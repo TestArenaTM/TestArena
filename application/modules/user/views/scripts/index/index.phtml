@@ -1,0 +1,106 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>  
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>   -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_edit') ?>" ><?php echo $this->t('Edytuj') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_email') ?>" ><?php echo $this->t('Zmień adres e-mail') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_password') ?>" ><?php echo $this->t('Zmień hasło') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_avatar') ?>"><?php echo $this->t('Zmień avatar') ?></a></li>
+        <?php if ($this->authUser->avatarExists()): ?>
+          <li class="button_link_li"><a class="button_link j_delete_avatar" href="<?php echo $this->url(array(), 'user_delete_avatar') ?>"><?php echo $this->t('Usuń avatar') ?></a></li>
+        <?php endif; ?>
+      </ul>
+    </nav>
+    
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><?php echo $this->authUser->getFullname() ?></div>
+    </div> 
+    
+    <div class="contentLRtable">
+      
+      <div class="contentProperties_left">
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text avatar-big"><img src="<?php echo $this->authUser->getAvatarUrl() ?>" alt="<?php echo $this->authUser->getFullName() ?>" /> <span class="avatar-button"></span></div>
+        </div>   
+        
+        <h3><?php echo $this->t('Przypisane projekty') ?></h3>
+        <?php if (count($this->projects)): ?>
+          <table>
+            <thead>
+              <tr>
+                <th><?php echo $this->t('Projekt') ?></th>
+                <th><?php echo $this->t('Role') ?></th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($this->projects as $project): ?>
+              <tr>
+                <td class="W_50"><a href="<?php echo $this->url(array('projectId' => $project->getId()), 'project_view') ?>"><?php echo $this->escapeQuotes($project->getName()); ?></a></td>
+                <td>
+                  <?php foreach ($this->roles[$project->getId()] as $role): ?>
+                    <span class="elementBox"><b><?php echo $this->escapeQuotes($role->getName()) ?></span>
+                  <?php endforeach; ?>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        <?php else: ?>
+          <p><?php echo $this->t('Nie uczestniczysz w żadnym projekcie.') ?></p>
+        <?php endif; ?>        
+
+      </div>
+      
+      <div class="contentEditUser_right" style="vertical-align:top">
+
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Adres e-mail') ?>: </div>
+          <div class="content_label"><?php echo $this->escapeQuotes($this->authUser->getEmail()) ?></div>
+        </div>
+        
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Firma/Organizacja') ?>: </div>
+          <?php if (strlen($this->authUser->getOrganization())): ?>
+            <div class="content_label"><?php echo $this->escapeQuotes($this->authUser->getOrganization()) ?></div>
+          <?php else: ?>
+            <div class="content_label notSpecified"><?php echo $this->generalT('[Nie podano]'); ?></div>
+          <?php endif; ?>
+        </div>
+        
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Dział') ?>: </div>
+          <?php if (strlen($this->authUser->getDepartment())): ?>        
+            <div class="content_label"><?php echo $this->escapeQuotes($this->authUser->getDepartment()) ?></div>
+          <?php else: ?>
+            <div class="content_label notSpecified"><?php echo $this->generalT('[Nie podano]'); ?></div>
+          <?php endif; ?>
+        </div>
+        
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Nr telefonu') ?>: </div>
+          <?php if (strlen($this->authUser->getPhoneNumber())): ?> 
+            <div class="content_label"><?php echo $this->escapeQuotes($this->authUser->getPhoneNumber()) ?></div>
+          <?php else: ?>
+            <div class="content_label notSpecified"><?php echo $this->generalT('[Nie podano]'); ?></div>
+          <?php endif; ?>
+        </div>
+        
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Administrator') ?>: </div>
+          <div class="content_label"><?php echo $this->authUser->getAdministrator() ? $this->generalT('Tak') : $this->generalT('Nie') ?></div>
+        </div>          
+      </div>
+      
+    </div>
+    
+  </article>
+</section>
+
+<?php echo $this->partial('popups/delete-avatar.phtml');

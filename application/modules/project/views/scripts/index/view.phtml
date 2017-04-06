@@ -1,0 +1,132 @@
+<section id="content">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if ($this->activeProject->isActive()): ?>
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <?php if ($this->authUser->isAdministrator()):?>
+          <li class="button_link_li"><a class="open button_link" href="<?php echo $this->url(array('id' => $this->activeProject->getId()), 'admin_project_view')?>" ><?php echo $this->generalT('Zarządzaj') ?></a></li>
+        <?php endif;?>
+        <?php if ($this->addAttachmentAccess):?>
+          <li class="popbox button_link_li">
+            <a href="#" class="open button_link"><?php echo $this->t('Dodaj załącznik') ?>▼</a>
+            <div class='collapse'>
+              <ul class="box">
+                <li class="button_link_li"><a id="j_projectAddPlan" class="j_openFileBrowser" href="<?php echo $this->url(array(), 'project_add_plan_ajax')?>" ><?php echo $this->t('Plan') ?></a></li>
+                <li class="button_link_li"><a id="j_projectAddDocumentation" href="<?php echo $this->url(array(), 'project_add_documentation_ajax')?>" ><?php echo $this->t('Dokumentacja') ?></a></li>
+              </ul> 
+            </div>
+          </li>
+        <?php endif; ?>
+      </ul>
+    </nav>
+    <?php endif; ?>
+    
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->activeProject->getName()) ?></div>
+    </div>
+    <div class="contentLRtable">
+      <div class="contentProperties_left">
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Status') ?></div>
+          <div id="text" class="content_label"><?php echo $this->statusT($this->activeProject->getStatus(), 'PROJECT') ?></div>
+        </div>        
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Prefiks') ?></div>
+          <div id="text" class="content_label"><?php echo $this->activeProject->getPrefix() ?></div>
+        </div>
+        <div>
+            <h5 class="break_page"><span aria-hidden="true" class="icon_pencil icon-20"></span><?php echo $this->t('Opis') ?></h5>
+            <div><?php echo $this->escapeQuotes($this->activeProject->getDescription()) ?></div>
+        </div>
+        
+    <?php if (count($this->attachments)): ?>
+    <div>
+      <h5 class="break_page"><span aria-hidden="true" class="icon_link_alt icon-20"></span><?php echo $this->t('Załączniki') ?></h5>
+      <table>
+        <thead>
+          <tr>
+            <th><?php echo $this->t('Plik') ?></th>
+            <th><?php echo $this->t('Typ') ?></th>
+            <th><?php echo $this->t('Data utworzenia') ?></th>
+            <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($this->attachments as $attachment): ?>
+          <tr>
+            <td><a href="<?php echo $this->url(array('id' => $attachment->getFile()->getId()), 'file_download') ?>"><?php echo $attachment->getFile()->getFullName() ?></a></td>
+            <td>
+              <?php if ($attachment->getTypeId() == Application_Model_AttachmentType::PROJECT_PLAN): ?>
+              <?php echo $this->t('Plan') ?>
+              <?php elseif ($attachment->getTypeId() == Application_Model_AttachmentType::DOCUMENTATION): ?>
+              <?php echo $this->t('Dokumentacja') ?>
+              <?php endif; ?>
+            </td>
+            <td><?php echo $attachment->getCreateDate() ?></td>
+            <td>
+              <?php if ($this->addAttachmentAccess):?>
+                <nav>
+                  <ul class="action_list">
+                    <div class="popbox">
+                      <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                      <div class='collapse'>
+                        <ul class="box">
+                          <li><a class="j_projectDeleteAttachment" href="<?php echo $this->url(array('id' => $attachment->getId()), 'project_delete_attachment_ajax')?>"><?php echo $this->t('Usuń')?></a></li>
+                        </ul> 
+                      </div>
+                    </div>                
+                  </ul>
+                </nav>
+              <?php endif; ?>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+      </tbody>
+    </table>
+    </div>
+    <?php endif; ?>        
+        
+      </div>
+      <div class="contentEditUser_right">        
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?></div>
+          <div id="text" class="content_label"><?php echo $this->activeProject->getCreateDate() ?></div>
+        </div>
+      </div>
+     </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th><?php echo $this->t('Rola') ?></th>
+          <th><?php echo $this->t('Użytkownicy') ?></th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($this->roles as $role): ?>
+        <tr>
+          <td class="t_status"><?php echo $this->escapeQuotes($role->getName()); ?></td>
+          <td>
+            <?php if (count($role->getUsers()) > 0): ?>
+              <?php foreach ($role->getUsers() as $user): ?>
+                <span class="elementBox"><b><?php echo $this->escapeQuotes($user->getFullname().' ('.$user->getEmail().')') ?></b></span>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+    
+
+    
+  </article>    
+</section>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+  url.current = '<?php echo $this->url() ?>';
+/* ]]> */
+</script>

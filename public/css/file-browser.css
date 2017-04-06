@@ -1,0 +1,232 @@
+*:before, *:after {
+  box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+  width: 100%;
+}
+body {
+  background-color: #ffffff;
+  color: #58666e;
+  font-family: 'Roboto',sans-serif;
+  font-size: 14px;
+  line-height: 1.42857;
+	margin: 0;
+}
+a {
+  color: black;
+  text-decoration: none;
+}
+#directoryList {
+    background-color: #ffffff;
+    border-right: 1px solid black;
+    bottom: 0;
+    content: "";
+    display: block;
+    float: left;
+    height: calc(100% - 119px);
+    margin-top: 53px;
+    overflow-y: auto;
+    padding: 0 0 66px;
+    position: relative;
+    top: 0;
+    width: 299px;
+    z-index: -1;
+}
+#directoryList .selected {
+    background-color: #111;
+    color: white;
+}
+#fileList, #statusBar {
+  margin-left: 300px;
+}
+#fileList {
+  margin-top: 50px;
+  height: calc(100% - 119px);
+  overflow: scroll;
+  padding: 10px;
+}
+#fileList:after {
+  clear: both;
+}
+#fileList:before, #fileList:after {
+  content: ' ';
+  display: table;
+}
+#fileBrowser {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  position: fixed;
+  z-index: 1040;
+  background-color: white;
+}
+#headerBar {
+    background-color: #1275d6;
+    border: 1px solid silver;
+    border-radius: 4px;
+    left: 0;
+    margin-bottom: 20px;
+    min-height: 50px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 1035;
+}
+#headerBar div {
+  display: inline-block;
+}
+#statusBar {
+    background-color: #333;
+    bottom: 0;
+    color: #ccc;
+    display: block;
+    height: auto;
+    padding: 0 0 0 9px;
+    position: fixed;
+    width: 100%;
+    word-wrap: break-word;
+}
+#directoryList ul, #fileList ul {
+  list-style: none;
+}
+#directoryList ul li, #fileList ul li {
+  margin-left: -24px;
+}
+.iconFile, .iconDirectory, .iconImage, .iconText {
+  display: inline-block;
+  background: url('../img/file_icons.png') no-repeat scroll 0 0 transparent;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+.iconDirectory {
+  background-position: -448px -16px;
+}
+.iconImage {
+  background-position: -112px -16px;
+}
+.iconText {
+  background-position: -224px -16px;
+}
+#closeButton {
+  display: block;
+  position: absolute;
+  right: 3px;
+  top: 0px;
+  font-weight: bold;
+  width: 40px;
+  height: 20px;
+  text-align: center;
+  background-color: #d80202;
+  color: white;
+}
+#closeButton:hover {
+  background-color: red;
+}
+#uploadFilesButton {
+  cursor: pointer;
+}
+#popupBackground {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1999;
+}
+.popup {
+  display: none;
+  position: fixed;
+  width: 320px;
+  height: 120px;
+  left: 50%;
+  top: 50%;
+  margin-left: -160px;
+  margin-top: -60px;
+  border: 1px solid silver;
+  background-color: white;
+  z-index: 2000;
+}
+.button {
+    background-color: #1275d6;
+    border-radius: 3px;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 2px 9px;
+}
+.button:hover {
+  background-color: #158bff;
+}
+.actions a {
+  margin: 1px 2px;
+}
+.imagePreview {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: auto;
+  background-color: white;
+  z-index: 2000;
+  border: 1px solid silver;
+}
+.imagePreview img {
+  width: 200px;
+}
+#headerBar a {
+    background-color: transparent;
+    border-radius: 0;
+    border-right: 1px solid #1067bd;
+    color: #fff;
+    display: inline-block;
+    font-size: 14px;
+    margin-left: -3px;
+    padding: 15px;
+}
+#headerBar a:hover {
+  background-color: #158bff;
+  color: #fff;
+}
+.logo-upload {
+    background-color: #000;
+    color: #fff;
+    padding: 15px;
+}
+.logo-upload span {
+    font-size: 20px;
+    vertical-align: sub;
+}
+#statusBar > p {
+    margin-right: 333px;
+}
+#currentPath {
+    min-width: 100px;
+}
+/*#currentPath {
+    cursor: help;
+    display: inline-block;
+    max-width: 430px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    white-space: nowrap;
+    word-wrap: break-word;
+}*/
+.actions {
+    display: inline-block;
+    width: 231px;
+}
+.file {
+    display: inline-block;
+    max-width: 375px;
+    white-space: pre-line;
+    word-wrap: break-word;
+}

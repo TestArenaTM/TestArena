@@ -1,0 +1,32 @@
+<style>
+  .percentStripe {
+    width: 100%;
+    height: 10px;
+    display: flex;
+  }
+  .percentStripeItem {
+    margin: 0;
+    padding: 0;
+    height: 10px;
+    background-color: #4C5C7B;
+    text-align: center;
+    border: 1px solid #FFFFFF;
+  }
+</style>
+<div class="percentStripe">
+  <?php if ($this->openTasks > 0): ?>
+  <div class="percentStripeItem status_OPEN percentStripe item" style="width: <?php echo $this->percent($this->allTasks, $this->openTasks) ?>%;"><div class="cloud percent"><span class="status_OPEN"></span><?php echo $this->t('Zadania niewykonane') ?></div></div>
+  <?php endif; ?>
+  <?php if ($this->successTasks > 0): ?>
+    <div class="percentStripeItem status_SUCCESS percentStripe item" style="width: <?php echo $this->percent($this->allTasks, $this->successTasks) ?>%;"><div class="cloud percent"><span class="status_SUCCESS"></span><?php echo $this->t('Zadania zakończone powodzeniem') ?></div></div>
+  <?php endif; ?>
+  <?php if ($this->failedTasks > 0): ?>
+    <div class="percentStripeItem status_FAILED percentStripe item" style="width: <?php echo $this->percent($this->allTasks, $this->failedTasks) ?>%;"><div class="cloud percent"><span class="status_FAILED"></span><?php echo $this->t('Zadania zakończone niepowodzeniem') ?></div></div>
+  <?php endif; ?>
+  <?php if ($this->inProgressTasks > 0): ?>
+    <div class="percentStripeItem status_IN_PROGRESS percentStripe item" style="width: <?php echo $this->percent($this->allTasks, $this->inProgressTasks) ?>%;"><div class="cloud percent"><span class="status_IN_PROGRESS"></span><?php echo $this->t('Zadania w toku') ?></div></div>
+  <?php endif; ?>
+  <?php if ($this->suspendedTasks > 0): ?>
+    <div class="percentStripeItem status_SUSPENDED percentStripe item" style="width: <?php echo $this->percent($this->allTasks, $this->suspendedTasks) ?>%;"><div class="cloud percent"><span class="status_SUSPENDED"></span><?php echo $this->t('Zadania zawieszone') ?></div></div>
+  <?php endif; ?>
+</div>

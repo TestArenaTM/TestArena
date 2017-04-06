@@ -1,0 +1,7 @@
+<div class="j_msgIsBusy"><img src="<?php echo $this->baseUrl('/img/is_busy.gif') ?>" /> <?php echo $this->generalT('Proszę czekać...') ?></div>
+<div class="j_msgForm commentForm">
+  <div class="msgForm"><?php echo $this->formTextarea('j_msgContent', '', array('maxlength' => 1000)) ?></div>
+  <div class="msg_button comment_button">
+    <a id="j_msgResponse-<?php echo $this->msgThreadId ?>" class="j_msgResponse" href="#"><?php echo $this->t('Odpowiedz') ?></a>
+  </div>
+</div>

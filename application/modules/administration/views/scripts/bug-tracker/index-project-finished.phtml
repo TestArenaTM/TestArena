@@ -1,0 +1,78 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>   
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_view')?>" ><?php echo $this->t('Właściwości projektu') ?></a></li>
+      </ul>
+    </nav>
+    
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->project->getName()) ?></div>
+    </div>
+    
+    <section id="bugTrackers">
+      <h4><?php echo $this->t('Narzedzie wewnętrzne') ?></h4>
+      <div>
+        <ul>
+
+          <?php if ($this->bugTrackers[Application_Model_BugTrackerType::INTERNAL]->getBugTrackerStatusId() == Application_Model_BugTrackerStatus::ACTIVE): ?>
+            <li class="active">
+              <span class="circle"></span>
+              <span>TestArena</span>
+            </li>
+          <?php else :?>
+            <li>
+              <span class="circle"></span>
+              <span>TestArena</span>
+              <a class="smallButtonLink" href="<?php echo $this->url(array('id' => $this->bugTrackers[Application_Model_BugTrackerType::INTERNAL]->getId()), 'admin_bug_tracker_activate') ?>"><?php echo $this->t('Aktywuj') ?></a>
+            </li>
+          <?php endif; ?>
+
+        </ul>
+      </div>
+      <h4>JIRA</h4>
+      <div>
+        <?php if (count($this->bugTrackers[Application_Model_BugTrackerType::JIRA][Application_Model_BugTrackerStatus::INACTIVE]) || $this->bugTrackers[Application_Model_BugTrackerType::JIRA][Application_Model_BugTrackerStatus::ACTIVE] !== null): ?>
+        <ul>
+
+          <?php foreach ($this->bugTrackers[Application_Model_BugTrackerType::JIRA][Application_Model_BugTrackerStatus::INACTIVE] as $bugTracker): ?>
+            <li>
+              <span class="circle"></span>
+              <span><?php echo $bugTracker->getName() ?></span>
+              <a class="smallButtonLink" href="<?php echo $this->url(array('id' => $bugTracker->getId()), 'admin_bug_tracker_activate') ?>"><?php echo $this->t('Aktywuj') ?></a>
+            </li>
+          <?php endforeach; ?>
+            
+        </ul>
+        <?php else: ?>
+          <p><?php echo $this->t('Brak elementów.') ?></p>
+        <?php endif; ?>
+      </div>
+      <h4>Mantis</h4>
+      <div>
+        <?php if (count($this->bugTrackers[Application_Model_BugTrackerType::MANTIS][Application_Model_BugTrackerStatus::INACTIVE]) || $this->bugTrackers[Application_Model_BugTrackerType::MANTIS][Application_Model_BugTrackerStatus::ACTIVE] !== null): ?>
+        <ul>
+
+          <?php foreach ($this->bugTrackers[Application_Model_BugTrackerType::MANTIS][Application_Model_BugTrackerStatus::INACTIVE] as $bugTracker): ?>
+            <li>
+              <span class="circle"></span>
+              <span><?php echo $bugTracker->getName() ?></span>
+              <a class="smallButtonLink" href="<?php echo $this->url(array('id' => $bugTracker->getId()), 'admin_bug_tracker_activate') ?>"><?php echo $this->t('Aktywuj') ?></a>
+            </li>
+          <?php endforeach; ?>
+
+        </ul>
+        <?php else: ?>
+          <div class="empty-text"><?php echo $this->t('Brak elementów.') ?></div>
+        <?php endif; ?>
+      </div>
+    </section>
+  </article>    
+</section>

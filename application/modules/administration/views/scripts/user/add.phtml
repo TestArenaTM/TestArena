@@ -1,0 +1,128 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Użytkownicy') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div> -->   
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->firstname->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('firstname', $this->t('Imię')) ?>
+            <?php foreach ($this->form->getErrors('firstname') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('firstname')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('firstname')->getValidator('StringLength')->getMax()
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->lastname->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('lastname', $this->t('Nazwisko')) ?>
+            <?php foreach ($this->form->getErrors('lastname') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('lastname')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('lastname')->getValidator('StringLength')->getMax()
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->email->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('email', $this->t('Adres e-mail')) ?>
+            <?php foreach ($this->form->getErrors('email') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('email')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('email')->getValidator('StringLength')->getMax()
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->organization->renderViewHelper() ?>
+            <?php echo $this->formLabel('organization', $this->t('Firma/Organizacja')) ?>
+            <?php foreach ($this->form->getErrors('organization') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('organization')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('organization')->getValidator('StringLength')->getMax()
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->department->renderViewHelper() ?>
+            <?php echo $this->formLabel('department', $this->t('Dział')) ?>
+            <?php foreach ($this->form->getErrors('department') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('department')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('department')->getValidator('StringLength')->getMax()
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->phoneNumber->renderViewHelper() ?>
+            <?php echo $this->formLabel('phoneNumber', $this->t('Nr telefonu')) ?>
+            <?php foreach ($this->form->getErrors('phoneNumber') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('phoneNumber')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('phoneNumber')->getValidator('StringLength')->getMax()
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+      
+        <div class="formContainer">
+          <span>
+            <?php echo $this->t('Status użytkownika') ?>
+            <div class="checkForm">
+              <?php echo $this->form->activeUser->renderViewHelper() ?><?php echo $this->formLabel('activeUser', $this->t('Użytkownik aktywny')) ?>
+            <?php foreach ($this->form->getErrors('activeUser') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+            </div>
+            <div class="checkForm">
+              <?php echo $this->form->administrator->renderViewHelper() ?><?php echo $this->formLabel('administrator', $this->t('Administrator')) ?>
+            <?php foreach ($this->form->getErrors('administrator') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+            </div>            
+          </span>
+        </div>       
+
+          <div>
+            <span id="save"><?php echo $this->formSubmit('save', $this->t('Zapisz')) ?></span>
+            <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+          </div>
+          <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+          <div>
+            <?php echo $this->form->csrf->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </div>
+
+    </form>
+  </article>    
+</section>

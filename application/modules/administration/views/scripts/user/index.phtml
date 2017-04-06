@@ -1,0 +1,117 @@
+<?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
+
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>-->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'admin_user_add')?>" ><?php echo $this->t('Dodaj użytkownika') ?></a></li>
+      </ul>
+    </nav>
+
+    <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
+
+      <div class="search_text">
+        <div class="filter">
+          <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+          <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
+        </div>
+      </div>
+
+      <div class="search_filter">
+        <div class="filter">
+          <div><?php echo $this->formLabel('status', $this->t('Status')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->status->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('administrator', $this->t('Administrator')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->administrator->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
+      </div>
+    </form>
+
+    <?php if (count($this->users) > 0): ?>
+
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th><?php echo $this->sortingControl('Imię', 'user_firstname', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Nazwisko', 'user_lastname', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Adres email', 'user_email', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->t('Status') ?></th>
+          <th><?php echo $this->t('Administrator') ?></th>
+          <!--<th><?php //echo $this->sortingControl('Opiekun Bazy Wiedzy', 'user_knowledge_keeper', 'sorting.phtml', $this->request) ?></th>-->
+          <th><?php echo $this->sortingControl('Firma/Organizacja', 'user_organization', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Dział', 'user_department', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Nr telefonu', 'user_phone_number', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Data utworzenia', 'user_create_date', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Data ostatniego logowania', 'user_last_login_date', 'sorting.phtml', $this->request) ?></th>
+          <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($this->users as $user): ?>
+        <tr>
+          <td class="t_avatar">
+            <div><img src="<?php echo $user->getAvatarUrl(true) ?>" alt="<?php echo $user->getFullName() ?>"></div>
+          </td>
+          <td class="t_name first-name" title="<?php echo $this->escapeQuotes($user->getFirstname()) ?>"><?php echo $this->escapeQuotes($user->getFirstname()) ?></td>
+          <td class="t_name" title="<?php echo $this->escapeQuotes($user->getLastname()) ?>"><?php echo $this->escapeQuotes($user->getLastname()) ?></td>
+          <td class="t_name" title="<?php echo $this->escapeQuotes($user->getEmail()) ?>"><?php echo $this->escapeQuotes($user->getEmail()) ?></td>
+          <td class="t_status"><?php echo $this->statusT($user->getStatus(), 'USER') ?></td>
+          <td class="t_status"><?php echo $user->getAdministrator() ? $this->generalT('Tak') : $this->generalT('Nie') ?></td>
+          <!--<td class="t_status"><?php //echo $user->getKnowledgeKeeper() ? $this->generalT('Tak') : $this->generalT('Nie') ?></td>-->
+          <td class="t_name" title="<?php echo $user->getOrganization() ? $this->escapeQuotes($user->getOrganization()) : '-' ?>"><?php echo $user->getOrganization() ? $this->escapeQuotes($user->getOrganization()) : '-' ?></td>
+          <td class="t_name" title="<?php echo $user->getDepartment() ? $this->escapeQuotes($user->getDepartment()) : '-' ?>"><?php echo $user->getDepartment() ? $this->escapeQuotes($user->getDepartment()) : '-' ?></td>
+          <td class="t_phone_number"><?php echo $user->getPhoneNumber() ? $this->escapeQuotes($user->getPhoneNumber()) : '-' ?></td>
+          <td class="t_date"><?php echo $user->getCreateDate() ?></td>
+          <td class="t_date"><?php echo $user->getLastLoginDate() ?></td>
+          <td>
+            <nav>
+              <ul class="action_list">
+                <div class="popbox">
+                  <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                    <div class='collapse'>
+                      <ul class="box">           
+                        <li><a href="<?php echo $this->url(array('id' => $user->getId()), 'admin_user_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+                        <?php if ($user->getStatusId() == Application_Model_UserStatus::ACTIVE): ?>
+                        <li><a href="<?php echo $this->url(array('id' => $user->getId()), 'admin_user_deactivate') ?>"><?php echo $this->t('Dezaktywuj') ?></a></li>
+                        <?php elseif ($user->getStatusId() == Application_Model_UserStatus::INACTIVE): ?>
+                        <li><a href="<?php echo $this->url(array('id' => $user->getId()), 'admin_user_activate') ?>"><?php echo $this->t('Aktywuj') ?></a></li>
+                        <?php endif; ?>
+                        <?php if (!$user->getResetPassword()): ?>
+                        <li><a href="<?php echo $this->url(array('id' => $user->getId()), 'admin_user_reset_password') ?>"><?php echo $this->t('Wymuś zmianę hasła') ?></a></li>
+                        <?php endif; ?>
+                      </ul> 
+                    </div>
+                </div>            
+              </ul>
+            </nav>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+    <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
+
+    <?php else: ?>
+    <div class="empty-text"><?php echo $this->t('Brak użytkowników.') ?></div>
+    <?php endif; ?>
+  </article>    
+</section>

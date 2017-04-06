@@ -1,0 +1,63 @@
+<?php echo $this->partial('header.phtml', array(
+  'keywords'    => $this->keywords,
+  'description' => $this->description,
+  'messageBox'  => $this->messageBox,
+  'language'    => $this->language,
+  'locale'      => $this->locale,
+  'cModule'     => $this->cModule,
+  'cController'=> $this->cController,
+  'cAction'     => $this->cAction
+)); ?>
+
+<header id="head-top" class="head-top-main">
+  <div class="top_left">
+    <?php echo $this->partial('/partials/projects-form.phtml', array(
+      'projectsForm' => $this->projectsForm
+    )); ?>
+    <?php if ($this->activeProject->isFinished()): ?>
+      <span class="finishedProject"><span class="status_SUCCESS"></span><?php echo $this->generalT('Projekt zakończony') ?></span>
+    <?php elseif ($this->activeProject->isSuspended()): ?>
+      <span class="suspendedProject"><span class="status_SUSPENDED"></span><?php echo $this->generalT('Projekt zawieszony') ?></span>
+    <?php endif; ?>
+  </div>
+  
+  <div class="top_right">   
+    <a class="top_messages" href="<?php echo $this->url(array(), 'message_list', true)?>" title="<?php echo $this->generalT('Wiadomości') ?>"<?php if ($this->activeMenu == 'messages'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_mail icon-20" style="line-height: 2.8;"></span></a> 
+    <a href="<?php echo $this->url(array(), 'user_profile') ?>" class="top_avatar_header">
+      <span class="user-info"><?php echo $this->authUser->getFullname()?> <br><small><?php echo $this->authUser->getEmail()?></small></span>
+      <span class="user-thumb"><p class="avatar_header"><img src="<?php echo $this->authUser->getAvatarUrl(true) ?>" alt="<?php echo $this->authUser->getFullname()?>" /></p></span>
+    </a>
+    
+    <?php if ($this->authUser->getAdministrator()): ?>
+      <div class="header_admin"><a href="<?php echo $this->url(array(), 'admin_index')?>" title="<?php echo $this->generalT('Administracja') ?>"><span aria-hidden="true" class="icon_tools icon-20" style="line-height: 2.8;"></span></a></div>
+    <?php endif; ?>
+      
+    <div class="header_logout"><a href="<?php echo $this->url(array(), 'user_logout')?>" title="<?php echo $this->generalT('Wyloguj') ?>"><span class="icons-switch icon-20" style="line-height: 2.8;"></span></a></div>
+  </div>
+</header>
+
+<aside id="left_header_menu">
+  <a id="header_logo" href="<?php echo $this->url(array(), 'index')?>" ></a>
+  <div id="wrapper">
+    <ul class="menu">
+      <li class="item1"><a href="<?php echo $this->url(array(), 'index')?>"<?php if ($this->activeMenu == 'dashboard'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_grid-2x2 icon-20"></span><?php echo $this->generalT('Kokpit') ?></a></li>
+      <li class="item3"><a href="<?php echo $this->url(array(), 'project_view')?>"<?php if ($this->activeMenu == 'project'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_puzzle_alt icon-20"></span><?php echo $this->generalT('Projekt') ?></a></li>
+      <li class="item3"><a href="<?php echo $this->url(array(), 'release_list')?>"<?php if ($this->activeMenu == 'releases'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_flowchart_alt icon-20"></span><?php echo $this->generalT('Wydania') ?></a></li>
+      <?php if ($this->activeProject->getExtraData('releaseCount') > 0): ?>
+      <li class="item3"><a href="<?php echo $this->url(array(), 'phase_list')?>"<?php if ($this->activeMenu == 'phases'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-flow-children icon-20"></span><?php echo $this->generalT('Fazy') ?></a></li>
+      <?php endif; ?>
+      <li class="item4"><a href="<?php echo $this->url(array(), 'environment_list')?>"<?php if ($this->activeMenu == 'environments'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_genius icon-20"></span><?php echo $this->generalT('Środowiska') ?></a></li>
+      <li class="item4"><a href="<?php echo $this->url(array(), 'version_list')?>"<?php if ($this->activeMenu == 'versions'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-sort-numeric-asc icon-20"></span><?php echo $this->generalT('Wersje') ?></a></li>
+      <li class="item6"><a href="<?php echo $this->url(array(), 'task_list', true)?>"<?php if ($this->activeMenu == 'tasks'): ?> class="activeMenu"<?php endif; ?>><span class="icon_tool icon-20"></span><?php echo $this->generalT('Zadania') ?></a></li>
+      <li class="item6"><a href="<?php echo $this->url(array(), 'defect_list', true)?>"<?php if ($this->activeMenu == 'defects'): ?> class="activeMenu"<?php endif; ?>><span class="icon_error-triangle icon-20"></span><?php echo $this->generalT('Defekty') ?></a></li>
+      <li class="item5"><a href="<?php echo $this->url(array(), 'test_list', true)?>"<?php if ($this->activeMenu == 'tests'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-database icon-20"></span><?php echo $this->generalT('Baza testów') ?></a></li>
+      <li class="item9"><a class="j_openFileBrowser" href="#"><span aria-hidden="true" class="icon_cloud-upload icon-20"></span><?php echo $this->generalT('Pliki') ?></a></li> 
+    </ul>
+  </div>
+</aside>
+  
+<div id="right_sidebar">
+  <?php echo $this->layout()->content ?>
+</div>
+
+<?php echo $this->partial('footer.phtml', array('locale' => $this->locale));

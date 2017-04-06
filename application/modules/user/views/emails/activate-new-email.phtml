@@ -1,0 +1,25 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title><?php echo $this->emailT($this->name, 'subject') ?></title>
+</head>
+<body>
+  <div>
+    <h5><?php echo $this->emailT($this->name, 'Witaj USER_NAME!', array('userName' => $this->user->getFullname())) ?></h5>
+    <p><?php echo $this->emailT($this->name, 'Zgłosiłeś chęć zmiany adresu e-mail. Aby aktywować nowy adres, kliknij w poniższy link.') ?></p>
+
+    <p><a href="<?php echo $this->url(array('uid' => base64_encode($this->user->getEmail()), 'code' => $this->user->getToken()), 'user_acvivate_new_email') ?>"><?php echo $this->url(array('uid' => base64_encode($this->user->getEmail()), 'code' => $this->user->getToken()), 'user_acvivate_new_email') ?></a></p>
+
+    <p>
+      <?php echo $this->emailT($this->name, 'Jeżeli nie chciałeś zmienić swojego maila, prosimy o zignorowanie tej wiadomości.') ?>
+      <br />
+      <?php echo $this->emailT($this->name, 'W razie jakichkolwiek pytań lub wątpliwości zapraszamy do KONTAKTU.', array(
+        'email' => Zend_Registry::get('config')->contact->email
+      )) ?>
+    </p>
+    <p><?php echo $this->emailT($this->name, 'Pozdrawiamy') ?></p>
+  </div>
+  
+</body>
+</html>
+</html>

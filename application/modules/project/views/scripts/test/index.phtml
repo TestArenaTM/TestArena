@@ -1,0 +1,120 @@
+<?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
+
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>   
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>-->  
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    
+    <?php if ($this->testUserPermissions[Application_Model_RoleAction::TEST_ADD]): ?>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul action_list">
+          <div class="popbox button_link_ul">
+            <a href="#" class="open button_link"><?php echo $this->t('Dodaj') ?>▼</a>
+            <div class='collapse'>
+              <ul class="box">
+                <li class="button_link_li"><a href="<?php echo $this->url(array(), 'test_add_exploratory_test')?>" ><?php echo $this->t('Test eksploracyjny') ?></a></li>
+                <li class="button_link_li"><a href="<?php echo $this->url(array(), 'test_add_test_case')?>" ><?php echo $this->t('Przypadek testowy') ?></a></li>
+                <li class="button_link_li"><a href="<?php echo $this->url(array(), 'test_add_other_test')?>" ><?php echo $this->t('Inny test') ?></a></li>
+              </ul> 
+            </div>
+          </div>                   
+        </ul>
+      </nav>
+    <?php endif;?>
+
+    <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
+
+      <div class="search_text">
+        <div class="filter">
+          <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+          <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
+        </div>
+      </div>
+      
+      <div class="search_filter">
+        <div class="filter">
+          <div><?php echo $this->formLabel('type', $this->t('Typ')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->type->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('author', $this->t('Autor')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->author->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
+      </div>
+
+    </form>
+
+    <?php if (count($this->tests) > 0): ?>
+    <form name="<?php echo $this->checkboxListForm->getName() ?>" method="<?php echo $this->checkboxListForm->getMethod() ?>" action="<?php echo $this->checkboxListForm->getAction() ?>">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20px;"><?php echo $this->formCheckbox('j_selectAllCheckBoxes', 1, null, array()) ?></th>
+            <th><?php echo $this->sortingControl('Nr obiektu', 'test_ordinal_no', 'sorting.phtml', $this->request) ?></th>
+            <th><?php echo $this->sortingControl('Nazwa', 'test_name', 'sorting.phtml', $this->request) ?></th>
+            <th><?php echo $this->t('Typ') ?></th>
+            <th><?php echo $this->sortingControl('Autor', $this->createSortedFieldName('test', 'email', array('author')), 'sorting.phtml', $this->request) ?></th>
+            <th><?php echo $this->sortingControl('Data utworzenia', 'test_create_date', 'sorting.phtml', $this->request) ?></th>
+            <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($this->tests as $test): ?>
+          <tr>
+            <td><?php echo $this->checkboxListForm->getElement('checkBoxId_'.$test->getId())->renderViewHelper() ?></td>
+            <td class="t_object_number"><?php echo $this->escapeQuotes($test->getObjectNumber()) ?></td>
+            <td><a href="<?php echo $this->url(array('id' => $test->getId()), $this->testViewRouteName($test))?>"><?php echo $this->escapeQuotes($test->getName()) ?></a></td>
+            <td class="t_status"><?php echo $this->typeT($test->getType(), 'TEST') ?></td>
+            <td class="t_user"><?php echo $this->escapeQuotes($test->getAuthor()->getFullname()) ?></td>
+          <td class="t_date" title="<?php echo $test->getCreateDate() ?>"><?php echo $test->getCreateDate(true) ?></td>
+            <td>
+              <nav>
+                <ul class="action_list">
+                  <div class="popbox">
+                    <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                    <div class='collapse'>
+                      <ul class="box">
+                        <?php foreach ($this->prepareTestActions($test, $this->testUserPermissions) as $action): ?>          
+                          <?php if ($action === null): ?>
+                            <li class="menuSeparator"></li>
+                          <?php else: ?>
+                            <li><a <?php if (array_key_exists('class', $action)):?>class="<?php echo $action['class'] ?>" <?php endif;?>href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                          <?php endif; ?>
+                        <?php endforeach; ?>
+                      </ul> 
+                    </div>
+                  </div>                   
+                </ul>
+              </nav>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+      
+      <!--<div><a class="j_group_action" href="<?php echo $this->url(array(), 'test_group_forward_to_execute') ?>"><?php echo $this->t('Przekaż wiele do wykonania') ?></a></div>-->
+
+      <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
+
+    </form>
+    <?php else: ?>
+      <div class="empty-text"><?php echo $this->t('Brak elementów bazy testów.') ?></div>
+    <?php endif;?>
+  </article>    
+</section>
+
+<?php 
+echo $this->partial('popups/select-least-one.phtml');
+echo $this->partial('popups/delete-test.phtml');

@@ -1,0 +1,22 @@
+<script id="directoryTmpl" type="text/x-jquery-tmpl" >
+<tr>
+  <td>
+    <input type="checkbox" name="selectedDirectory_${index}" value="${name}" id="selectedDirectory_${index}" class="selectedDirectory">
+    <span class="iconDirectory"></span>
+    <a class="directory" path="${path}" href="#">${name}</a>
+  </td>
+  <td class="actions">
+    <a class="button removeDirectoryButton" directoryName="${name}" href="#"><?php echo $this->generalT('Usuń') ?></a>
+    <a class="button renameDirectoryButton" directoryName="${name}" href="#"><?php echo $this->generalT('Zmień nazwę') ?></a>
+  </td>
+</tr>        
+</script>
+<script id="directoryUpTmpl" type="text/x-jquery-tmpl" >
+<tr>
+  <td>
+    <span class="iconDirectory"></span>
+    <a class="directory" path="${path}" href="#"><?php echo $this->generalT('[...]') ?></a>
+  </td>
+  <td>&nbsp;</td>
+</tr>        
+</script>

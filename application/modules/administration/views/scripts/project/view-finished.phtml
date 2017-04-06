@@ -1,0 +1,95 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Projekty') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_export') ?>"><?php echo $this->t('Eksportuj') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_list') ?>"><?php echo $this->t('Narzedzia śledzenia defektów') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_resolution_list') ?>"><?php echo $this->t('Statusy rozwiązań') ?></a></li>
+      </ul>
+    </nav>
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->project->getName()) ?></div>
+    </div>
+    <div class="contentLRtable">
+      <div class="contentProperties_left">
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Prefiks') ?></div>
+          <div id="text" class="content_label"><?php echo $this->project->getPrefix() ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
+          <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->project->getDescription()) ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Status') ?></div>
+          <div id="text" class="content_label"><?php echo $this->statusT($this->project->getStatus(), 'PROJECT') ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Kolor dla statusów OPEN i REOPEN', array(
+            'open'    => $this->statusT('OPEN', 'TASK'),
+            'reopen'  => $this->statusT('REOPEN', 'TASK')
+          )) ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getOpenStatusColor(), $this->statusT('OPEN', 'TASK')) ?><?php echo $this->statusT('OPEN', 'TASK') ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Kolor dla statusu IN_PROGRESS', array(
+            'inProgress' => $this->statusT('IN_PROGRESS', 'TASK')
+          )) ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getInProgressStatusColor(), $this->statusT('IN_PROGRESS', 'TASK')) ?><?php echo $this->statusT('IN_PROGRESS', 'TASK') ?></div>
+        </div>        
+      </div>
+      <div class="contentEditUser_right">        
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?></div>
+          <div id="text" class="content_label"><?php echo $this->project->getCreateDate() ?></div>
+        </div>      
+      </div>
+     </div>
+
+    <div style="margin-top: 55px;">
+      <h1 class="content_title"><?php echo $this->t('Role w projekcie') ?></h1>
+
+      <?php if (count($this->roles) > 0): ?>
+        <table>
+          <thead>
+            <tr>
+              <th><?php echo $this->t('Rola') ?></th>
+              <th><?php echo $this->t('Użytkownicy') ?></th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($this->roles as $role): ?>
+            <tr>
+              <td><?php echo $this->escapeQuotes($role->getName()); ?></td>
+              <td>
+                <span>
+                  <?php if (count($role->getUsers()) > 0): ?>
+                    <?php foreach ($role->getUsers() as $user): ?>
+                      <?php echo $user->getExtraData('name') ?>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </span>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+
+      <?php else: ?>
+        <div><?php echo $this->t('Brak ról.') ?></div>
+      <?php endif; ?>
+    </div>
+    
+  </article>    
+</section>
+
+<?php echo $this->partial('popups/delete-role.phtml');

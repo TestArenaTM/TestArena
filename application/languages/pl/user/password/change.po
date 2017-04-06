@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2014-05-23 09:25+0100\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.6.5\n"
+
+msgid "pageTitle"
+msgstr "Zmień hasło"
+
+msgid "statusSuccess"
+msgstr "Twoje hasło zostało zmienione."
+
+msgid "statusError"
+msgstr "Podczas zmiany hasła wystąpił błąd."
+
+msgid "Stare hasło"
+msgstr "Stare hasło"
+
+msgid "Nowe hasło"
+msgstr "Nowe hasło"
+
+msgid "Powtórz hasło"
+msgstr "Powtórz hasło"
+
+msgid "Zmień hasło"
+msgstr "Zmień hasło"
+
+msgid "Zmień nr telefonu"
+msgstr "Zmień nr telefonu"
+
+msgid "Ustawienia"
+msgstr "Ustawienia ogólne"
+
+msgid "Zmień adres e-mail"
+msgstr "Zmień adres e-mail"

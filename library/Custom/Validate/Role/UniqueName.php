@@ -1,0 +1,67 @@
+<?php
+class Custom_Validate_Role_UniqueName extends Custom_Validate_DbAbstract
+{
+  const ROLENAME_EXISTS = 'roleNameExists';
+  
+  protected $_messageTemplates = array
+  (
+    self::ROLENAME_EXISTS => 'Role name already exists!'
+  );
+  
+  protected function _initOptions(array &$options)
+  {
+    $options['table'] = 'role';
+    $options['field'] = 'name';
+  }
+  
+  public function isValid($value, $context = null)
+  {
+    $this->_setValue($value);
+    
+    $projects = explode(',', $context['projects']);
+    
+    foreach($projects as $project)
+    {
+      if (!is_numeric($project) || $project <= 0)
+      {
+        return false;
+      }
+    }
+    
+    $result = $this->_uniqueRoleNameSelect($value, $context['projects']);
+
+    if ($result[$this->_field] == $value)
+    {
+      $this->_error(self::ROLENAME_EXISTS);
+      return false;
+    }
+    
+    return true;
+  }
+  
+  protected function _uniqueRoleNameSelect($value, $projectsIds)
+  {
+    $db = $this->getAdapter();
+    $select = new Zend_Db_Select($db);
+    $select->from($this->_table, array($this->_field), $this->_schema);
+    
+    if ($db->supportsParameters('named'))
+    {
+      $select->where($db->quoteIdentifier($this->_field, true).' = :value'); // named
+    } 
+    else
+    {
+      $select->where($db->quoteIdentifier($this->_field, true).' = ?'); // positional
+    }
+    
+    $select->where($db->quoteIdentifier('project_id', true).' IN (?)', $projectsIds); // named
+
+    if ($this->_exclude !== null)
+    {
+      $select->where($db->quoteIdentifier('id', true).' != ?', $this->_exclude);
+    }
+
+    $this->setSelect($select);
+    return $this->_query($value);
+  }
+}

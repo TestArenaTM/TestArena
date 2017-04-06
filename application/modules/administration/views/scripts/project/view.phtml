@@ -1,0 +1,151 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Projekty') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>-->  
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+        <?php if ($this->project->getStatusId() == Application_Model_ProjectStatus::ACTIVE): ?>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_suspend') ?>"><?php echo $this->t('Zawieś') ?></a></li>
+        <?php elseif ($this->project->getStatusId() == Application_Model_ProjectStatus::SUSPENDED): ?>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_activate') ?>"><?php echo $this->t('Aktywuj') ?></a></li>
+        <?php endif; ?>
+        <li class="button_link_li"><a class="button_link j_finish_project" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_finish') ?>"><?php echo $this->t('Zakończ') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_export') ?>"><?php echo $this->t('Eksportuj') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_list') ?>"><?php echo $this->t('Narzedzia śledzenia defektów') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_resolution_list') ?>"><?php echo $this->t('Statusy rozwiązań') ?></a></li>
+      </ul>
+    </nav>
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->project->getName()) ?></div>
+    </div>
+    <div class="contentLRtable">
+      <div class="contentProperties_left">
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Prefiks') ?></div>
+          <div id="text" class="content_label"><?php echo $this->project->getPrefix() ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
+          <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->project->getDescription()) ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Status') ?></div>
+          <div id="text" class="content_label"><?php echo $this->statusT($this->project->getStatus(), 'PROJECT') ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Kolor dla statusów OPEN i REOPEN', array(
+            'open'    => $this->statusT('OPEN', 'TASK'),
+            'reopen'  => $this->statusT('REOPEN', 'TASK')
+          )) ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getOpenStatusColor(), $this->statusT('OPEN', 'TASK')) ?><?php echo $this->statusT('OPEN', 'TASK') ?></div>
+        </div>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Kolor dla statusu IN_PROGRESS', array(
+            'inProgress' => $this->statusT('IN_PROGRESS', 'TASK')
+          )) ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getInProgressStatusColor(), $this->statusT('IN_PROGRESS', 'TASK')) ?><?php echo $this->statusT('IN_PROGRESS', 'TASK') ?></div>
+        </div>        
+      </div>
+      <div class="contentEditUser_right">        
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?></div>
+          <div id="text" class="content_label"><?php echo $this->project->getCreateDate() ?></div>
+        </div>      
+      </div>
+     </div>
+
+    <div style="margin-top: 55px;">
+      <h1 class="content_title"><?php echo $this->t('Role w projekcie') ?></h1>
+
+      <nav class="button_link_nav" style="position: relative;">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_role_add') ?>"><?php echo $this->t('Dodaj rolę') ?></a></li>
+        </ul>
+      </nav>
+
+      <?php if (count($this->roles) > 0): ?>
+      <form name="j_editUsersForm" method="<?php echo $this->form->getMethod() ?>">
+
+        <table>
+          <thead>
+            <tr>
+              <th><?php echo $this->t('Rola') ?></th>
+              <th><?php echo $this->t('Użytkownicy') ?></th>
+              <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($this->roles as $role): ?>
+            <tr>
+              <td class="t_status"><?php echo $this->escapeQuotes($role->getName()); ?></td>
+              <td class="j_editUsers" id="<?php echo 'j_role_'.$role->getId() ?>">
+                <span id="<?php echo 'j_users_'.$role->getId() ?>"><?php if (count($role->getUsers()) > 0): ?>
+                  <?php foreach ($role->getUsers() as $user): ?>
+                    <?php echo $user->getExtraData('name') ?>
+                  <?php endforeach; ?>
+                <?php endif; ?></span>
+                <a class="plus_button" id="<?php echo 'j_editUsersButton_'.$role->getId() ?>" href="#" title="<?php echo $this->t('Dodaj/usuń użytkowników') ?>"><span class="icon_plus_alt2 icon-20" aria-hidden="true"></span></a>
+                <a class="j_saveUsers" id="<?php echo 'j_saveUsers_'.$role->getId() ?>" href="<?php echo $this->url(array(
+                  'module'      => 'administration',
+                  'controller'  => 'role',
+                  'action'      => 'edit-users-ajax',
+                  'id'          => $role->getId()
+                ), 'default'); ?>"><?php echo $this->t('Zapisz') ?></a>
+                <a class="j_cancelUsers" id="<?php echo 'j_cancelUsers_'.$role->getId() ?>" href="#"><?php echo $this->generalT('Anuluj') ?></a>
+              </td>
+              <td>
+                <nav>
+                  <ul class="action_list">
+                    <div class="popbox">
+                      <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                      <div class='collapse'>
+                        <ul class="box">
+                          <li><a href="<?php echo $this->url(array('id' => $role->getId()), 'admin_role_edit')?>"><?php echo $this->t('Edytuj') ?></a></li>
+                          <li><a class="j_delete_role" href="<?php echo $this->url(array('id' => $role->getId()), 'admin_role_delete')?>"><?php echo $this->t('Usuń') ?></a></li>
+                        </ul> 
+                      </div>
+                    </div>                    
+                  </ul>
+                </nav>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+
+        <?php echo $this->form->authtoken->renderViewHelper() ?>
+      </form>
+      <?php else: ?>
+      <div><?php echo $this->t('Brak ról.') ?></div>
+      <?php endif; ?>
+    </div>
+  </article>    
+</section>
+
+<?php foreach ($this->multiPrePopulatedUsers as $id => $prePopulatedUsers): ?>
+  <?php if (count($prePopulatedUsers) > 0): ?>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+      prePopulated['<?php echo 'users_'.$id ?>'] = <?php echo $prePopulatedUsers ?>;
+    /* ]]> */
+    </script>
+  <?php endif; ?>
+<?php endforeach; ?>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+  url['userListAjax'] = '<?php echo $this->url(array(), 'admin_user_list_ajax') ?>';
+/* ]]> */
+</script>
+
+<?php 
+echo $this->partial('popups/delete-role.phtml');
+echo $this->partial('popups/finish-project.phtml');

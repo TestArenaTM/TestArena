@@ -1,0 +1,39 @@
+<section id="content">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle', array('assignee' => $this->assignee->getFullname())) ?></h1>
+
+    <?php if (count($this->taskRuns) > 0): ?>
+
+      <table>
+        <thead>
+          <tr>
+            <th><?php echo $this->t('Nazwa') ?></th>
+            <th><?php echo $this->t('Wydanie') ?></th>
+            <th><?php echo $this->t('Faza') ?></th>
+            <th><?php echo $this->t('Typ') ?></th>
+            <th><?php echo $this->t('Status') ?></th>
+            <th><?php echo $this->t('Data utworzenia') ?></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($this->taskRuns as $taskRun): ?>
+          <tr>
+            <td><?php echo $this->escapeQuotes($taskRun->getTask()->getName()) ?></td>
+            <td><?php echo $this->escapeQuotes($taskRun->getPhase()->getRelease()->getName()) ?></td>
+            <td><?php echo $this->escapeQuotes($taskRun->getPhase()->getName()) ?></td>
+            <td><?php echo $this->typeT($taskRun->getTask()->getType(), 'TASK') ?></td>
+            <td><?php echo $this->statusT($taskRun->getStatus(), 'TASK_RUN') ?></td>
+            <td><?php echo $this->escapeQuotes($taskRun->getCreateDate()) ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+
+    <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-default.phtml'); ?>
+
+    <?php else: ?>
+    <div><?php echo $this->t('Brak zadań.') ?></div>
+    <?php endif; ?>
+    
+  </article>    
+</section>

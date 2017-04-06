@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: TestX\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2014-05-30 12:03+0100\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.6.5\n"
+
+msgid "pageTitle"
+msgstr "Edit user"
+
+msgid "statusSuccess"
+msgstr "Changes successfully saved."
+
+msgid "statusError"
+msgstr "An unexpected error occurred. Please try again!"
+
+msgid "Imię"
+msgstr "First name"
+
+msgid "Nazwisko"
+msgstr "Last name"
+
+msgid "Adres e-mail"
+msgstr "Email"
+
+msgid "Firma/Organizacja"
+msgstr "Company/Organisation"
+
+msgid "Dział"
+msgstr "Department"
+
+msgid "Nr telefonu"
+msgstr "Telephone number"
+
+msgid "Użytkownik aktywny"
+msgstr "Active user"
+
+msgid "Administrator"
+msgstr "Admin"
+
+msgid "Opiekun Bazy Wiedzy"
+msgstr "Knowledge base editor"
+
+msgid "Zapisz"
+msgstr "Save"
+
+msgid "Status użytkownika"
+msgstr "User status"

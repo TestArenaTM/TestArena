@@ -1,0 +1,4 @@
+<!-- Next page link -->
+<?php if ($this->pageCount > 1 && isset($this->next)): ?>
+  <div><a class="j_scrollNext" href="<?php echo $this->url(array('page' => $this->next)); ?>">next</a></div>
+<?php endif; ?>

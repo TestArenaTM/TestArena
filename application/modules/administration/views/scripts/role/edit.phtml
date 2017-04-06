@@ -1,0 +1,134 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Role') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if (isset($this->formError)): ?>
+      <div><?php echo $this->t($this->formError) ?></div>
+    <?php endif; ?>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->name->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('name', $this->t('Nazwa')) ?>
+            <?php foreach ($this->form->getErrors('name') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('name')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('name')->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->type->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('type', $this->t('Szablon')); ?>
+            <?php foreach ($this->form->getErrors('type') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->projects->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('projects', $this->t('Projekty')) ?>
+            <?php foreach ($this->form->getErrors('projects') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->users->renderViewHelper() ?>
+            <?php echo $this->formLabel('users', $this->t('Użytkownicy')) ?>
+            <?php foreach ($this->form->getErrors('users') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+      
+      <div>
+        <h5 class="break_page"><span class="icon_cogs icon-20" aria-hidden="true"></span><?php echo $this->formRequiredLabel('type', $this->t('Ustawienia roli')); ?></h5>
+        <input type="checkbox" id="rsMCheck" name="rsMCheck" value="1" /><label for="rsMCheck"><?php echo $this->t('Zaznacz wszystko') ?></label>
+        <div class="checkTable">
+          <table>
+            <thead>
+              <tr>
+                <?php foreach ($this->roleActions as $actionId => $actionName): ?>
+                  <?php if (($actionId-1) % 5 == 0):?>
+                    </tr><tr>
+                  <?php endif;?>
+                  <?php $fieldName = 'roleAction_'.$actionId; ?>
+                  <td><?php echo $this->form->$fieldName->renderViewHelper() ?><label for="roleSettings-roleAction_<?php echo $actionId ?>"><?php echo $this->roleT($actionName, 'ACTION') ?></label></td>
+                <?php endforeach;?>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+      
+      <div><?php echo $this->form->roleSettingsEmptyValidation->renderViewHelper() ?>
+      <?php foreach ($this->form->getErrors('roleSettingsEmptyValidation') as $error): ?>
+        <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+      <?php endforeach; ?>
+      </div>
+
+      <div>
+        <span id="save"><?php echo $this->formSubmit('edit', $this->t('Zapisz')) ?></span>
+        <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+      </div>
+      <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>  
+
+      <div>
+        <?php echo $this->form->csrf->renderViewHelper() ?>
+        <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+        <div><?php echo $this->errorT($error) ?></div>
+        <?php endforeach; ?>
+      </div>
+ 
+
+    </form>
+    
+  </article>    
+</section>
+
+<?php if (isset($this->prePopulatedUsers)) :?>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    prePopulated['users'] = <?php echo $this->prePopulatedUsers?>;
+  /* ]]> */
+  </script>
+<?php endif?>
+    
+<?php if (isset($this->prePopulatedProjects)) :?>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    prePopulated['projects'] = <?php echo $this->prePopulatedProjects?>;
+  /* ]]> */
+  </script>
+  <?php endif?>
+    
+<script type="text/javascript">
+/* <![CDATA[ */
+  url = {
+    'projectListAjax' : '<?php echo $this->url(array(), 'admin_project_list_ajax') ?>',
+    'userListAjax' : '<?php echo $this->url(array(), 'admin_user_list_ajax') ?>'
+  };
+  var projectTokenLimit = 1;
+  var defaultRoleTypesSettings = <?php echo $this->defaultRoleTypesSettings?>;
+  var defaultRoleTypes = <?php echo $this->defaultRoleTypes?>;
+/* ]]> */
+</script>

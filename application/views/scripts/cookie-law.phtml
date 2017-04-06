@@ -1,0 +1,15 @@
+<?php if (Custom_CookieLaw::show()): ?>
+<p id="cookie-law">
+  <span>Używamy cookies i podobnych technologii m.in. w celach: świadczenia usług, reklamy, statystyk. Korzystanie z witryny bez zmiany ustawień Twojej przeglądarki oznacza, że będą one umieszczane w Twoim urządzeniu końcowym.</span><span><a class="j_cookie-law-close " href="#close">zamknij</a></span>
+  <a id="cookie-law-close" class="j_cookie-law-close" href="#close">×</a>
+</p>
+<script type="text/javascript">
+//<![CDATA[
+url['cookie_law'] = '<?php echo $this->url(array(
+  'module'      => 'default',
+  'controller'  => 'cookie-law',
+  'action'      => 'index'
+), 'default'); ?>';
+//]]>
+</script>
+<?php endif; ?>

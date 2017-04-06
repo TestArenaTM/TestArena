@@ -1,0 +1,36 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2012-10-05 09:27+0100\n"
+"Last-Translator: Paweł Piaskowy <pawel.piaskowy@gmail.com>\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.5.3\n"
+
+msgid "pageTitle"
+msgstr "Utwórz hasło do konta"
+
+msgid "statusFaliure"
+msgstr "Ustawienie hasła niedozwolone. Skontaktuj się z administratorem."
+
+msgid "statusError"
+msgstr "Nie udało się ustawić twojego hasła. Prosimy spróbować ponownie."
+
+msgid "statusSuccess"
+msgstr "Twoje hasło zostało ustawione."
+
+msgid "Hasło"
+msgstr "Hasło"
+
+msgid "Powtórz hasło"
+msgstr "Powtórz hasło"
+
+msgid "Ustaw hasło"
+msgstr "Ustaw hasło"

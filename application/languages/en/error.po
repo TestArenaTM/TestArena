@@ -1,0 +1,395 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2015-08-24 09:21+0200\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.8.4\n"
+
+# Captcha
+msgid "missingValue"
+msgstr "Captcha ID field is missing."
+
+msgid "missingID"
+msgstr "Captcha ID field is missing."
+
+msgid "badCaptcha"
+msgstr "Wrong captcha value."
+
+# Hash
+msgid "notSame"
+msgstr "The form has expired. Please reload this page and try again."
+
+msgid "missingToken"
+msgstr "The form has expired. Please reload this page and try again."
+
+# UniqueEmail
+msgid "emailExists"
+msgstr "This email already exists in the system."
+
+# Token
+msgid "invalidToken"
+msgstr "Invalid token."
+
+# UserPassword
+msgid "userPasswordNotValid"
+msgstr "Your current password is different."
+
+# EmailAddressSimpleMessage
+msgid "emailAddressInvalid"
+msgstr "Invalid email. Please enter your email again."
+
+# EmailExists
+msgid "emailNotExists"
+msgstr "This email doesn't exist in database."
+
+msgid "emailAddressInvalidFormat"
+msgstr "Invalid email format. Please enter your email again."
+
+# PasswordConfirmation
+msgid "passwordNotMatch"
+msgstr "Passwords do not match."
+
+# StringLength
+msgid "stringLengthInvalid"
+msgstr "Invalid type of data. String expected."
+
+msgid "stringLengthTooShort"
+msgstr "The field must contain at least __min__ characters."
+
+msgid "stringLengthTooLong"
+msgstr "Maximum number of characters is __max__."
+
+# NotEmpty
+msgid "notEmptyInvalid"
+msgstr "Invalid input data."
+
+msgid "isEmpty"
+msgstr "This field can't be blank."
+
+# notInArray
+msgid "notInArray"
+msgstr "Value is not the one available in the list."
+
+# SimpleText
+msgid "simpleTextInvalidCharacters"
+msgstr ""
+"Text can only consist of letters, numbers, spaces and characters: !@#$%&*\\/"
+"()[]<>?.,\"':;+-=_€"
+
+# Name
+msgid "nameInvalidCharacters"
+msgstr ""
+"Text can only consist of letters, numbers, spaces and characters: !@#$%&*\\/"
+"()?.,\"':;+-=_"
+
+# Firstname
+msgid "firstnameInvalidCharacters"
+msgstr "First name can only consist of letters, spaces and characters: '-"
+
+# Lastname
+msgid "lastnameInvalidCharacters"
+msgstr "Last name can only consist of letters, spaces and characters: '-"
+
+# Password
+msgid "passwordInvalidCharacters"
+msgstr ""
+"Password can only consist of letters (without national characters), numbers "
+"and characters: !@#$%^&*?"
+
+msgid "passwordInvalidFormat"
+msgstr ""
+"Password must consist of at least one big letter, one small letter and one "
+"number."
+
+# Role_Name
+msgid "roleNameExists"
+msgstr "Name of a role already exists in the project."
+
+# Role Type
+msgid "roleTypeExists"
+msgstr "Type of a role already exists in the project."
+
+# Role_Projects
+msgid "roleProjectsInvalidIds"
+msgstr "Project IDs can only be numbers."
+
+msgid "roleProjectNotExists"
+msgstr "Project doesn't exist in database."
+
+# Role Settings
+msgid "roleSettingsEmpty"
+msgstr "You need to choose at least one action."
+
+# ProjectPrefix
+msgid "projectPrefixInvalidCharacters"
+msgstr ""
+"Prefix can only consist of the Latin script (without national marks) and "
+"numbers."
+
+# UniqueProjectName
+msgid "projectNameExists"
+msgstr "Name of a project already exists in database."
+
+# UniqueProjectPrefix
+msgid "projectPrefixExists"
+msgstr "Prefix already exists in database."
+
+# Users
+msgid "usersInvalidIds"
+msgstr "User IDs can only be numbers."
+
+msgid "userIdNotExists"
+msgstr "This user doesn't exist in the system"
+
+msgid "userNotExists"
+msgstr "This user doesn't exist in the system."
+
+# Date
+msgid "dateInvalid"
+msgstr "Invalid format."
+
+msgid "dateInvalidDate"
+msgstr "Invalid date."
+
+msgid "dateFalseFormat"
+msgstr "Invalid date format. Enter a valid date in __format__ format."
+
+# DateEarlierToField
+msgid "dateIsNotEarlier"
+msgstr "Date must be less than '__field__'."
+
+msgid "dateIsNotEarlierOrEqual"
+msgstr "Date must be less than or equal to '__field__'."
+
+# DateLaterToField
+msgid "dateIsNotLater"
+msgstr "Date must be greater than '__field__'."
+
+msgid "dateIsNotLaterOrEqual"
+msgstr "Date must be greater than or equal to '__field__'."
+
+# DateBetween
+msgid "dateNotBetween"
+msgstr "The date must be between '__min__' and '__max__'."
+
+msgid "dateNotBetweenStrict"
+msgstr "The date is not between '__min__' and '__max__'."
+
+# DateEarlier
+msgid "dateNotEarlier"
+msgstr "Date must be less than '__date__'."
+
+msgid "dateNotEarlierStrict"
+msgstr "Date must be less than '__date__'."
+
+# DateLater
+msgid "dateNotLater"
+msgstr "Date must be greater than '__date__'."
+
+msgid "dateNotLaterStrict"
+msgstr "Date must be greater than '__date__'."
+
+# File
+msgid "fileImageSizeNotDetected"
+msgstr "Unrecognized file size."
+
+msgid "imageIsCorrupted"
+msgstr "The file is not a valid image."
+
+msgid "fileUploadErrorFormSize"
+msgstr "Maximum file size: 1MB."
+
+msgid "fileSizeNotFound"
+msgstr "Cannot read the file."
+
+msgid "fileUploadErrorNoFile"
+msgstr "File was not uploaded."
+
+msgid "fileExtensionFalse"
+msgstr "Unsupported file type. You can upload .jpg or .png files only."
+
+msgid "fileExtensionNotFound"
+msgstr "Cannot read the file."
+
+msgid "fileCountTooMany"
+msgstr "Too many files."
+
+msgid "fileCountTooFew"
+msgstr "Not enough files."
+
+msgid "fileSizeTooSmall"
+msgstr "Insufficient file size."
+
+msgid "isImage"
+msgstr "This file is not an image."
+
+msgid "unsupportedType"
+msgstr "Unsupported file type. You can upload .jpg or .png files only."
+
+msgid "avatarUnsupportedType"
+msgstr "Unsupported file type. You can upload .jpg or .png files only."
+
+msgid "fitNotSupportGif"
+msgstr "Dopasowanie nie obsługuje plików .gif"
+
+msgid "fileSizeTooBig"
+msgstr "Maximum file size: 1MB."
+
+msgid "fileNotExist"
+msgstr "File doesn't exist."
+
+msgid "fileImageSizeWidthTooSmall"
+msgstr "Insufficient image size. Your image must be at least 50 px wide."
+
+msgid "fileImageSizeHeightTooSmall"
+msgstr "Insufficient image size. Your image must be at least 50 px tall."
+
+msgid "fileImageSizeWidthTooBig"
+msgstr "Wrong image size. Maximum image width is 3000 px."
+
+msgid "fileImageSizeHeightTooBig"
+msgstr "Wrong image size. Maximum image height is 3000 px."
+
+# UniqueProductName
+msgid "productNameExists"
+msgstr "Name already exists."
+
+# Url
+msgid "invalidUrl"
+msgstr "Invalid url."
+
+msgid "urlNotExists"
+msgstr "Page at the address does not exist."
+
+# Float
+msgid "notFloat"
+msgstr "This is not a number..."
+
+msgid "floatInvalid"
+msgstr "This is not a number..."
+
+# Between
+msgid "notBetween"
+msgstr "The number must be between __min__ and __max__."
+
+msgid "notBetweenStrict"
+msgstr "The number must be between __min__ and __max__."
+
+# Address
+msgid "addressInvalidCharacters"
+msgstr ""
+"Address can only consist of letters, numbers, spaces and characters: '-/"
+
+# ZipCode
+msgid "zipCodeInvalidCharacters"
+msgstr "ZIP code can only consist of numbers and character -"
+
+# City
+msgid "cityInvalidCharacters"
+msgstr "Name of a city can only consist of letters, spaces and characters: '-"
+
+# UniqueReleaseName
+msgid "releaseNameExists"
+msgstr "This name already exists."
+
+# UniquePhaseName
+msgid "phaseNameExists"
+msgstr "This name already exists."
+
+# ProjectElements
+msgid "projectElementsInvalidIds"
+msgstr "Projects can only be numbers."
+
+msgid "projectElementNotExists"
+msgstr "This element doesn't exist in database."
+
+# UniqueEnvironemtnName
+msgid "environmentNameExists"
+msgstr "The environment name already exists in database."
+
+# UniqueVersionName
+msgid "versionNameExists"
+msgstr "The version name already exists in database."
+
+# Environments
+msgid "environmentInvalidIds"
+msgstr "Environment ids can only be numbers."
+
+msgid "environmentNotExists"
+msgstr "Environment not exists in database."
+
+# Versions
+msgid "versionInvalidIds"
+msgstr "Version ids can only be numbers."
+
+msgid "versionNotExists"
+msgstr "Version not exists in database."
+
+# Int
+msgid "notInt"
+msgstr "This is not a number..."
+
+# Id
+msgid "invalidId"
+msgstr "Incorrect data"
+
+# ReleaseExists
+msgid "releaseNotExists"
+msgstr "The release doesn't exist in database."
+
+# PhaseExists
+msgid "phaseNotExists"
+msgstr "The phase doesn't exist in database."
+
+# ExcludeExtension
+msgid "fileExcludeExtensionFalse"
+msgstr "Unsupported file extension."
+
+msgid "fileExcludeExtensionNotFound"
+msgstr "Cannot read the file or the file doesn't exist."
+
+# PhoneNumber
+msgid "phoneNumberInvalidCharacters"
+msgstr "Text can only consist of numbers, spaces and characters: +-()"
+
+# JiraRestProjectKey
+msgid "jiraInvalidProjectKey"
+msgstr "Invalid JIRA project key."
+
+msgid "jiraUrlOrAuthorizationDataIsIncorrect"
+msgstr "Adres URL lub dane do autoryzacji są niepoprawne."
+
+# MantisSoapProject
+msgid "mantisProjectNotExists"
+msgstr "Mantis project not exists."
+
+msgid "mantisUrlIsIncorrect"
+msgstr "The URL is incorrect or WSDL file is corrupted."
+
+msgid "mantisAccessDenied"
+msgstr "The user does not have access to the project."
+
+# UniqueProjectResolutionName
+msgid "projectResolutionNameExists"
+msgstr "Name of a status already exists in project."
+
+# UniqueProjectResolutionColor
+msgid "projectResolutionColorExists"
+msgstr "Color of a status already exists in project."
+
+# UniqueTaskTest
+msgid "taskTestExists"
+msgstr "Test already exists in task."
+
+# UniqueTaskDefect
+msgid "taskDefectExists"
+msgstr "Defect already exists in task."

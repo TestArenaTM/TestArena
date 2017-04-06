@@ -1,0 +1,97 @@
+<?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
+
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>  
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  --> 
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if ($this->activeProject->isActive()): ?>
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <?php if ($this->accessReleaseAndPhaseManagement): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'release_add')?>" ><?php echo $this->t('Dodaj wydanie') ?></a></li>
+        <?php endif; ?>
+      </ul>
+    </nav>
+    <?php endif; ?>
+
+    <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
+
+      <div class="search_text">
+        <div class="filter">
+          <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+          <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
+        </div>
+      </div>
+      <div class="search_filter">
+        <div class="filter">
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
+      </div>
+    </form>
+
+    <?php if (count($this->releases) > 0): ?>
+
+    <table>
+      <thead>
+        <tr>
+          <th><?php echo $this->sortingControl('Nazwa', 'release_name', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Data rozpoczęcia', 'release_start_date', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Data zakończenia', 'release_end_date', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Liczba zadań', 'release_taskCount', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->t('Opis') ?></th>
+          <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($this->releases as $release): ?>
+        <tr class="date_status_<?php echo $this->tagByDateRange($release) ?>">
+          <td><a href="<?php echo $this->url(array('id' => $release->getId()), 'release_view') ?>"><?php echo $this->escapeQuotes($release->getName()) ?></a></td>
+          <td class="t_date"><?php echo $release->getStartDate() ?></td>
+          <td class="t_date"><?php echo $release->getEndDate() ?></td>
+          <td class="t_number"><?php echo $release->getExtraData('taskCount') ?></td>
+          <td class="t_description"><?php echo $this->escapeQuotes($release->getDescription()) ?></td>
+          <td>
+            <nav>
+              <ul class="action_list">
+                <div class="popbox">
+                  <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                  <div class='collapse'>
+                    <ul class="box">
+                      <?php if ($this->activeProject->isActive() && $this->accessReleaseAndPhaseManagement): ?>
+                        <li><a href="<?php echo $this->url(array('id' => $release->getId()), 'release_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+                        <li><a href="<?php echo $this->url(array('id' => $release->getId()), 'release_clone') ?>"><?php echo $this->t('Klonuj') ?></a></li>
+                        <?php if ($release->getExtraData('taskCount') == 0): ?>
+                        <li><a class="j_delete_release" href="<?php echo $this->url(array('id' => $release->getId()), 'release_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+                        <?php endif; ?>
+                      <?php endif; ?>
+                      <li><a href="<?php echo $this->url(array(), 'phase_list').'?release='.$release->getId() ?>"><?php echo $this->t('Fazy') ?></a></li>
+                      <li><a href="<?php echo $this->url(array(), 'task_list').'?release='.$release->getId() ?>" ><?php echo $this->t('Zadania') ?></a></li>
+                    </ul> 
+                  </div>
+                </div>                
+              </ul>
+            </nav>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+    <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
+
+    <?php else: ?>
+    <div class="empty-text"><?php echo $this->t('Brak wydań.') ?></div>
+    <?php endif; ?>
+    
+  </article>    
+</section>
+
+<?php echo $this->partial('popups/delete-release.phtml');

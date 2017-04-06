@@ -1,0 +1,8 @@
+<span>
+  <div class="j_projectsForm" style="display: none">
+    <form method="<?php echo $this->projectsForm->getMethod() ?>" action="<?php echo $this->projectsForm->getAction() ?>" name="<?php echo $this->projectsForm->getName() ?>">
+      <?php echo $this->projectsForm->activeProject->renderViewHelper() ?>
+    </form>
+  </div>
+  <div class="j_projectsFormBussy"><img src="<?php echo $this->baseUrl('/img/loader.gif') ?>" /></div>
+</span>

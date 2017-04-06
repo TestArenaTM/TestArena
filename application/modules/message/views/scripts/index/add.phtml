@@ -1,0 +1,76 @@
+<section id="content">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+          
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->userName->renderViewHelper() ?>
+            <div><?php echo $this->form->userId->renderViewHelper() ?></div>
+            <?php echo $this->formRequiredLabel('userName', $this->t('Użytkownik')) ?>
+            <?php foreach ($this->form->getErrors('userId') as $error): ?>
+            
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->subject->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('subject', $this->t('Temat')) ?>
+              <?php foreach ($this->form->getErrors('subject') as $error): ?>
+                
+                <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('subject')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('subject')->getValidator('StringLength')->getMax()
+              )) ?></div>
+              <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->content->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('content', $this->t('Treść')) ?>
+              <?php foreach ($this->form->getErrors('content') as $error): ?>
+                
+                <div class="error_msg"><?php echo $this->errorT($error, array(
+                    'min' => $this->form->getElement('content')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                    'max' => $this->form->getElement('content')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+                  )) ?></div>
+              <?php endforeach; ?>
+          </span>
+        </div>
+          
+          <div>
+            <span id="save"><?php echo $this->formSubmit('save', $this->t('Wyślij')) ?></span>
+            <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+          </div>
+          <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+          <div>
+            <?php echo $this->form->csrf->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+              
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </div>      
+
+    </form>
+  </article>    
+</section>
+
+<script type="text/javascript">
+language['charactersLeft'] = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+
+var autocompleteData = {
+  url: '<?php echo $this->url(array(), 'message_user_list_ajax') ?>',
+  textInputName: '#userName',
+  dstName: '#userId'
+};
+
+</script>

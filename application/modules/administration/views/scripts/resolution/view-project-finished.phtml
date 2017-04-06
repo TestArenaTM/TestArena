@@ -1,0 +1,36 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <div class="contentLRtable">
+      <div class="contentProperties_left">
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Nazwa') ?></div>
+          <div id="text" class="content_label"><?php echo $this->showResolutionIcon($this->resolution) ?> <?php echo$this->escapeQuotes($this->resolution->getName()) ?></div>
+        </div>
+        <?php if (strlen($this->resolution->getDescription())): ?>
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
+          <div id="text" class="content_label"><?php echo $this->resolution->getDescription() ?></div>
+        </div>
+        <?php endif; ?>
+      </div>
+      <div class="contentEditUser_right">   
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Liczba zadań') ?></div>
+          <div id="text" class="content_label"><?php echo $this->resolution->getExtraData('taskCount') ?></div>
+        </div>     
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Liczba testów') ?></div>
+          <div id="text" class="content_label"><?php echo $this->resolution->getExtraData('testCount') ?></div>
+        </div>
+      </div>
+     </div>
+    
+  </article>    
+</section>

@@ -1,0 +1,10 @@
+<?php if ($this->column == $this->fieldName): ?>
+  <?php if ($this->sort == 'desc'): ?>
+    <a class="activeArrow" href="<?php echo $this->url(array('column' => $this->fieldName, 'sort' => 'asc')).$this->filterRequestConditions() ?>" ><?php echo $this->fieldText ?>▼</a>
+  <?php else: ?>
+    <a class="activeArrow" href="<?php echo $this->url(array('column' => $this->fieldName, 'sort' => 'desc')).$this->filterRequestConditions() ?>" ><?php echo $this->fieldText ?>▲</a>
+  <?php endif; ?>  
+<?php else: ?>
+  <a href="<?php echo $this->url(array('column' => $this->fieldName, 'sort' => 'asc')).$this->filterRequestConditions() ?>" ><?php echo $this->fieldText ?></a>
+<?php endif;
+

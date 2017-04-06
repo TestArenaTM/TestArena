@@ -1,0 +1,49 @@
+<section id="content">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <p><?php echo $this->t('Ze względów bezpieczeństwa wymagana jest zmiana hasła.') ?></p>
+
+    <form class="front-log" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+          
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->password->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('password', $this->t('Nowe hasło')) ?>
+            <?php foreach ($this->form->getErrors('password') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('password')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('password')->getValidator('StringLength')->getMax(),
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->confirmPassword->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('confirmPassword', $this->t('Powtórz hasło')) ?>
+            <?php foreach ($this->form->getErrors('confirmPassword') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+              'min' => $this->form->getElement('password')->getValidator('StringLength')->getMin(),
+              'max' => $this->form->getElement('password')->getValidator('StringLength')->getMax(),
+            )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div id="save" class="button-front"><?php echo $this->formSubmit('change', $this->t('Zmień hasło')) ?></div>        
+        
+        <div class="login_table">
+          <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+          <div>
+            <?php echo $this->form->csrf->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+          
+    </form>
+  </article>    
+</section>

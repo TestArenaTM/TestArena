@@ -1,0 +1,39 @@
+Installation Guide
+
+1. Recommended requirements:
+- PHP 5.6
+- Apache version 2.4
+- MySQL >= 5.5
+
+Additional non-standard php extensions:
+- php_gd2
+- php_mbstring
+
+Additional apache modules:
+- mod_rewrite
+
+2. Installation steps:
+2.1. Extract files from the .zip file to an empty directory. Copy all the application files and directories to the directory on the server assigned for TestArena.
+2.2. Modify the file /application/configs/application.ini applying your personal settings i.e.:
+- database
+- mailbox
+- website adress (domain)
+2.3. Direct a domain assigned in step 2.2 to the directory /public which contains the main index.php file.
+2.4. Import the file located at /docs/change_log/testarena_db.sql to the created database.
+2.5. Set write permissions for the following directories:
+	/public/upload
+	/public/captcha
+	/logs
+	/cache
+	/temp
+	and their subdirectories.
+2.6. Change line 33 in /application/const.php 
+	from:
+    || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
+	to
+	|| define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'production'));
+	
+3. Predefined log in data:
+	Login: administrator@testarena.pl
+	Password: 12qwAS
+	

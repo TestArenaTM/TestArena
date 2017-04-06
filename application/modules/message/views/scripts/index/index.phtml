@@ -1,0 +1,125 @@
+<div id="content">
+  <article class="article_in_content message">
+    
+    <?php if (count($this->messages) > 0): ?>
+      <article class="article_left_message">
+        <article class="article_left_box">
+          <div class="message-panel"><a class="message-create-button" href="<?php echo $this->url(array(), 'message_add') ?>" title="<?php echo $this->t('Utwórz wiadomość') ?>"><span class="icon_pencil-edit icon-20"></span></a></div>
+            <div class="PanelList j_MsgThreads">
+            <div id="list-message" class="j_scroll">
+              <!--<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+              <div class="viewport">
+               <div class="overview">-->
+              <div id="page-<?php echo $this->paginator->getCurrentPageNumber()?>" class="j_scrollPage">
+                  <ul>
+                    <?php foreach ($this->messages as $item): ?>
+                      <?php if (in_array($item->getExtraData('message_type'), array(Application_Model_Message::TYPE_MESSAGE_SENT,
+                                                                                        Application_Model_Message::TYPE_MESSAGE_RECEIVED))):?>
+                        <li>
+                          <a class="j_MsgThread" id="j_MsgThread-<?php echo $item->getThreadId()?>" href="javascript:void(0);">
+                            <div class="clearfix">
+                              <?php if ($item->getExtraData('user_status') == Application_Model_MessageToStatus::UNREAD): ?>
+                                <span class="newMessage" id="j_msgNew-<?php echo $item->getThreadId()?>"><?php echo $this->t('nowe') ?></span>
+                              <?php endif; ?>                              
+                              <?php if (Application_Model_Message::TYPE_MESSAGE_SENT == $item->getExtraData('message_type')):?>
+                                <div class="avatar">
+                                  <img class="avatar" alt="<?php echo $this->escapeQuotes($item->getRecipient()->getFullname()) ?>" src="<?php echo $item->getRecipient()->getAvatarUrl(true) ?>">
+                                </div>
+                                <div class="author">
+                                  <strong><?php echo $this->escapeQuotes($item->getRecipient()->getFullname()) ?></strong>
+                                </div>
+                              <?php elseif (Application_Model_Message::TYPE_MESSAGE_RECEIVED == $item->getExtraData('message_type')):?>
+                                <div class="avatar">
+                                  <img class="avatar" alt="<?php echo $this->escapeQuotes($item->getSender()->getFullname()) ?>" src="<?php echo $item->getSender()->getAvatarUrl(true) ?>">
+                                </div>
+                                <div class="author">
+                                  <strong><?php echo $this->escapeQuotes($item->getSender()->getFullname()) ?></strong>
+                                </div>
+                              <?php endif;?>
+                              
+                              <div class="snippet preview">
+                                <span id="j_msgThreadSubject-<?php echo $item->getThreadId()?>"><?php echo $this->purifier->purify($item->getSubject()) ?></span>
+                              </div>
+                            </div>
+                          </a>
+                        </li>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                  </ul>
+                 <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-jscroll.phtml', $this->request->getParams()); ?>
+                </div>
+                </div>
+              </div>
+            <!--</div>                 
+          </div>-->
+        </article>
+      </article>
+      <article class="article_right_message">
+        <article class="article_right_box_message">
+          <div id="j_msgThreadList" class="contentListMessage">
+            <h5 id="j_msgSingleThreadSubject"></h5>
+            <ul id="j_msgSingleThreadList"></ul>
+            <div id="j_msgFormContainer" >
+              <div id="j_msgIsBusy"><img src="<?php echo $this->baseUrl('/img/is_busy.gif') ?>" /> <?php echo $this->generalT('Proszę czekać...') ?></div>
+              <div id="j_msgForm" class="messageContainer" style="display: none">
+                <div class="msgForm"><?php echo $this->formTextarea('j_msgContent', '', array('maxlength' => 1000, 'placeholder' => $this->t('Wpisz wiadomość'))) ?></div>
+                <span class="msg_button comment_button">
+                  <a class="j_msgResponse" href="#"><?php echo $this->t('Odpowiedz') ?></a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </article>                                               
+      </article>
+    <?php else: ?>
+      <article class="article_left_message">
+        <article class="article_left_box">
+          <div class="message-panel"><a class="message-create-button" href="<?php echo $this->url(array(), 'message_add') ?>" title="<?php echo $this->t('Utwórz wiadomość') ?>"><span class="icon_pencil-edit icon-20"></span></a></div>
+            <div class="PanelList j_MsgThreads">
+            <div id="list-message" class="j_scroll">
+              <!--<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+              <div class="viewport">
+               <div class="overview">-->
+              <div class="no-message">Brak wiadomości</div>
+                </div>
+                </div>
+        </article>
+      </article>
+      <article class="article_right_message">
+        <article class="article_right_box_message">
+          <div id="j_msgThreadList" class="contentListMessage">
+          </div>
+        </article>                                               
+      </article>
+    <?php endif; ?>
+  </article>
+</div>
+
+
+
+<?php if ($this->messageItemId > 0 && $this->messageItemType): ?>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    var msgItemId = '<?php echo $this->messageItemId ?>';
+    var msgItemType = '<?php echo $this->messageItemType ?>';
+  /* ]]> */
+  </script>
+<?php endif; ?>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+  url.messageRead = '<?php echo $this->url(array(), 'message_read_ajax') ?>';
+  url.msgResponse = '<?php echo $this->url(array(), 'message_response_ajax') ?>';
+  url.msgThreadList = '<?php echo $this->url(array(), 'message_thread_list_ajax') ?>';
+  
+  language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+  language.msgResponseError = '<?php echo $this->t('Błąd podczas odpowiedzi na wiadomość.') ?>';
+  language.msgResponseContentError = '<?php echo $this->t('Błąd treści wiadomości') ?>';
+  language.msgNotExists = '<?php echo $this->t('Błąd podczas wyświetlenia wiadomości.') ?>';
+  
+  var msgCategoryDefault = '<?php echo Application_Model_Message::CATEGORY_MESSAGE ?>';
+/* ]]> */
+</script>
+
+<?php echo $this->partial('popups/field-is-empty.phtml'); ?> 
+<?php echo $this->partial('partials/thread-content-template.phtml', 'message'); ?> 

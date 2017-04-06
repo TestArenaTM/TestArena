@@ -1,0 +1,73 @@
+<section id="content">
+ <!-- <div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Profil') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div> -->  
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form id="<?php echo $this->form->getId() ?>" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>" enctype="<?php echo $this->form->getEnctype() ?>">
+
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+
+      <div style="width:100%">
+        <div class="contentEditUser_left">
+          
+          <div class="textLabelEditor">
+            <div class="textLabelEditor_text"><?php echo $this->formLabel('avatar', $this->t('Avatar')) ?></div>
+            <div class="avatar_profil_thumb">
+              <img src="<?php echo $this->authUser->getAvatarUrl() ?>" alt="<?php echo $this->authUser->getFullName() ?>" />
+            </div>
+            <div id="text" style="display: table-cell;"><?php echo $this->form->avatar->renderFile() ?></div>
+            <?php foreach ($this->form->getErrors('avatar') as $error): ?>
+              <span class="arrow_msg"></span>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'maxFileSize' => $this->form->getElement('avatar')->getValidator('Size')->getMax(),
+                'minWidth'    => $this->form->getImageMinWidth(),
+                'maxWidth'    => $this->form->getImageMaxWidth(),
+                'minHeight'   => $this->form->getImageMinHeight(),
+                'maxHeight'   => $this->form->getImageMaxHeight(),
+                'extensions'  => implode(', ', $this->form->getElement('avatar')->getValidator('Extension')->getExtension())
+              )) ?></div>
+            <?php endforeach; ?>
+            <?php if ($this->errorFile): ?>
+              <span class="arrow_msg"></span>
+              <div class="error_msg"><?php echo $this->errorT($this->errorFile) ?></div>
+            <?php endif; ?>  
+          </div>
+
+          <div class="avatar_info">
+            <p>
+              <?php echo $this->t('Avatar info', array(
+                'maxFileSize' => $this->form->getElement('avatar')->getValidator('Size')->getMax(),
+                'minWidth'    => $this->form->getImageMinWidth(),
+                'minHeight'   => $this->form->getImageMinHeight()
+              )) ?>
+            </p>
+          </div>
+          
+          <div>
+            <span id="save"><?php echo $this->formSubmit('send', $this->t('Zapisz')) ?></span>
+            <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+          </div>
+
+          <div>
+            <?php echo $this->form->csrf->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </div>
+
+        </div>      
+      </div>
+
+    </form>
+  </article>    
+</section>
+
+<?php 
+echo $this->partial('popups/wrong-image.phtml');
+echo $this->partial('popups/wrong-file-size.phtml');

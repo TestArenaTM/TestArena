@@ -1,0 +1,10 @@
+<section id="content">
+  <article class="article_in_content error-page">
+    <h1 class="pagenotfound_title">404</h1>
+    <h2><?php echo  $this->t('Strona nie istnieje') ?></h2>
+    
+    <?php if (!empty($this->backUrl)): ?>
+      <a href="<?php echo $this->backUrl?>">Poprzednia strona</a>
+    <?php endif; ?>
+  </article>
+</section>

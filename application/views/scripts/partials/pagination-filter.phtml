@@ -1,0 +1,32 @@
+﻿<?php if ($this->pageCount > 1): ?>
+<div class="paginationControl">
+  
+<!-- Previous page link -->
+<?php if (isset($this->previous)): ?>
+  <span class="enabled"><a href="<?php echo $this->url(array('page' => 1)).$this->filterRequestConditions(); ?>"><?php echo $this->generalT('Pierwsza') ?></a></span>
+  <span class="enabled"><a href="<?php echo $this->url(array('page' => $this->previous)).$this->filterRequestConditions(); ?>"><?php echo $this->generalT('Poprzednia') ?></a></span>
+<?php else: ?>
+  <span class="disabled"><?php echo $this->generalT('Pierwsza') ?></span>
+  <span class="disabled"><?php echo $this->generalT('Poprzednia') ?></span>
+<?php endif; ?>
+ 
+<!-- Numbered page links -->
+<?php foreach ($this->pagesInRange as $page): ?>
+  <?php if ($page != $this->current): ?>
+    <span class="enabled"><a href="<?php echo $this->url(array('page' => $page)).$this->filterRequestConditions(); ?>"><?php echo $page; ?></a></span> 
+  <?php else: ?>
+    <span class="current"><?php echo $page; ?></span>
+  <?php endif; ?>
+<?php endforeach; ?>
+ 
+<!-- Next page link -->
+<?php if (isset($this->next)): ?>
+  <span class="enabled"><a href="<?php echo $this->url(array('page' => $this->next)).$this->filterRequestConditions(); ?>"><?php echo $this->generalT('Następna') ?></a></span>
+  <span class="enabled"><a href="<?php echo $this->url(array('page' => $this->pageCount)).$this->filterRequestConditions(); ?>"><?php echo $this->generalT('Ostatnia') ?></a></span>
+<?php else: ?>
+  <span class="disabled"><?php echo $this->generalT('Następna') ?></span>
+  <span class="disabled"><?php echo $this->generalT('Ostatnia') ?></span>
+<?php endif; ?>
+
+</div>
+<?php endif;

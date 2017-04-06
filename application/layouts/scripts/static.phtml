@@ -1,0 +1,42 @@
+<?php echo $this->partial('header.phtml', array(
+  'keywords'    => $this->keywords,
+  'description' => $this->description,
+  'messageBox'  => $this->messageBox,
+  'language'    => $this->language,
+  'locale'      => $this->locale
+)); ?>
+
+<header id="head-top" class="head-top-main">
+  <div class="top_left logo-left">
+    <a id="header_logo" href="<?php echo $this->url(array(), 'index')?>" ></a>
+    <?php if (isset($this->authUser)): ?>
+      <span>
+        <div class="j_projectsForm">
+         <form method="<?php echo $this->projectsForm->getMethod() ?>" action="<?php echo $this->projectsForm->getAction() ?>" name="<?php echo $this->projectsForm->getName() ?>">
+           <?php echo $this->projectsForm->activeProject->renderViewHelper() ?>
+         </form>
+        </div>       
+      </span>
+    <?php endif; ?>
+  </div>
+  
+  <div class="top_right">   
+    <?php if (isset($this->authUser)): ?>
+    <a href="<?php echo $this->url(array(), 'user_profile') ?>" class="top_avatar_header">
+      <span class="user-info"><?php echo $this->authUser->getFullname()?> <br><small><?php echo $this->authUser->getEmail()?></small></span>
+      <span class="user-thumb"><p class="avatar_header"><img src="<?php echo $this->authUser->getAvatarUrl(true) ?>" alt="<?php echo $this->authUser->getFullname()?>" /></p></span>
+    </a>
+    
+    <?php if ($this->authUser->getAdministrator()): ?>
+      <div class="header_admin"><a href="<?php echo $this->url(array(), 'admin_index')?>" title="<?php echo $this->generalT('Administracja') ?>"><span aria-hidden="true" class="icon_tools icon-20" style="line-height: 2.8;"></span></a></div>
+    <?php endif; ?>
+      
+    <div class="header_logout"><a href="<?php echo $this->url(array(), 'user_logout')?>" title="<?php echo $this->generalT('Wyloguj') ?>"><span class="icons-switch icon-20" style="line-height: 2.8;"></span></a></div>
+  <?php endif; ?>
+  </div>  
+  
+</header>
+
+<?php echo $this->layout()->content ?>
+
+<?php echo $this->partial('footer.phtml', array('locale' => $this->locale));

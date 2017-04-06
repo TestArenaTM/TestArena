@@ -1,0 +1,26 @@
+<script id="j_taskDefectItemsTmpl" type="text/x-jquery-tmpl">
+<div id="j_defectContent">
+  <ul id="j_defectList">
+  </ul>
+</div>
+</script>
+
+<script id="j_taskDefectItemTmpl" type="text/x-jquery-tmpl">
+<li id="j_defectItem_${id}">
+  <div class="clearfixDashboard history">
+    <div class="testlist-l" title="${name}">
+      <a href="${viewUrl}"><span class="object_nr">${objectNumber}</span> ${name}</a>
+    </div>
+    <div class="testlist-r">
+      <span>
+        <strong class="j_defectStatus">${status}</strong>
+      </span>
+      <?php if ($this->activeProject->isActive() 
+                      && $this->taskUserPermission->isDefectModifyPermission()
+                      && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
+        <a class="j_deleteDefectFromTask" href="${deleteUrl}" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+      <?php endif; ?>
+    </div>                   
+  </div>
+</li>
+</script>

@@ -1,0 +1,41 @@
+<form class="front-log" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+<h1><?php echo $this->t('pageTitle') ?></h1>
+
+  <div class="formContainer full">
+    <span>
+          <?php echo $this->form->password->renderViewHelper() ?>
+          <?php echo $this->formRequiredLabel('password', $this->t('Hasło')) ?>
+          <?php foreach ($this->form->getErrors('password') as $error): ?>
+          <div class="login_form_error"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('password')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('password')->getValidator('StringLength')->getMax()
+              )) ?></div>
+          <?php endforeach; ?>
+    </span>
+  </div>
+
+  <div class="formContainer full">
+    <span>
+          <?php echo $this->form->confirmPassword->renderViewHelper() ?>
+          <?php echo $this->formRequiredLabel('confirmPassword', $this->t('Powtórz hasło')) ?>
+          <?php foreach ($this->form->getErrors('confirmPassword') as $error): ?>
+          <div class="login_form_error"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('password')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('password')->getValidator('StringLength')->getMax()
+              )) ?></div>
+          <?php endforeach; ?>
+    </span>
+  </div>
+
+        <div id="save" class="button-front"><?php echo $this->formSubmit('new', $this->t('Zmień hasło')) ?></div>
+        <div class="login_table">  
+          <p><div class="remember_check"><?php echo $this->generalT('Pole wymagane') ?></div></p>
+        </div>
+        <div>
+          <?php echo $this->form->csrf->renderViewHelper() ?>
+          <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+          
+          <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>
+      </form> 

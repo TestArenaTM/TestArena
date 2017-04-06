@@ -1,0 +1,43 @@
+<form class="front-log" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+<h1><?php echo $this->t('pageTitle') ?></h1>
+  <div class="formContainer full">
+    <span>
+    <?php echo $this->form->email->renderViewHelper() ?>
+      <?php echo $this->formRequiredLabel('email', $this->t('Adres e-mail')) ?>
+    <?php foreach ($this->form->getErrors('email') as $error): ?>
+    <div class="login_form_error"><?php echo $this->errorT($error, array('value' => $this->form->email->getValue())) ?></div>
+    <?php endforeach; ?>
+    </span>
+  </div>
+
+        
+
+  <div class="formContainer full">
+    <span>
+      <?php echo $this->form->captcha->render() ?>
+      <?php echo $this->formRequiredLabel('captcha', $this->t('Prosimy o przepisanie znaków z obrazka.'), array('escape' => false)) ?>
+      <?php foreach ($this->form->getErrors('captcha') as $error): ?>
+      <div class="login_form_error"><?php echo $this->errorT($error) ?></div>
+      <?php endforeach; ?>
+    </span>
+  </div>
+    
+    <div id="save" class="button-front"><?php echo $this->formSubmit('recover', $this->t('Odzyskaj hasło')) ?></div>     
+    
+    <div class="login_table">
+      <p><div class="remember_check"><a href="<?php echo $this->url(array(), 'user_login') ?>"><?php echo $this->t('Strona logowania') ?></a></div></p>
+
+      <p><div class="remember_check"><?php echo $this->generalT('Pole wymagane') ?></div></p>
+
+      <div>
+        <?php echo $this->form->csrf->renderViewHelper() ?>
+        <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+        <div><?php echo $this->errorT($error) ?></div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <?php if (isset($this->formError)): ?>
+      <div class="login_form_error"><?php echo $this->t($this->formError, array('link' => $this->url(array(), 'contact'))) ?></div>
+    <?php endif; ?>                
+ </div>
+</form>

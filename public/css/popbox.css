@@ -1,0 +1,66 @@
+/*
+ * MIT license https://github.com/gristmill/jquery-popbox/blob/master/README.md
+ * 
+ */
+.popbox {
+  margin:0px auto;
+  text-align:left;
+  position:relative;
+}
+
+  .collapse { position:relative; }
+
+  .open {
+    color: #333333;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 8px 5px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5)
+  }
+
+    .box {
+    background: #222 none repeat scroll 0 0;
+    border: 1px solid #222;
+    box-shadow: 0 0 1px #cccccc;
+    display: none;
+    position: absolute;
+    top: 0 !important;
+    width: 152px;
+    z-index: 1000;
+    }
+    #box ul {
+    width: 150px;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #333333;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px 1px 2px;
+    margin-top: -1px;
+    right:-1px;
+    padding: 4px 0;
+    position: absolute;
+    top: 41px;
+    z-index: 1;       
+    }
+    .box li {
+    padding: 1px 0 !important;
+}
+.box li a {
+    background-color: #222 !important;
+    color: #fff !important;
+    display: block;
+    font-family: "Roboto";
+    font-size: 12px;
+    font-weight: 500 !important;
+    padding: 5px 3px 7px 17px !important;
+    width: 130px;
+}
+.box li a:hover {
+  background-color: #ff0054 !important;
+  color:#fff !important;
+}

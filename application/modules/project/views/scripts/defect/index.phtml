@@ -1,0 +1,152 @@
+<?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
+
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>  
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>-->    
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if ($this->activeProject->isActive() && $this->defectUserPermissions[Application_Model_RoleAction::DEFECT_ADD]): ?>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'defect_add')?>" ><?php echo $this->t('Dodaj defekt') ?></a></li>
+        </ul>
+      </nav>
+    <?php endif; ?>
+    
+    <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
+      
+      <div class="search_text">
+        <div class="filter">
+          <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+          <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
+        </div>
+      </div>      
+
+      <div class="search_filter">
+        <div class="filter">
+          <div><?php echo $this->formLabel('release', $this->t('Wydanie')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->release->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('phase', $this->t('Faza')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->phase->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('status', $this->t('Status')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->status->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('priority', $this->t('Priorytet')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->priority->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('assigner', $this->t('Przydzielił')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->assigner->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('assignee', $this->t('Przydzielone do')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->assignee->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('environment', $this->t('Środowisko')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->environment->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
+      </div>
+
+    </form>
+
+    <?php if (count($this->defects) > 0): ?>
+
+    <table>
+      <thead>
+        <tr>
+          <th><?php echo $this->sortingControl('Nr obiektu', 'defect_ordinal_no', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Tytuł', 'defect_title', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Priorytet', 'defect_priority', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Wydanie', $this->createSortedFieldName('defect', 'name', array('release')), 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Faza', $this->createSortedFieldName('defect', 'name', array('phase')), 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Data utworzenia', 'defect_create_date', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Data modyfikacji', 'defect_modify_date', 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Przydzielił', $this->createSortedFieldName('defect', 'name', array('assigner')), 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Przydzielone do', $this->createSortedFieldName('defect', 'name', array('assignee')), 'sorting.phtml', $this->request) ?></th>
+          <?php if ($this->activeProject->isActive()): ?>
+          <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+          <?php endif; ?>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($this->defects as $defect): ?>
+        <tr>
+          <td class="t_object_number">
+            <?php echo $this->showDefectStatusIcon($defect) ?>
+            <?php echo $this->escapeQuotes($defect->getObjectNumber()) ?>
+          </td>
+          <td><a href="<?php echo $this->url(array('id' => $defect->getId()), 'defect_view') ?>"><?php echo $this->escapeQuotes($defect->getTitle()) ?></a></td>
+          <td class="t_priority"><span class="prio_<?php echo $defect->getPriority() ?>" title="<?php echo $this->typeT($defect->getPriority(), 'DEFECT_PRIORITY') ?>" alt="<?php echo $this->typeT($defect->getPriority(), 'DEFECT_PRIORITY') ?>"></span></td>
+          <td><?php echo $this->escapeQuotes($defect->getRelease()->getName()) ?></td>
+          <td><?php echo $this->escapeQuotes($defect->getPhase()->getName()) ?></td>
+          <td class="t_date" title="<?php echo $defect->getCreateDate() ?>"><?php echo $defect->getCreateDate(true) ?></td>
+          <td class="t_date" title="<?php echo $defect->getModifyDate() ?>"><?php echo $defect->getModifyDate(true) ?></td>
+          <td class="t_user"><?php echo $this->escapeQuotes($defect->getAssigner()->getFullname()) ?></td>
+          <td class="t_user"><?php echo $this->escapeQuotes($defect->getAssignee()->getFullname()) ?></td>
+          <?php if ($this->activeProject->isActive()): ?>
+          <td>
+            <nav>
+              <ul class="action_list">
+                <div class="popbox">
+                  <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                  <div class='collapse'>
+                    <ul class="box">
+                      <?php foreach ($this->prepareDefectActions($defect, $this->defectUserPermissions) as $action): ?>          
+                        <?php if ($action === null): ?>
+                          <li class="menuSeparator"></li>
+                        <?php else: ?>
+                          <li><a href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                        <?php endif; ?>
+                      <?php endforeach; ?>
+                    </ul> 
+                  </div>
+                </div>                
+              </ul>
+            </nav>
+          </td>
+          <?php endif; ?>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+    <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
+
+    <?php else: ?>
+    <div class="empty-text"><?php echo $this->t('Brak defektów.') ?></div>
+    <?php endif; ?>
+    
+  </article>    
+</section>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+  language.defaultPhaseName = '<?php echo $this->generalT('[Bez fazy]') ?>';
+  language.all = '<?php echo $this->generalT('[Wszystkie]') ?>';
+
+  url['phaseListAjax'] = '<?php echo $this->url(array(), 'phase_list_ajax') ?>';
+/* ]]> */
+</script>

@@ -1,0 +1,109 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2015-07-02 14:49+0200\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy>\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.8.2\n"
+
+msgid "pageTitle"
+msgstr "Browser"
+
+msgid "Wczytaj pliki"
+msgstr "Upload files"
+
+msgid "Utwórz katalog"
+msgstr "Create directory"
+
+msgid "Wybierz zaznaczone"
+msgstr "Choose selected"
+
+msgid "Zaznacz wszystko"
+msgstr "Select all"
+
+msgid "Odznacz wszystko"
+msgstr "Unselect all"
+
+msgid "Usuń zaznaczone"
+msgstr "Delete selected"
+
+msgid "Przenieś zaznaczone"
+msgstr "Move selected"
+
+msgid "Plików"
+msgstr "Files"
+
+msgid "Bieżacy katalog"
+msgstr "Current directory"
+
+msgid "Tworzenie nowego katalogu"
+msgstr "Creating a new directory"
+
+msgid "Nazwa"
+msgstr "Name"
+
+msgid "Utwórz"
+msgstr "Create"
+
+msgid "Zamiana nazwy katalogu"
+msgstr "Changing directory name"
+
+msgid "Zmień"
+msgstr "Change"
+
+msgid "Zamiana nazwy pliku"
+msgstr "Changing file name"
+
+msgid "FILE_IS_ATTACHMENT"
+msgstr "The file is attached to a task and cannot be deleted."
+
+msgid "FILE_IN_DIR_IS_ATTACHMENT"
+msgstr "The directory cannot be deleted because at least one file is attached to a task."
+
+msgid "SOME_FILES_ARE_ATTACHMENTS"
+msgstr ""
+"At least one file and/or directory is not deleted, because at least one file is assigned to the task. "
+
+msgid "FILE_NOT_EXISTS"
+msgstr "The file doesn't exist in the file system."
+
+msgid "DESTINATION_FILE_ALREADY_EXISTS"
+msgstr "A file with the specified name already exists."
+
+msgid "DIRECTORY_NOT_EXISTS"
+msgstr "The directory doesn't exist in the file system."
+
+msgid "DESTINATION_DIRECTORY_ALREADY_EXISTS"
+msgstr "A directory with the specified name already exists."
+
+msgid "DIRECTORY_NAME_IS_EMPTY"
+msgstr "You need to specify the name of the directory."
+
+msgid "NEW_DIRECTORY_NAME_IS_EMPTY"
+msgstr "You need to specify the new name of the directory."
+
+msgid "FILE_NAME_IS_EMPTY"
+msgstr "You need to specify the name of the file."
+
+msgid "NO_FILE_SELECTED"
+msgstr "You need to select at least one file."
+
+msgid "UPLOAD_FILE_ERROR"
+msgstr "When uploading files to an unexpected error. File list:"
+
+msgid "UPLOAD_FILE_EXISTS"
+msgstr "At least one of the file upload has a name that already exists in the specified location. File list:"
+
+msgid "Akcje"
+msgstr "Actions"
+
+msgid "[root]"
+msgstr "[root directory]"

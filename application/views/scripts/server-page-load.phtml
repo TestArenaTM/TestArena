@@ -1,0 +1,22 @@
+<?php
+global $appStartTime;
+@list( $startMilli, $startSeconds, $endMilli, $endSeconds) = explode(' ',$appStartTime . ' ' . microtime());
+$generateTime = ($endSeconds+$endMilli)-($startSeconds+$startMilli);
+//printf( '. Generated in %.3fs', $generateTime);
+
+$writer = new Zend_Log_Writer_Stream( _LOGDIR . '/server_load_time.log');
+$logger = new Zend_Log($writer);
+$request = Zend_Controller_Front::getInstance()->getRequest();
+$logger->info( 'Id: ' . $startSeconds.$startMilli . ' - Page load time of ' . $generateTime . ' on ' . $request->getRequestUri() . ' IP:' . $request->getServer('REMOTE_ADDR') . '|' . $request->getClientIp() );
+?>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3160936-40']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>

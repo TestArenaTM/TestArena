@@ -1,0 +1,23 @@
+<section id="content">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if (isset($this->messages)): ?>
+      <?php foreach ($this->messages as $message): ?>
+        <p><?php echo $message ?></p>
+      <?php endforeach; ?>
+    <?php endif; ?>
+        
+    <br />
+
+    <p>
+      <span class="button_edit"><a href="<?php echo $this->url(array('id' => $this->file->getId()), 'file_download_process') ?>"><?php echo $this->t('Pobierz') ?></a></span>
+      <?php if ($this->backUrl !== null): ?>
+        <a href="<?php echo $this->backUrl ?>"><?php echo $this->t('Powrót') ?></a>
+      <?php else: ?>
+        <a href="<?php echo $this->url(array(), 'index') ?>"><?php echo $this->t('Strona główna') ?></a>
+      <?php endif; ?>
+    </p>
+    
+  </article>
+</section>

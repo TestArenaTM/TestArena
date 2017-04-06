@@ -1,0 +1,54 @@
+<!--<h1><?php echo $this->t('Witaj testerze') ?></h1>
+<h2><?php echo $this->t('Zaloguj się') ?></h2>-->
+
+<form class="front-log" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+  <div class="login_avatar"><img src="../img/login_avatar.jpg"/></div>
+  <div class="formContainer full">
+    <span>
+      <?php echo $this->form->email->renderViewHelper() ?>
+      <?php echo $this->formRequiredLabel('email', $this->t('Adres e-mail')) ?>
+      <?php foreach ($this->form->getErrors('email') as $error): ?>
+      <div class="login_form_error"><?php echo $this->errorT($error, array('value' => $this->form->email->getValue())) ?></div>
+      <?php endforeach; ?>
+    </span>
+  </div>
+
+  <div class="formContainer full">
+    <span>
+      <?php echo $this->form->password->renderViewHelper() ?>
+      <?php echo $this->formRequiredLabel('password', $this->t('Hasło')) ?>
+      <?php foreach ($this->form->getErrors('password') as $error): ?>
+      <div class="login_form_error"><?php echo $this->errorT($error, array(
+        'value' => $this->form->password->getValue()
+      )) ?></div>
+      <?php endforeach; ?>
+    <?php if (isset($this->formError)): ?>
+      <div class="login_form_error"><?php echo $this->t($this->formError) ?></div>
+    <?php endif; ?>      
+    </span>
+  </div>
+
+
+  <div id="save" class="button-front"><?php echo $this->formSubmit('login', $this->t('Zaloguj')) ?></div>
+
+  <div class="login_table">
+    <p>
+      <div class="remember_check"><?php echo $this->form->remember->renderViewHelper() ?><?php echo $this->formLabel('remember', $this->t('Zapamiętaj mnie')) ?><a href="<?php echo $this->url(array(), 'user_recover_password') ?>"><?php echo $this->t('Nie pamiętam hasła') ?></a></div>
+      <?php foreach ($this->form->getErrors('remember') as $error): ?>
+      <div class="login_form_error"><?php echo $this->errorT($error) ?></div>
+      <?php endforeach; ?>
+    </p>
+
+    <p><div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div></p>
+
+    <div>
+      <?php echo $this->form->csrf->renderViewHelper() ?>
+      <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+      <div><?php echo $this->errorT($error) ?></div>
+      <?php endforeach; ?>
+    </div>
+
+  </div>
+  
+</form>   
+          

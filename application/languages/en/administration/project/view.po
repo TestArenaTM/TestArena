@@ -1,0 +1,87 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2015-07-17 13:26+0200\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy>\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.8.2\n"
+
+msgid "pageTitle"
+msgstr "Project properties"
+
+msgid "Prefiks"
+msgstr "Prefix"
+
+msgid "Nazwa"
+msgstr "Name"
+
+msgid "Opis"
+msgstr "Description"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Data utworzenia"
+msgstr "Date of creating"
+
+msgid "Kolor dla statusów OPEN i REOPEN"
+msgstr "Color for status '__open__' and '__reopen__'"
+
+msgid "Kolor dla statusu IN_PROGRESS"
+msgstr "Color for status '__inProgress__'"
+
+msgid "Edytuj"
+msgstr "Edit"
+
+msgid "Zawieś"
+msgstr "Suspend"
+
+msgid "Aktywuj"
+msgstr "Activate"
+
+msgid "Zakończ"
+msgstr "Finish"
+
+msgid "Narzedzia śledzenia defektów"
+msgstr "Bug trackers"
+
+msgid "Statusy rozwiązań"
+msgstr "Statuses resolutions"
+
+msgid "Role w projekcie"
+msgstr "Roles in the project"
+
+msgid "Dodaj rolę"
+msgstr "Add a role"
+
+msgid "Brak ról."
+msgstr "No roles available..."
+
+msgid "Zapisz"
+msgstr "Save"
+
+msgid "Usuń"
+msgstr "Delete"
+
+msgid "Eksportuj"
+msgstr "Export"
+
+msgid "Rola"
+msgstr "Role"
+
+msgid "Użytkownicy"
+msgstr "Users"
+
+msgid "Akcje"
+msgstr "Actions"
+
+msgid "Dodaj/usuń użytkowników"
+msgstr "Add/Delete users"

@@ -1,0 +1,96 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#">Narzędzia</a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->name->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('name', $this->t('Nazwa')) ?>
+            <?php foreach ($this->form->getErrors('name') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('name')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('name')->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer half">
+          <span>
+            <?php echo $this->form->prefix->renderViewHelper() ?><span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span>
+            <?php echo $this->formRequiredLabel('prefix', $this->t('Prefiks')) ?>
+            <?php foreach ($this->form->getErrors('prefix') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('prefix')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('prefix')->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer half">
+          <span>
+            <?php echo $this->form->users->renderViewHelper() ?>
+            <?php echo $this->formLabel('users', $this->t('Liderzy')) ?>
+            <?php foreach ($this->form->getErrors('users') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->description->renderViewHelper() ?>
+            <?php echo $this->formLabel('description', $this->t('Opis')) ?>
+            <?php foreach ($this->form->getErrors('description') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                'max' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+          <div>
+            <span id="save"><?php echo $this->formSubmit('save', $this->t('Zapisz')) ?></span>
+            <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+          </div>
+          <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+          <div>
+            <?php echo $this->form->csrf->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </div>   
+
+    </form>
+
+    <?php if (isset($this->prePopulatedUsers)) :?>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+    prePopulated['users'] = <?php echo $this->prePopulatedUsers?>;
+    /* ]]> */
+    </script>
+    <?php endif?>
+
+    <script type="text/javascript">
+    /* <![CDATA[ */
+    language['charactersLeft'] = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+    url['userListAjax'] = '<?php echo $this->url(array(), 'admin_user_list_ajax') ?>';
+    /* ]]> */
+    </script>
+  </article>    
+</section>

@@ -1,0 +1,6 @@
+<?php if ($this->locale != 'pl_PL'): ?>
+<span><a href="<?php echo $this->url(array('locale' => 'pl_PL'), 'change_language') ?>" title="polski"><img src="<?php echo $this->baseUrl('/img/locale/pl_PL.png') ?>" alt="polski" /></a></span>
+<?php endif; ?>
+<?php if ($this->locale != 'en_US'): ?>
+<span><a href="<?php echo $this->url(array('locale' => 'en_US'), 'change_language') ?>" title="english"><img src="<?php echo $this->baseUrl('/img/locale/en_US.png') ?>" alt="english" /></a></span>
+<?php endif; ?>

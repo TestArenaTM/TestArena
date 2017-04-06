@@ -1,0 +1,385 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2015-10-01 14:09+0100\n"
+"Last-Translator: \n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.8.4\n"
+
+# Captcha
+msgid "missingValue"
+msgstr "Nie uzupełniono pola captcha."
+
+msgid "missingID"
+msgstr "Nie uzupełniono pola captcha."
+
+msgid "badCaptcha"
+msgstr "Proszę poprawnie uzupełnić pole captcha."
+
+# Hash
+msgid "notSame"
+msgstr "Ważność formularza wygasła. Spróbuj wysłać go ponownie."
+
+msgid "missingToken"
+msgstr "Ważność formularza wygasła. Spróbuj wysłać o ponownie."
+
+# UniqueEmail
+msgid "emailExists"
+msgstr "Podany adres e-mail istnieje już w systemie."
+
+# Token
+msgid "invalidToken"
+msgstr "Niepoprawny token."
+
+# UserPassword
+msgid "userPasswordNotValid"
+msgstr "Twoje aktualne hasło jest inne."
+
+# EmailAddressSimpleMessage
+msgid "emailAddressInvalid"
+msgstr "Nieprawidłowy adres e-mail. Wprowadź adres ponownie."
+
+# EmailExists
+msgid "emailNotExists"
+msgstr "Podany adres e-mail nie istnieje w systemie."
+
+msgid "emailAddressInvalidFormat"
+msgstr "Nieprawidłowy format adresu e-mail. Wprowadź adres ponownie."
+
+# PasswordConfirmation
+msgid "passwordNotMatch"
+msgstr "Podane hasła nie są zgodne."
+
+# StringLength
+msgid "stringLengthInvalid"
+msgstr "Niepoprawny typ danych. Oczekiwano ciąg znaków."
+
+msgid "stringLengthTooShort"
+msgstr "Minimalna liczba znaków dla pola to __min__."
+
+msgid "stringLengthTooLong"
+msgstr "Maksymalna liczba znaków dla pola to __max__."
+
+# NotEmpty
+msgid "notEmptyInvalid"
+msgstr "Niepoprawny typ danych wejściowych."
+
+msgid "isEmpty"
+msgstr "Pole wymagane"
+
+# notInArray
+msgid "notInArray"
+msgstr "Wartość nie jest jedną z dostępnych na liście"
+
+# SimpleText
+msgid "simpleTextInvalidCharacters"
+msgstr "Tekst może zawierać wyłącznie litery, cyfry, spacje oraz znaki !@#$%&*\\/()[]<>?.,\"':;+-=_€"
+
+# Name
+msgid "nameInvalidCharacters"
+msgstr "Tekst może zawierać wyłącznie litery, cyfry, spacje oraz znaki !@#$%&*\\/()?.,\"':;+-=_"
+
+# Firstname
+msgid "firstnameInvalidCharacters"
+msgstr "Imię może zawierać wyłącznie litery, spacje oraz znaki '-"
+
+# Lastname
+msgid "lastnameInvalidCharacters"
+msgstr "Nazwisko może zawierać wyłącznie litery, spacje oraz znaki '-"
+
+# Password
+msgid "passwordInvalidCharacters"
+msgstr "Hasło może zawierać tylko małe i duże litery (bez znaków narodowych), cyfry oraz znaki !@#$%^&*?"
+
+msgid "passwordInvalidFormat"
+msgstr "Hasło musi zawierać co najmniej jedną małą literę, jedną dużą literę oraz jedną cyfrę."
+
+# Role_Name
+msgid "roleNameExists"
+msgstr "Nazwa roli już istnieje w projekcie."
+
+# Role Type
+msgid "roleTypeExists"
+msgstr "Typ roli już istnieje w projekcie."
+
+# Role_Projects
+msgid "roleProjectsInvalidIds"
+msgstr "Role project ids can only be numbers."
+
+msgid "roleProjectNotExists"
+msgstr "Role project not exists in database."
+
+# Role Settings
+msgid "roleSettingsEmpty"
+msgstr "Musisz wybrać prznajmniej jedną akcję."
+
+# ProjectPrefix
+msgid "projectPrefixInvalidCharacters"
+msgstr "Prefiks projektu może zawierać tylko litery alfabetu łacińskiego (bez znaków narodowych) i liczby."
+
+# UniqueProjectName
+msgid "projectNameExists"
+msgstr "Nazwa projektu już istnieje w bazie danych."
+
+# UniqueProjectPrefix
+msgid "projectPrefixExists"
+msgstr "Prefiks projektu już istnieje w bazie danych."
+
+# Users
+msgid "usersInvalidIds"
+msgstr "Numery identyfikacyjne użytkowników mogą być wyłącznie liczbami."
+
+msgid "userIdNotExists"
+msgstr "Podany użytkownik nie istnieje w systemie."
+
+msgid "userNotExists"
+msgstr "Podany użytkownik nie istnieje w systemie."
+
+# Date
+msgid "dateInvalid"
+msgstr "Niepoprawny format."
+
+msgid "dateInvalidDate"
+msgstr "Niepoprawna data."
+
+msgid "dateFalseFormat"
+msgstr "Niepoprawny format daty. Wprowadź datę wg schematu __format__"
+
+# DateEarlierToField
+msgid "dateIsNotEarlier"
+msgstr "Wprowadzona data musi być wcześniejsza od daty '__field__'."
+
+msgid "dateIsNotEarlierOrEqual"
+msgstr "Wprowadzona data musi być wcześniejsza lub równa dacie '__field__'."
+
+# DateLaterToField
+msgid "dateIsNotLater"
+msgstr "Wprowadzona data musi być późniejsza od daty '__field__'."
+
+msgid "dateIsNotLaterOrEqual"
+msgstr "Wprowadzona data musi być późniejsza lub równa dacie '__field__'."
+
+# DateBetween
+msgid "dateNotBetween"
+msgstr "Data musi być pomiędzy '__min__' a '__max__' włącznie."
+
+msgid "dateNotBetweenStrict"
+msgstr "Data nie jest pomiędzy '__min__' and '__max__'."
+
+# DateEarlier
+msgid "dateNotEarlier"
+msgstr "Data musi być wcześniejsza niż '__date__' włącznie."
+
+msgid "dateNotEarlierStrict"
+msgstr "Data musi być wcześniejsza niż '__date__'."
+
+# DateLater
+msgid "dateNotLater"
+msgstr "Data musi być późniejsza niż '__date__' włącznie."
+
+msgid "dateNotLaterStrict"
+msgstr "Data musi być późniejsza niż '__date__'."
+
+# File
+msgid "fileImageSizeNotDetected"
+msgstr "Nie można rozpoznać rozmiaru pliku."
+
+msgid "imageIsCorrupted"
+msgstr "Wybrany plik nie jest poprawnym obrazkiem."
+
+msgid "fileUploadErrorFormSize"
+msgstr "Maksymalna wielkość pliku to __maxFileSize__."
+
+msgid "fileSizeNotFound"
+msgstr "Nie można odczytać pliku."
+
+msgid "fileUploadErrorNoFile"
+msgstr "Plik nie został załączony."
+
+msgid "fileExtensionFalse"
+msgstr "Nieobsługiwany format pliku. Dozwolone są pliki z rozszerzeniem: __extensions__."
+
+msgid "fileExtensionNotFound"
+msgstr "Nie można odczytać pliku."
+
+msgid "fileCountTooMany"
+msgstr "Zbyt dużo plików."
+
+msgid "fileCountTooFew"
+msgstr "Za mało plików."
+
+msgid "fileSizeTooSmall"
+msgstr "Za mały plik."
+
+msgid "isImage"
+msgstr "Wybrany plik nie jest obrazem."
+
+msgid "unsupportedType"
+msgstr "Nieobsługiwany format pliku. Wypróbuj .jpg lub .png."
+
+msgid "avatarUnsupportedType"
+msgstr "Nieobsługiwany format pliku. Wypróbuj .jpg lub .png."
+
+msgid "fitNotSupportGif"
+msgstr "Dopasowanie nie obsługuje plików .gif"
+
+msgid "fileSizeTooBig"
+msgstr "Maksymalna wielkość pliku to 1MB."
+
+msgid "fileNotExist"
+msgstr "Plik nie istnieje."
+
+msgid "fileImageSizeWidthTooSmall"
+msgstr "Niepoprawny rozmiar obrazu. Minimalna szerokość to 50 px."
+
+msgid "fileImageSizeHeightTooSmall"
+msgstr "Niepoprawny rozmiar obrazu. Minimalna wysokość to 50 px."
+
+msgid "fileImageSizeWidthTooBig"
+msgstr "Niepoprawny rozmiar obrazu. Maksymalna szerokość to 3000 px."
+
+msgid "fileImageSizeHeightTooBig"
+msgstr "Niepoprawny rozmiar obrazu. Maksymalna wysokość to 3000 px."
+
+# UniqueProductName
+msgid "productNameExists"
+msgstr "Nazwa produktu już istnieje."
+
+# Url
+msgid "invalidUrl"
+msgstr "Nieprawidłowy url."
+
+msgid "urlNotExists"
+msgstr "Strona pod podanym adresem nie istnieje."
+
+# Float
+msgid "notFloat"
+msgstr "To nie jest liczba."
+
+msgid "floatInvalid"
+msgstr "To nie jest liczba."
+
+# Between
+msgid "notBetween"
+msgstr "Liczba musi zawierać się w zakresie od __min__ do __max__."
+
+msgid "notBetweenStrict"
+msgstr "Liczba musi zawierać się pomiędzy __min__ i __max__."
+
+# Address
+msgid "addressInvalidCharacters"
+msgstr "Adres może zawierać wyłącznie litery, cyfry, spacje oraz znaki '-/"
+
+# ZipCode
+msgid "zipCodeInvalidCharacters"
+msgstr "Kod pocztowy może zawierać wyłącznie cyfry oraz znak -"
+
+# City
+msgid "cityInvalidCharacters"
+msgstr "Miasto może zawierać wyłącznie litery, spacje oraz znaki '-"
+
+# UniqueReleaseName
+msgid "releaseNameExists"
+msgstr "Nazwa wydania już istnieje."
+
+# UniquePhaseName
+msgid "phaseNameExists"
+msgstr "Nazwa fazy już istnieje."
+
+# ProjectElements
+msgid "projectElementsInvalidIds"
+msgstr "Projekty elementu mogą być tylko liczbami."
+
+msgid "projectElementNotExists"
+msgstr "Element projektu nie istnieje w bazie."
+
+# UniqueEnvironemtnName
+msgid "environmentNameExists"
+msgstr "Nazwa środowiska już istnieje w bazie danych!"
+
+# UniqueVersionName
+msgid "versionNameExists"
+msgstr "Nazwa wersji już istnieje w bazie danych!"
+
+# Environments
+msgid "environmentInvalidIds"
+msgstr "Środowisko nie istnieje w bazie danych."
+
+msgid "environmentNotExists"
+msgstr "Środowisko nie istnieje w bazie danych."
+
+# Versions
+msgid "versionInvalidIds"
+msgstr "Wersja nie istnieje w bazie danych."
+
+msgid "versionNotExists"
+msgstr "Wersja nie istnieje w bazie danych."
+
+# Int
+msgid "notInt"
+msgstr "Pole musi być liczbą całkowitą"
+
+# Id
+msgid "invalidId"
+msgstr "Niepoprawne dane"
+
+# ReleaseExists
+msgid "releaseNotExists"
+msgstr "Podane wydanie nie istnieje w systemie."
+
+# PhaseExists
+msgid "phaseNotExists"
+msgstr "Podana faza nie istnieje w systemie."
+
+# ExcludeExtension
+msgid "fileExcludeExtensionFalse"
+msgstr "Plik ma złe rozszerzenie."
+
+msgid "fileExcludeExtensionNotFound"
+msgstr "Plik nie jest do odczytu lub nie istnieje."
+
+# PhoneNumber
+msgid "phoneNumberInvalidCharacters"
+msgstr "Tekst może zawierać wyłącznie cyfry, spacje oraz znaki +-()"
+
+# JiraRestProject
+msgid "jiraInvalidProjectKey"
+msgstr "Nieprawidłowy klucz projektu JIRA."
+
+msgid "jiraUrlOrAuthorizationDataIsIncorrect"
+msgstr "Adres URL lub dane do autoryzacji są niepoprawne."
+
+# MantisSoapProject
+msgid "mantisProjectNotExists"
+msgstr "Projekt Mantis nie istnieje."
+
+msgid "mantisUrlIsIncorrect"
+msgstr "Adres URL jest niepoprawny lub plik WSDL jest uszkodzony."
+
+msgid "mantisAccessDenied"
+msgstr "Użytkownik nie ma dostępu do projektu."
+
+# UniqueProjectResolutionName
+msgid "projectResolutionNameExists"
+msgstr "Nazwa statusu już istnieje w projekcie."
+
+# UniqueProjectResolutionColor
+msgid "projectResolutionColorExists"
+msgstr "Kolor statusu już istnieje w projekcie."
+
+# UniqueTaskTest
+msgid "taskTestExists"
+msgstr "Test już istnieje w zadaniu."
+
+# UniqueTaskDefect
+msgid "taskDefectExists"
+msgstr "Defekt już istnieje w zadaniu."
+

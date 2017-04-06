@@ -1,0 +1,42 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2014-06-26 15:00+0100\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 1.6.5\n"
+
+msgid "pageTitle"
+msgstr "Odzyskaj hasło"
+
+msgid "statusError"
+msgstr ""
+"Wystąpił błąd w trakcie odzyskiwania hasła. Prosimy spróbować ponownie."
+
+msgid "statusNotFound"
+msgstr "Podany adres e-mail nie istnieje w bazie."
+
+msgid "statusSuccess"
+msgstr ""
+"Sprawdź swoją skrzynkę mailową i odbierz wiadomość z linkiem umożliwiającym "
+"utworzenie nowego hasła."
+
+msgid "Adres e-mail"
+msgstr "Adres e-mail"
+
+msgid "Prosimy o przepisanie znaków z obrazka."
+msgstr "Prosimy o przepisanie znaków z obrazka."
+
+msgid "Odzyskaj hasło"
+msgstr "Odzyskaj hasło"
+
+msgid "Strona logowania"
+msgstr "Strona logowania"

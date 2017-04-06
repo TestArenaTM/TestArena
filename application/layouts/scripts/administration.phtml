@@ -1,0 +1,41 @@
+<?php echo $this->partial('header.phtml', array(
+  'keywords'    => $this->keywords,
+  'description' => $this->description,
+  'messageBox'  => $this->messageBox,
+  'language'    => $this->language,
+  'locale'      => $this->locale
+)); ?>
+    
+<header id="head-top" class="head-top-main">
+  
+  <div class="top_right">   
+    <a href="<?php echo $this->url(array(), 'user_profile') ?>" class="top_avatar_header">
+      <span class="user-info"><?php echo $this->authUser->getFullname()?> <br><small><?php echo $this->authUser->getEmail()?></small></span>
+      <span class="user-thumb"><p class="avatar_header"><img src="<?php echo $this->authUser->getAvatarUrl(true) ?>" alt="<?php echo $this->authUser->getFullname()?>" /></p></span>
+    </a>
+    
+    <?php if ($this->authUser->getAdministrator()): ?>
+      <div class="header_admin"><a href="<?php echo $this->url(array(), 'index')?>" title="<?php echo $this->generalT('Kokpit') ?>"><span class="icon_grid-2x2 icon-20" aria-hidden="true" style="line-height: 2.8;"></span></a></div>
+    <?php endif; ?>
+      
+    <div class="header_logout"><a href="<?php echo $this->url(array(), 'user_logout')?>" title="<?php echo $this->generalT('Wyloguj') ?>"><span class="icons-switch icon-20" style="line-height: 2.8;"></span></a></div>
+  </div>  
+  
+</header>
+
+<aside id="left_header_menu">
+  <a id="header_logo" href="<?php echo $this->url(array(), 'index')?>" ></a>
+  <div id="wrapper">
+    <ul class="menu">
+      <!--<li class="item1"><a href="<?php //echo $this->url(array(), 'admin_index')?>"<?php //if ($this->activeMenu == 'dashboard'): ?> class="activeMenu"<?php //endif; ?>><?php //echo $this->generalT('Kokpit') ?></a></li>-->
+      <li class="item2"><a href="<?php echo $this->url(array(), 'admin_project_list')?>"<?php if ($this->activeMenu == 'projects'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_puzzle_alt icon-20"></span><?php echo $this->generalT('Projekty') ?></a></li>
+      <li class="item3"><a href="<?php echo $this->url(array(), 'admin_role_list')?>"<?php if ($this->activeMenu == 'roles'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_id-2_alt icon-20"></span><?php echo $this->generalT('Role') ?></a></li>       
+      <li class="item4"><a href="<?php echo $this->url(array(), 'admin_user_list')?>"<?php if ($this->activeMenu == 'users'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_group icon-20"></span><?php echo $this->generalT('Użytkownicy') ?></a></li> 
+    </ul>
+  </div>
+</aside>   
+  <div id="right_sidebar">
+    <?php echo $this->layout()->content ?>
+  </div>
+
+<?php echo $this->partial('footer.phtml', array('locale' => $this->locale));

@@ -1,0 +1,7 @@
+<?php if ($this->messageBox->present()): ?>
+<div id="j_info_box">
+  <div class="icon_<?php echo $this->messageBox->getType() ?>"></div>
+  <div class="j_close_button"></div>
+  <p><?php echo nl2br($this->messageBox->getText()) ?></p>
+</div>
+<?php endif; ?>

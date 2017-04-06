@@ -1,0 +1,74 @@
+<section id="content">
+  <article class="article_in_content<?php if (!isset($this->authUser)): ?> full<?php endif; ?>">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->name->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('name', $this->t('Nazwa')) ?>
+                        <?php foreach ($this->form->getErrors('name') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->email->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('email', $this->t('Adres e-mail')) ?>
+                        <?php foreach ($this->form->getErrors('email') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->subject->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('subject', $this->t('Temat')) ?>
+                        <?php foreach ($this->form->getErrors('subject') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->message->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('message', $this->t('Wiadomość')) ?>
+                        <?php foreach ($this->form->getErrors('message') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>            
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->formRequiredLabel('captcha', $this->t('Prosimy o przepisanie znaków z obrazka.')) ?>
+            <?php echo $this->form->captcha->render() ?>
+                        <?php foreach ($this->form->getErrors('captcha') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+          <div>
+            <span id="save"><?php echo $this->formSubmit('send', $this->t('Wyślij')) ?></span>
+          </div>
+
+          <div>
+            <?php echo $this->form->csrf->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </div>
+
+    </form>
+  </article>    
+</section>
+
+<script type="text/javascript">
+  language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+</script>

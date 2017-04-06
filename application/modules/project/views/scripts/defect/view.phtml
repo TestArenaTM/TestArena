@@ -1,0 +1,172 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Defekty') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>-->    
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if ($this->activeProject->isActive()): ?>
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <?php foreach ($this->prepareDefectActions($this->defect, array(), $this->defectUserPermission) as $action): ?>
+          <?php if ($action === null): ?>
+            <li class="button_link_li separator"></li>
+          <?php else: ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      </ul>
+    </nav>
+    <?php endif;?>
+
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escape($this->defect->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->defect->getTitle()) ?></div>
+    </div>     
+    
+    <div class="contentLRtable">
+      <div class="contentProperties_left">
+        <div class="col1">
+          <div class="leftside">
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Status') ?></div>
+              <div id="text" class="content_label">
+                <?php echo $this->showDefectStatusIcon($this->defect) ?>
+                <?php echo $this->statusT($this->defect->getStatus(), 'DEFECT') ?>
+              </div>
+            </div>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Priorytet') ?></div>
+              <div id="text" class="content_label"><span class="prio_<?php echo $this->defect->getPriority() ?> view"></span><?php echo $this->typeT($this->defect->getPriority(), 'DEFECT_PRIORITY') ?></div>
+            </div>
+            <?php if (count($this->environments)): ?>
+              <div class="textLabelPropertiesDiv">
+                <div class="textLabelEditor_text"><?php echo $this->t('Środowiska') ?></div>
+                <div id="text" class="content_label">
+                  <?php foreach ($this->environments as $environment): ?>
+                    <a class="environmentBox" href="<?php echo $this->url(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endif; ?>
+            <?php if (count($this->versions)): ?>
+              <div class="textLabelPropertiesDiv">
+                <div class="textLabelEditor_text"><?php echo $this->t('Wersje') ?></div>
+                <div id="text" class="content_label">
+                  <?php foreach ($this->versions as $version): ?>
+                    <a class="versionBox" href="<?php echo $this->url(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endif; ?>
+            <?php if ($this->defect->getRelease()->getName() !== null): ?>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Wydanie') ?></div>
+              <div id="text" class="content_label">
+                <a class="environmentBox" href="<?php echo $this->url(array('id' => $this->defect->getRelease()->getId()), 'release_view') ?>"><?php echo $this->escapeQuotes($this->defect->getRelease()->getName()) ?></a>
+              </div>
+            </div>
+            <?php endif; ?>
+            <?php if ($this->defect->getPhase()->getName() !== null): ?>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Faza') ?></div>
+              <div id="text" class="content_label">
+                <a class="environmentBox" href="<?php echo $this->url(array('id' => $this->defect->getPhase()->getId()), 'phase_view') ?>"><?php echo $this->escapeQuotes($this->defect->getPhase()->getName()) ?></a>
+              </div>
+            </div>
+            <?php endif; ?>
+          </div>
+          <div class="rightside">
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?></div>
+              <div id="text" class="content_label"><?php echo $this->defect->getCreateDate() ?></div>
+            </div>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Data modyfikacji') ?></div>
+              <div id="text" class="content_label"><?php echo $this->defect->getModifyDate() ?></div>
+            </div>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Przydzielił') ?></div>
+              <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->defect->getAssigner()->getFullname()) ?></div>
+            </div>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Przydzielone do') ?></div>
+              <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->defect->getAssignee()->getFullname()) ?></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h5 class="break_page"><span aria-hidden="true" class="icon_pencil icon-20"></span><?php echo $this->t('Opis') ?></h5>
+          <div><?php echo nl2br($this->escapeQuotes($this->defect->getDescription())) ?></div>
+        </div>
+        
+        <?php if (count($this->defect->getExtraData('attachments'))): ?>
+        <div>
+          <h5 class="break_page"><span aria-hidden="true" class="icon_link_alt icon-20"></span><?php echo $this->t('Załączniki') ?></h5>
+          <?php foreach ($this->defect->getExtraData('attachments') as $file): ?>       
+          <div class="attachement-list">
+            <ul>
+              <li>
+              <div class="attachment-thumb">
+                <a href="<?php echo $this->url(array('id' => $file->getId()), 'file_download') ?>"><i class="social_instagram icon-23" style="line-height: 58px;"></i></a>
+              </div>
+              <div class="attachment-info">
+                <div class="attachment-file-name">
+                  <?php echo $file->getFullName() ?>
+                </div>
+                <div class="attachment-action-bar">
+                  <span class="list-file-download"><a href="<?php echo $this->url(array('id' => $file->getId()), 'file_download') ?>"><i class="icon_download"></i> Pobierz</a></span>
+                </div>
+              </div>
+              </li>
+            </ul>
+          </div>          
+          <?php endforeach; ?>
+        </div>
+        <?php endif; ?>        
+
+        <?php echo $this->partial('comment/partial.phtml', array(
+          'subjectId'     => $this->defect->getId(),
+          'subjectType'   => Application_Model_CommentSubjectType::DEFECT,
+          'addCommentOn'  => $this->activeProject->isActive()
+        )); ?>         
+        
+      </div>
+ 
+      <div class="contentEditUser_right">   
+        
+        <div class="textLabelPropertiesDiv history">
+          <h5 class="break_page"><span aria-hidden="true" class="icon_clock_alt icon-20"></span> <?php echo $this->t('Historia') ?></h5>
+          <?php if (count($this->history)): ?>
+            <div class="contentList history">
+                  <ul>
+                    <?php foreach ($this->history as $element): ?>
+                      <li>
+                        <div class="clearfixDashboard history">
+                          <a class="post_more_options" href="#"></a>
+                          <div class="author history" title="<?php echo $this->escapeQuotes($element->getUser()->getEmail()) ?>">
+                            <strong><?php echo $this->escapeQuotes($element->getUser()->getFullname()) ?></strong>
+                          </div>
+                          <div class="snippet_action_contentList history">
+                            <span class="snippet_action_contentList snippet_action_text history"><?php echo $this->defectHistory($element) ?></span>
+                            <div class="activity-item-info history">
+                              <div class="timestamp"><?php echo $element->getDate() ?></div>
+                            </div>                     
+                          </div>                   
+                        </div>
+                      </li>              
+                    <?php endforeach; ?>
+                  </ul>
+            </div>
+          <?php endif;?>
+        </div> 
+
+      </div>
+      
+    </div>
+
+  </article>    
+</section>

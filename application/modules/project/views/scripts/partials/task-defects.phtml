@@ -1,0 +1,30 @@
+<div id="j_defectContent">
+  <ul id="j_defectList">
+    <?php foreach ($this->defects as $defect): ?>
+      <li id="j_defectItem_<?php echo $defect->getId() ?>">
+        <div class="clearfixDashboard history">
+          <div class="testlist-l" title="<?php echo $defect->getExtraData('name') ?>">
+            <p class="j_defectLink" key="<?php echo $defect->getExtraData('key') ?>"><a class="j_new_window" href="<?php echo $this->defectUrl($defect->getNo(), $this->bugTracker) ?>"><?php echo $defect->getExtraData('name') ?></a></p>
+            <p class="j_defectText" key="<?php echo $defect->getExtraData('key') ?>"><?php echo $defect->getExtraData('name') ?></p>
+          </div>
+          <div class="testlist-r">
+            <span>
+              <?php echo $this->defectStatusTag($defect, $this->bugTracker) ?>
+            </span>
+            <?php if ($this->activeProject->isActive() 
+                      && $this->taskUserPermission->isDefectModifyPermission()
+                      && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
+              <a class="j_deleteDefectFromTask" href="<?php echo $this->url(array('id' => $this->task->getId(), 'defectId' => $defect->getId()), 'task_delete_defect_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+            <?php endif; ?>
+          </div>                   
+        </div>
+      </li>              
+    <?php endforeach; ?>
+  </ul>
+</div>
+<script type="text/javascript">
+/* <![CDATA[ */
+  url.defectStatusAjax = '<?php echo $this->url(array(), 'defect_status_ajax') ?>';
+  language.defectNotExists = '<?php echo $this->generalT('Defekt nie istnieje.') ?>';
+/* ]]> */
+</script>

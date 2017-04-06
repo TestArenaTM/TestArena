@@ -1,0 +1,451 @@
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Project-Id-Version: TestX\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: pl_PL\n"
+"X-Generator: Poedit 1.8.4\n"
+
+msgid "headTitle"
+msgstr "TestArena Demo"
+
+msgid "headKeywords"
+msgstr "it, testowanie, przypadek ,przypadek testowy, zarządzania przypadkami testowymi, wydania, fazy, projekty, oprogramowanie, zarządzanie projektami, test competence, 21cn, smilgin"
+
+msgid "headDescription"
+msgstr "Darmowe narzędzie do zarządzania przypadkami testowymi"
+
+msgid "noScript"
+msgstr "Musisz mieć włączoną obsługę JavaScript aby poprawnie korzystać z tej strony."
+
+msgid "Nieokreślona"
+msgstr "Nieokreślona"
+
+msgid "Tak"
+msgstr "Tak"
+
+msgid "Nie"
+msgstr "Nie"
+
+msgid "od"
+msgstr "od"
+
+msgid "do"
+msgstr "do"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Dodaj"
+msgstr "Dodaj"
+
+msgid "Edytuj"
+msgstr "Edytuj"
+
+msgid "Zarządzaj"
+msgstr "Zarządzaj"
+
+msgid "Usuń"
+msgstr "Usuń"
+
+msgid "Zmień nazwę"
+msgstr "Zmień nazwę"
+
+msgid "Zapisz"
+msgstr "Zapisz"
+
+msgid "Anuluj"
+msgstr "Anuluj"
+
+msgid "Eksportuj"
+msgstr "Eksportuj"
+
+msgid "Eksportuj wszystko"
+msgstr "Eksportuj wszystko"
+
+msgid "Komentarze"
+msgstr "Komentarze"
+
+msgid "Zmodyfikowane"
+msgstr "Zmodyfikowane"
+
+msgid "Proszę czekać..."
+msgstr "Proszę czekać..."
+
+msgid "Pobierz"
+msgstr "Pobierz"
+
+msgid "Nierozwiązany"
+msgstr "Nierozwiązany"
+
+msgid "[...]"
+msgstr "[do góry]"
+
+msgid "[Wybierz]"
+msgstr "[Wybierz]"
+
+msgid "[Wszystkie projekty]"
+msgstr "[Wszystkie projekty]"
+
+msgid "[Wszystko]"
+msgstr "[Wszystko]"
+
+msgid "[Wszystkie]"
+msgstr "[Wszystkie]"
+
+msgid "[Wszyscy]"
+msgstr "[Wszyscy]"
+
+msgid "[Nie podano]"
+msgstr "[Nie podano]"
+
+msgid "Przeciągnij tutaj pliki"
+msgstr "Przeciągnij tutaj pliki"
+
+msgid "Przerwij"
+msgstr "Przerwij"
+
+msgid "Gotowe"
+msgstr "Gotowe"
+
+msgid "Wybierz pliki"
+msgstr "Wybierz pliki"
+
+msgid "Przeciąganie plików nie jest dozwolone."
+msgstr "Gotowe"
+
+msgid "jest niedozwolony. Dopuszczalne rozszerzenia: "
+msgstr "Gotowe"
+
+msgid "jest niedozwolony. Maksymalny rozmiar: "
+msgstr "Gotowe"
+
+msgid "Wysyłanie plików na serwer jest niedozwolone."
+msgstr "Gotowe"
+
+# Menu
+msgid "Kokpit"
+msgstr "Kokpit"
+
+msgid "Zaloguj"
+msgstr "Zaloguj"
+
+msgid "Użytkownicy"
+msgstr "Użytkownicy"
+
+msgid "Projekty"
+msgstr "Projekty"
+
+msgid "Projekt"
+msgstr "Projekt"
+
+msgid "Wydania"
+msgstr "Wydania"
+
+msgid "Fazy"
+msgstr "Fazy"
+
+msgid "Środowiska"
+msgstr "Środowiska"
+
+msgid "Wersje"
+msgstr "Wersje"
+
+msgid "Zadania"
+msgstr "Zadania"
+
+msgid "Baza testów"
+msgstr " Baza testów"
+
+msgid "Defekty"
+msgstr "Defekty"
+
+msgid "Role"
+msgstr "Role"
+
+msgid "Wyloguj"
+msgstr "Wyloguj"
+
+msgid "Regulamin"
+msgstr "Regulamin"
+
+msgid "Dokumentacja"
+msgstr "Dokumentacja"
+
+msgid "Kontakt"
+msgstr "Kontakt"
+
+msgid "Administracja"
+msgstr "Administracja"
+
+msgid "Wyjdź z administracji"
+msgstr "Wyjdź z administracji"
+
+msgid "Baza Wiedzy"
+msgstr "Baza Wiedzy"
+
+msgid "Wyjdź z bazy wiedzy"
+msgstr "Wyjdź z bazy wiedzy"
+
+msgid "Raporty"
+msgstr "Raporty"
+
+msgid "Wiadomości"
+msgstr "Wiadomości"
+
+msgid "Pliki"
+msgstr "Pliki"
+
+# Stopka
+msgid "Copyright"
+msgstr "Darmowe narzędzie do zarządzania testami stworzone przez 21CN. Wszelkie prawa zastrzeżone. "
+
+# Stronicowanie
+msgid "Pierwsza"
+msgstr "« Pierwsza"
+
+msgid "Poprzednia"
+msgstr "‹ Poprzednia"
+
+msgid "Następna"
+msgstr "Następna ›"
+
+msgid "Ostatnia"
+msgstr "Ostatnia »"
+
+msgid "Poprzednie"
+msgstr "‹ Poprzednie"
+
+msgid "Następne"
+msgstr "Następne ›"
+
+msgid "autocomplete"
+msgstr "ABC"
+
+# JavaScript: language
+msgid "Pozostało __left__/__max__ znaków."
+msgstr "Pozostało __left__/__max__ znaków."
+
+msgid "Defekt nie istnieje."
+msgstr "Defekt nie istnieje."
+
+msgid "Brak wyników dla"
+msgstr "Brak wyników dla"
+
+msgid "Wpisz szukaną frazę"
+msgstr "Wpisz szukaną frazę"
+
+msgid "Brak rezultatów"
+msgstr "Brak rezultatów"
+
+msgid "Wyszukiwanie..."
+msgstr "Wyszukiwanie..."
+
+# pola wymagane
+msgid "Pole wymagane"
+msgstr "* pole wymagane"
+
+# dni
+msgid "__value__ dzień"
+msgid_plural ""
+msgstr[0] "__value__ dni"
+msgstr[1] "__value__ dni"
+msgstr[2] "__value__ dni"
+
+# Miesiące
+msgid "Month01"
+msgstr "Styczeń __year__"
+
+msgid "Month02"
+msgstr "Luty __year__"
+
+msgid "Month03"
+msgstr "Marzec __year__"
+
+msgid "Month04"
+msgstr "Kwiecień __year__"
+
+msgid "Month05"
+msgstr "Maj __year__"
+
+msgid "Month06"
+msgstr "Czerwiec __year__"
+
+msgid "Month07"
+msgstr "Lipiec __year__"
+
+msgid "Month08"
+msgstr "Sierpień __year__"
+
+msgid "Month09"
+msgstr "Wrzesień __year__"
+
+msgid "Month10"
+msgstr "Październik __year__"
+
+msgid "Month11"
+msgstr "Listopad __year__"
+
+msgid "Month12"
+msgstr "Grudzień __year__"
+
+msgid "dni"
+msgid_plural ""
+msgstr[0] "__value__ dzień"
+msgstr[1] "__value__ dni"
+msgstr[2] "__value__ dni"
+
+# timeAgo helper
+msgid "timeAgoMomentAgo"
+msgstr "przed chwilą"
+
+msgid "timeAgoMinuteAgo"
+msgid_plural ""
+msgstr[0] "minutę temu"
+msgstr[1] "__value__ minuty temu"
+msgstr[2] "__value__ minut temu"
+
+msgid "timeAgoHourAgo"
+msgid_plural ""
+msgstr[0] "godzinę temu"
+msgstr[1] "__value__ godziny temu"
+msgstr[2] "__value__ godzin temu"
+
+msgid "timeAgoDayAgo"
+msgid_plural ""
+msgstr[0] "wczoraj"
+msgstr[1] "__value__ dni temu"
+msgstr[2] "__value__ dni temu"
+
+msgid "timeAgoWeekAgo"
+msgid_plural ""
+msgstr[0] "tydzień temu"
+msgstr[1] "__value__ tygodnie temu"
+msgstr[2] "__value__ tygodni temu"
+
+msgid "timeAgoMonthAgo"
+msgid_plural ""
+msgstr[0] "miesiąc temu"
+msgstr[1] "__value__ miesięce temu"
+msgstr[2] "__value__ miesięcy temu"
+
+msgid "timeAgoYearAgo"
+msgid_plural ""
+msgstr[0] "rok temu"
+msgstr[1] "__value__ lata temu"
+msgstr[2] "__value__ lat temu"
+
+# Przekroczone o X dni
+msgid "exceededMomentAgo"
+msgstr "przekroczone o parę sekund"
+
+msgid "exceededMinuteAgo"
+msgid_plural ""
+msgstr[0] "przekroczone o minutę"
+msgstr[1] "przekroczone o __value__ minuty"
+msgstr[2] "przekroczone o __value__ minut"
+
+msgid "exceededHourAgo"
+msgid_plural ""
+msgstr[0] "przekroczone o godzinę"
+msgstr[1] "przekroczone o __value__ godziny"
+msgstr[2] "przekroczone o __value__ godzin"
+
+msgid "exceededDayAgo"
+msgid_plural ""
+msgstr[0] "przekroczone o 1 dzień"
+msgstr[1] "przekroczone o __value__ dni"
+msgstr[2] "przekroczone o __value__ dni"
+
+msgid "exceededWeekAgo"
+msgid_plural ""
+msgstr[0] "przekroczone o tydzień"
+msgstr[1] "przekroczone o __value__ tygodnie"
+msgstr[2] "przekroczone o __value__ tygodni"
+
+msgid "exceededMonthAgo"
+msgid_plural ""
+msgstr[0] "przekroczone o miesiąc"
+msgstr[1] "przekroczone o __value__ miesięce"
+msgstr[2] "przekroczone o __value__ miesięcy"
+
+msgid "exceededYearAgo"
+msgid_plural ""
+msgstr[0] "przekroczone o rok"
+msgstr[1] "przekroczone o __value__ lata"
+msgstr[2] "przekroczone o __value__ lat"
+
+# Languages
+msgid "pl"
+msgstr "polski"
+
+msgid "en"
+msgstr "angielski"
+
+# Status projektu
+msgid "Projekt zakończony"
+msgstr "Projekt zakończony"
+
+msgid "Projekt zawieszony"
+msgstr "Projekt zawieszony"
+
+# History
+msgid "utworzył(a) zadanie"
+msgstr "utworzył(a) zadanie"
+
+msgid "zmienił(a) zadanie"
+msgstr "zmienił(a) zadanie"
+
+msgid "utworzył(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
+msgstr "utworzył(a) zadanie i przekazał(a) je do wykonania użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+
+msgid "zmienił(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
+msgstr "zmienił(a) zadanie i przekazał(a) je do wykonania użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+
+msgid "zmienił(a) status zadania na TASK_STATUS"
+msgstr "zmienił(a) status zadania na <strong>__taskStatus__</strong>"
+
+msgid "dodał(a) test TEST do zadania"
+msgstr "dodał(a) test __test__ do zadania"
+
+msgid "usunoł/eła test TEST Z zadania"
+msgstr "usunął(ęła) test __test__ z zadania"
+
+msgid "utworzył(a) defekt"
+msgstr "utworzył(a) defekt"
+
+msgid "zmienił(a) defekt"
+msgstr "zmienił(a) defekt"
+
+msgid "utworzył(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
+msgstr "utworzył(a) defekt i przypisał(a) go użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+
+msgid "zmienił(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
+msgstr "zmienił(a) defekt i przypisał(a) go użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+
+msgid "zmienił(a) status defektu na DEFECT_STATUS"
+msgstr "zmienił(a) status defektu na <strong>__defectStatus__</strong>"
+
+msgid "dodał(a) defekt DEFEKT do zadania"
+msgstr "dodał(a) defekt __defekt__ do zadania"
+
+msgid "usunoł/eła defekt DEFEKT z zadania"
+msgstr "usunął(ęła) defekt __defekt__ z zadania"
+
+# Default name
+msgid "[Bez wydania]"
+msgstr "[Bez wydania]"
+
+msgid "[Bez fazy]"
+msgstr "[Bez fazy]"
+
+# Breadcrumb
+msgid "Profil"
+msgstr "Profil"
+

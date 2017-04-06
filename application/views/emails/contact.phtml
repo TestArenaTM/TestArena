@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title><?php echo $this->values['subject'] ?></title>
+</head>
+<body>
+  <div>
+    <h5><?php echo $this->emailT($this->name, 'Od') ?>: <?php echo $this->values['name'] ?> (<?php echo $this->values['email'] ?>)</h5>
+    <p><?php echo $this->emailT($this->name, 'Temat') ?><br /><?php echo $this->values['subject'] ?></p>
+    <p><?php echo $this->emailT($this->name, 'Wiadomość') ?><br /><?php echo $this->values['message'] ?></p>
+  </div>
+</body>
+</html>

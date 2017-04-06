@@ -1,0 +1,16 @@
+<script id="j_msgThreadItemTmpl" type="text/x-jquery-tmpl" >
+  <li>
+    <div class="message_content">
+      <div class="avatar_message">
+        <img class="avatar" alt="${userFullname}" src="${userAvatarUrl}">
+      </div>
+      <div class="message_info">
+        <p class="message_user">${userFullname}</p>
+          <p class="message_date"><span class="timestamp"><span class="time_icon"></span>${msgCreateDate}</span></p>
+      </div>
+      <div class="message_content_text">
+        {{html msgContent}}
+      </div> 
+    </div>
+  </li> 
+</script>

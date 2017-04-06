@@ -1,0 +1,97 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Projekty') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if (isset($this->formError)): ?>
+      <div class="error_msg"><?php echo $this->t($this->formError) ?></div>
+    <?php endif; ?>
+    
+    <form name="exportForm" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+          
+        <div class="formContainer export">
+          <span>
+            <?php echo $this->form->exportEnvironments->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportEnvironments', $this->t('Środowiska')) ?>
+            <?php foreach ($this->form->getErrors('exportEnvironments') as $error): ?>
+              <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer export">
+          <span>
+            <?php echo $this->form->exportReleases->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportReleases', $this->t('Wydania')) ?>
+            <?php foreach ($this->form->getErrors('exportReleases') as $error): ?>
+              <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer export">
+          <span>
+            <?php echo $this->form->exportPhases->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportPhases', $this->t('Fazy')) ?>
+            <?php foreach ($this->form->getErrors('exportPhases') as $error): ?>
+              <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer export">
+          <span>
+            <?php echo $this->form->exportRoles->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportRoles', $this->t('Role')) ?>
+            <?php foreach ($this->form->getErrors('exportRoles') as $error): ?>
+              <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <!--<div class="formContainer export">
+          <span>
+            <?php echo $this->form->exportTasks->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportTasks', $this->t('Zadania')) ?>
+            <?php foreach ($this->form->getErrors('exportTasks') as $error): ?>
+              <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>-->
+          
+        <div class="formContainer export">
+          <span>
+            <?php echo $this->form->exportUsers->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportUsers', $this->t('Użytkownicy')) ?>
+            <?php foreach ($this->form->getErrors('exportUsers') as $error): ?>
+              <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+          <div>
+            <span id="save"><?php echo $this->formSubmit('export', $this->t('Eksportuj')) ?></span>
+            <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+          </div>
+
+          <div>
+            <?php echo $this->form->csrf->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </div>   
+
+    </form>
+    
+  </article>    
+</section>
+
+<?php echo $this->partial('popups/select-least-one-checkbox.phtml');

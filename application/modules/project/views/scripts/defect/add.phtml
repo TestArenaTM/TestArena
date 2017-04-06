@@ -1,0 +1,186 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Defekty') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div> --> 
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+
+ 
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->title->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('title', $this->t('Tytuł')) ?>
+            <?php foreach ($this->form->getErrors('title') as $error): ?>
+                <div class="error_msg"><?php echo $this->errorT($error, array(
+                  'min' => $this->form->getElement('title')->getValidator('StringLength')->getMin(),
+                  'max' => $this->form->getElement('title')->getValidator('StringLength')->getMax()
+                )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->description->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('description', $this->t('Opis')) ?>
+            <?php foreach ($this->form->getErrors('description') as $error): ?>
+                <div class="error_msg"><?php echo $this->errorT($error, array(
+                  'min' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                  'max' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+                )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->releaseName->renderViewHelper() ?>
+            <?php echo $this->formLabel('releaseName', $this->t('Wydanie')) ?>
+            <?php echo $this->form->releaseId->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('releaseId') as $error): ?>            
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->phaseName->renderViewHelper() ?>
+            <?php echo $this->formLabel('phaseName', $this->t('Faza')) ?>
+            <?php echo $this->form->phaseId->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('phaseId') as $error): ?>            
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->environments->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('environments', $this->t('Środowiska')) ?>
+            <?php foreach ($this->form->getErrors('environments') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->versions->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('versions', $this->t('Wersje')) ?>
+            <?php foreach ($this->form->getErrors('versions') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <div><?php echo $this->form->assigneeName->renderViewHelper() ?></div>
+            <div><?php echo $this->form->assigneeId->renderViewHelper() ?></div>
+            <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?> <span><a id="j_assignToMe" href="#"><?php echo $this->t('Przypisz do mnie') ?></a></span>
+            <?php foreach ($this->form->getErrors('assigneeId') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>      
+      
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->priority->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('priority', $this->t('Priorytet')); ?>
+            <?php foreach ($this->form->getErrors('priority') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div> 
+
+        <div class="formContainer">
+          <span><?php echo $this->formLabel('attachments', $this->t('Załączniki')) ?>
+          <div><a class="j_taskSelectAttachments" href="#"><?php echo $this->generalT('Wybierz pliki') ?></a></div>
+          <div id="j_attachments">
+            <?php foreach ($this->form->getAttachmentIds(true) as $name): ?>
+              <?php echo $this->form->getElement($name)->renderViewHelper() ?>
+            <?php endforeach; ?>
+            <?php foreach ($this->form->getAttachmentNames(true) as $name): ?>
+              <?php echo $this->form->getElement($name)->renderViewHelper() ?>
+            <?php endforeach; ?>
+          </div>
+          <?php foreach ($this->form->getErrors('attachmentIds') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+          <?php foreach ($this->form->getErrors('attachmentNames') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div>
+          <span id="save"><?php echo $this->formSubmit('save', $this->t('Zapisz')) ?></span>
+          <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+        </div>
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>  
+
+        <div>
+          <?php echo $this->form->csrf->renderViewHelper() ?>
+          <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+          <div><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>
+
+    </form>
+  </article>
+</section>
+<?php echo $this->partial('partials/attachment-object.phtml'); ?>
+
+<?php if (isset($this->prePopulatedEnvironments)) :?>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    prePopulated['environments'] = <?php echo $this->prePopulatedEnvironments?>;
+  /* ]]> */
+  </script>
+<?php endif?>
+
+<?php if (isset($this->prePopulatedVersions)) :?>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    prePopulated['versions'] = <?php echo $this->prePopulatedVersions?>;
+  /* ]]> */
+  </script>
+<?php endif?>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+  language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+  
+  var autocompleteData = {
+    url: '<?php echo $this->url(array(), 'project_user_list_ajax') ?>',
+    textInputName: '#assigneeName',
+    dstName: '#assigneeId'
+  };
+  
+  var currentUser = {id: <?php echo $this->authUser->getId() ?>, name: '<?php echo $this->authUser->getFullname().' ('.$this->authUser->getEmail().')' ?>'};
+  url.environmentListAjax = '<?php echo $this->url(array(), 'environment_list_ajax') ?>';
+  url.versionListAjax = '<?php echo $this->url(array(), 'version_list_ajax') ?>';
+  
+  var autocompleteForTask = {
+    release: {
+      url: '<?php echo $this->url(array(), 'release_list_for_forward_ajax') ?>',
+      textInputName: '#releaseName',
+      dstName: '#releaseId'
+    },
+    phase: {
+      url: '<?php echo $this->url(array(), 'phase_list_for_forward_ajax') ?>',
+      textInputName: '#phaseName',
+      dstName: '#phaseId'
+    }
+  };
+/* ]]> */
+</script>
