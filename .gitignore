@@ -1,0 +1,21 @@
+#ignore rules
+/cache/*
+!/cache/.gitkeep
+#
+/logs/*
+!/logs/.gitkeep
+#
+/temp/*
+!/temp/.gitkeep
+#
+/public/captcha/*
+!/public/captcha/.gitkeep
+#
+/public/upload/*
+!public/upload/.htaccess
+!public/upload/images/.gitkeep
+!public/upload/files/.gitkeep
+!public/upload/files/temp/.gitkeep
+!public/upload/avatars/user/default.jpg
+!public/upload/avatars/user/mini/default.jpg
+!public/upload/avatars/user/temp/.gitkeep
