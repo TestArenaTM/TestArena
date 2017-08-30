@@ -1,7 +1,6 @@
 <?php
 return array(
-  Application_Model_RoleAction::PROJECT_ATTACHMENT,
-  Application_Model_RoleAction::PROJECT_STATUS,
-  Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT,
-  Application_Model_RoleAction::ENVIRONMENT_ADD
+  Application_Model_RoleAction::DEFECT_ADD,
+  Application_Model_RoleAction::DEFECT_EDIT_CREATED_BY_YOU,
+  Application_Model_RoleAction::DEFECT_CHANGE_STATUS_CREATED_BY_YOU
 );

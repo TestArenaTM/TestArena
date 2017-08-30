@@ -34,14 +34,19 @@ class Application_Model_FileMapper extends Custom_Model_Mapper_Abstract
       $adapter->beginTransaction();
       
       $data = array(
-        'is_temporary'  => $file->getIsTemporary(),
-        'name'          => $file->getName(),
-        'extension'     => $file->getExtension(),
-        'path'          => $file->getPath(),
-        'create_date'   => $file->getCreateDate()
+        'name'        => $file->getName(),
+        'extension'   => $file->getExtension(),
+        'subpath'     => $file->getSubpath(),
+        'create_date' => $file->getCreateDate(),
+        'description' => $file->getDescription()
       );
+
+      if ($file->getProject() !== null && $file->getProject()->getId() > 0)
+      {
+        $data['project_id'] = $file->getProject()->getId();
+      }
       
-      if ($file->getIsTemporary())
+      if ($file->isTemporary())
       {
         $data['remove_date'] = $file->getRemoveDate();
       }
@@ -69,140 +74,5 @@ class Application_Model_FileMapper extends Custom_Model_Mapper_Abstract
     }
     
     return $file->setDbProperties($row->toArray());
-  }
-  
-  public function getIdByFullPath(Application_Model_File $file)
-  {
-    $id = $this->_getDbTable()->getIdByFullPath($file->getName(), $file->getExtension(), $file->getPath());
-    
-    if ($id > 0)
-    {
-      $file->setId($id);
-      return true;
-    }
-    
-    return false;
-  }
-  
-  public function getByPath($path)
-  {
-    $rows = $this->_getDbTable()->getByPath($path);
-    
-    if ($rows === null)
-    {
-      return false;
-    }
-    
-    $list = array();
-    
-    foreach ($rows->toArray() as $row)
-    {
-      $file = new Application_Model_File($row);
-      
-      if ($file->getId() > 0)
-      {
-        $list[] = $file;
-      }
-    }
-
-    return $list;
-  }
-  
-  public function attachmentExistsByFullPath(Application_Model_File $file)
-  {
-    return $this->_getDbTable()->attachmentExistsByFullPath($file->getName(), $file->getExtension(), $file->getPath()) > 0;
-  }
-  
-  public function deleteByPaths(array $paths)
-  {
-    $this->_getDbTable()->delete(array('path IN(?)' => $paths));
-  }
-  
-  public function deleteById(Application_Model_File $file)
-  {
-    $this->_getDbTable()->delete(array('id = ?' => $file->getId()));
-  }
-  
-  public function deleteByIds(array $ids)
-  {
-    if (count($ids))
-    {
-      $this->_getDbTable()->delete(array('id IN(?)' => $ids));
-    }
-  }
-  
-  public function rename(Application_Model_File $file, Application_Model_File $newFile)
-  {
-    return $this->_getDbTable()->update(array('name' => $newFile->getName()), array('id = ?' => $file->getId()));
-  }
-  
-  public function renameDirectory($path, $newPath)
-  {
-    $db = $this->_getDbTable();
-    $rows = $db->getAllPathBySubPath($path);
-
-    if ($rows === null)
-    {
-      return false;
-    }
-
-    foreach ($rows->toArray() as $row)
-    {
-      $db->update(array(
-          'path' => str_replace($path, $newPath, $row['path'])
-        ), array(
-          'path = ?' => $row['path']
-        ));
-    }   
-  }
-  
-  public function getForBrowserByPath($path)
-  {
-    $rows = $this->_getDbTable()->getForBrowserByPath($path);
-    
-    if ($rows === null)
-    {
-      return false;
-    }
-    
-    $list = array();
-    
-    foreach ($rows->toArray() as $row)
-    {
-      $list[$row['name'].'.'.$row['extension']] = $row['id'];
-    }
-    
-    return $list;
-  }
-  
-  public function getForBrowserById(Application_Model_File $file)
-  {
-    $row = $this->_getDbTable()->getForBrowserById($file->getId());
-    
-    if ($row === null)
-    {
-      return false;
-    }
-    
-    return $file->setDbProperties($row->toArray());
-  }
-  
-  public function getForBrowserByIds(array $ids)
-  {
-    $rows = $this->_getDbTable()->getForBrowserByIds($ids);
-    
-    if ($rows === null)
-    {
-      return false;
-    }
-    
-    $list = array();
-    
-    foreach ($rows->toArray() as $row)
-    {
-      $list[] = new Application_Model_File($row);
-    }
-    
-    return $list;
   }
 }

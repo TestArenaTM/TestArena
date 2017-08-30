@@ -12,7 +12,7 @@ class Custom_Validate_Name extends Zend_Validate_Abstract
   {
     $this->_setValue($value);
     
-    if (!preg_match('/^[!@#$%&*\/\(\)\?\.,"\':;+-=_\s\p{L}0-9\\\]+$/ui', $value))
+    if (!preg_match('/^[!@#$%\^&*\/\(\)\?\.,"\':;+-=_\s\p{L}0-9\\\]+$/ui', $value))
     {
       $this->_error(self::INVALID_CHARACTERS);
       return false;

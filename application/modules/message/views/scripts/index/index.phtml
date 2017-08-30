@@ -40,6 +40,13 @@
                               <div class="snippet preview">
                                 <span id="j_msgThreadSubject-<?php echo $item->getThreadId()?>"><?php echo $this->purifier->purify($item->getSubject()) ?></span>
                               </div>
+                              <div>
+                                <?php if (Application_Model_Message::TYPE_MESSAGE_SENT == $item->getExtraData('message_type')):?>
+                                  <img class="message_arrow" src="<?php echo $this->baseUrl('/img/arrow_red_left.png') ?>">
+                                <?php elseif (Application_Model_Message::TYPE_MESSAGE_RECEIVED == $item->getExtraData('message_type')):?>
+                                  <img class="message_arrow" src="<?php echo $this->baseUrl('/img/arrow_green_right.png') ?>">
+                                <?php endif;?>
+                              </div>
                             </div>
                           </a>
                         </li>
@@ -80,7 +87,7 @@
               <!--<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
               <div class="viewport">
                <div class="overview">-->
-              <div class="no-message">Brak wiadomości</div>
+              <div class="no-message"><?php echo $this->t('Brak wiadomości.') ?></div>
                 </div>
                 </div>
         </article>

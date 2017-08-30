@@ -11,30 +11,49 @@
 
     <nav class="button_link_nav">
       <ul class="button_link_ul">
-        <?php if ($this->activeProject->isActive() && $this->accessEnvironmentModify): ?>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->environment->getId()), 'environment_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
+        <?php if ($this->activeProject->isActive() && $this->accessEnvironmentManagement): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->environment->getId()), 'environment_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
           <?php if ($this->environment->getExtraData('taskCount') == 0 && $this->environment->getExtraData('defectCount') == 0): ?>
-            <li class="button_link_li"><a class="button_link j_delete_environment" href="<?php echo $this->url(array('id' => $this->environment->getId()), 'environment_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+            <li class="button_link_li"><a class="button_link j_delete_environment" href="<?php echo $this->projectUrl(array('id' => $this->environment->getId()), 'environment_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
           <?php endif; ?>
         <?php endif; ?>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'task_list').'?environment='.$this->environment->getId() ?>"><?php echo $this->t('Zadania') ?></a></li>
       </ul>
     </nav>
+    
     <div class="textLabelEditor">
       <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->environment->getName()) ?></div>
     </div>
+    
     <div class="contentLRtable">
+      
       <div class="contentProperties_left">
         <div class="box_number_info">
-            <a class="number_content" href="<?php echo $this->url(array(), 'task_list').'?environment='.$this->environment->getId() ?>"><?php echo $this->escapeQuotes($this->environment->getExtraData('taskCount')) ?></a>
+            <a class="number_content" href="<?php echo $this->projectUrl(array(), 'task_list').'?skipSavedFilter&environment='.$this->environment->getId() ?>">
+              <?php echo $this->escapeQuotes($this->environment->getExtraData('taskCount')) ?>
+            </a>
           <div class="descr_number_info"><?php echo $this->t('Liczba zadań') ?></div>
-        </div> 
-        <div>
-            <h5 class="break_page"><span aria-hidden="true" class="icon_pencil icon-20"></span><?php echo $this->t('Opis') ?></h5>
-            <div><?php echo nl2br($this->escapeQuotes($this->environment->getDescription())) ?></div>
-        </div>        
+        </div>         
+        
+        <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
+        <div class="box_number_info">
+            <a class="number_content" href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&environment='.$this->environment->getId() ?>">
+              <?php echo $this->escapeQuotes($this->environment->getExtraData('defectCount')) ?>
+            </a>
+          <div class="descr_number_info"><?php echo $this->t('Liczba defektów') ?></div>
+        </div>
+        <?php endif; ?>
+        
       </div>
-     </div>
+      
+      <div class="contentEditUser_right">        
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
+          <div id="text" class="content_label"><?php echo nl2br($this->environment->getDescription()) ?></div>
+        </div>
+      </div>
+      
+    </div>
     
   </article>    
 </section>

@@ -14,7 +14,7 @@
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
 
       <div class="filter">
-        <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+        <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
         <div><?php echo $this->filterForm->search->renderViewHelper() ?></div>
       </div>
       
@@ -29,12 +29,14 @@
       </div>
 
       <div class="filter">
-        <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
+        <div><?php echo $this->formLabel('resultCountPerPage', $this->generalT('Wyniki')) ?></div>
         <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
       </div>
 
-      <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
-
+        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->generalT('Filtruj')) ?></div>
+        <div class="filterButton"><?php echo $this->formButton('j_filterAndSaveButton', $this->generalT('Filtruj i zapisz')) ?></div>
+        <div class="filterButton"><?php echo $this->formButton('j_restoreButton', $this->generalT('Przywróć')) ?></div>
+        <div class="filterButton"><?php echo $this->formButton('j_clearButton', $this->generalT('Wyczyść')) ?></div>
     </form>
 
     <?php if (count($this->tests) > 0): ?>
@@ -53,7 +55,7 @@
           <?php foreach ($this->tests as $test): ?>
           <tr>
             <td class="t_object_number"><?php echo $this->escapeQuotes($test->getObjectNumber()) ?></td>
-            <td><a href="<?php echo $this->url(array('id' => $test->getId()), $this->testViewRouteName($test))?>"><?php echo $this->escapeQuotes($test->getName()) ?></a></td>
+            <td><a href="<?php echo $this->projectUrl(array('id' => $test->getId()), $this->testViewRouteName($test))?>"><?php echo $this->escapeQuotes($test->getName()) ?></a></td>
             <td class="t_status"><?php echo $this->typeT($test->getType(), 'TEST') ?></td>
             <td class="t_user"><?php echo $this->escapeQuotes($test->getAuthor()->getFullname()) ?></td>
             <td class="t_date"><?php echo $test->getCreateDate() ?></td>
@@ -66,7 +68,13 @@
 
     </form>
     <?php else: ?>
-      <div class="empty-text"><?php echo $this->t('Brak elementów bazy testów.') ?></div>
+      <div class="empty-text"><?php echo $this->t('Brak elementów bazy testów') ?></div>
     <?php endif;?>
   </article>    
 </section>
+<script type="text/javascript">
+/* <![CDATA[ */
+  var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
+  var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
+/* ]]> */
+</script>

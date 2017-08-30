@@ -26,10 +26,10 @@
   </div>   
 
   <div class="formContainer full">
-    <span><?php echo $this->formRequiredLabel('captcha', $this->t('Prosimy o przepisanie znaków z obrazka.'), array('escape' => false)) ?>
-      <div class="login_form"><?php echo $this->form->captcha->render() ?></div>
-      <?php foreach ($this->form->getErrors('captcha') as $error): ?>
-      <div class="login_form_error"><?php echo $this->errorT($error) ?></div>
+    <span>
+      <?php echo $this->form->grecaptcharesponse->renderViewHelper() ?>
+      <?php foreach ($this->form->getErrors('grecaptcharesponse') as $error): ?>
+        <div class="error_msg"><?php echo $this->errorT($error) ?></div>
       <?php endforeach; ?>
     </span>
   </div>

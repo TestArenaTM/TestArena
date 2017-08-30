@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-09-28 10:55+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2017-08-24 12:48+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,22 +12,13 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.2\n"
+"X-Generator: Poedit 2.0.3\n"
 
 msgid "pageTitle"
 msgstr "Releases"
 
 msgid "Dodaj wydanie"
 msgstr "Add a release"
-
-msgid "Szukaj"
-msgstr "Search"
-
-msgid "Wyniki"
-msgstr "Results"
-
-msgid "Filtruj"
-msgstr "Filter"
 
 msgid "Nazwa"
 msgstr "Name"
@@ -41,8 +32,8 @@ msgstr "End date"
 msgid "Liczba zadań"
 msgstr "Number of tasks"
 
-msgid "Opis"
-msgstr "Description"
+msgid "Liczba defektów"
+msgstr "Number of defects"
 
 msgid "Akcje"
 msgstr "Actions"
@@ -53,15 +44,17 @@ msgstr "Edit"
 msgid "Klonuj"
 msgstr "Clone"
 
+msgid "Aktywuj"
+msgstr "Activate"
+
+msgid "Dezaktywuj"
+msgstr "Deaktivate"
+
 msgid "Usuń"
 msgstr "Delete"
 
-msgid "Fazy"
-msgstr "Phases"
+msgid "Raport"
+msgstr "Report"
 
-msgid "Zadania"
-msgstr "Tasks"
-
-msgid "Brak wydań."
-msgstr "No releases available."
-
+msgid "Brak wydań"
+msgstr "No releases available"

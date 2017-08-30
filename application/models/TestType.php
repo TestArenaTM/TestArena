@@ -25,10 +25,14 @@ class Application_Model_TestType extends Custom_Model_Dictionary_Abstract
   const OTHER_TEST        = 1;
   const TEST_CASE         = 2;
   const EXPLORATORY_TEST  = 3;
+  const AUTOMATIC_TEST    = 4;
+  const CHECKLIST         = 5;
   
   protected $_names = array(
     self::OTHER_TEST        => 'OTHER_TEST',
     self::TEST_CASE         => 'TEST_CASE',
-    self::EXPLORATORY_TEST  => 'EXPLORATORY_TEST'
+    self::EXPLORATORY_TEST  => 'EXPLORATORY_TEST',
+    self::AUTOMATIC_TEST    => 'AUTOMATIC_TEST',
+    self::CHECKLIST         => 'CHECKLIST'
   );
 }

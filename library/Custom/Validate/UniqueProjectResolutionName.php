@@ -18,7 +18,7 @@ class Custom_Validate_UniqueProjectResolutionName extends Custom_Validate_DbUniq
     $this->_setValue($value);
     $result = $this->_uniqueSelect($value);
 
-    if ($result[$this->_field] == $value)
+    if (mb_strtolower($result[$this->_field]) == mb_strtolower($value))
     {
       $this->_error(self::ERROR_EXISTS);
       return false;

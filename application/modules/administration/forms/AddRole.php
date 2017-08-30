@@ -73,9 +73,9 @@ class Administration_Form_AddRole extends Custom_Form_Abstract
     ));
     
     $this->addElement('text', 'users', array(
-      'required'   => false,
-      'filters'    => array('ArrayTrim'),
-      'validators' => array(
+      'required'    => false,
+      'filters'     => array('ArrayTrim'),
+      'validators'  => array(
         'Users'
       )
     )); 

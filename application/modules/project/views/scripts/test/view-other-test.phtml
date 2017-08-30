@@ -11,9 +11,9 @@
 
     <nav class="button_link_nav">
       <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
         <?php if ($this->activeProject->isActive()): ?>
         
-          <?php echo $this->prevTest($this->test->getPrevious()) ?>
           <?php foreach ($this->prepareTestActions($this->test, array(), $this->testUserPermission) as $action): ?>
             <?php if ($action === null): ?>
               <li class="button_link_li separator"></li>
@@ -21,7 +21,14 @@
               <li class="button_link_li"><a class="button_link <?php if (array_key_exists('class', $action)):?><?php echo $action['class'] ?><?php endif;?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
             <?php endif; ?>
           <?php endforeach; ?>
-          <?php echo $this->nextTest($this->test->getNext()) ?>
+           
+          <?php if ($this->test->getPrevious() !== null): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->test->getPrevious()->getId()), $this->testViewRouteName($this->test->getPrevious()))?>" title="<?php echo $this->generalT('Poprzednie')?>"><span aria-hidden="true" class="arrow_triangle-left icon-22" style="vertical-align:middle;"></span></a></li>
+          <?php endif; ?>
+                
+          <?php if ($this->test->getNext() !== null): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->test->getNext()->getId()), $this->testViewRouteName($this->test->getNext()))?>" title="<?php echo $this->generalT('Następne')?>"><span aria-hidden="true" class="arrow_triangle-right icon-22" style="vertical-align:middle;"></span></a></li>
+          <?php endif; ?>
           
         <?php endif; ?>
       </ul>
@@ -42,33 +49,25 @@
           <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?>: </div>
           <div id="text" class="content_label"> <?php echo nl2br($this->escapeQuotes($this->test->getDescription())) ?></div>
         </div>
+      </div>
+      
+      <div class="contentEditUser_right">
         <div class="textLabelPropertiesDiv">
           <div class="textLabelEditor_text"><?php echo $this->t('Autor') ?>: </div>
           <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->test->getAuthor()->getFullname()) ?></div>
         </div>
-      </div>
-      
-      <div class="contentEditUser_right">
         <div class="textLabelPropertiesDiv" style="border-bottom:0px solid;">
           <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?>: </div>
           <div id="text" class="content_label"> <?php echo $this->test->getCreateDate() ?></div>
         </div> 
+        
+        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->test->getExtraData('attachments'))); ?> 
       </div>
       
-    </div>
-    
-    <?php if (count($this->test->getExtraData('attachments'))): ?>
-    <div>
-      <h4><?php echo $this->t('Załączniki') ?></h4>
-      <?php foreach ($this->test->getExtraData('attachments') as $file): ?>
-      <a href="<?php echo $this->url(array('id' => $file->getId()), 'file_download') ?>"><span class="fileElement"><span><?php echo $file->getFullName() ?></span></span></a>
-      <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
-    
+    </div>    
   </article>    
 </section>
 
-<?php echo $this->partial('popups/delete-test.phtml');
+<?php echo $this->partial('popups/delete-tests.phtml');
   
   

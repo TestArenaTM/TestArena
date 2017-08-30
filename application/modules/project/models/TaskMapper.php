@@ -35,7 +35,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     $paginator->setCurrentPageNumber($request->getParam('page', 1));
     $resultCountPerPage = (int)$request->getParam('resultCountPerPage');
     $paginator->setItemCountPerPage($resultCountPerPage > 0 ? $resultCountPerPage : 10);
-    
+
     $list = array();
     
     foreach ($paginator->getCurrentItems() as $row)
@@ -44,7 +44,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       $task->setProjectObject($project);
       $list[] = $task->setDbProperties($row);
     }
-    
+
     return array($list, $paginator);
   }
   
@@ -63,7 +63,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
   
   public function getForEdit(Application_Model_Task $task)
   {
-    $row = $this->_getDbTable()->getForEdit($task);
+    $row = $this->_getDbTable()->getForEdit($task->getId(), $task->getProjectId());
     
     if (null === $row)
     {
@@ -103,14 +103,69 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     return $list;
   }
   
-  public function getByIds(array $ids)
+  public function getAllByReleaseByIds(array $ids, Application_Model_Release $release, $returnSql = false)
+  {
+    if ($returnSql)
+    {
+      return $this->_getDbTable()->getAllByReleaseByIds($ids, $release, $returnSql);
+    }
+    else
+    {
+      $rows = $this->_getDbTable()->getAllByReleaseByIds($ids, $release, $returnSql);
+    }
+    
+    if (null === $rows)
+    {
+      return false;
+    }
+    
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $list[] = new Application_Model_Task($row);
+    }
+
+    return $list;
+  }
+  
+  public function getByIds(array $ids, $returnSql = false)
   {
     if (count($ids) === 0)
     {
       return array();
     }
     
-    $rows = $this->_getDbTable()->getByIds($ids);
+    $rows = $this->_getDbTable()->getByIds($ids, $returnSql);
+    
+    if ($returnSql)
+    {
+      return $rows;
+    }
+    
+    if (null === $rows)
+    {
+      return false;
+    }
+    
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $list[$row['id']] = new Application_Model_Task($row);
+    }
+
+    return $list;
+  }
+  
+  public function getByIds4CheckAccess(array $ids)
+  {
+    if (count($ids) === 0)
+    {
+      return array();
+    }
+    
+    $rows = $this->_getDbTable()->getByIds4CheckAccess($ids);
     
     if (null === $rows)
     {
@@ -129,7 +184,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
   
   public function getForView(Application_Model_Task $task)
   {
-    $row = $this->_getDbTable()->getForView($task->getId());
+    $row = $this->_getDbTable()->getForView($task->getId(), $task->getProjectId());
     
     if (null === $row)
     {
@@ -162,11 +217,6 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     if ($task->getRelease()->getId() > 0)
     {
       $data['release_id'] = $task->getRelease()->getId();
-      
-      if ($task->getPhase()->getId() > 0)
-      {
-        $data['phase_id'] = $task->getPhase()->getId();
-      }
     }
 
     try
@@ -180,6 +230,9 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       $taskVersionMapper = new Project_Model_TaskVersionMapper();
       $taskVersionMapper->save($task);
 
+      $taskTagMapper = new Project_Model_TaskTagMapper();
+      $taskTagMapper->save($task);
+
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveTask($task);
 
@@ -188,7 +241,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     catch (Exception $e)
     {
       Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
-      $adapter->rollBack();
+      $adapter->rollBack();die;
       return false;
     }
   }
@@ -206,18 +259,12 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       'priority'    => $task->getPriorityId(),
       'title'       => $task->getTitle(),
       'description' => $task->getDescription(),
-      'release_id'  => null,
-      'phase_id'    => null
+      'release_id'  => null
     );
 
     if ($task->getRelease()->getId() > 0)
     {
       $data['release_id'] = $task->getRelease()->getId();
-      
-      if ($task->getPhase()->getId() > 0)
-      {
-        $data['phase_id'] = $task->getPhase()->getId();
-      }
     }
 
     try
@@ -234,6 +281,11 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       $taskVersion->setTaskId($task->getId());
       $taskVersionMapper = new Project_Model_TaskVersionMapper();
       $taskVersionMapper->save($task);
+      
+      $taskTag = new Application_Model_TaskTag();
+      $taskTag->setTaskId($task->getId());
+      $taskTagMapper = new Project_Model_TaskTagMapper();
+      $taskTagMapper->save($task);
       
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveTask($task);
@@ -255,10 +307,10 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     $taskIds = $task->getExtraData('taskIds');
     $environmentIds = $task->getExtraData('environments');
     $versionIds = $task->getExtraData('versions');
+    $tagIds = $task->getExtraData('tags');
     
     $data = array(
       'task_id'     => 0,
-      'phase_id'    => $task->getPhase()->getId(),
       'assigner_id' => $task->getAssignerId(),
       'assignee_id' => $task->getAssigneeId(),
       'status'      => Application_Model_TaskStatus::OPEN,
@@ -298,6 +350,16 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
         $taskVersion->setVersionId($versionId);
         $taskVersionMapper->add($taskVersion);
       }
+      
+      $taskTag = new Application_Model_TaskTag();
+      $taskTag->setTaskId($task->getId());
+      $taskTagMapper = new Project_Model_TaskTagMapper();
+      
+      foreach ($tagIds as $tagId)
+      {
+        $taskTag->setTagId($tagId);
+        $taskTagMapper->add($taskTag);
+      }
 
       $commentContent = Utils_Text::unicodeTrim($task->getExtraData('comment'));
       
@@ -307,7 +369,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
         $comment->setContent($commentContent);
         $comment->setUserObject($task->getAssigner());
         $comment->setSubjectType(Application_Model_CommentSubjectType::TASK_RUN);
-        $commentMapper = new Application_Model_CommentMapper();
+        $commentMapper = new Project_Model_CommentMapper();
         
         foreach ($taskIds as $taskId)
         {
@@ -350,69 +412,218 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     if ($task->getRelease()->getId() > 0)
     {
       $data['release_id'] = $task->getRelease()->getId();
-      
-      if ($task->getPhase()->getId() > 0)
-      {
-        $data['phase_id'] = $task->getPhase()->getId();
-      }
     }
 
-    try
-    {
-      return $this->_getDbTable()->insert($data);
-    }
-    catch (Exception $e)
-    {
-      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
-      return false;
-    }
+    return $this->_getDbTable()->insert($data);
   }
   
   public function saveClonedTasksExtraDataPatchByRelease(array $tasks)
   {
-    $taskVersions     = array();
-    $taskEnvironments = array();
-    $taskTests        = array();
-    $taskAttachments  = array();
+    $taskVersions           = array();
+    $taskEnvironments       = array();
+    $taskTests              = array();
+    $taskAttachments        = array();
+    $taskTags               = array();
     
     foreach($tasks as $task)
     {
-      $taskVersions     = array_merge($taskVersions, $task->getExtraData('versions'));
-      $taskEnvironments = array_merge($taskEnvironments, $task->getExtraData('environments'));
-      $taskTests        = array_merge($taskTests, $task->getExtraData('taskTests'));
-      $taskAttachments  = array_merge($taskAttachments, $task->getExtraData('attachments'));
+      $taskVersions           = array_merge($taskVersions, $task->getExtraData('versions'));
+      $taskEnvironments       = array_merge($taskEnvironments, $task->getExtraData('environments'));
+      $taskTests              = array_merge($taskTests, $task->getExtraData('taskTests'));
+      $taskAttachments        = array_merge($taskAttachments, $task->getExtraData('attachments'));
+      $taskTags               = array_merge($taskTags, $task->getExtraData('taskTags'));
     }
+    
+    if (count($taskEnvironments) > 0)
+    {
+      $taskEnvironmentMapper = new Project_Model_TaskEnvironmentMapper();
+      $taskEnvironmentMapper->saveGroup($taskEnvironments);
+    }
+
+    if (count($taskVersions) > 0)
+    {
+      $taskVersionMapper = new Project_Model_TaskVersionMapper();
+      $taskVersionMapper->saveGroup($taskVersions);
+    }
+
+    if (count($taskTests) > 0)
+    {
+      $taskTestMapper = new Project_Model_TaskTestMapper();
+      $taskTestMapper->saveGroup($taskTests);
+
+      $taskTestChecklistItems = array();
+
+      foreach ($taskTests as $taskTest)
+      {
+        //tmp solution
+        $currentTaskTestChecklistItems = $taskTest->getChecklistItems();
+
+        if (count($currentTaskTestChecklistItems) > 0)
+        {
+          $taskTestId = $taskTestMapper->getIdByTaskTestData($taskTest);
+
+          if ($taskTestId > 0)
+          {
+            foreach ($currentTaskTestChecklistItems as $currentTaskTestChecklistItem)
+            {
+              $currentTaskTestChecklistItem->setTaskTest('id', $taskTestId);
+            }
+
+            $taskTestChecklistItems = array_merge($taskTestChecklistItems, $currentTaskTestChecklistItems);
+          }
+        }
+        //tmp solution end
+      }
+
+      if (count($taskTestChecklistItems) > 0)
+      {
+        $taskChecklistItemMapper = new Project_Model_TaskChecklistItemMapper();
+        $taskChecklistItemMapper->saveGroup($taskTestChecklistItems);
+      }
+    }
+
+    if (count($taskAttachments) > 0)
+    {
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveGroupForTasks($taskAttachments);
+    }
+
+    if (count($taskTags) > 0)
+    {
+      $tagMapper = new Project_Model_TaskTagMapper();
+      $tagMapper->saveGroup($taskTags);
+    }
+
+    return true;
+  }
+  
+  public function delete(Application_Model_Task $task)
+  {
+    if ($task->getId() === null)
+    {
+      return false;
+    }
+
+    $db = $this->_getDbTable();    
+    $adapter = $db->getAdapter();
     
     try
     {
-      if (count($taskEnvironments) > 0)
+      $adapter->beginTransaction();
+      
+      $taskTestMapper = new Project_Model_TaskTestMapper();
+      $taskTestIds = $taskTestMapper->getIdsByTask($task);
+      
+      if (count($taskTestIds) > 0)
       {
-        $taskEnvironmentMapper = new Project_Model_TaskEnvironmentMapper();
-        $taskEnvironmentMapper->saveGroup($taskEnvironments);
+        $commentMapper = new Project_Model_CommentMapper();
+        $commentMapper->deleteByTaskTestIds($taskTestIds);
+      
+        $historyMapper = new Project_Model_HistoryMapper();
+        $historyMapper->deleteByTaskTestIds($taskTestIds);
+      
+        $taskChecklistItemMapper = new Project_Model_TaskChecklistItemMapper();
+        $taskChecklistItemMapper->deleteByTaskTestIds($taskTestIds);
+        
+        $taskTestMapper->deleteByTask($task);
       }
       
-      if (count($taskVersions) > 0)
-      {
-        $taskVersionMapper = new Project_Model_TaskVersionMapper();
-        $taskVersionMapper->saveGroup($taskVersions);
-      }
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->deleteByTask($task);
       
-      if (count($taskTests) > 0)
-      {
-        $taskTestMapper = new Project_Model_TaskTestMapper();
-        $taskTestMapper->saveGroup($taskTests);
-      }
+      $commentMapper = new Project_Model_CommentMapper();
+      $commentMapper->deleteByTask($task);
       
-      if (count($taskAttachments) > 0)
-      {
-        $attachmentMapper = new Project_Model_AttachmentMapper();
-        $attachmentMapper->saveGroupForTasks($taskAttachments);
-      }
-
-      return true;
+      $historyMapper = new Project_Model_HistoryMapper();
+      $historyMapper->deleteByTask($task);
+      
+      $taskDefectMapper = new Project_Model_TaskDefectMapper();
+      $taskDefectMapper->deleteByTask($task);
+      
+      $taskEnvironmentMapper = new Project_Model_TaskEnvironmentMapper();
+      $taskEnvironmentMapper->deleteByTask($task);
+      
+      $taskTagMapper = new Project_Model_TaskTagMapper();
+      $taskTagMapper->deleteByTask($task);
+      
+      $taskVersionMapper = new Project_Model_TaskVersionMapper();
+      $taskVersionMapper->deleteByTask($task);
+      
+      $db->delete(array(
+        'id = ?' => $task->getId()
+      ));
+      
+      return $adapter->commit();
     }
     catch (Exception $e)
     {
+      $adapter->rollBack();
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      return false;
+    }
+  }  
+  
+  public function deleteByIds(array $taskIds)
+  {
+    if (count($taskIds) == 0)
+    {
+      return true;
+    }
+
+    $db = $this->_getDbTable();    
+    $adapter = $db->getAdapter();
+    
+    try
+    {
+      $adapter->beginTransaction();
+      
+      $taskTestMapper = new Project_Model_TaskTestMapper();
+      $taskTestIds = $taskTestMapper->getIdsByTaskIds($taskIds);
+      
+      if (count($taskTestIds) > 0)
+      {
+        $commentMapper = new Project_Model_CommentMapper();
+        $commentMapper->deleteByTaskTestIds($taskTestIds);
+      
+        $historyMapper = new Project_Model_HistoryMapper();
+        $historyMapper->deleteByTaskTestIds($taskTestIds);
+      
+        $taskChecklistItemMapper = new Project_Model_TaskChecklistItemMapper();
+        $taskChecklistItemMapper->deleteByTaskTestIds($taskTestIds);
+        
+        $taskTestMapper->deleteByIds($taskTestIds);
+      }
+      
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->deleteByTaskIds($taskIds);
+      
+      $commentMapper = new Project_Model_CommentMapper();
+      $commentMapper->deleteByTaskIds($taskIds);
+      
+      $historyMapper = new Project_Model_HistoryMapper();
+      $historyMapper->deleteByTaskIds($taskIds);
+      
+      $taskDefectMapper = new Project_Model_TaskDefectMapper();
+      $taskDefectMapper->deleteByTaskIds($taskIds);
+      
+      $taskEnvironmentMapper = new Project_Model_TaskEnvironmentMapper();
+      $taskEnvironmentMapper->deleteByTaskIds($taskIds);
+      
+      $taskTagMapper = new Project_Model_TaskTagMapper();
+      $taskTagMapper->deleteByTaskIds($taskIds);
+      
+      $taskVersionMapper = new Project_Model_TaskVersionMapper();
+      $taskVersionMapper->deleteByTaskIds($taskIds);
+      
+      $db->delete(array(
+        'id IN(?)' => $taskIds
+      ));
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      $adapter->rollBack();
       Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
       return false;
     }
@@ -447,7 +658,8 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     
     $data = array(
       'assignee_id' => $task->getAssigneeId(),
-      'status'      => $task->getStatusId()
+      'status'      => $task->getStatusId(),
+      'modify_date' => date('Y-m-d H:i:s')
     );
 
     try
@@ -464,7 +676,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
         $comment->setUserObject($task->getAssigner());
         $comment->setSubjectId($task->getId());
         $comment->setSubjectType(Application_Model_CommentSubjectType::TASK);
-        $commentMapper = new Application_Model_CommentMapper();
+        $commentMapper = new Project_Model_CommentMapper();
 
         if ($commentMapper->add($comment) === false)
         {
@@ -517,7 +729,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
         $comment->setUserObject($task->getAssignee());
         $comment->setSubjectId($task->getId());
         $comment->setSubjectType(Application_Model_CommentSubjectType::TASK);
-        $commentMapper = new Application_Model_CommentMapper();
+        $commentMapper = new Project_Model_CommentMapper();
 
         if ($commentMapper->add($comment) === false)
         {
@@ -534,4 +746,59 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       return false;
     }
   }
-}
+  
+  public function getForPdfReportByRelease(Application_Model_Release $release)
+  {
+    $rows = $this->_getDbTable()->getForPdfReportByRelease($release);  
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $task = new Application_Model_Task($row);
+      $list[$task->getId()] = $task;
+    }
+    
+    return $list;
+  }
+  
+  public function getForCsvReportByRelease(Application_Model_Release $release)
+  {
+    $rows = $this->_getDbTable()->getForCsvReportByRelease($release);  
+    $tasks = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $task = new Application_Model_Task($row);
+      $tasks[$task->getId()] = $task;
+    }
+    
+    return $tasks;
+  }
+  
+  public function getTasks4ReleaseCloneByRelease(Application_Model_Release $release, $returnSql = false)
+  {
+    if ($returnSql)
+    {
+      return $this->_getDbTable()->getTasks4ReleaseCloneByRelease($release, $returnSql);
+    }
+    else
+    {
+      $rows = $this->_getDbTable()->getTasks4ReleaseCloneByRelease($release, $returnSql);
+    }
+    
+    if (null === $rows)
+    {
+      return false;
+    }
+    
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $task   = new Application_Model_Task($row);
+      $task->setProjectObject($release->getProject());
+      $list[] = $task;
+    }
+
+    return $list;
+  }}

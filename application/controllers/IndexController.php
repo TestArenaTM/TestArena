@@ -33,11 +33,23 @@ class IndexController extends Custom_Controller_Action_Application_Abstract
     $this->_setTranslateTitle();
   }
   
-  /*public function testAction()
+  public function runScriptAction()
   {
-    include _ROOT_DIR.DIRECTORY_SEPARATOR.'scripts'.DIRECTORY_SEPARATOR.'createInternalBugTrackers.php';
+    //include _ROOT_DIR.DIRECTORY_SEPARATOR.'scripts'.DIRECTORY_SEPARATOR.'createInternalBugTrackers.php';
+    //include _ROOT_DIR.DIRECTORY_SEPARATOR.'scripts'.DIRECTORY_SEPARATOR.'updateFiles.php';
+    //include _ROOT_DIR.DIRECTORY_SEPARATOR.'scripts'.DIRECTORY_SEPARATOR.'removeTasksWithDeletedStatus.php';
+    //include _ROOT_DIR.DIRECTORY_SEPARATOR.'scripts'.DIRECTORY_SEPARATOR.'removeDefectsWithDeletedStatus.php';
     exit();
-  }*/
+  }
+  
+  public function activateFinishedProjectsScriptAction()
+  {
+    exec('php '._ROOT_DIR.'/scripts/activateFinishedProjects.php',$op);
+    echo '<pre>';
+    var_dump($op);
+    echo '</pre>';
+    exit;
+  }
   
   public function chartAction()
   {

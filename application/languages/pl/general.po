@@ -4,19 +4,19 @@ msgstr ""
 "Project-Id-Version: TestX\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: \n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pl_PL\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 2.0.3\n"
 
 msgid "headTitle"
-msgstr "TestArena Demo"
+msgstr "TestArena"
 
 msgid "headKeywords"
-msgstr "it, testowanie, przypadek ,przypadek testowy, zarządzania przypadkami testowymi, wydania, fazy, projekty, oprogramowanie, zarządzanie projektami, test competence, 21cn, smilgin"
+msgstr "it, testowanie, przypadek ,przypadek testowy, zarządzania przypadkami testowymi, wydania, projekty, oprogramowanie, zarządzanie projektami, test competence, 21cn, smilgin"
 
 msgid "headDescription"
 msgstr "Darmowe narzędzie do zarządzania przypadkami testowymi"
@@ -63,6 +63,39 @@ msgstr "Zapisz"
 msgid "Anuluj"
 msgstr "Anuluj"
 
+msgid "Powrót"
+msgstr "Powrót"
+
+msgid "Szukaj"
+msgstr "Szukaj"
+
+msgid "Wyniki"
+msgstr "Wyniki"
+
+msgid "Filtruj"
+msgstr "Filtruj"
+
+msgid "Filtruj - opis"
+msgstr "Filtruje w oparciu o wybrane filtry"
+
+msgid "Filtruj i zapisz"
+msgstr "Filtruj i zapisz"
+
+msgid "Filtruj i zapisz - opis"
+msgstr "Filtruje w oparciu o wybrane filtry oraz zapisuje wybrane filtry w celu ich ponownego użycia"
+
+msgid "Wyczyść"
+msgstr "Wyczyść"
+
+msgid "Wyczyść - opis"
+msgstr "Czyści filtry do stanu zerowego"
+
+msgid "Przywróć"
+msgstr "Przywróć"
+
+msgid "Przywróć - opis"
+msgstr "Przywraca zapisane filtry"
+
 msgid "Eksportuj"
 msgstr "Eksportuj"
 
@@ -77,6 +110,9 @@ msgstr "Zmodyfikowane"
 
 msgid "Proszę czekać..."
 msgstr "Proszę czekać..."
+
+msgid "Załączniki"
+msgstr "Załączniki"
 
 msgid "Pobierz"
 msgstr "Pobierz"
@@ -114,6 +150,9 @@ msgstr "Przerwij"
 msgid "Gotowe"
 msgstr "Gotowe"
 
+msgid "Załaczniki"
+msgstr "Załaczniki"
+
 msgid "Wybierz pliki"
 msgstr "Wybierz pliki"
 
@@ -148,14 +187,14 @@ msgstr "Projekt"
 msgid "Wydania"
 msgstr "Wydania"
 
-msgid "Fazy"
-msgstr "Fazy"
-
 msgid "Środowiska"
 msgstr "Środowiska"
 
 msgid "Wersje"
 msgstr "Wersje"
+
+msgid "Tagi"
+msgstr "Tagi"
 
 msgid "Zadania"
 msgstr "Zadania"
@@ -246,6 +285,18 @@ msgstr "Brak rezultatów"
 
 msgid "Wyszukiwanie..."
 msgstr "Wyszukiwanie..."
+
+msgid "Kliknij aby wybrać projekty"
+msgstr "Kliknij aby wybrać projekty"
+
+msgid "Kliknij aby wybrać projekt"
+msgstr "Kliknij aby wybrać projekt"
+
+msgid "Kliknij aby wybrać użytkowników"
+msgstr "Kliknij aby wybrać użytkowników"
+
+msgid "lightBoxLabel"
+msgstr "Obrazek %1 z %2"
 
 # pola wymagane
 msgid "Pole wymagane"
@@ -395,42 +446,67 @@ msgstr "Projekt zakończony"
 msgid "Projekt zawieszony"
 msgstr "Projekt zawieszony"
 
-# History
+# Task history
 msgid "utworzył(a) zadanie"
 msgstr "utworzył(a) zadanie"
+
+msgid "utworzył(a) zadanie i przypisał(a) je do użytkownika ASSIGNEE"
+msgstr "utworzył(a) zadanie i przypisał(a) je do użytkownika __assignee__"
 
 msgid "zmienił(a) zadanie"
 msgstr "zmienił(a) zadanie"
 
-msgid "utworzył(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "utworzył(a) zadanie i przekazał(a) je do wykonania użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "zmienił(a) zadanie i przypisał(a) je do siebie"
+msgstr "zmienił(a) zadanie i przypisał(a) je do siebie"
 
-msgid "zmienił(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "zmienił(a) zadanie i przekazał(a) je do wykonania użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "zmienił(a) zadanie i przypisał(a) je do użytkownika ASSIGNEE"
+msgstr "zmienił(a) zadanie i przypisał(a) je do użytkownika __assignee__"
+
+msgid "przypisał(a) zadanie do siebie"
+msgstr "przypisał(a) zadanie do siebie"
+
+msgid "przypisał(a) zadanie do użytkownika ASSIGNEE"
+msgstr "przypisał(a) zadanie do użytkownika __assignee__"
 
 msgid "zmienił(a) status zadania na TASK_STATUS"
-msgstr "zmienił(a) status zadania na <strong>__taskStatus__</strong>"
+msgstr "zmienił(a) status zadania na __taskStatus__"
 
 msgid "dodał(a) test TEST do zadania"
 msgstr "dodał(a) test __test__ do zadania"
 
-msgid "usunoł/eła test TEST Z zadania"
+msgid "rozwiązał(a) test TEST ze statusem STATUS"
+msgstr "rozwiązał(a) test __test__ ze statusem __status__"
+
+msgid "zmienił(a) status testu TEST na status STATUS"
+msgstr "zmienił(a) status testu __test__ na status __status__"
+
+msgid "usunął/ęła test TEST Z zadania"
 msgstr "usunął(ęła) test __test__ z zadania"
 
+# Defect history
 msgid "utworzył(a) defekt"
 msgstr "utworzył(a) defekt"
+
+msgid "utworzył(a) defekt i przypisał(a) go użytkownika ASSIGNEE"
+msgstr "utworzył(a) defekt i przypisał(a) go użytkownika __assignee__"
 
 msgid "zmienił(a) defekt"
 msgstr "zmienił(a) defekt"
 
-msgid "utworzył(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "utworzył(a) defekt i przypisał(a) go użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "zmienił(a) defekt i przypisał(a) go do siebie"
+msgstr "zmienił(a) defekt i przypisał(a) go do siebie"
 
-msgid "zmienił(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "zmienił(a) defekt i przypisał(a) go użytkownikowi <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "zmienił(a) defekt i przypisał(a) go do użytkownika ASSIGNEE"
+msgstr "zmienił(a) defekt i przypisał(a) go do użytkownika __assignee__"
+
+msgid "przypisał(a) defekt do siebie"
+msgstr "przypisał(a) defekt do siebie"
+
+msgid "przypisał(a) defekt do użytkownika ASSIGNEE"
+msgstr "przypisał(a) defekt do użytkownika __assignee__"
 
 msgid "zmienił(a) status defektu na DEFECT_STATUS"
-msgstr "zmienił(a) status defektu na <strong>__defectStatus__</strong>"
+msgstr "zmienił(a) status defektu na __defectStatus__"
 
 msgid "dodał(a) defekt DEFEKT do zadania"
 msgstr "dodał(a) defekt __defekt__ do zadania"
@@ -442,10 +518,26 @@ msgstr "usunął(ęła) defekt __defekt__ z zadania"
 msgid "[Bez wydania]"
 msgstr "[Bez wydania]"
 
-msgid "[Bez fazy]"
-msgstr "[Bez fazy]"
-
 # Breadcrumb
 msgid "Profil"
 msgstr "Profil"
 
+# Mutiselect on list
+msgid "Wybierz wszystkie na tej stronie"
+msgstr "Wybierz wszystkie na tej stronie"
+
+msgid "Wybierz wszystkie"
+msgstr "Wybierz wszystkie"
+
+msgid "Wyczyść wybrane"
+msgstr "Wyczyść wybrane"
+
+msgid "Liczba wybranych elementów"
+msgstr "Liczba wybranych elementów"
+
+# Default project colors
+msgid "DEFAULT_SUCCESS_RESOLUTION"
+msgstr "Powodzenie"
+
+msgid "DEFAULT_FAIL_RESOLUTION"
+msgstr "Niepowodzenie"

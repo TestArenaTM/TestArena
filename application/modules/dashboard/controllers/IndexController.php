@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 The full text of the GPL is in the LICENSE file.
 */
-class Dashboard_IndexController extends Custom_Controller_Action_Application_Project_Abstract
+class Dashboard_IndexController extends Custom_Controller_Action_Application_Abstract
 {
   public function preDispatch()
   {
@@ -28,49 +28,95 @@ class Dashboard_IndexController extends Custom_Controller_Action_Application_Pro
     $this->checkUserSession(true);
   }
   
+  private function _getFilterForm()
+  {
+    return new Dashboard_Form_Filter(array('action' => $this->_url(array(), 'index')));
+  }
+  
   public function indexAction()
   {
-    $request = $this->getRequest();
-    $request->setParam('userId', $this->_user->getId());
+    // Filter
+    $filterForm = null;
+    $mainLinkPart = '?assignee='.$this->_user->getId();
+    $release = new Application_Model_Release();
+    $release->setId(0);
     
     if ($this->_isActiveProject())
     {
-      $request->setParam('projectId', $this->_project->getId());
+      $project = $this->_project;
+      $releaseMapper = new Project_Model_ReleaseMapper();
+      $activeRelease = $releaseMapper->getActive($this->_project);
+      
+      if ($activeRelease !== null)
+      {
+        $request = $this->_getRequestForFilter(Application_Model_FilterGroup::DASHBOARD);
+        $request->setParam('filterAction', 2);
+        $this->view->activeRelease = $activeRelease;
+        $filterForm = $this->_getFilterForm();
+
+        if ($filterForm->isValid($request->getParams()))
+        {
+          if ($filterForm->getValue('onlyActiveRelease'))
+          {
+            $release = $activeRelease;
+            $mainLinkPart .= '&release='.$release->getId();
+          }
+        }
+
+        $this->_filterAction($filterForm->getValues());
+      }
     }
+    else
+    {
+      $project = new Application_Model_Project();
+      $project->setId(0);
+    }
+
+    $this->view->release = $release;
+    $this->view->mainLinkPart = $mainLinkPart;
+    $this->view->filterForm = $filterForm;
+    
     $taskMapper = new Dashboard_Model_TaskMapper();
     $messageMapper = new Dashboard_Model_MessageMapper();
-    $this->getHelper('HTMLPurifier')->run();
-    
-    $allTasksCnt = $taskMapper->getAllCnt($request);
-    
-    $allTasksAssigned2YouCntByStatus = $taskMapper->getAllAssigned2YouCntByStatus($request);
     
     $this->_setTranslateTitle();
-    $this->view->latestNotClosedTasksAssigned2You = $taskMapper->getLimitLatestNotClosedAssigned2You($request, 5);
+
+    // Last tasks
+    $this->view->lastNotClosedTasksAssignedToMe = $taskMapper->getLimitLastNotClosedAssignedToMe($this->_user, $project, $release, 5);
+    $this->view->numberOfNotClosedTasksAssignedToMe = $taskMapper->countNotClosedAssignedToMe($this->_user, $project, $release);
     
-    $this->view->overdueTasks = $taskMapper->getLimitOverdue($request, 5);
-    $this->view->numberOfOverdueTasks = $taskMapper->getNumberOfOverdue($request);
+    // Overdue tasks
+    $this->view->overdueTasksAssignedToMe = $taskMapper->getLimitOverdueAssignedToMe($this->_user, $project, $release, 5);
+    $this->view->numberOfOverdueTasksAssignedToMe = $taskMapper->countOverdueAssignedToMe($this->_user, $project, $release);
     
+    // Messages
+    $this->getHelper('HTMLPurifier')->run();
     $this->view->latestMessages = $messageMapper->getLimitLatest($this->_user, 5);
     $this->view->numberOfUnreadMessages = $messageMapper->getNumberOfUnread($this->_user);
     
-    //Project data
-    $this->view->allTasksAssigned2YouCnt = $allTasksAssigned2YouCntByStatus['all'];
-    $this->view->allTasksAssigned2YouCntPrct = ($allTasksCnt > 0) ? number_format($allTasksAssigned2YouCntByStatus['all']/$allTasksCnt * 100, 1): 0;
+    // Statistics
+    $numberOfTasks = $taskMapper->countAll($project, $release);
+    $numberOfTasksAssignedToMeGroupedByStatus = $taskMapper->countAssignedToMeGroupedByStatus($this->_user, $project, $release);
     
-    $this->view->allOpenTasksAssigned2YouCnt = $allTasksAssigned2YouCntByStatus['open'];
-    $this->view->allOpenTasksAssigned2YouCntPrct = ($allTasksAssigned2YouCntByStatus['all'] > 0) ? number_format($allTasksAssigned2YouCntByStatus['open']/$allTasksAssigned2YouCntByStatus['all'] * 100, 1): 0;
+    $this->view->numberOfTasksAssignedToMe = $numberOfTasksAssignedToMeGroupedByStatus['all'];
+    $this->view->percentOfTasksAssignedToMe = ($numberOfTasks > 0) ? number_format($numberOfTasksAssignedToMeGroupedByStatus['all']/$numberOfTasks * 100, 1): 0;
     
-    $this->view->allInProgressTasksAssigned2YouCnt = $allTasksAssigned2YouCntByStatus['inProgress'];
-    $this->view->allInProgressTasksAssigned2YouCntPrct = ($allTasksAssigned2YouCntByStatus['all'] > 0) ? number_format($allTasksAssigned2YouCntByStatus['inProgress']/$allTasksAssigned2YouCntByStatus['all'] * 100, 1): 0;
+    $this->view->numberOfOpenTasksAssignedToMe = $numberOfTasksAssignedToMeGroupedByStatus['open'];
+    $this->view->percentOfOpenTasksAssignedToMe = ($numberOfTasksAssignedToMeGroupedByStatus['all'] > 0) ? number_format($numberOfTasksAssignedToMeGroupedByStatus['open']/$numberOfTasksAssignedToMeGroupedByStatus['all'] * 100, 1): 0;
     
-    $this->view->allClosedTasksAssigned2YouCnt = $allTasksAssigned2YouCntByStatus['closed'];
-    $this->view->allClosedTasksAssigned2YouCntPrct = ($allTasksAssigned2YouCntByStatus['all'] > 0) ? number_format($allTasksAssigned2YouCntByStatus['closed']/$allTasksAssigned2YouCntByStatus['all'] * 100, 1): 0;
+    $this->view->numberOfReopenTasksAssignedToMe = $numberOfTasksAssignedToMeGroupedByStatus['reopen'];
+    $this->view->percentOfReopenTasksAssignedToMe = ($numberOfTasksAssignedToMeGroupedByStatus['all'] > 0) ? number_format($numberOfTasksAssignedToMeGroupedByStatus['reopen']/$numberOfTasksAssignedToMeGroupedByStatus['all'] * 100, 1): 0;
     
-    $this->view->projectTaskChartDataJson = $this->_prepareData4TaskChart($allTasksAssigned2YouCntByStatus);
+    $this->view->numberOfInProgressTasksAssignedToMe = $numberOfTasksAssignedToMeGroupedByStatus['inProgress'];
+    $this->view->percentOfInProgressTasksAssignedToMe = ($numberOfTasksAssignedToMeGroupedByStatus['all'] > 0) ? number_format($numberOfTasksAssignedToMeGroupedByStatus['inProgress']/$numberOfTasksAssignedToMeGroupedByStatus['all'] * 100, 1): 0;
+    
+    $this->view->numberOfClosedTasksAssignedToMe = $numberOfTasksAssignedToMeGroupedByStatus['closed'];
+    $this->view->percentOfClosedTasksAssignedToMe = ($numberOfTasksAssignedToMeGroupedByStatus['all'] > 0) ? number_format($numberOfTasksAssignedToMeGroupedByStatus['closed']/$numberOfTasksAssignedToMeGroupedByStatus['all'] * 100, 1): 0;
+    
+    $this->view->json_numberOfTasksAssignedToMeGroupedByStatus = $this->_prepareData4TaskChart($numberOfTasksAssignedToMeGroupedByStatus);
   }
   
-  private function _prepareData4TaskChart(array $allTasksAssigned2YouCntByStatus)
+  private function _prepareData4TaskChart(array $numberOfTasksAssignedToMeGroupedByStatus)
   {
     $t = new Custom_Translate();
     
@@ -84,24 +130,30 @@ class Dashboard_IndexController extends Custom_Controller_Action_Application_Pro
     $dataTable['rows'] = array(
       array(
         'c' => array (
-          array('v' => $t->translate('Otwarte zadania')),
-          array('v' => $allTasksAssigned2YouCntByStatus['open'])
+          array('v' => $t->translate('Nowe zadania')),
+          array('v' => $numberOfTasksAssignedToMeGroupedByStatus['open'])
+        )
+      ),
+      array(
+        'c' => array (
+          array('v' => $t->translate('Ponownie otwarte zadania')),
+          array('v' => $numberOfTasksAssignedToMeGroupedByStatus['reopen'])
         )
       ),
       array(
         'c' => array (
           array('v' => $t->translate('Zadania w toku')),
-          array('v' => $allTasksAssigned2YouCntByStatus['inProgress'])
+          array('v' => $numberOfTasksAssignedToMeGroupedByStatus['inProgress'])
         )
       ),
       array(
         'c' => array (
           array('v' => $t->translate('Zamknięte zadania')),
-          array('v' => $allTasksAssigned2YouCntByStatus['closed'])
+          array('v' => $numberOfTasksAssignedToMeGroupedByStatus['closed'])
         )
       ),
     );
-    
+
     return json_encode($dataTable);
   }
 }

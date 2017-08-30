@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-08-24 09:21+0200\n"
-"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"PO-Revision-Date: 2017-08-18 12:50+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,17 +12,23 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 2.0.3\n"
 
 # Captcha
 msgid "missingValue"
-msgstr "Captcha ID field is missing."
+msgstr "The captcha must be completed"
 
 msgid "missingID"
-msgstr "Captcha ID field is missing."
+msgstr "The captcha must be completed"
 
 msgid "badCaptcha"
-msgstr "Wrong captcha value."
+msgstr "The captcha was invalid"
+
+msgid "captchaEmpty"
+msgstr "The captcha must be completed"
+
+msgid "invalidCaptcha"
+msgstr "The captcha was invalid"
 
 # Hash
 msgid "notSame"
@@ -259,6 +265,13 @@ msgstr "Wrong image size. Maximum image width is 3000 px."
 msgid "fileImageSizeHeightTooBig"
 msgstr "Wrong image size. Maximum image height is 3000 px."
 
+# Attachment
+msgid "attachmentCanNotAdd"
+msgstr "Can not add attachment."
+
+msgid "attachmentNotSetIds"
+msgstr "Not set ids."
+
 # UniqueProductName
 msgid "productNameExists"
 msgstr "Name already exists."
@@ -301,8 +314,12 @@ msgstr "Name of a city can only consist of letters, spaces and characters: '-"
 msgid "releaseNameExists"
 msgstr "This name already exists."
 
-# UniquePhaseName
-msgid "phaseNameExists"
+# UniqueTagName
+msgid "tagNameExists"
+msgstr "This name already exists."
+
+# UniqueTestName
+msgid "testNameExists"
 msgstr "This name already exists."
 
 # ProjectElements
@@ -346,9 +363,9 @@ msgstr "Incorrect data"
 msgid "releaseNotExists"
 msgstr "The release doesn't exist in database."
 
-# PhaseExists
-msgid "phaseNotExists"
-msgstr "The phase doesn't exist in database."
+# TagExists
+msgid "tagNotExists"
+msgstr "The tag doesn't exist in database."
 
 # ExcludeExtension
 msgid "fileExcludeExtensionFalse"

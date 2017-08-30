@@ -36,17 +36,22 @@ class Administration_Form_ExportProject extends Custom_Form_Abstract
       'class' => 'j_exportItem'
     ));
     
-    $this->addElement('checkbox', 'exportPhases', array(
-      'value' => true,
-      'class' => 'j_exportItem'
-    ));
-    
     $this->addElement('checkbox', 'exportRoles', array(
       'value' => true,
       'class' => 'j_exportItem'
     ));
     
     $this->addElement('checkbox', 'exportTasks', array(
+      'value' => true,
+      'class' => 'j_exportItem'
+    ));
+    
+    $this->addElement('checkbox', 'exportVersions', array(
+      'value' => true,
+      'class' => 'j_exportItem'
+    ));
+    
+    $this->addElement('checkbox', 'exportTags', array(
       'value' => true,
       'class' => 'j_exportItem'
     ));

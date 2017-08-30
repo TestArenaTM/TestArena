@@ -18,7 +18,7 @@ class Custom_Validate_UniqueProjectResolutionColor extends Custom_Validate_DbUni
     $this->_setValue($value);
     $result = $this->_uniqueSelect($value);
 
-    if ($result[$this->_field] == $value)
+    if (strtolower($result[$this->_field]) == strtolower($value))
     {
       $this->_error(self::ERROR_EXISTS);
       return false;

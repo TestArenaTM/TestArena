@@ -25,6 +25,8 @@ class Zend_View_Helper_TaskTestViewRouteName extends Zend_View_Helper_Abstract
   const ROUTE_OTHER_TEST_VIEW       = 'task_other_test_view';
   const ROUTE_TEST_CASE_VIEW        = 'task_test_case_view';
   const ROUTE_EXPLORATORY_TEST_VIEW = 'task_exploratory_test_view';
+  const ROUTE_AUTOMATIC_TEST_VIEW   = 'task_automatic_test_view';
+  const ROUTE_CHECKLIST_VIEW        = 'task_checklist_view';
   
   public function taskTestViewRouteName(Custom_Interface_Test $test)
   {
@@ -38,6 +40,12 @@ class Zend_View_Helper_TaskTestViewRouteName extends Zend_View_Helper_Abstract
       
       case Application_Model_TestType::EXPLORATORY_TEST:
         return self::ROUTE_EXPLORATORY_TEST_VIEW;
+      
+      case Application_Model_TestType::AUTOMATIC_TEST:
+        return self::ROUTE_AUTOMATIC_TEST_VIEW;
+      
+      case Application_Model_TestType::CHECKLIST:
+        return self::ROUTE_CHECKLIST_VIEW;
     }
     
     return null;

@@ -22,11 +22,18 @@ The full text of the GPL is in the LICENSE file.
 */
 abstract class Custom_Form_AbstractFilter extends Custom_Form_Abstract
 {
+  protected $_savedValues = array();
+  
   public function init()
   {
     parent::init();
     $this->setMethod('get');
     $this->setName('filterForm');
+    
+    $this->addElement('hidden', 'filterAction', array( 
+      'required' => false,
+      'value'    => 0
+    ));
     
     $this->addElement('select', 'resultCountPerPage', array( 
       'required'     => false,
@@ -38,5 +45,42 @@ abstract class Custom_Form_AbstractFilter extends Custom_Form_Abstract
         100 => 100,
       )
     ));
+  }
+  
+  public function getValues($suppressArrayNotation = false)
+  {
+    $values = parent::getValues($suppressArrayNotation);
+    
+    if (array_key_exists('filterAction', $values))
+    {
+      $this->getElement('filterAction')->setValue(0);
+    }
+    
+    return $values;
+  }
+  
+  public function prepareSavedValues(array $data)
+  {    
+    $this->_savedValues = array();
+    
+    foreach ($data as $key => $value)
+    {
+      if (is_array($value))
+      {
+        $this->_savedValues[$key] = array(
+          'type'    => 'tokenInput',
+          'values'  => $value
+        );
+      }
+      else
+      {
+        $this->_savedValues[$key] = $value;
+      }      
+    }
+  }
+  
+  public function getSavedValues()
+  {
+    return json_encode($this->_savedValues);
   }
 }

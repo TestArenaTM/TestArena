@@ -55,8 +55,9 @@ class Administration_Form_EditRole extends Administration_Form_AddRole
     if (count($roleData) > 0)
     {
       $result[] = array(
-        'name' => $htmlSpecialCharsFilter->filter($roleData['project$name']),
-        'id'   => $roleData['project$id']
+        'name'     => $htmlSpecialCharsFilter->filter($roleData['project$name']),
+        'id'       => $roleData['project$id'],
+        'readonly' => true
       );
     }
     

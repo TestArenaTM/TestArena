@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-10-19 12:51+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2017-07-12 10:31+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,40 +12,34 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 2.0.2\n"
 
 msgid "pageTitle"
 msgstr "Cockpit"
 
-msgid "Najnowsze zadania"
-msgstr "Latest tasks"
+msgid "Moje zadania"
+msgstr "My tasks"
 
 msgid "przekazał ci zadanie do wykonania"
 msgstr "gave you a task to do"
 
-msgid "Czytaj więcej..."
-msgstr "Read more..."
-
 msgid "Komentarze"
 msgstr "Comments"
 
-msgid "Brak zadań."
-msgstr "No tasks available..."
-
-msgid "Brak zadań z przekroczonym terminem."
-msgstr "No tasks."
+msgid "Brak zadań"
+msgstr "No tasks available"
 
 msgid "Pokaż wszystkie..."
 msgstr "Show all..."
 
-msgid "Zadania z przekroczonym terminem realizacji"
-msgstr "Tasks with exceeded time limit."
+msgid "Moje zadania z przekroczonym terminem"
+msgstr "My tasks with exceeded time limit"
 
 msgid "Ostatnie otrzymane wiadomości"
-msgstr "Last messages."
+msgstr "Last messages"
 
-msgid "Brak wiadomości."
-msgstr "You have no messages."
+msgid "Brak wiadomości"
+msgstr "You have no messages"
 
 msgid "nowa"
 msgstr "new"
@@ -56,8 +50,11 @@ msgstr "Tasks assigned to me"
 msgid "Wszystkich zadań"
 msgstr "Overall number of tasks"
 
-msgid "Otwartych"
-msgstr "Open"
+msgid "Nowych"
+msgstr "New"
+
+msgid "Ponownie otwartych"
+msgstr "Reopen"
 
 msgid "W toku"
 msgstr "In progress"
@@ -65,11 +62,14 @@ msgstr "In progress"
 msgid "Zamkniętych"
 msgstr "Closed"
 
-msgid "zadań w projektcie"
+msgid "zadań w projekcie"
 msgstr "of all tasks in project"
 
-msgid "Otwarte zadania"
-msgstr "Open tasks"
+msgid "Nowe zadania"
+msgstr "New tasks"
+
+msgid "Ponownie otwarte zadania"
+msgstr "Reopen tasks"
 
 msgid "Zadania w toku"
 msgstr "Tasks in progress"
@@ -80,3 +80,5 @@ msgstr "Closed tasks"
 msgid "zadań w projektach aktywnych"
 msgstr "tasks in active projects"
 
+msgid "Pokaż tylko dla aktywnego wydania NAME"
+msgstr "Show only for active release '__name__'"

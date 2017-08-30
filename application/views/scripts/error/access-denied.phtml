@@ -1,5 +1,22 @@
-<section id="content">
-  <article class="article_in_content">
-    <h1 class="pagenotfound_title"><?php echo  $this->t('Dostęp zabroniony') ?></h1>
-  </article>    
+<section id="content_login">
+  <header id="tc-head">
+    <div class="gk-page" id="tc-header-mod">
+      <div class="boxx  imageBg all widget_text" id="text-2">
+        <div class="textwidget">
+          <a href="<?php echo $this->url(array(), 'index')?>" class="login_tc_header"></a>
+
+          <section id="content">
+            <article class="article_in_content error-page">
+              <h1><?php echo $this->t('Dostęp zabroniony') ?></h1>
+
+              <?php if (!empty($this->backUrl)): ?>
+                <a href="<?php echo $this->backUrl?>"><?php echo $this->t('Poprzednia strona') ?></a>
+              <?php endif; ?>
+            </article>
+          </section>
+          
+        </div>
+      </div>
+    </div>
+  </header>
 </section>

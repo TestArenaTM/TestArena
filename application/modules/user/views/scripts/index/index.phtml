@@ -42,7 +42,7 @@
             <tbody>
               <?php foreach ($this->projects as $project): ?>
               <tr>
-                <td class="W_50"><a href="<?php echo $this->url(array('projectId' => $project->getId()), 'project_view') ?>"><?php echo $this->escapeQuotes($project->getName()); ?></a></td>
+                <td class="W_50"><a href="<?php echo $this->url(array('projectPrefix' => $project->getPrefix()), 'project_view') ?>"><?php echo $this->escapeQuotes($project->getName()); ?></a></td>
                 <td>
                   <?php foreach ($this->roles[$project->getId()] as $role): ?>
                     <span class="elementBox"><b><?php echo $this->escapeQuotes($role->getName()) ?></span>

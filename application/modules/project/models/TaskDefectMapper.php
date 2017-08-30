@@ -73,4 +73,18 @@ class Project_Model_TaskDefectMapper extends Custom_Model_Mapper_Abstract
       return false;
     }
   }
+
+  public function deleteByTask(Application_Model_Task $task)
+  {
+    $this->_getDbTable()->delete(array(
+      'task_id = ?' => $task->getId()
+    ));
+  }
+
+  public function deleteByTaskIds(array $taskIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'task_id IN(?)' => $taskIds
+    ));
+  }
 }

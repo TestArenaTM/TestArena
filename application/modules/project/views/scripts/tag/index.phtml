@@ -1,0 +1,113 @@
+<?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
+
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>  
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->  
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <?php if ($this->activeProject->isActive()): ?>
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <?php if ($this->accessTagManagement): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'tag_add').$this->filterRequestConditions();?>" ><?php echo $this->t('Dodaj tag') ?></a></li>
+        <?php endif; ?>
+      </ul>
+    </nav>
+    <?php endif; ?>
+
+    <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
+      <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
+      
+      <div class="search_text">
+        <div class="filter">
+          <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
+          <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
+        </div>
+      </div>      
+
+      <div class="search_filter">
+        <div class="filter">
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->generalT('Wyniki')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
+        </div>
+
+        <?php echo $this->partial('partials/filter-buttons.phtml'); ?>
+      </div>
+    </form>
+    
+    <?php if (count($this->tags) > 0): ?>
+
+      <table>
+        <thead>
+          <tr>
+            <th><?php echo $this->sortingControl('Nazwa', 'tag_name', 'sorting.phtml', $this->request) ?></th>
+            <th><?php echo $this->sortingControl('Liczba zadań', 'tag_taskCount', 'sorting.phtml', $this->request) ?></th>
+            <th><?php echo $this->sortingControl('Liczba defektów', 'tag_defectCount', 'sorting.phtml', $this->request) ?></th>
+            <?php if ($this->activeProject->isActive()): ?>
+            <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+            <?php endif; ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($this->tags as $tag): ?>
+          <tr>
+            <td><a href="<?php echo $this->projectUrl(array('id' => $tag->getId()), 'tag_view') ?>"><?php echo $this->escapeQuotes($tag->getName()) ?></a></td>
+            <td class="t_number">
+              <a href="<?php echo $this->projectUrl(array(), 'task_list').'?skipSavedFilter&tags='.$tag->getId() ?>">
+                <?php echo $tag->getExtraData('taskCount') ?>
+              </a>
+            </td>
+            <td class="t_number">
+              <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
+                <a href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&tags='.$tag->getId() ?>">
+                  <?php echo $tag->getExtraData('defectCount') ?>
+                </a>
+              <?php else: ?>
+                <?php echo $tag->getExtraData('defectCount') ?>
+              <?php endif; ?>
+            </td>
+            <?php if ($this->activeProject->isActive()): ?>
+            <td>
+              <?php if ($this->accessTagManagement): ?>
+                <nav>
+                  <ul class="action_list">
+                    <div class="popbox">
+                      <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                      <div class='collapse'>
+                        <ul class="box">       
+                          <li><a href="<?php echo $this->projectUrl(array('id' => $tag->getId()), 'tag_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+                          <?php if ($tag->getExtraData('taskCount') == 0 && $tag->getExtraData('defectCount') == 0): ?>
+                          <li><a class="j_delete_tag" href="<?php echo $this->projectUrl(array('id' => $tag->getId()), 'tag_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+                          <?php endif; ?>
+                        </ul> 
+                      </div>
+                    </div>                
+                  </ul>
+                </nav>
+              <?php endif; ?>  
+            </td>
+            <?php endif; ?>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+
+      <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
+
+    <?php else: ?>
+      <div class="empty-text"><?php echo $this->t('Brak tagów') ?></div>
+    <?php endif; ?>
+  </article>    
+</section>
+
+<?php echo $this->partial('popups/delete-tag.phtml'); ?>
+<script type="text/javascript">
+/* <![CDATA[ */
+  var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
+  var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
+/* ]]> */
+</script>

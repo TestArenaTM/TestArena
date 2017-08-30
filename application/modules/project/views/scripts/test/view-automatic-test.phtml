@@ -1,0 +1,73 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Baza testów') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div> -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
+        <?php if ($this->activeProject->isActive()): ?>
+        
+          <?php foreach ($this->prepareTestActions($this->automaticTest, array(), $this->testUserPermission) as $action): ?>
+            <?php if ($action === null): ?>
+              <li class="button_link_li separator"></li>
+            <?php else: ?>
+              <li class="button_link_li"><a class="button_link <?php if (array_key_exists('class', $action)):?><?php echo $action['class'] ?><?php endif;?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+            <?php endif; ?>
+          <?php endforeach; ?>
+           
+          <?php if ($this->automaticTest->getPrevious() !== null): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->automaticTest->getPrevious()->getId()), $this->testViewRouteName($this->automaticTest->getPrevious()))?>" title="<?php echo $this->generalT('Poprzednie')?>"><span aria-hidden="true" class="arrow_triangle-left icon-22" style="vertical-align:middle;"></span></a></li>
+          <?php endif; ?>
+                
+          <?php if ($this->automaticTest->getNext() !== null): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->automaticTest->getNext()->getId()), $this->testViewRouteName($this->automaticTest->getNext()))?>" title="<?php echo $this->generalT('Następne')?>"><span aria-hidden="true" class="arrow_triangle-right icon-22" style="vertical-align:middle;"></span></a></li>
+          <?php endif; ?>
+          
+        <?php endif; ?>
+      </ul>
+    </nav>
+
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escapeQuotes($this->automaticTest->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->automaticTest->getName()) ?></div>
+    </div>     
+    
+    <div class="contentLRtable">
+      
+      <div class="contentProperties_left">
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Status') ?>: </div>
+          <div id="text" class="content_label"><?php echo $this->statusT($this->automaticTest->getStatus(), 'TEST') ?></div>
+        </div>
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?>: </div>
+          <div id="text" class="content_label"> <?php echo nl2br($this->escapeQuotes($this->automaticTest->getDescription())) ?></div>
+        </div>
+      </div>
+      
+      <div class="contentEditUser_right">
+        <div class="textLabelPropertiesDiv">
+          <div class="textLabelEditor_text"><?php echo $this->t('Autor') ?>: </div>
+          <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->automaticTest->getAuthor()->getFullname()) ?></div>
+        </div>
+        <div class="textLabelPropertiesDiv" style="border-bottom:0px solid;">
+          <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?>: </div>
+          <div id="text" class="content_label"> <?php echo $this->automaticTest->getCreateDate() ?></div>
+        </div> 
+        
+        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->automaticTest->getExtraData('attachments'))); ?> 
+      </div>
+      
+    </div>    
+  </article>    
+</section>
+
+<?php echo $this->partial('popups/delete-tests.phtml');
+  
+  

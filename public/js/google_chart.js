@@ -33,24 +33,24 @@ function drawChart() {
     var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
     
     var options = {
-      height: 250,
-      
+      height: 319,      
       showRowNumber: true,
       //title: 'Zadania przypisane do mnie',
       colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
-      is3D: true
+      is3D: true,
+      sliceVisibilityThreshold: 0
     };
     
     chart.draw(data, options);
     
     function resizeHandler () {
-        chart.draw(data, options);
+      chart.draw(data, options);
     }
     if (window.addEventListener) {
-        window.addEventListener('resize', resizeHandler, false);
+      window.addEventListener('resize', resizeHandler, false);
     }
     else if (window.attachEvent) {
-        window.attachEvent('onresize', resizeHandler);
+      window.attachEvent('onresize', resizeHandler);
     }
 
     //chart.draw(data, options);

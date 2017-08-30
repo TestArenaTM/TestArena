@@ -1,0 +1,43 @@
+<section id="content">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+
+      <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+          
+        <div class="formContainer half">
+          <span>
+            <div><?php echo $this->form->type->renderViewHelper() ?></div>
+            <?php echo $this->formRequiredLabel('type', $this->t('Typ')); ?>
+            <?php foreach ($this->form->getErrors('type') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div> 
+
+        <div>
+          <span id="save"><?php echo $this->formSubmit('create', $this->t('Utwórz')) ?></span>
+          <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+        </div>
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div> 
+
+        <div>
+          <?php echo $this->form->csrf->renderViewHelper() ?>
+          <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+          <div><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>
+
+    </form>
+
+  </article>    
+</section>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+language['charactersLeft'] = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+maxStartDate = '<?php echo $this->release->getEndDate() ?>';
+minEndDate = '<?php echo $this->release->getStartDate() ?>';
+/* ]]> */
+</script>

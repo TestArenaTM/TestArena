@@ -1,5 +1,5 @@
 <script id="j_msgThreadItemTmpl" type="text/x-jquery-tmpl" >
-  <li>
+  <li {{if (messageType == 1)}}class="message_sender"{{/if}}>
     <div class="message_content">
       <div class="avatar_message">
         <img class="avatar" alt="${userFullname}" src="${userAvatarUrl}">

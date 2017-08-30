@@ -9,19 +9,21 @@
   <article class="article_in_content">
     <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <?php if ($this->activeProject->isActive() && $this->defectUserPermissions[Application_Model_RoleAction::DEFECT_ADD]): ?>
+    <?php if ($this->activeProject->isActive() 
+        && $this->defectUserPermissions[Application_Model_RoleAction::DEFECT_ADD]): ?>
       <nav class="button_link_nav">
         <ul class="button_link_ul">
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'defect_add')?>" ><?php echo $this->t('Dodaj defekt') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'defect_add')?>" ><?php echo $this->t('Dodaj defekt') ?></a></li>
         </ul>
       </nav>
     <?php endif; ?>
     
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
+      <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
       
       <div class="search_text">
         <div class="filter">
-          <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+          <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
           <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
         </div>
       </div>      
@@ -30,11 +32,6 @@
         <div class="filter">
           <div><?php echo $this->formLabel('release', $this->t('Wydanie')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->release->renderViewHelper() ?></div>
-        </div>
-
-        <div class="filter">
-          <div><?php echo $this->formLabel('phase', $this->t('Faza')) ?></div>
-          <div class="custom-select-xsmall"><?php echo $this->filterForm->phase->renderViewHelper() ?></div>
         </div>
 
         <div class="filter">
@@ -48,12 +45,12 @@
         </div>
 
         <div class="filter">
-          <div><?php echo $this->formLabel('assigner', $this->t('Przydzielił')) ?></div>
+          <div><?php echo $this->formLabel('assigner', $this->t('Przypisał')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->assigner->renderViewHelper() ?></div>
         </div>
 
         <div class="filter">
-          <div><?php echo $this->formLabel('assignee', $this->t('Przydzielone do')) ?></div>
+          <div><?php echo $this->formLabel('assignee', $this->t('Przypisane do')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->assignee->renderViewHelper() ?></div>
         </div>
 
@@ -63,11 +60,21 @@
         </div>
 
         <div class="filter">
-          <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
-          <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
+          <div><?php echo $this->formLabel('version', $this->t('Wersja')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->version->renderViewHelper() ?></div>
         </div>
 
-        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
+        <div class="filter">
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->generalT('Wyniki')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
+        </div>
+        
+        <div class="filter custom-auto">
+          <div><?php echo $this->formLabel('tags', $this->t('Tagi')) ?></div>
+          <div class="ustom-select-xsmall"><?php echo $this->filterForm->tags->renderViewHelper() ?></div>
+        </div>
+        
+        <?php echo $this->partial('partials/filter-buttons.phtml'); ?>
       </div>
 
     </form>
@@ -77,15 +84,18 @@
     <table>
       <thead>
         <tr>
-          <th><?php echo $this->sortingControl('Nr obiektu', 'defect_ordinal_no', 'sorting.phtml', $this->request) ?></th>
+          <th>
+            <input type="checkbox" name="selectAll" value="defect<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_selectAll" title="<?php echo $this->generalT('Wybierz wszystkie na tej stronie')?>" />
+            <?php echo $this->sortingControl('Nr obiektu', 'defect_ordinal_no', 'sorting.phtml', $this->request) ?>
+          </th>
           <th><?php echo $this->sortingControl('Tytuł', 'defect_title', 'sorting.phtml', $this->request) ?></th>
+          <th class="attachment_column"></th>
           <th><?php echo $this->sortingControl('Priorytet', 'defect_priority', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Wydanie', $this->createSortedFieldName('defect', 'name', array('release')), 'sorting.phtml', $this->request) ?></th>
-          <th><?php echo $this->sortingControl('Faza', $this->createSortedFieldName('defect', 'name', array('phase')), 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Data utworzenia', 'defect_create_date', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Data modyfikacji', 'defect_modify_date', 'sorting.phtml', $this->request) ?></th>
-          <th><?php echo $this->sortingControl('Przydzielił', $this->createSortedFieldName('defect', 'name', array('assigner')), 'sorting.phtml', $this->request) ?></th>
-          <th><?php echo $this->sortingControl('Przydzielone do', $this->createSortedFieldName('defect', 'name', array('assignee')), 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Przypisał', $this->createSortedFieldName('defect', 'name', array('assigner')), 'sorting.phtml', $this->request) ?></th>
+          <th><?php echo $this->sortingControl('Przypisane do', $this->createSortedFieldName('defect', 'name', array('assignee')), 'sorting.phtml', $this->request) ?></th>
           <?php if ($this->activeProject->isActive()): ?>
           <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
           <?php endif; ?>
@@ -95,37 +105,51 @@
         <?php foreach ($this->defects as $defect): ?>
         <tr>
           <td class="t_object_number">
-            <?php echo $this->showDefectStatusIcon($defect) ?>
+            <input type="checkbox" name="item_<?php echo $defect->getId() ?>" value="defect<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_item" />
             <?php echo $this->escapeQuotes($defect->getObjectNumber()) ?>
           </td>
-          <td><a href="<?php echo $this->url(array('id' => $defect->getId()), 'defect_view') ?>"><?php echo $this->escapeQuotes($defect->getTitle()) ?></a></td>
+          <td>
+            <?php echo $this->showDefectStatusIcon($defect) ?>
+            <a href="<?php echo $this->projectUrl(array('id' => $defect->getId()), 'defect_view') ?>">
+              <?php echo $this->escapeQuotes($defect->getTitle()) ?>
+            </a>
+          </td>
+          <td>
+            <?php if ($defect->getExtraData('attachmentCount') > 0): ?>
+              <span class="icon_link_alt icon-20" title="<?php echo $defect->getExtraData('attachmentCount') ?>"></span>
+            <?php endif; ?>
+          </td>
           <td class="t_priority"><span class="prio_<?php echo $defect->getPriority() ?>" title="<?php echo $this->typeT($defect->getPriority(), 'DEFECT_PRIORITY') ?>" alt="<?php echo $this->typeT($defect->getPriority(), 'DEFECT_PRIORITY') ?>"></span></td>
           <td><?php echo $this->escapeQuotes($defect->getRelease()->getName()) ?></td>
-          <td><?php echo $this->escapeQuotes($defect->getPhase()->getName()) ?></td>
           <td class="t_date" title="<?php echo $defect->getCreateDate() ?>"><?php echo $defect->getCreateDate(true) ?></td>
           <td class="t_date" title="<?php echo $defect->getModifyDate() ?>"><?php echo $defect->getModifyDate(true) ?></td>
           <td class="t_user"><?php echo $this->escapeQuotes($defect->getAssigner()->getFullname()) ?></td>
           <td class="t_user"><?php echo $this->escapeQuotes($defect->getAssignee()->getFullname()) ?></td>
           <?php if ($this->activeProject->isActive()): ?>
           <td>
-            <nav>
-              <ul class="action_list">
-                <div class="popbox">
-                  <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
-                  <div class='collapse'>
-                    <ul class="box">
-                      <?php foreach ($this->prepareDefectActions($defect, $this->defectUserPermissions) as $action): ?>          
-                        <?php if ($action === null): ?>
-                          <li class="menuSeparator"></li>
-                        <?php else: ?>
-                          <li><a href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
-                        <?php endif; ?>
-                      <?php endforeach; ?>
-                    </ul> 
-                  </div>
-                </div>                
-              </ul>
-            </nav>
+            <?php
+              $actions = $this->prepareDefectActions($defect, $this->defectUserPermissions);
+              if ($this->activeProject->isActive() && count($actions) > 0):
+            ?>  
+              <nav>
+                <ul class="action_list">
+                  <div class="popbox">
+                    <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                    <div class='collapse'>
+                      <ul class="box">
+                        <?php foreach ($actions as $action): ?>       
+                          <?php if ($action === null): ?>
+                            <li class="menuSeparator"></li>
+                          <?php else: ?>
+                            <li><a<?php if (array_key_exists('class', $action)):?> class="<?php echo $action['class']; ?>"<?php endif; ?> href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                          <?php endif; ?>
+                        <?php endforeach; ?>
+                      </ul> 
+                    </div>
+                  </div>                
+                </ul>
+              </nav>
+            <?php endif; ?>
           </td>
           <?php endif; ?>
         </tr>
@@ -133,20 +157,40 @@
       </tbody>
     </table>
 
+    <div>
+      <p id="j_multiSelect_couterContainer"><?php echo $this->generalT('Liczba wybranych elementów') ?>: <span id="j_multiSelect_couterValue">0</span></p>
+      <a class="button j_multiSelect_sendButton_defect<?php echo $this->activeProject->getId(); ?> j_delete_defects" href="<?php echo $this->projectUrl(array(), 'defect_multi_delete') ?>">
+        <?php echo $this->t('Usuń wybrane') ?>
+      </a>
+      <a id="j_multiSelect_selectAllButton_defect<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wybierz wszystkie') ?></a>
+      <a id="j_multiSelect_unselectAllButton_defect<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wyczyść wybrane') ?></a>
+    </div>
+
     <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
 
     <?php else: ?>
-    <div class="empty-text"><?php echo $this->t('Brak defektów.') ?></div>
+    <div class="empty-text"><?php echo $this->t('Brak defektów') ?></div>
     <?php endif; ?>
     
   </article>    
 </section>
 
+<?php 
+echo $this->partial('popups/delete-defects.phtml');
+echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allIds)); 
+?>
+
 <script type="text/javascript">
 /* <![CDATA[ */
-  language.defaultPhaseName = '<?php echo $this->generalT('[Bez fazy]') ?>';
   language.all = '<?php echo $this->generalT('[Wszystkie]') ?>';
 
-  url['phaseListAjax'] = '<?php echo $this->url(array(), 'phase_list_ajax') ?>';
+  <?php if (isset($this->prePopulatedTags)) :?>
+    prePopulated['tags'] = <?php echo $this->prePopulatedTags?>;
+  <?php endif?>
+  isSearchTags = true;
+    
+  url.tagListAjax = '<?php echo $this->projectUrl(array(), 'tag_list_ajax') ?>';
+  var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
+  var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
 /* ]]> */
 </script>

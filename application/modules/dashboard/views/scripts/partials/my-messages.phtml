@@ -1,0 +1,44 @@
+<?php if (count($this->latestMessages)): ?>
+  <article class="article_right_box dsb">
+    <h4><?php echo $this->t('Ostatnie otrzymane wiadomości') ?>
+      <?php if (!empty($this->numberOfUnreadMessages)): ?>
+        <span class="redMessage"><?php echo $this->numberOfUnreadMessages ?></span>
+      <?php endif; ?>
+    </h4>
+    <div class="PanelList">
+      <ul>
+        <?php foreach ($this->latestMessages as $message): ?>
+          <li>
+            <a href="<?php echo $this->url(array('item_id' => $message->getThreadId()), 'message_list') ?>">
+              <div class="clearfix">
+                <?php if ($message->getToStatusId() == Application_Model_MessageToStatus::UNREAD): ?>
+                  <span class="newMessage"><?php echo $this->t('nowa') ?></span>
+                <?php endif; ?>
+                <div class="avatar">
+                  <img class="avatar" alt="<?php echo $this->escapeQuotes($message->getSender()->getFullname()) ?>" src="<?php echo $message->getSender()->getAvatarUrl(true) ?>">
+                </div>
+                <div class="author">
+                  <strong><?php echo $this->escapeQuotes($message->getSender()->getFullname()) ?></strong>
+                </div>
+                <div class="snippet preview">
+                  <span><strong><?php echo nl2br($this->purifier->purify($message->getSubject())) ?></strong></span>
+                </div>                    
+                <div class="snippet preview">
+                  <span><?php echo nl2br($this->purifier->purify($message->getContent())) ?></span>
+                </div>
+              </div>
+            </a>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+      <a class="view_all_text" href="<?php echo $this->url(array(), 'message_list') ?>"><?php echo $this->t('Pokaż wszystkie...') ?></a>
+    </div>
+  </article>
+<?php else: ?>
+  <article class="article_right_box dsb">
+    <h4><?php echo $this->t('Ostatnie otrzymane wiadomości') ?></h4>
+    <div class="PanelList">
+      <p><?php echo $this->t('Brak wiadomości') ?></p>
+    </div>
+  </article>
+<?php endif;

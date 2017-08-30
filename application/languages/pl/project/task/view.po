@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-09-27 11:11+0200\n"
-"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"PO-Revision-Date: 2017-07-18 13:36+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,10 +12,13 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 2.0.2\n"
 
 msgid "pageTitle"
 msgstr "Zadanie"
+
+msgid "headTitle"
+msgstr "Zadanie \"__name__\""
 
 msgid "Status"
 msgstr "Status"
@@ -29,20 +32,20 @@ msgstr "Środowiska"
 msgid "Wersje"
 msgstr "Wersje"
 
+msgid "Tagi"
+msgstr "Tagi"
+
 msgid "Opis"
 msgstr "Opis"
 
 msgid "Wydanie"
 msgstr "Wydanie"
 
-msgid "Faza"
-msgstr "Faza"
+msgid "Przypisał"
+msgstr "Przypisał"
 
-msgid "Przydzielił"
-msgstr "Przydzielił"
-
-msgid "Przydzielone do"
-msgstr "Przydzielone do"
+msgid "Przypisane do"
+msgstr "Przypisane do"
 
 msgid "Data utworzenia"
 msgstr "Data utworzenia"
@@ -74,9 +77,6 @@ msgstr "Zamknij"
 msgid "Otwórz ponownie"
 msgstr "Otwórz ponownie"
 
-msgid "Załączniki"
-msgstr "Załączniki"
-
 msgid "Testy"
 msgstr "Testy"
 
@@ -90,7 +90,13 @@ msgid "Dodaj defekt"
 msgstr "Dodaj defekt"
 
 msgid "addTestToTaskMustFillField"
-msgstr "Aby dodać istniejący test do zadania, musisz wpisać do pola obok numer testu z bazy testów."
+msgstr "Aby dodać istniejący test do zadania, musisz wpisać do pola obok część nazwy testu z bazy testów."
 
 msgid "addDefectToTaskMustFillField"
+msgstr "Aby dodać istniejący defekt do zadania, musisz wpisać do pola obok część nazwy defektu."
+
+msgid "addDefectToTaskMustFillFieldEx"
 msgstr "Aby dodać istniejący defekt do zadania, musisz wpisać do pola obok numer defektu."
+
+msgid "Pokaż komentarze do testów"
+msgstr "Pokaż komentarze do testów"

@@ -69,7 +69,7 @@ class User_Form_Edit extends Custom_Form_Abstract
     $this->addElement('text', 'phoneNumber', array(
       'required'    => false,
       'maxlength'   => 20,
-      'filters'     => array('StringTrim'),
+      'filters'     => array('StringTrim', 'WhitespaceReduce'),
       'validators'  => array(
         'PhoneNumber',
         array('StringLength', false, array(7, 20, 'UTF-8')),

@@ -52,6 +52,16 @@ class Project_Form_AddVersion extends Custom_Form_Abstract
       )
     ));
     
+    $this->addElement('textarea', 'description', array(
+      'maxlength'   => 255,
+      'required'    => false,
+      'filters'     => array('StringTrim'),
+      'validators'  => array(
+        'SimpleText',
+        array('StringLengthOneCharacterLineBreaks', false, array(1, 255, 'UTF-8')),
+      ),
+    ));
+    
     $this->addElement('hash', 'csrf', array(
       'ignore'  => true,
       'salt'    => 'add_version',

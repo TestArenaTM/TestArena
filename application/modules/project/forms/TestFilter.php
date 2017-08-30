@@ -57,9 +57,11 @@ class Project_Form_TestFilter extends Custom_Form_AbstractFilter
       'required'    => false,
       'multiOptions' => array(
         0                                             => $t->translate('[Wszystkie]', array(), 'general'),
-        Application_Model_TestType::OTHER_TEST        => $t->translate('TEST_OTHER_TEST', array(), 'type'),
+        Application_Model_TestType::EXPLORATORY_TEST  => $t->translate('TEST_EXPLORATORY_TEST', array(), 'type'),
         Application_Model_TestType::TEST_CASE         => $t->translate('TEST_TEST_CASE', array(), 'type'),
-        Application_Model_TestType::EXPLORATORY_TEST  => $t->translate('TEST_EXPLORATORY_TEST', array(), 'type')
+        Application_Model_TestType::AUTOMATIC_TEST    => $t->translate('TEST_AUTOMATIC_TEST', array(), 'type'),
+        Application_Model_TestType::CHECKLIST         => $t->translate('TEST_CHECKLIST', array(), 'type'),
+        Application_Model_TestType::OTHER_TEST        => $t->translate('TEST_OTHER_TEST', array(), 'type')
       )
     ));
     
@@ -71,5 +73,15 @@ class Project_Form_TestFilter extends Custom_Form_AbstractFilter
     ));
     
     $this->getElement('author')->addMultiOptions($this->_userList);
+  }
+  
+  public function getDefaultValues()
+  {
+    return json_encode(array(
+      'resultCountPerPage' => 10,
+      'search' => '',
+      'type' => 0,
+      'author' => 0
+    ));
   }
 }

@@ -12,29 +12,30 @@
     <?php if ($this->activeProject->isActive()): ?>
     <nav class="button_link_nav">
       <ul class="button_link_ul">
-        <?php if ($this->accessVersionAdd): ?>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'version_add')?>" ><?php echo $this->t('Dodaj wersję') ?></a></li>
+        <?php if ($this->accessVersionManagement): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'version_add').$this->filterRequestConditions();?>" ><?php echo $this->t('Dodaj wersję') ?></a></li>
         <?php endif; ?>
       </ul>
     </nav>
     <?php endif; ?>
 
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
-
+      <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
+      
       <div class="search_text">
         <div class="filter">
-          <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+          <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
           <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
         </div>
       </div>      
 
       <div class="search_filter">
         <div class="filter">
-          <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->generalT('Wyniki')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
         </div>
 
-        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
+        <?php echo $this->partial('partials/filter-buttons.phtml'); ?>
       </div>
     </form>
     
@@ -54,28 +55,40 @@
         <tbody>
           <?php foreach ($this->versions as $version): ?>
           <tr>
-            <td><a href="<?php echo $this->url(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a></td>
-            <td class="t_number"><?php echo $version->getExtraData('taskCount') ?></td>
-            <td class="t_number"><?php echo $version->getExtraData('defectCount') ?></td>
+            <td><a href="<?php echo $this->projectUrl(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a></td>
+            <td class="t_number">
+              <a href="<?php echo $this->projectUrl(array(), 'task_list').'?skipSavedFilter&version='.$version->getId() ?>">
+                <?php echo $version->getExtraData('taskCount') ?>
+              </a>
+            </td>
+            <td class="t_number">
+              <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
+                <a href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&version='.$version->getId() ?>">
+                  <?php echo $version->getExtraData('defectCount') ?>
+                </a>
+              <?php else: ?>
+                <?php echo $version->getExtraData('defectCount') ?>
+              <?php endif; ?>
+            </td>
             <?php if ($this->activeProject->isActive()): ?>
             <td>
-              <nav>
-                <ul class="action_list">
-                  <div class="popbox">
-                    <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
-                    <div class='collapse'>
-                      <ul class="box">       
-                        <?php if ($this->accessVersionModify): ?>
-                          <li><a href="<?php echo $this->url(array('id' => $version->getId()), 'version_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+              <?php if ($this->accessVersionManagement): ?>
+                <nav>
+                  <ul class="action_list">
+                    <div class="popbox">
+                      <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                      <div class='collapse'>
+                        <ul class="box">       
+                          <li><a href="<?php echo $this->projectUrl(array('id' => $version->getId()), 'version_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
                           <?php if ($version->getExtraData('taskCount') == 0 && $version->getExtraData('defectCount') == 0): ?>
-                          <li><a class="j_delete_version" href="<?php echo $this->url(array('id' => $version->getId()), 'version_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+                            <li><a class="j_delete_version" href="<?php echo $this->projectUrl(array('id' => $version->getId()), 'version_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
                           <?php endif; ?>
-                        <?php endif; ?>  
-                      </ul> 
-                    </div>
-                  </div>                
-                </ul>
-              </nav>
+                        </ul> 
+                      </div>
+                    </div>                
+                  </ul>
+                </nav>
+              <?php endif; ?>
             </td>
             <?php endif; ?>
           </tr>
@@ -86,10 +99,15 @@
       <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
 
     <?php else: ?>
-      <div class="empty-text"><?php echo $this->t('Brak wersji.') ?></div>
+      <div class="empty-text"><?php echo $this->t('Brak wersji') ?></div>
     <?php endif; ?>
   </article>    
 </section>
 
-<?php 
-echo $this->partial('popups/delete-version.phtml');
+<?php echo $this->partial('popups/delete-version.phtml'); ?>
+<script type="text/javascript">
+/* <![CDATA[ */
+  var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
+  var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
+/* ]]> */
+</script>

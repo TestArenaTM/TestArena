@@ -14,7 +14,15 @@
     <?php echo $this->partial('/partials/projects-form.phtml', array(
       'projectsForm' => $this->projectsForm
     )); ?>
+    <?php if ($this->activeProject !== null): ?>
+      <?php if ($this->activeProject->isFinished()): ?>
+        <span class="finishedProject"><span class="status_SUCCESS"></span><?php echo $this->generalT('Projekt zakończony') ?></span>
+      <?php elseif ($this->activeProject->isSuspended()): ?>
+        <span class="suspendedProject"><span class="status_SUSPENDED"></span><?php echo $this->generalT('Projekt zawieszony') ?></span>
+      <?php endif; ?>
+    <?php endif; ?>
   </div>
+  
   <div class="top_right">   
     <a class="top_messages" href="<?php echo $this->url(array(), 'message_list', true)?>" title="<?php echo $this->generalT('Wiadomości') ?>"<?php if ($this->activeMenu == 'messages'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_mail icon-20" style="line-height: 2.8;"></span></a> 
     <a href="<?php echo $this->url(array(), 'user_profile') ?>" class="top_avatar_header">

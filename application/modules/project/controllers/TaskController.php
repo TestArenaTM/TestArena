@@ -28,7 +28,10 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if (!$this->getRequest()->isXmlHttpRequest())
     {
-      $this->checkUserSession(true);
+      if ($this->_project === null)
+      {
+        throw new Custom_404Exception();
+      }
   
       if (!in_array($this->getRequest()->getActionName(), array('index', 'view')))
       {
@@ -39,44 +42,36 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   }
   
   private function _getFilterForm()
-  {
+  {    
     $userMapper = new Project_Model_UserMapper();
     $releaseMapper = new Project_Model_ReleaseMapper();
-    $phaseMapper = new Project_Model_PhaseMapper();
     $environmentMapper = new Project_Model_EnvironmentMapper();
-    $request = $this->getRequest();
+    $versionMapper = new Project_Model_VersionMapper();
     
     $release = new Application_Model_Release();
-    $release->setId($request->getParam('release', null));
-    $phase = new Application_Model_Phase();
-    $phase->setId($request->getParam('phase', null));
-    
-    if (!$release->getId() && $phase->getId())
-    {
-      $release = $releaseMapper->getByPhase($phase);
-      $request->setParam('release', $release->getId());
-    }
-    
-    $releaseList = $releaseMapper->getByProjectAsOptions($this->_project);
-    $phaseList = $phaseMapper->getByReleaseAsOptions($release);
+    $release->setId($this->getRequest()->getParam('release', null));
     
     return new Project_Form_TaskFilter(array(
-      'action'          => $this->_url(array(), 'task_list'),
+      'action'          => $this->_projectUrl(array(), 'task_list'),
       'userList'        => $userMapper->getByProjectAsOptions($this->_project),
-      'releaseList'     => $releaseList,
-      'phaseList'       => $phaseList,
+      'releaseList'     => $releaseMapper->getByProjectAsOptions($this->_project),
       'environmentList' => $environmentMapper->getByProjectAsOptions($this->_project),
+      'versionList'     => $versionMapper->getByProjectAsOptions($this->_project),
       'project'         => $this->_project
     ));
   }
     
   public function indexAction()
   {
-    $request = $this->getRequest();
+    $this->_setCurrentBackUrl('task_list');
+    $this->_setCurrentBackUrl('task_assignToMe');
+    $this->_setCurrentBackUrl('task_changeStatus');
+    $request = $this->_getRequestForFilter(Application_Model_FilterGroup::TASKS);
     $filterForm = $this->_getFilterForm();
 
     if ($filterForm->isValid($request->getParams()))
     {
+      $this->_filterAction($filterForm->getValues(), 'task'.$this->_project->getId());
       $request->setParam('userId', $this->_user->getId());
       
       $taskMapper = new Project_Model_TaskMapper();
@@ -89,10 +84,33 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $list = $allIds = array();
       $paginator = null;
     }
+    
+    $filter = $this->_user->getFilter(Application_Model_FilterGroup::TASKS);
+    
+    if ($filter !== null)
+    {
+      $savedValues = $filter->getData();
+
+      if (array_key_exists('tags', $savedValues) && is_array($savedValues['tags']) && count($savedValues['tags']) > 0)
+      {
+        $tagMapper = new Project_Model_TagMapper();
+        $savedValues['tags'] = $tagMapper->getForFilterByIds($savedValues['tags']);
+      }
+      
+      if (array_key_exists('exceededDueDate', $savedValues))
+      {
+        $savedValues['exceededDueDate'] = (bool)$savedValues['exceededDueDate'];
+      }
+    
+      $filterForm->prepareSavedValues($savedValues);
+    }
 
     // Zapisanie kolejności zadań do sesji
     $session = new Zend_Session_Namespace('Task');
     $session->allIds = $allIds;
+
+    $tagMapper = new Project_Model_TagMapper();
+    $this->view->prePopulatedTags = $filterForm->prePopulateTags($tagMapper->getForPopulateByIds($filterForm->getTags()));
     
     $this->_setTranslateTitle();
     $this->view->tasks = $list;
@@ -100,6 +118,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
     $this->view->taskUserPermissions = $this->_getAccessPermissionsForTasks();
+    $this->view->allIds = $allIds;
   }
   
   private function _setViewNavigation(Application_Model_Task $task)
@@ -175,31 +194,27 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   }
     
   public function viewAction()
-  {
+  {    
+    $task = $this->_getValidTaskForView();
     $this->_setCurrentBackUrl('file_dwonload');
-    $this->_setCurrentBackUrl('task_test_view');
+    $this->_setCurrentBackUrl('task_assignToMe');
+    $this->_setCurrentBackUrl('task_changeStatus');
     
-    $task = $this->_getValidTask();
-    $taskMapper = new Project_Model_TaskMapper();
-    $task = $taskMapper->getForView($task);
-
-    if ($task === false)
-    {
-      throw new Custom_404Exception();
-    }
-
     $fileMapper = new Project_Model_FileMapper();
-    $task->setExtraData('attachments', $fileMapper->getAllByTask($task));
+    $task->setExtraData('attachments', $fileMapper->getListByTask($task));
     
-    $historyMapper = new Application_Model_HistoryMapper();
+    $historyMapper = new Project_Model_HistoryMapper();
     $environmentMapper = new Project_Model_EnvironmentMapper();
     $versionMapper = new Project_Model_VersionMapper();
+    $tagMapper = new Project_Model_TagMapper();
     $taskTestMapper = new Project_Model_TaskTestMapper();
     
-    $this->_setTranslateTitle();
+    $this->_setTranslateTitle(array('name' => $task->getTitle()), 'headTitle');
+    $this->view->backUrl = $this->_getBackUrl('task_list', $this->_projectUrl(array(), 'test_list'));
     $this->view->task = $task;
     $this->view->environments = $environmentMapper->getByTask($task);
     $this->view->versions = $versionMapper->getByTask($task);
+    $this->view->tags = $tagMapper->getByTask($task);
     $this->view->history = $historyMapper->getByTask($task);
     $this->view->taskTests = $taskTestMapper->getByTask($task);
     $this->view->taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_getAccessPermissionsForTasks());
@@ -211,33 +226,47 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   private function _getAddForm()
   {
     $options = array(
-      'action'    => $this->_url(array(), 'task_add_process'),
+      'action'    => $this->_projectUrl(array(), 'task_add_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     );
-    
+    $releaseMapper = new Project_Model_ReleaseMapper();
     $request = $this->getRequest();
-    $release = new Application_Model_Release();
-    $release->setId($request->getParam('releaseId', 0));
-    $phase = new Application_Model_Phase();
-    $phase->setId($request->getParam('phaseId', 0));
+    $release = null;
     
-    if ($phase->getId() > 0)
+    if ($request->isPost())
     {
-      $phaseMapper = new Project_Model_PhaseMapper();
-      $phaseMapper->getForView($phase);
-      $options['minDate'] = $phase->getStartDate();
-      $options['maxDate'] = $phase->getEndDate();
+      $releaseId = $request->getPost('releaseId', 0);
+      
+      if ($releaseId > 0)
+      {
+        $release = new Application_Model_Release();
+        $release->setId($releaseId);
+        $release = $releaseMapper->getBasicById($release);
+      }
     }
-    elseif ($release->getId() > 0)
+    else
     {
-      $releaseMapper = new Project_Model_ReleaseMapper();
-      $releaseMapper->getForView($release);
+      $release = $releaseMapper->getActive($this->_project);
+    }
+
+    if ($release !== null && $release->getId() > 0)
+    {
       $options['minDate'] = $release->getStartDate();
       $options['maxDate'] = $release->getEndDate();
     }
 
-    return new Project_Form_AddTask($options);
+    $form = new Project_Form_AddTask($options);
+
+    if ($release !== null && $release->getId() > 0)
+    {
+      $form->populate(array(
+        'releaseId'   => $release->getId(),
+        'releaseName' => $release->getName()
+      ));
+    }
+    
+    return $form;
   }  
 
   public function addAction()
@@ -256,7 +285,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'task_add');
+      return $this->projectRedirect(array(), 'task_add');
     }
     
     $form = $this->_getAddForm();
@@ -266,18 +295,19 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     {
       $environmentMapper = new Project_Model_EnvironmentMapper();
       $versionMapper = new Project_Model_VersionMapper();
+      $tagMapper = new Project_Model_TagMapper();
 
       $this->_setTranslateTitle();
       $this->view->form = $form;
       $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByIds($form->getEnvironments()));
       $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByIds($form->getVersions()));
+      $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByIds($form->getTags()));
       return $this->render('add'); 
     }
     
     $task = new Application_Model_Task($form->getValues());
     $task->setProjectObject($this->_project);
     $task->setRelease('id', $form->getValue('releaseId'));
-    $task->setPhase('id', $form->getValue('phaseId'));
     $task->setAssignee('id', $form->getValue('assigneeId'));
     $task->setAssigner('id', $this->_user->getId());
     $task->setAuthor('id', $this->_user->getId());
@@ -292,7 +322,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history->setSubjectObject($task);
       $history->setType(Application_Model_HistoryType::CREATE_TASK);
       $history->setField1($task->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -301,48 +331,35 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect(array('id' => $task->getId()), 'task_view');
+    $this->projectRedirect(array('id' => $task->getId()), 'task_view');
   }
   
   private function _getEditForm(Application_Model_Task $task)
   {
     $request = $this->getRequest();
     $options = array(
-      'action'    => $this->_url(array('id' => $task->getId()), 'task_edit_process'),
+      'action'    => $this->_projectUrl(array('id' => $task->getId()), 'task_edit_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     );
 
     $rowData = $task->getExtraData('rowData');
     $release = new Application_Model_Release();
-    $phase = new Application_Model_Phase();
 
     if ($request->isPost())
     {
       $release->setId($request->getParam('releaseId'));
-      $phase->setId($request->getParam('phaseId'));
     }
     else
     {
       $release->setId($rowData['releaseId']);
-      $phase->setId($rowData['phaseId']);
     }
 
-    if ($phase->getId() > 0)
-    {
-      $phaseMapper = new Project_Model_PhaseMapper();
-    
-      if ($phaseMapper->getForView($phase) !== false)
-      {
-        $options['minDate'] = $phase->getStartDate();
-        $options['maxDate'] = $phase->getEndDate();
-      }
-    }
-    elseif ($release->getId() > 0)
+    if ($release->getId() > 0)
     {
       $releaseMapper = new Project_Model_ReleaseMapper();
       
-      if ($releaseMapper->getForView($release) !== false)
+      if ($releaseMapper->getBasicById($release) !== false)
       {
         $options['minDate'] = $release->getStartDate();
         $options['maxDate'] = $release->getEndDate();
@@ -358,6 +375,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $task = $this->_getValidTaskForEdit();
     $environmentMapper = new Project_Model_EnvironmentMapper();
     $versionMapper = new Project_Model_VersionMapper();
+    $tagMapper = new Project_Model_TagMapper();
     $form = $this->_getEditForm($task);
     $rowData = $task->getExtraData('rowData');
     $form->populate($form->prepareAttachmentsFromDb($rowData['attachments']));
@@ -367,6 +385,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $this->view->task = $task;
     $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByTask($task));
     $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByTask($task));
+    $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByTask($task));
   }
   
   public function editProcessAction()
@@ -376,7 +395,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'task_run_list');
+      return $this->projectRedirect(array(), 'task_run_list');
     }
     
     $form = $this->_getEditForm($task);
@@ -386,17 +405,31 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     {
       $environmentMapper = new Project_Model_EnvironmentMapper();
       $versionMapper = new Project_Model_VersionMapper();
+      $tagMapper = new Project_Model_TagMapper();
       
       $this->_setTranslateTitle();
       $this->view->form = $form;
       $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByIds($form->getEnvironments()));
       $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByIds($form->getVersions()));
+      $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByIds($form->getTags()));
       return $this->render('edit'); 
     }
 
+    if ($task->getAssigneeId() != $form->getValue('assigneeId'))
+    {
+      $historyType = Application_Model_HistoryType::CHANGE_AND_ASSIGN_TASK;
+    }
+    else
+    {
+      $historyType = Application_Model_HistoryType::CHANGE_TASK;
+    }
+    /*elseif (ZMIENIŁO SIĘ TYLKO PRZYPISANIE)
+    {
+      $historyType = Application_Model_HistoryType::ASSIGN_TASK;
+    }*/
+    
     $task->setDbProperties($form->getValues());
     $task->setRelease('id', $form->getValue('releaseId'));
-    $task->setPhase('id', $form->getValue('phaseId'));
     $task->setAssignee('id', $form->getValue('assigneeId'));
     $task->setAssigner('id', $this->_user->getId());
 
@@ -408,9 +441,9 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($task);
-      $history->setType(Application_Model_HistoryType::CHANGE_TASK);
+      $history->setType($historyType);
       $history->setField1($task->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -419,7 +452,51 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
+  }
+  
+  public function deleteAction()
+  {
+    $task = $this->_getValidTaskForDelete();
+    $taskMapper = new Project_Model_TaskMapper();
+    $t = new Custom_Translate();
+    
+    if ($taskMapper->delete($task))
+    {
+      $this->_removeIdFromMultiSelectIds('task', $task->getId());
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+    
+    return $this->projectRedirect($this->_getBackUrl('task_list', $this->_projectUrl(array(), 'task_list')));
+  }
+  
+  public function multiDeleteAction()
+  {
+    $multiSelectName = 'task'.$this->_project->getId();
+    $taskIds = $this->_getMultiSelectIds($multiSelectName, false);
+    
+    $taskMapper = new Project_Model_TaskMapper();
+    $tasks = $taskMapper->getByIds4CheckAccess($taskIds);
+    
+    $this->_checkDeletePermissions4MultipleTasks($tasks);
+    
+    $t = new Custom_Translate();
+    
+    if ($taskMapper->deleteByIds($taskIds))
+    {    
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+      $this->_clearMultiSelectIds($multiSelectName);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+    
+    return $this->projectRedirect(array(), 'task_list');
   }
   
   public function startAction()
@@ -441,7 +518,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history->setSubjectObject($task);
       $history->setType(Application_Model_HistoryType::CHANGE_TASK_STATUS);
       $history->setField1(Application_Model_TaskStatus::IN_PROGRESS);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -450,13 +527,13 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('task_changeStatus', $this->_projectUrl(array(), 'task_list')));
   }
   
   private function _getAssignForm(Application_Model_Task $task)
   {
     $form = new Project_Form_AssignTask(array(
-      'action'      => $this->_url(array('id' => $task->getId()), 'task_assign_process'),
+      'action'      => $this->_projectUrl(array('id' => $task->getId()), 'task_assign_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId()
     ));
@@ -484,7 +561,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $task->getId()), 'task_assign');
+      return $this->projectRedirect(array('id' => $task->getId()), 'task_assign');
     }
     
     $form = $this->_getAssignForm($task);
@@ -509,9 +586,9 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($task);
-      $history->setType(Application_Model_HistoryType::CHANGE_TASK_STATUS);
-      $history->setField1($task->getStatusId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $history->setType(Application_Model_HistoryType::ASSIGN_TASK);
+      $history->setField1($task->getAssigneeId());
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -520,7 +597,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   public function assignToMeAction()
@@ -542,9 +619,9 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($task);
-      $history->setType(Application_Model_HistoryType::CHANGE_TASK_STATUS);
-      $history->setField1($task->getStatusId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $history->setType(Application_Model_HistoryType::ASSIGN_TASK);
+      $history->setField1($task->getAssigneeId());
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -553,7 +630,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($this->getRequest()->get);
+    return $this->projectRedirect($this->_getBackUrl('task_assignToMe', $this->_projectUrl(array(), 'task_list')));
   }
   
   private function _getCloseForm(Application_Model_Task $task)
@@ -561,7 +638,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $resolutionMapper = new Project_Model_ResolutionMapper();
     
     return new Project_Form_CloseTask(array(
-      'action'      => $this->_url(array('id' => $task->getId()), 'task_close_process'),
+      'action'      => $this->_projectUrl(array('id' => $task->getId()), 'task_close_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId(),
       'resolutions' => $resolutionMapper->getByProjectAsOptions($this->_project)
@@ -601,7 +678,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $task->getId()), 'task_close');
+      return $this->projectRedirect(array('id' => $task->getId()), 'task_close');
     }
 
     $form = $this->_getCloseForm($task);
@@ -631,7 +708,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history->setSubjectObject($task);
       $history->setType(Application_Model_HistoryType::CHANGE_TASK_STATUS);
       $history->setField1(Application_Model_TaskStatus::CLOSED);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -640,13 +717,13 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   private function _getReopenForm(Application_Model_Task $task)
   {
     $form = new Project_Form_ReopenTask(array(
-      'action'      => $this->_url(array('id' => $task->getId()), 'task_reopen_process'),
+      'action'      => $this->_projectUrl(array('id' => $task->getId()), 'task_reopen_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId()
     ));
@@ -686,7 +763,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $task->getId()), 'task_reopen');
+      return $this->projectRedirect(array('id' => $task->getId()), 'task_reopen');
     }
     
     $form = $this->_getReopenForm($task);
@@ -712,7 +789,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history->setSubjectObject($task);
       $history->setType(Application_Model_HistoryType::CHANGE_TASK_STATUS);
       $history->setField1($task->getStatusId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -721,305 +798,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
-  }
-  
-  public function addTestAjaxAction()
-  {
-    $this->checkUserSession(true, true);
-    $result = array(
-      'status' => 'SUCCESS',
-      'data'   => array(),
-      'errors' => array()
-    );
-    
-    $taskTest = new Application_Model_TaskTest();
-    $taskTest->setTaskObject($this->_getValidTaskForEditTestAndDefectAjax());
-    $taskTest->setTest('id', $this->getRequest()->getPost('testId'));
-    $testMapper = new Project_Model_TestMapper();
-    $t = new Custom_Translate();
-    
-    if ($taskTest->getTest()->getId() > 0 && $testMapper->getForViewInTask($taskTest->getTest(), $this->_project) !== false)
-    {
-      $validator = new Custom_Validate_UniqueTaskTest(array('criteria' => array('task_id' => $taskTest->getTask()->getId())));
-      
-      if ($validator->isValid($taskTest->getTest()->getId()))
-      {
-        $taskTestMapper = new Project_Model_TaskTestMapper();
-
-        if ($taskTestMapper->add($taskTest))
-        {
-          $history = new Application_Model_History();
-          $history->setUserObject($this->_user);
-          $history->setSubjectObject($taskTest->getTask());
-          $history->setType(Application_Model_HistoryType::ADD_TEST_TO_TASK);
-          $history->setField1($taskTest->getTest()->getId());
-          $historyMapper = new Application_Model_HistoryMapper();
-          $historyMapper->add($history);
-          $result['data']['testId'] = $taskTest->getTest()->getId();
-          $result['data']['testType'] = $taskTest->getTest()->getTypeId();
-        }
-        else
-        {
-          $result['status'] = 'ERROR';
-          $result['errors'][] = $t->translate('generalError');
-        }
-      }
-      else
-      {
-        $result['status'] = 'ERROR';
-        
-        foreach ($validator->getErrors() as $error)
-        {
-          $result['errors'][] = $t->translate($error, null, 'error');
-        }
-      }
-    }
-    else
-    {
-      $result['status'] = 'ERROR';
-      $result['errors'][] = $t->translate('generalError');
-    }
-    
-    echo json_encode($result);
-    exit;
-  }
-
-  public function deleteTestAjaxAction()
-  {
-    $this->checkUserSession(true, true);
-    
-    $result = array(
-      'status' => 'SUCCESS',
-      'data'   => array(),
-      'errors' => array()
-    );
-    
-    $t = new Custom_Translate();
-
-    $taskTest = new Application_Model_TaskTest();
-    $taskTest->setTaskObject($this->_getValidTaskForEditTestAndDefectAjax());
-    $taskTest->setTest('id', $this->getRequest()->getParam('testId'));
-    
-    if ($taskTest->getTest()->getId() > 0)
-    {
-      $taskTestMapper = new Project_Model_TaskTestMapper();
-
-      if ($taskTestMapper->delete($taskTest))
-      {
-        $history = new Application_Model_History();
-        $history->setUserObject($this->_user);
-        $history->setSubjectObject($taskTest->getTask());
-        $history->setType(Application_Model_HistoryType::DELETE_TEST_FROM_TASK);
-        $history->setField1($taskTest->getTest()->getId());
-        $historyMapper = new Application_Model_HistoryMapper();
-        $historyMapper->add($history);
-        $result['data']['testId'] = $taskTest->getTest()->getId();
-      }
-      else
-      {
-        $result['status'] = 'ERROR';
-        $result['errors'][] = $t->translate('generalError');
-      }
-    }
-    else
-    {
-      $result['status'] = 'ERROR';
-      $result['errors'][] = $t->translate('generalError');
-    }
-    
-    echo json_encode($result);
-    exit;
-  }
-  
-  public function viewOtherTestAction()
-  {
-    $this->_setCurrentBackUrl('file_dwonload');
-    $taskTest = $this->_getValidTaskOtherTestForView();
-    $fileMapper = new Project_Model_FileMapper();
-    $taskTest->getTest()->setExtraData('attachments', $fileMapper->getAllByTest($taskTest->getTest()));
-
-    $this->_setTranslateTitle();
-    $this->view->taskTest = $taskTest;
-    $this->view->taskUserPermission = new Application_Model_TaskUserPermission($taskTest->getTask(), $this->_user, $this->_getAccessPermissionsForTasks());
-  }
-  
-  public function viewTestCaseAction()
-  {
-    $this->_setCurrentBackUrl('file_dwonload');
-    $taskTest = $this->_getValidTaskTestCaseForView();
-    $fileMapper = new Project_Model_FileMapper();
-    $taskTest->getTest()->setExtraData('attachments', $fileMapper->getAllByTest($taskTest->getTest()));
-    
-    $this->_setTranslateTitle();
-    $this->view->taskTest = $taskTest;
-    $this->view->taskUserPermission = new Application_Model_TaskUserPermission($taskTest->getTask(), $this->_user, $this->_getAccessPermissionsForTasks());
-  }
-  
-  public function viewExploratoryTestAction()
-  {
-    $this->_setCurrentBackUrl('file_dwonload');
-    $taskTest = $this->_getValidTaskExploratoryTestForView();
-    $fileMapper = new Project_Model_FileMapper();
-    $taskTest->getTest()->setExtraData('attachments', $fileMapper->getAllByTest($taskTest->getTest()));
-    
-    $this->_setTranslateTitle();
-    $this->view->taskTest = $taskTest;
-    $this->view->taskUserPermission = new Application_Model_TaskUserPermission($taskTest->getTask(), $this->_user, $this->_getAccessPermissionsForTasks());
-  }
-  
-  private function _getResolveTaskTestForm(Application_Model_TaskTest $taskTest)
-  {
-    $resolutionMapper = new Project_Model_ResolutionMapper();
-    
-    return new Project_Form_ResolveTaskTest(array(
-      'action'      => $this->_url(array('id' => $taskTest->getTask()->getId(), 'testId' => $taskTest->getTest()->getId()), 'task_test_resolve_process'),
-      'method'      => 'post',
-      'resolutions' => $resolutionMapper->getByProjectAsOptions($this->_project)
-    ));
-  }
-  
-  public function resolveTestAction()
-  {
-    $taskTest = $this->_getValidTaskTestForChangeStatus();
-    
-    if ($taskTest->getTask()->getStatusId() == Application_Model_TaskStatus::CLOSED)
-    {
-      throw new Custom_404Exception();
-    }
-    
-    $form = $this->_getResolveTaskTestForm($taskTest);
-    
-    $this->_setTranslateTitle();
-    $this->view->form = $form;
-    $this->view->taskTest = $taskTest;
-  }
-  
-  public function resolveTestProcessAction()
-  {
-    $taskTest = $this->_getValidTaskTestForChangeStatus();
-    
-    if ($taskTest->getTask()->getStatusId() == Application_Model_TaskStatus::CLOSED)
-    {
-      throw new Custom_404Exception();
-    }
-    
-    $request = $this->getRequest();
-    
-    if (!$request->isPost())
-    {
-      return $this->redirect(array('id' => $taskTest->getTask()->getId(), 'testId' => $taskTest->getTest()->getId()), 'task_test_resolve');
-    }
-
-    $form = $this->_getResolveTaskTestForm($taskTest);
-    
-    if (!$form->isValid($request->getPost()))
-    {
-      $this->_setTranslateTitle();
-      $this->view->form = $form;
-      $this->view->taskTest = $taskTest;
-      return $this->render('resolve-test'); 
-    }
-    
-    $preComment = $taskTest->getTest()->getObjectNumber().' '.$taskTest->getTest()->getName();
-    //$url = $this->_url(array('id' => $taskTest->getTask()->getId(), 'testId' => $taskTest->getTest()->getId()), $this->view->taskTestViewRouteName($taskTest->getTest()));
-    //$preComment = '[a href="'.$url.'"]'.$preComment."[/a]\r\n".$form->getValue('comment');
-    $preComment .= "\r\n";
-
-    $taskTest->setExtraData('comment', $preComment.$form->getValue('comment'));
-    $taskTest->setResolution('id', $form->getValue('resolutionId'));
-    $taskTestMapper = new Project_Model_TaskTestMapper();
-    $t = new Custom_Translate();
-    
-    if ($taskTestMapper->changeResolution($taskTest))
-    {
-      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
-    }
-    else
-    {
-      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
-    }
-
-    return $this->redirect($form->getBackUrl());
-  }
-
-  private function _getChangeTaskTestForm(Application_Model_TaskTest $taskTest)
-  {
-    $resolutionMapper = new Project_Model_ResolutionMapper();
-    
-    $form = new Project_Form_ChangeTaskTest(array(
-      'action'      => $this->_url(array('id' => $taskTest->getTask()->getId(), 'testId' => $taskTest->getTest()->getId()), 'task_test_change_process'),
-      'method'      => 'post',
-      'resolutions' => $resolutionMapper->getByProjectAsOptions($this->_project)
-    ));
-    
-    return $form->populate(array(
-      'resolutionId' => $taskTest->getResolutionId()
-    ));
-  }
-  
-  public function changeTestAction()
-  {
-    $taskTest = $this->_getValidTaskTestForChangeStatus();
-    
-    if ($taskTest->getTask()->getStatusId() == Application_Model_TaskStatus::CLOSED)
-    {
-      throw new Custom_404Exception();
-    }
-    
-    $form = $this->_getChangeTaskTestForm($taskTest);
-    
-    $this->_setTranslateTitle();
-    $this->view->form = $form;
-    $this->view->taskTest = $taskTest;
-  }
-  
-  public function changeTestProcessAction()
-  {
-    $taskTest = $this->_getValidTaskTestForChangeStatus();
-    
-    if ($taskTest->getTask()->getStatusId() == Application_Model_TaskStatus::CLOSED)
-    {
-      throw new Custom_404Exception();
-    }
-    
-    $request = $this->getRequest();
-    
-    if (!$request->isPost())
-    {
-      return $this->redirect(array('id' => $taskTest->getTask()->getId(), 'testId' => $taskTest->getTest()->getId()), 'task_test_resolve');
-    }
-
-    $form = $this->_getChangeTaskTestForm($taskTest);
-    
-    if (!$form->isValid($request->getPost()))
-    {
-      $this->_setTranslateTitle();
-      $this->view->form = $form;
-      $this->view->taskTest = $taskTest;
-      return $this->render('resolve-test'); 
-    }
-    
-    $preComment = $taskTest->getTest()->getObjectNumber().' '.$taskTest->getTest()->getName();
-    //$url = $this->_url(array('id' => $taskTest->getTask()->getId(), 'testId' => $taskTest->getTest()->getId()), $this->view->taskTestViewRouteName($taskTest->getTest()));
-    //$preComment = '[a href="'.$url.'"]'.$preComment."[/a]\r\n".$form->getValue('comment');
-    $preComment .= "\r\n";
-
-    $taskTest->setExtraData('comment', $preComment.$form->getValue('comment'));
-    $taskTest->setResolution('id', $form->getValue('resolutionId'));
-    $taskTestMapper = new Project_Model_TaskTestMapper();
-    $t = new Custom_Translate();
-    
-    if ($taskTestMapper->changeResolution($taskTest))
-    {
-      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
-    }
-    else
-    {
-      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
-    }
-
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   public function addDefectAjaxAction()
@@ -1032,7 +811,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     );
     
     $taskDefect = new Application_Model_TaskDefect();
-    $taskDefect->setTaskObject($this->_getValidTaskForEditTestAndDefectAjax(false));
+    $taskDefect->setTaskObject($this->_getValidTaskForDefectAjax());
     $taskDefect->setBugTrackerId($this->_project->getBugTracker()->getBugTrackerId());
     $t = new Custom_Translate();
     $data = false;
@@ -1140,7 +919,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
           $history->setSubjectObject($taskDefect->getTask());
           $history->setType(Application_Model_HistoryType::ADD_DEFECT_TO_TASK);
           $history->setField1($taskDefect->getDefect()->getId());
-          $historyMapper = new Application_Model_HistoryMapper();
+          $historyMapper = new Project_Model_HistoryMapper();
           $historyMapper->add($history);
           $result['data'] = $data;
         }
@@ -1183,7 +962,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $t = new Custom_Translate();
 
     $taskDefect = new Application_Model_TaskDefect();
-    $taskDefect->setTaskObject($this->_getValidTaskForEditTestAndDefectAjax(false));
+    $taskDefect->setTaskObject($this->_getValidTaskForDefectAjax());
     $taskDefect->setDefect('id', $this->getRequest()->getParam('defectId'));
     
     if ($taskDefect->getDefect()->getId() > 0)
@@ -1197,7 +976,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
         $history->setSubjectObject($taskDefect->getTask());
         $history->setType(Application_Model_HistoryType::DELETE_DEFECT_FROM_TASK);
         $history->setField1($taskDefect->getDefect()->getId());
-        $historyMapper = new Application_Model_HistoryMapper();
+        $historyMapper = new Project_Model_HistoryMapper();
         $historyMapper->add($history);
         $result['data']['id'] = $taskDefect->getDefect()->getId();
       }
@@ -1233,18 +1012,6 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     return $task;
   }
   
-  private function _getValidTest()
-  {
-    $idValidator = new Application_Model_Validator_Id();
-    
-    if (!$idValidator->isValid(array('id' => $this->_getParam('testId'))))
-    {
-      throw new Custom_404Exception();
-    }
-    
-    return new Application_Model_Test($idValidator->getFilteredValues());
-  }
-  
   private function _getValidTaskForEdit()
   {
     $task = $this->_getValidTask();
@@ -1259,20 +1026,29 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $this->_checkEditPermissions($task);
     
     $fileMapper = new Project_Model_FileMapper();
-    $rowData['attachments'] = $fileMapper->getAllByTask($task);
+    $rowData['attachments'] = $fileMapper->getListByTask($task);
     $rowData['dueDate'] = substr($rowData['dueDate'], 0, 16);
     return $task->setExtraData('rowData', $rowData);
   }
   
-  private function _getValidTaskForAssign()
+  private function _getValidTaskForView()
   {
     $task = $this->_getValidTask();
     $taskMapper = new Project_Model_TaskMapper();
-    $task = $taskMapper->getForView($task);
     
-    if ($task === false 
-        || $task->getProject()->getId() != $this->_project->getId()
-        || $task->getStatusId() == Application_Model_TaskStatus::CLOSED)
+    if ($taskMapper->getForView($task) === false)
+    {
+      throw new Custom_404Exception();
+    }
+    
+    return $task;
+  }
+  
+  private function _getValidTaskForAssign()
+  {
+    $task = $this->_getValidTaskForView();
+    
+    if ($task->getStatusId() == Application_Model_TaskStatus::CLOSED)
     {
       throw new Custom_404Exception();
     }
@@ -1284,115 +1060,29 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   
   private function _getValidTaskForChangeStatus()
   {
-    $task = $this->_getValidTask();
-    $taskMapper = new Project_Model_TaskMapper();
-    $task = $taskMapper->getForView($task);
-    
-    if ($task === false 
-        || $task->getProject()->getId() != $this->_project->getId())
-    {
-      throw new Custom_404Exception();
-    }
-    
-    $this->_checkChangeStatusPermissions($task);
-    
+    $task = $this->_getValidTaskForView();
+    $this->_checkChangeStatusPermissions($task);    
     return $task;
   }
   
-  private function _getValidTaskForEditTestAndDefectAjax($isTestModification = true)
+  private function _getValidTaskForDelete()
   {
-    $task = $this->_getValidTask();
-    $taskMapper = new Project_Model_TaskMapper();
-    $task = $taskMapper->getForView($task);
+    $task = $this->_getValidTaskForView();
+    $this->_checkDeletePermissions($task);    
+    return $task;
+  }
+  
+  private function _getValidTaskForDefectAjax()
+  {
+    $task = $this->_getValidTaskForView();
     
-    if ($task === false 
-        || $task->getProject()->getId() != $this->_project->getId()
-        || $task->getStatusId() == Application_Model_TaskStatus::CLOSED)
+    if ($task->getStatusId() == Application_Model_TaskStatus::CLOSED)
     {
       $this->_throwTask500ExceptionAjax();
     }
     
-    if ($isTestModification)
-    {
-      $this->_checkTestModifyPermissions($task);
-    }
-    else
-    {
-      $this->_checkDefectModifyPermissions($task);
-    }
-    
+    $this->_checkDefectModifyPermissions($task);
     return $task;
-  }
-  
-  private function _getValidTaskTestForChangeStatus()
-  {    
-    $taskTest = new Application_Model_TaskTest();
-    $taskTest->setTestObject($this->_getValidTest());
-    $taskTest->setTaskObject($this->_getValidTask());
-    
-    $taskTestMapper = new Project_Model_TaskTestMapper();
-    $taskTest = $taskTestMapper->getForView($taskTest);
-    
-    if ($taskTest === false
-        || $taskTest->getTask()->getProject()->getId() != $this->_project->getId())
-    {
-      throw new Custom_404Exception();
-    }
-    
-    $this->_checkChangeStatusPermissions($taskTest->getTask());
-    
-    return $taskTest;
-  }
-  
-  private function _getValidTaskOtherTestForView()
-  {    
-    $taskTest = new Application_Model_TaskTest();
-    $taskTest->setTestObject($this->_getValidTest());
-    $taskTest->setTaskObject($this->_getValidTask());
-    
-    $taskTestMapper = new Project_Model_TaskTestMapper();
-    $taskTest = $taskTestMapper->getOtherTestForView($taskTest);
-    
-    if ($taskTest === false)
-    {
-      throw new Custom_404Exception();
-    }
-    
-    return $taskTest;
-  }
-  
-  private function _getValidTaskTestCaseForView()
-  {    
-    $taskTest = new Application_Model_TaskTest();
-    $taskTest->setTestObject($this->_getValidTest());
-    $taskTest->setTaskObject($this->_getValidTask());
-    
-    $taskTestMapper = new Project_Model_TaskTestMapper();
-    $taskTest = $taskTestMapper->getTestCaseForView($taskTest);
-    
-    if ($taskTest === false)
-    {
-      throw new Custom_404Exception();
-    }
-    
-    return $taskTest;
-  }
-  
-  private function _getValidTaskExploratoryTestForView()
-  {    
-    $taskTest = new Application_Model_TaskTest();
-    $taskTest->setTestObject($this->_getValidTest());
-    $taskTest->setTaskObject($this->_getValidTask());
-    
-    $taskTestMapper = new Project_Model_TaskTestMapper();
-    $taskTest = $taskTestMapper->getExploratoryTestForView($taskTest);
-    
-    if ($taskTest === false)
-    {
-      throw new Custom_404Exception();
-    }
-    
-    return $taskTest;
   }
   
   private function _checkEditPermissions(Application_Model_Task $task)
@@ -1416,7 +1106,10 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $roleActionsForChangeStatus = array(
       Application_Model_RoleAction::TASK_CHANGE_STATUS_CREATED_BY_YOU,
       Application_Model_RoleAction::TASK_CHANGE_STATUS_ASSIGNED_TO_YOU,
-      Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL
+      Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL,
+      Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU,
+      Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU,
+      Application_Model_RoleAction::TASK_EDIT_ALL
     );
     
     $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForChangeStatus));
@@ -1430,10 +1123,10 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   private function _checkAssignPermissions(Application_Model_Task $task)
   {
     $roleActionsForAssign = array(
-      Application_Model_RoleAction::TASK_ASSIGN_CREATED_BY_YOU,
-      Application_Model_RoleAction::TASK_ASSIGN_ASSIGNED_TO_YOU,
-      Application_Model_RoleAction::TASK_ASSIGN_ASSIGNED_BY_YOU,
-      Application_Model_RoleAction::TASK_ASSIGN_ALL
+      Application_Model_RoleAction::TASK_ASSIGN_ALL,
+      Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU,
+      Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU,
+      Application_Model_RoleAction::TASK_EDIT_ALL
     );
     
     $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForAssign));
@@ -1441,6 +1134,41 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     if (false === $taskUserPermission->isAssignPermission())
     {
       $this->_throwTaskAccessDeniedException();
+    }
+  }
+  
+  private function _checkDeletePermissions(Application_Model_Task $task)
+  {
+    $roleActionsForAssign = array(
+      Application_Model_RoleAction::TASK_DELETE_ALL,
+      Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU,
+      Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU
+    );
+    
+    $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForAssign));
+    
+    if (false === $taskUserPermission->isDeletePermission())
+    {
+      $this->_throwTaskAccessDeniedException();
+    }
+  }
+  
+  private function _checkDeletePermissions4MultipleTasks(array $tasks)
+  {
+    $roleActionsForAssign = array(
+      Application_Model_RoleAction::TASK_DELETE_ALL,
+      Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU,
+      Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU
+    );
+    
+    foreach ($tasks as $task)
+    {
+      $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForAssign));
+    
+      if (false === $taskUserPermission->isDeletePermission())
+      {
+        $this->_throwTaskAccessDeniedException();
+      }
     }
   }
   
@@ -1455,22 +1183,6 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForDefectModify));
     
     if (false === $taskUserPermission->isDefectModifyPermission())
-    {
-      $this->_throwTaskAccessDeniedException();
-    }
-  }
-  
-  private function _checkTestModifyPermissions(Application_Model_Task $task)
-  {
-    $roleActionsForTestModify = array(
-      Application_Model_RoleAction::TASK_TEST_MODIFY_CREATED_BY_YOU,
-      Application_Model_RoleAction::TASK_TEST_MODIFY_ASSIGNED_TO_YOU,
-      Application_Model_RoleAction::TASK_TEST_MODIFY_ALL
-    );
-    
-    $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForTestModify));
-    
-    if (false === $taskUserPermission->isTestModifyPermission())
     {
       $this->_throwTaskAccessDeniedException();
     }

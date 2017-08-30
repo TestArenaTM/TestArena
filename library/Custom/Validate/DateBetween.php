@@ -35,8 +35,28 @@ class Custom_Validate_DateBetween extends Zend_Validate_Abstract
   {
     $this->_setValue($value);
     $value = strtotime($value);
-    $min = strtotime($this->_min);
-    $max = strtotime($this->_max);
+
+    $buf = explode(' ', $this->_min);
+
+    if (count($buf) == 1)
+    {
+      $min = strtotime($this->_min.' 00:00:00');
+    }
+    else      
+    {
+      $min = strtotime($this->_min);
+    }
+
+    $buf = explode(' ', $this->_max);
+
+    if (count($buf) == 1)
+    {
+      $max = strtotime($this->_max.' 23:59:59');
+    }
+    else      
+    {
+      $max = strtotime($this->_max);
+    }
 
     if ($this->_inclusive)
     {

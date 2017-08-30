@@ -164,10 +164,11 @@ class Message_IndexController extends Custom_Controller_Action_Application_Abstr
         $timeAgo  = $this->view->getHelper('timeAgo');
         
         $responseData = array(
-          'userFullname' => $this->_user->getFullname(),
+          'userFullname'  => $this->_user->getFullname(),
           'userAvatarUrl' => $this->_user->getAvatarUrl(true),
-          'msgContent' => nl2br($purifier->purify($responseMessage->getContent())),
-          'msgCreateDate' => $timeAgo->timeAgo($responseMessage->getCreateDate())
+          'msgContent'    => nl2br($purifier->purify($responseMessage->getContent())),
+          'msgCreateDate' => $timeAgo->timeAgo($responseMessage->getCreateDate()),
+          'messageType'   => $message->getExtraData('message_type')
         );
         
         echo json_encode($responseData);
@@ -287,7 +288,8 @@ class Message_IndexController extends Custom_Controller_Action_Application_Abstr
         'userFullname'  => $sender->getFullname(),
         'userAvatarUrl' => $sender->getAvatarUrl(true),
         'msgContent'    => nl2br($purifier->purify($message->getContent())),
-        'msgCreateDate' => $timeAgo->timeAgo($message->getCreateDate())
+        'msgCreateDate' => $timeAgo->timeAgo($message->getCreateDate()),
+        'messageType'   => $message->getExtraData('message_type')
       );
     }
     

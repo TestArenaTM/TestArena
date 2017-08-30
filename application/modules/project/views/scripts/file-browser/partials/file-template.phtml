@@ -1,0 +1,18 @@
+<script id="fileTmpl" type="text/x-jquery-tmpl" >
+<tr>
+  <td id="file_${id}" class="file${fileType}">
+    <input type="checkbox" name="selectedFile_${id}" value="${name}" id="selectedFile_${id}" class="selectedFile">
+    <span class="icon${fileType}"></span>
+    <a class="file" id="fileName_${id}" href="#">${fullname}</a>
+    {{if fileType == 'Image'}}
+    <!-- Podgląd obrazków -->
+    <div class="previewImage" id="previewImage_${id}"><img src="${previewImageUrl}" alt="${name}"></div>
+    {{/if}}
+  </td>
+  <td class="actions">
+    <a class="button removeFileButton" id="removeFile_${id}" href="#"><?php echo $this->generalT('Usuń') ?></a>
+    <a class="button renameFileButton" id="renameFile_${id}" fileName="${name}" fileExtension="${extension}" href="#"><?php echo $this->generalT('Zmień nazwę') ?></a>
+    <a class="button downloadFileButton" id="downloadFile_${id}" href="#"><?php echo $this->generalT('Pobierz') ?></a>
+  </td>
+</tr>
+</script>

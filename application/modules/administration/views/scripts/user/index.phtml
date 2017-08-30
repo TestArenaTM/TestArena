@@ -95,7 +95,7 @@
                         <li><a href="<?php echo $this->url(array('id' => $user->getId()), 'admin_user_activate') ?>"><?php echo $this->t('Aktywuj') ?></a></li>
                         <?php endif; ?>
                         <?php if (!$user->getResetPassword()): ?>
-                        <li><a href="<?php echo $this->url(array('id' => $user->getId()), 'admin_user_reset_password') ?>"><?php echo $this->t('Wymuś zmianę hasła') ?></a></li>
+                        <li><a class="j_reset_user_password" href="<?php echo $this->url(array('id' => $user->getId()), 'admin_user_reset_password') ?>"><?php echo $this->t('Wymuś zmianę hasła') ?></a></li>
                         <?php endif; ?>
                       </ul> 
                     </div>
@@ -111,7 +111,9 @@
     <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
 
     <?php else: ?>
-    <div class="empty-text"><?php echo $this->t('Brak użytkowników.') ?></div>
+    <div class="empty-text"><?php echo $this->t('Brak użytkowników') ?></div>
     <?php endif; ?>
   </article>    
 </section>
+
+<?php echo $this->partial('popups/reset-user-password.phtml');

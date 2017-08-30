@@ -11,18 +11,24 @@
 
     <nav class="button_link_nav">
       <ul class="button_link_ul">
-        <?php if ($this->activeProject->isActive() && $this->accessReleaseAndPhaseManagement): ?>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->release->getId()), 'release_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->release->getId()), 'release_clone') ?>"><?php echo $this->t('Klonuj') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
+        <?php if ($this->activeProject->isActive() && $this->accessReleaseManagement): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->release->getId()), 'release_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->release->getId()), 'release_clone_multiform') ?>"><?php echo $this->t('Klonuj') ?></a></li>
+          <?php if ($this->release->isActive()): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->release->getId()), 'release_deactivate') ?>"><?php echo $this->t('Dezaktywuj') ?></a></li>
+          <?php else: ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->release->getId()), 'release_activate') ?>"><?php echo $this->t('Aktywuj') ?></a></li>
+          <?php endif; ?>
           <?php if ($this->release->getExtraData('taskCount') == 0): ?>
-            <li class="button_link_li"><a class="j_delete_release button_link" href="<?php echo $this->url(array('projectId' => $this->activeProject->getId(), 'id' => $this->release->getId()), 'release_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+            <li class="button_link_li"><a class="j_delete_release button_link" href="<?php echo $this->projectUrl(array('id' => $this->release->getId()), 'release_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
           <?php endif; ?>
         <?php endif; ?>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'phase_list').'?release='.$this->release->getId() ?>"><?php echo $this->t('Fazy') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'task_list').'?release='.$this->release->getId() ?>"><?php echo $this->t('Zadania') ?></a></li>
+        <?php if ($this->accessReportGenerate): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->release->getId()), 'release_report') ?>"><?php echo $this->t('Raport') ?></a></li>
+        <?php endif; ?>
       </ul>
     </nav>
-
     
     <div class="textLabelEditor">
       <div id="text" class="content_label_title">
@@ -31,18 +37,28 @@
         <span class="isEnded"><?php echo $this->t('Zakończone') ?></span>
         <?php endif; ?>
       </div>
-    </div>     
+    </div>    
+    
     <div class="contentLRtable">
+      
       <div class="contentProperties_left">
         <div class="box_number_info">
-            <a class="number_content" href="<?php echo $this->url(array(), 'task_list').'?release='.$this->release->getId() ?>"><?php echo $this->escapeQuotes($this->release->getExtraData('taskCount')) ?></a>
+            <a class="number_content" href="<?php echo $this->projectUrl(array(), 'task_list').'?skipSavedFilter&release='.$this->release->getId() ?>">
+              <?php echo $this->escapeQuotes($this->release->getExtraData('taskCount')) ?>
+            </a>
           <div class="descr_number_info"><?php echo $this->t('Liczba zadań') ?></div>
+        </div>         
+        
+        <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
+        <div class="box_number_info">
+            <a class="number_content" href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&release='.$this->release->getId() ?>">
+              <?php echo $this->escapeQuotes($this->release->getExtraData('defectCount')) ?>
+            </a>
+          <div class="descr_number_info"><?php echo $this->t('Liczba defektów') ?></div>
         </div>
-        <div>
-            <h5 class="break_page"><span aria-hidden="true" class="icon_pencil icon-20"></span><?php echo $this->t('Opis') ?></h5>
-            <div><?php echo $this->escapeQuotes($this->release->getDescription()) ?></div>
-        </div>
+        <?php endif; ?>
       </div>
+      
       <div class="contentEditUser_right">        
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Data rozpoczęcia') ?></div>
@@ -51,9 +67,14 @@
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Data zakończenia') ?></div>
           <div id="text" class="content_label"><?php echo $this->release->getEndDate() ?></div>
+        </div>       
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
+          <div id="text" class="content_label"><?php echo nl2br($this->release->getDescription()) ?></div>
         </div>
       </div>
-     </div>
+      
+    </div>
     
   </article>    
 </section>

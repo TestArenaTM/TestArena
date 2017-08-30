@@ -38,6 +38,6 @@ class Zend_View_Helper_DefectUrl extends Zend_View_Helper_Abstract
       return trim($bugTracker->getUrl(), '/').'/view.php?id='.$id;
     }
     
-    return $this->view->url(array('id' => $id), 'defect_view');
+    return $this->view->projectUrl(array('id' => $id), 'defect_view');
   }
 }

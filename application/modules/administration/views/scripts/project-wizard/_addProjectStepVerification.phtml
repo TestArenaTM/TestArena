@@ -1,0 +1,39 @@
+<section id="content" style="padding-top: 50px;">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitleStep2') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+        
+        <div class="wizard-step">
+          <?php foreach ($this->form->breadCrumbs->getElements() as $breadcrumb): ?>
+            <span><?php echo $breadcrumb->renderViewHelper() ?></span>
+            <span class="arrow_right icon-20"></span>
+          <?php endforeach; ?>
+        </div>      
+        <div style="display: inline-block">
+          <span>
+            <div><?php echo $this->formLabel('activeSettings', $this->t('Ustawienia')) ?></div>
+            <div class="multiSelectBox">
+              <div><?php echo $this->form->stepTwo->ps->renderViewHelper() ?></div>
+              <div><?php echo $this->formLabel('step2-stepTwo-allProjectSettings', $this->t('Zaznacz wszystko')) ?><?php echo $this->form->stepTwo->allProjectSettings->renderViewHelper() ?></div>
+              <div><?php echo $this->form->stepTwo->activeSettings->renderViewHelper() ?></div>
+            </div>  
+          </span>
+        </div>
+
+        <div style="margin-top:15px">
+          <span id="save"><?php echo $this->form->submit ?></span>
+        </div>
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+        <div>
+          <?php echo $this->form->custom_wizard_csrf_check ?>
+          <?php foreach ($this->form->getErrors('custom_wizard_csrf_check') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>
+    
+    </form>
+
+  </article>    
+</section>

@@ -1,0 +1,21 @@
+<div class="formContainer full">
+  <span>
+    <?php echo $this->formLabel('attachments', $this->generalT('Załączniki')) ?>
+    <div><a class="j_selectAttachments" href="#"><?php echo $this->generalT('Wybierz pliki') ?></a></div>
+    <div id="j_attachments">
+      <?php foreach ($this->form->getAttachmentIds(true) as $name): ?>
+        <?php echo $this->form->getElement($name)->renderViewHelper() ?>
+      <?php endforeach; ?>
+      <?php foreach ($this->form->getAttachmentNames(true) as $name): ?>
+        <?php echo $this->form->getElement($name)->renderViewHelper() ?>
+      <?php endforeach; ?>
+    </div>
+    <?php foreach ($this->form->getErrors('attachmentIds') as $error): ?>
+      <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+    <?php endforeach; ?>
+    <?php foreach ($this->form->getErrors('attachmentNames') as $error): ?>
+      <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+    <?php endforeach; ?>
+  </span>
+</div>
+<?php echo $this->partial('partials/attachment-object.phtml');

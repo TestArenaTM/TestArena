@@ -16,16 +16,14 @@
     </a>
     
     <?php if ($this->authUser->getAdministrator()): ?>
-      <div class="header_admin"><a href="<?php echo $this->url(array(), 'index')?>" title="<?php echo $this->generalT('Administracja') ?>"><span aria-hidden="true" class="icon_house icon-20" style="line-height: 2.8;"></span></a></div>
+      <div class="header_admin"><a href="<?php echo $this->url(array(), 'admin_index')?>" title="<?php echo $this->generalT('Administracja') ?>"><span aria-hidden="true" class="icon_tools icon-20" style="line-height: 2.8;"></span></a></div>
     <?php endif; ?>
       
     <div class="header_logout"><a href="<?php echo $this->url(array(), 'user_logout')?>" title="<?php echo $this->generalT('Wyloguj') ?>"><span class="icons-switch icon-20" style="line-height: 2.8;"></span></a></div>
   </div>  
   
-</header>
- 
+</header> 
 
 <?php echo $this->layout()->content ?>
 
-
-<?php echo $this->partial('footer.phtml', array('locale' => $this->locale));
+<?php echo $this->partial('footer-static.phtml', array('locale' => $this->locale));

@@ -27,14 +27,15 @@ class Project_Model_VersionDbTable extends Custom_Model_DbTable_Criteria_Abstrac
   public function getSqlAll(Zend_Controller_Request_Abstract $request)
   {
     $sqlDefectCnt = '(SELECT COUNT(dv.defect_id) FROM defect_version AS dv WHERE dv.version_id=v.id)';
+    $sqlTaskCnt = '(SELECT COUNT(*) FROM task_version AS tv INNER JOIN task AS t ON t.id=tv.task_id WHERE tv.version_id=v.id)';
     
     $sql = $this->select()
       ->from(array('v' => $this->_name), array(
         'id',
         'name',
-        'defectCount' => new Zend_Db_Expr($sqlDefectCnt)
+        'defectCount' => new Zend_Db_Expr($sqlDefectCnt),
+        'taskCount' => new Zend_Db_Expr($sqlTaskCnt)
       ))
-      ->joinLeft(array('tv' => 'task_version'), 'tv.version_id = v.id', array('taskCount' => 'COUNT(tv.task_id)'))
       ->group('v.id')
       ->setIntegrityCheck(false);
       
@@ -98,28 +99,37 @@ class Project_Model_VersionDbTable extends Custom_Model_DbTable_Criteria_Abstrac
     return $this->fetchAll($sql);
   }
   
-  public function getForEdit($id)
+  public function getForEdit($id, $projectId)
   {
     $sql = $this->select()
       ->from(array('v' => $this->_name), array(
-        'name'
+        'name',
+        'description'
       ))
       ->where('v.id = ?', $id)
+      ->where('v.project_id = ?', $projectId)
+
       ->limit(1);
     
     return $this->fetchRow($sql);
   }
   
-  public function getForView($id)
+  public function getForView($id, $projectId)
   {
+    $sqlDefectCnt = '(SELECT COUNT(dv.defect_id) FROM defect_version AS dv WHERE dv.version_id=v.id)';
+    $sqlTaskCnt = '(SELECT COUNT(*) FROM task_version AS tv INNER JOIN task AS t ON t.id=tv.task_id WHERE tv.version_id=v.id)';
+    
     $sql = $this->select()
       ->from(array('v' => $this->_name), array(
         'id',
-        'name'
-      ))      
-      ->joinLeft(array('tv' => 'task_version'), 'tv.version_id = v.id', array('taskCount' => 'COUNT(tv.task_id)'))
-      ->group('v.id')
+        'name',
+        'description',
+        'defectCount' => new Zend_Db_Expr($sqlDefectCnt),
+        'taskCount' => new Zend_Db_Expr($sqlTaskCnt)
+      ))
       ->where('v.id = ?', $id)
+      ->where('v.project_id = ?', $projectId)
+      ->group('v.id')
       ->limit(1)
       ->setIntegrityCheck(false);
     

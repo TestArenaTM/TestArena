@@ -8,7 +8,7 @@ abstract class Custom_Validate_DbAbstract extends Zend_Validate_Db_Abstract
       $options = array();
     }
     
-    $this->_initOptions($options);
+    $this->_initOptions($options);//print_r($options);echo 'b';
     parent::__construct($options);
   }
   

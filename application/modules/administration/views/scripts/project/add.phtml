@@ -29,7 +29,8 @@
 
         <div class="formContainer">
           <span>
-            <?php echo $this->form->prefix->renderViewHelper() ?><span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span>
+            <?php echo $this->form->prefix->renderViewHelper() ?>
+            <span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span>
             <?php echo $this->formRequiredLabel('prefix', $this->t('Prefiks')) ?>
             <?php foreach ($this->form->getErrors('prefix') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error, array(

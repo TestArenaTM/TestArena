@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2017-07-14 13:45+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 2.0.2\n"
+
+msgid "pageTitle"
+msgstr "Klonowanie wydania"
+
+msgid "pageTitleStep1"
+msgstr "Klonowanie wydania - krok 1 - właściwości nowego wydania"
+
+msgid "pageTitleStep2"
+msgstr "Klonowanie wydania - krok 2 - wybór zadań i określenie ich właściwości dla nowego wydania"
+
+msgid "statusSuccess"
+msgstr "Wydanie zostało sklonowane."
+
+msgid "statusError"
+msgstr "Podczas klonowania wydania wystąpił nieoczekiwany błąd."
+
+msgid "Data rozpoczęcia"
+msgstr "Data rozpoczęcia"
+
+msgid "Data zakończenia"
+msgstr "Data zakończenia"
+
+msgid "Wersje"
+msgstr "Wersje"
+
+msgid "Środowiska"
+msgstr "Środowiska"
+
+msgid "Nazwa"
+msgstr "Nazwa"
+
+msgid "Opis"
+msgstr "Opis"
+
+msgid "Termin realizacji"
+msgstr "Termin realizacji"
+
+msgid "Aktywne"
+msgstr "Aktywne"
+
+msgid "Zadania do wyboru"
+msgstr "Zadania do wyboru"
+
+msgid "Właściwości nowych zadań"
+msgstr "Właściwości nowych zadań"
+
+msgid "Wybrane zadania dla nowego wydania"
+msgstr "Wybrane zadania dla nowego wydania"
+
+msgid "Aktywne wydanie - info"
+msgstr "Aktywne wydanie będzie automatycznie uzupełniane w formularzu dodawania nowego zadania lub defektu."
+
+msgid "Środowiska - info"
+msgstr "Jeżeli chcesz zmienić środowiska dla zadań w nowym wydaniu uzupełnij pole. Pozostawiając pole puste, środowiska w zadaniach pozostaną niezmienione."
+
+msgid "Wersje - info"
+msgstr "Jeżeli chcesz zmienić wersje dla zadań w nowym wydaniu uzupełnij pole. Pozostawiając pole puste, wersje w zadaniach pozostaną niezmienione."
+
+msgid "Zapisz"
+msgstr "Zapisz"
+
+msgid "Zapisz i kontynuuj"
+msgstr "Zapisz i kontynuuj"
+
+msgid "Zapisz i zakończ"
+msgstr "Zapisz i zakończ"
+
+msgid "Wszystkie"
+msgstr "Wszystkie"
+
+msgid "Żadne"
+msgstr "Żadne"
+
+# subform labels
+msgid "SUBFORM_LABEL_releaseCloneStep1"
+msgstr "Krok 1 - wydanie"
+
+msgid "SUBFORM_LABEL_releaseCloneStepVerification"
+msgstr "Krok 2 - zadania"

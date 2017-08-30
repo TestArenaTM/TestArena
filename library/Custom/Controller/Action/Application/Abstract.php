@@ -21,9 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 The full text of the GPL is in the LICENSE file.
 */
 abstract class Custom_Controller_Action_Application_Abstract extends Custom_Controller_Action_Abstract
-{
+{  
+  private $_filter = null;
+  
   protected $_project  = null;
   protected $_projects = array();
+  protected $_projectsByPrefix = array();
+  protected $_projectsForm;
   
   public function init()
   {
@@ -33,6 +37,7 @@ abstract class Custom_Controller_Action_Application_Abstract extends Custom_Cont
     {
       $this->_setActiveProject();
       $this->_setRoleSettings();
+      $this->_initUserFilters();
     }
   }
   
@@ -40,25 +45,26 @@ abstract class Custom_Controller_Action_Application_Abstract extends Custom_Cont
   {
     //get user projects
     $projectMapper  = new Application_Model_ProjectMapper();
-    $projectsDbRows = $projectMapper->getByUserId($this->_user);
-    $projectsNames  = array();
+    $projectsRows = $projectMapper->getByUserId($this->_user);
+    $projectNames = array();
     
-    foreach ($projectsDbRows as $row)
+    foreach ($projectsRows as $row)
     {
-      $this->_projects[$row['id']] = $row;
-      $projectsNames[$row['id']]   = $row['name'];
+      $project = new Application_Model_Project($row);
+      $this->_projects[$project->getId()] = $project;
+      $this->_projectsByPrefix[$project->getPrefix()] = $project;
+      $projectNames[$project->getId()] = $project->getName();
     }
-    
-    $form = new Application_Form_Project(array('projects' => $projectsNames));
-    
-    $request = $this->getRequest();
-    
+
     //set active project by form
+    $request = $this->getRequest();
+    $this->_projectsForm = new Application_Form_Project(array('projects' => $projectNames));
+    
     if ($request->isPost() && $request->getPost('activeProject', null) !== null)
     {
-      if ($form->isValid($request->getPost()))
+      if ($this->_projectsForm->isValid($request->getPost()))
       {
-        $this->_user->setDefaultProjectId($form->getValue('activeProject'));
+        $this->_user->setDefaultProjectId($this->_projectsForm->getValue('activeProject'));
         $userMapper = new Application_Model_UserMapper();
         $userMapper->changeDefaultProjectId($this->_user);
       }
@@ -67,16 +73,51 @@ abstract class Custom_Controller_Action_Application_Abstract extends Custom_Cont
     }
 
     //set active project by user default project id from db
-    if ($this->_user->getDefaultProjectId() > 0 && array_key_exists($this->_user->getDefaultProjectId(), $this->_projects))
+    if ($this->_user->getDefaultProjectId() > 0)
     {
-      $this->_project = new Application_Model_Project($this->_projects[$this->_user->getDefaultProjectId()]);
+      if (array_key_exists($this->_user->getDefaultProjectId(), $this->_projects))
+      {
+        $this->_project = $this->_projects[$this->_user->getDefaultProjectId()];
+        $this->_helper->layout->setLayout('project');
+        $request->setParam('projectId', $this->_project->getId());
+      }
+      else
+      {
+        $this->_user->setDefaultProjectId();
+        $userMapper = new Application_Model_UserMapper();
+        $userMapper->changeDefaultProjectId($this->_user);
+      }
       
-      $this->_helper->layout->setLayout('project');
-      $form->getElement('activeProject')->setValue($this->_user->getDefaultProjectId());
+      $this->_projectsForm->getElement('activeProject')->setValue($this->_user->getDefaultProjectId());
     }
     
-    $this->view->projectsForm = $form;
+    if ($this->_project !== null)
+    {
+      $this->_helper->layout->setLayout('project');
+    }
+  
+    $this->view->projectsForm = $this->_projectsForm;
     $this->view->activeProject = $this->_project;
+  }
+  
+  protected function _projectUrl($args, $routeName)
+  {
+    if (is_array($args) && $this->_project !== null)
+    {
+      $args['projectPrefix'] = $this->_project->getPrefix();
+    }
+    
+    return $this->_url($args, $routeName);
+  }
+  
+  public function projectRedirect($action = 'index', $controller = 'index', $module = 'default', $params = array(), $route = null, $reset = true)
+  {
+    if (is_array($action))
+    {
+      $action['projectPrefix'] = $this->_project->getPrefix();
+    }
+    
+    return $this->redirect($action, $controller, $module, $params, $route, $reset);
   }
 
   protected function _setRoleSettings()
@@ -157,5 +198,83 @@ abstract class Custom_Controller_Action_Application_Abstract extends Custom_Cont
 
     echo Zend_Json::encode($result);
     exit();
+  }
+  
+  private function _initUserFilters()
+  {
+    $filterMapper = new Application_Model_FilterMapper();
+    
+    if ($this->_project === null)
+    {
+      $filterMapper->getForUser($this->_user);
+    }
+    else
+    {
+      $filterMapper->getForUserByProject($this->_user, $this->_project);
+    }
+  }
+  
+  protected function _getRequestForFilter($groupId)
+  {
+    $request = $this->getRequest();
+    
+    if ($request->getParam('skipSavedFilter', null) === null)
+    {
+      $this->_filter = $this->_user->getFilter($groupId);
+
+      if ($this->_filter === null)
+      {
+        $this->_filter = new Application_Model_Filter();
+        $this->_filter->setUserObject($this->_user);
+        $this->_filter->setProjectObject($this->_project);
+        $this->_filter->setGroup($groupId);
+      }
+      else
+      {
+        $this->_filter->prepareRequest($request);
+      }
+    }
+    
+    return $request;
+  }
+  
+  protected function _filterAction(array $data, $multiSelectName = null)
+  {
+    if (array_key_exists('filterAction', $data) && is_numeric($data['filterAction']) && $data['filterAction'] > 0)
+    {
+      $action = $data['filterAction'];
+      unset($data['filterAction']);
+      $this->_clearMultiSelectIds($multiSelectName);
+
+      if ($action == 2)
+      {
+        $currentData = $this->_filter->getData();
+
+        if ($currentData === null)
+        {
+          $saveData = true;
+        }
+        else
+        {
+          $saveData = false;
+
+          foreach ($data as $key => $value)
+          {
+            if (!array_key_exists($key, $currentData) || $value != $currentData[$key])
+            {
+              $saveData = true;
+              break;
+            }
+          }
+        }
+
+        if ($saveData)
+        {
+          $this->_filter->setData($data);
+          $filterMapper = new Application_Model_FilterMapper();
+          $filterMapper->save($this->_filter);
+        }
+      }
+    }
   }
 }

@@ -12,16 +12,13 @@
 
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <?php echo $this->form->backUrl->renderViewHelper() ?>
-
-
-
         <div class="formContainer">
           <span>
-          <?php echo $this->form->environments->renderViewHelper() ?>
-          <?php echo $this->formRequiredLabel('environments', $this->t('Środowiska')) ?>
-          <?php foreach ($this->form->getErrors('environments') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
+            <?php echo $this->form->environments->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('environments', $this->t('Środowiska')) ?>
+            <?php foreach ($this->form->getErrors('environments') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
           </span>
         </div>
 
@@ -91,8 +88,8 @@
 
 <script type="text/javascript">
 /* <![CDATA[ */
-  url.environmentListAjax = '<?php echo $this->url(array(), 'environment_list_ajax') ?>';
-  url.versionListAjax = '<?php echo $this->url(array(), 'version_list_ajax') ?>';  
+  url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
+  url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';  
   language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
 /* ]]> */
 </script>

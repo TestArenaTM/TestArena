@@ -39,9 +39,10 @@ class Project_Model_AttachmentDbTable extends Custom_Model_DbTable_Criteria_Abst
       ))
       ->join(array('f' => 'file'), 'f.id = a.file_id', $this->_createAlias('file', array(
         'id',
+        'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
         'extension',
-        'path'
+        'subpath'
       )))
       ->where('a.type IN (?)', array(
         Application_Model_AttachmentType::PROJECT_PLAN,

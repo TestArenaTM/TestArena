@@ -53,7 +53,7 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
     }
   }
   
-  public function redirect( $action = 'index', $controller = 'index', $module = 'default', $params = array(), $route = null, $reset = true )
+  public function redirect($action = 'index', $controller = 'index', $module = 'default', $params = array(), $route = null, $reset = true)
   {
     $this->_redirect = $this->_helper->getHelper('Redirector');
     
@@ -504,21 +504,22 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
         'index' => array(
           'view' => 'project'
         ),
-        'phase' => array(
-          'add'           => 'phases',
-          'add-process'   => 'phases',
-          'edit'          => 'phases',
-          'edit-process'  => 'phases',
-          'index'         => 'phases',
-          'view'          => 'phases'
-        ),
         'release' => array(
           'add'           => 'releases',
           'add-process'   => 'releases',
           'edit'          => 'releases',
           'edit-process'  => 'releases',
           'index'         => 'releases',
-          'view'          => 'releases'
+          'view'          => 'releases',
+          'report'        => 'releases'
+        ),
+        'tag' => array(
+          'add'           => 'tags',
+          'add-process'   => 'tags',
+          'edit'          => 'tags',
+          'edit-process'  => 'tags',
+          'index'         => 'tags',
+          'view'          => 'tags'
         ),
         'task' => array(
           'add'                   => 'tasks',
@@ -537,28 +538,42 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'resolve-test'          => 'tasks',
           'resolve-test-process'  => 'tasks',
           'view'                  => 'tasks',
+          'view-automatic-test'   => 'tasks',
+          'view-checklist'        => 'tasks',
+          'view-exploratory-test' => 'tasks',
+          'view-other-test'       => 'tasks',
+          'view-test-case'        => 'tasks'
+        ),
+        'task-test' => array(
+          'view-automatic-test'   => 'tasks',
+          'view-checklist'        => 'tasks',
           'view-exploratory-test' => 'tasks',
           'view-other-test'       => 'tasks',
           'view-test-case'        => 'tasks'
         ),
         'test' => array(
+          'add-checklist'                     => 'tests',
+          'add-checklist-process'             => 'tests',
           'add-exploratory-test'              => 'tests',
           'add-exploratory-test-process'      => 'tests',
           'add-other-test'                    => 'tests',
           'add-other-test-process'            => 'tests',
           'add-test-case'                     => 'tests',
           'add-test-case-process'             => 'tests',
+          'edit-checklist'                    => 'tests',
+          'edit-checklist-process'            => 'tests',
           'edit-exploratory-test'             => 'tests',
           'edit-exploratory-test-process'     => 'tests',
           'edit-other-test'                   => 'tests',
           'edit-other-test-process'           => 'tests',
           'edit-test-case'                    => 'tests',
           'edit-test-case-process'            => 'tests',
-          'forward-to-execute'                => 'tests',
-          'forward-to-execute-process'        => 'tests',
-          'group-forward-to-execute'          => 'tests',
-          'group-forward-to-execute-process'  => 'tests',
+          'forward-to-execute'                => 'tests',//NIEUŻYWANE
+          'forward-to-execute-process'        => 'tests',//NIEUŻYWANE
+          'group-forward-to-execute'          => 'tests',//NIEUŻYWANE
+          'group-forward-to-execute-process'  => 'tests',//NIEUŻYWANE
           'index'                             => 'tests',
+          'view-checklist'                    => 'tests',
           'view-exploratory-test'             => 'tests',
           'view-other-test'                   => 'tests',
           'view-test-case'                    => 'tests'
@@ -570,33 +585,6 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'edit-process'  => 'versions',
           'index'         => 'versions',
           'view'          => 'versions'
-        )
-      ),
-      'report' => array(
-        'environment' => array(
-          'index' => 'reports'
-        ),
-        'index' => array(
-          'index' => 'reports'
-        ),
-        'phase' => array(
-          'index' => 'reports'
-        ),
-        'release' => array(
-          'index' => 'reports'
-        ),
-        'test' => array(
-          'list-by-type' => 'reports'
-        ),
-        'task' => array(
-          'list-by-priority'  => 'reports',
-          'user-task-list'    => 'reports'
-        ),
-        'project' => array(
-          'index' => 'reports'
-        ),
-        'user' => array(
-          'index' => 'reports'
         )
       )
     );
@@ -630,5 +618,55 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
         $this->redirect(array(), 'user_reset_password');
       }
     }
+  }
+  
+  protected function _initMultiSelectSession($name)
+  {
+    if (!array_key_exists('MultiSelect', $_SESSION) || !is_array($_SESSION['MultiSelect']))
+    {
+      $_SESSION['MultiSelect'] = array();
+    }
+    
+    if (!array_key_exists($name, $_SESSION['MultiSelect']) || !is_array($_SESSION['MultiSelect'][$name]))
+    {
+      $_SESSION['MultiSelect'][$name] = array();
+    }
+  }
+  
+  protected function _removeIdFromMultiSelectIds($name, $id)
+  {
+    $this->_initMultiSelectSession($name);
+    
+    if (array_key_exists($id, $_SESSION['MultiSelect'][$name]))
+    {
+      unset($_SESSION['MultiSelect'][$name][$id]);
+    }
+  }
+  
+  protected function _getMultiSelectIds($name, $clear = true)
+  {
+    $this->_initMultiSelectSession($name);
+    $ids = array();
+    
+    foreach ($_SESSION['MultiSelect'][$name] as $id => $checked)
+    {
+      if ($checked)
+      {
+        $ids[] = $id;
+      }
+    }
+    
+    if ($clear)
+    {
+      $_SESSION['MultiSelect'][$name] = array();
+    }
+    
+    return $ids;
+  }
+  
+  protected function _clearMultiSelectIds($name = null)
+  {
+    $this->_initMultiSelectSession($name);
+    $_SESSION['MultiSelect'][$name] = array();
   }
 }

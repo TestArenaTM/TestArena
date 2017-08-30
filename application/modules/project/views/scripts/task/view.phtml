@@ -11,22 +11,23 @@
 
     <nav class="button_link_nav">
       <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
         <?php if ($this->activeProject->isActive()): ?>
             
             <?php foreach ($this->prepareTaskActions($this->task, array(), $this->taskUserPermission) as $action): ?>
               <?php if ($action === null): ?>
                 <li class="button_link_li separator"></li>
               <?php else: ?>
-                <li class="button_link_li"><a class="button_link" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                <li class="button_link_li"><a class="button_link <?php echo $action['class'] ?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
               <?php endif; ?>
           <?php endforeach; ?>
 
           <?php if ($this->prevTask !== null): ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->prevTask->getId()), 'task_view') ?>" title="<?php echo $this->generalT('Poprzednie') ?>"><span aria-hidden="true" class="arrow_triangle-left icon-22" style="vertical-align:middle;"></span></a></li>
-          <?php endif; ?>                
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->prevTask->getId()), 'task_view') ?>" title="<?php echo $this->generalT('Poprzednie') ?>"><span aria-hidden="true" class="arrow_triangle-left icon-22" style="vertical-align:middle;"></span></a></li>
+          <?php endif; ?>
                 
           <?php if ($this->nextTask !== null): ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->nextTask->getId()), 'task_view') ?>" title="<?php echo $this->generalT('Następne') ?>"><span aria-hidden="true" class="arrow_triangle-right icon-22" style="vertical-align:middle;"></span></a></li>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->nextTask->getId()), 'task_view') ?>" title="<?php echo $this->generalT('Następne') ?>"><span aria-hidden="true" class="arrow_triangle-right icon-22" style="vertical-align:middle;"></span></a></li>
           <?php endif; ?>
             
         <?php endif; ?>
@@ -60,7 +61,7 @@
                 <div class="textLabelEditor_text"><?php echo $this->t('Środowiska') ?></div>
                 <div id="text" class="content_label">
                   <?php foreach ($this->environments as $environment): ?>
-                    <a class="environmentBox" href="<?php echo $this->url(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a>
+                    <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a>
                   <?php endforeach; ?>
                 </div>
               </div>
@@ -70,7 +71,17 @@
                 <div class="textLabelEditor_text"><?php echo $this->t('Wersje') ?></div>
                 <div id="text" class="content_label">
                   <?php foreach ($this->versions as $version): ?>
-                    <a class="versionBox" href="<?php echo $this->url(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a>
+                    <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endif; ?>
+            <?php if (count($this->tags)): ?>
+              <div class="textLabelPropertiesDiv">
+                <div class="textLabelEditor_text"><?php echo $this->t('Tagi') ?></div>
+                <div id="text" class="content_label">
+                  <?php foreach ($this->tags as $tag): ?>
+                    <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $tag->getId()), 'tag_view') ?>"><?php echo $this->escapeQuotes($tag->getName()) ?></a>
                   <?php endforeach; ?>
                 </div>
               </div>
@@ -79,15 +90,7 @@
             <div class="textLabelPropertiesDiv">
               <div class="textLabelEditor_text"><?php echo $this->t('Wydanie') ?></div>
               <div id="text" class="content_label">
-                <a class="environmentBox" href="<?php echo $this->url(array('id' => $this->task->getRelease()->getId()), 'release_view') ?>"><?php echo $this->escapeQuotes($this->task->getRelease()->getName()) ?></a>
-              </div>
-            </div>
-            <?php endif; ?>
-            <?php if ($this->task->getPhase()->getName() !== null): ?>
-            <div class="textLabelPropertiesDiv">
-              <div class="textLabelEditor_text"><?php echo $this->t('Faza') ?></div>
-              <div id="text" class="content_label">
-                <a class="environmentBox" href="<?php echo $this->url(array('id' => $this->task->getPhase()->getId()), 'phase_view') ?>"><?php echo $this->escapeQuotes($this->task->getPhase()->getName()) ?></a>
+                <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $this->task->getRelease()->getId()), 'release_view') ?>"><?php echo $this->escapeQuotes($this->task->getRelease()->getName()) ?></a>
               </div>
             </div>
             <?php endif; ?>
@@ -102,11 +105,11 @@
               <div id="text" class="content_label"><?php echo $this->task->getDueDate() ?></div>
             </div>
             <div class="textLabelPropertiesDiv">
-              <div class="textLabelEditor_text"><?php echo $this->t('Przydzielił') ?></div>
+              <div class="textLabelEditor_text"><?php echo $this->t('Przypisał') ?></div>
               <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->task->getAssigner()->getFullname()) ?></div>
             </div>
             <div class="textLabelPropertiesDiv">
-              <div class="textLabelEditor_text"><?php echo $this->t('Przydzielone do') ?></div>
+              <div class="textLabelEditor_text"><?php echo $this->t('Przypisane do') ?></div>
               <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->task->getAssignee()->getFullname()) ?></div>
             </div>
           </div>
@@ -117,31 +120,6 @@
           <div><?php echo nl2br($this->escapeQuotes($this->task->getDescription())) ?></div>
         </div>
         
-        <?php if (count($this->task->getExtraData('attachments'))): ?>
-        <div>
-          <h5 class="break_page"><span aria-hidden="true" class="icon_link_alt icon-20"></span><?php echo $this->t('Załączniki') ?></h5>
-          <?php foreach ($this->task->getExtraData('attachments') as $file): ?>        
-          <div class="attachement-list">
-            <ul>
-              <li>
-              <div class="attachment-thumb">
-                <a href="<?php echo $this->url(array('id' => $file->getId()), 'file_download') ?>"><i class="icon_image icon-23" style="line-height: 58px;"></i></a>
-              </div>
-              <div class="attachment-info">
-                <div class="attachment-file-name">
-                  <?php echo $file->getFullName() ?>
-                </div>
-                <div class="attachment-action-bar">
-                  <span class="list-file-download"><a href="<?php echo $this->url(array('id' => $file->getId()), 'file_download') ?>"><i class="icon_download"></i> <?php echo $this->generalT('Pobierz') ?></a></span>
-                </div>
-              </div>
-              </li>
-            </ul>
-          </div>          
-          <?php endforeach; ?>
-        </div>
-        <?php endif; ?>     
-        
         <div class="textLabelPropertiesDiv history" id="j_testBox">
           <h5 class="break_page" <?php if (!$this->activeProject->isActive() || !$this->taskUserPermission->isTestModifyPermission()):?>style="border-bottom:0px !important"<?php endif; ?>><span aria-hidden="true" class="icon_search_alt icon-20"></span> <?php echo $this->t('Testy') ?></h5>
           <?php if ($this->activeProject->isActive() 
@@ -151,7 +129,7 @@
               <div class="search_in_filter addTest">
                 <input type="hidden" name="testId" value="" id="j_testId">
                 <input type="text" name="testName" value="" id="j_testName">
-                <a id="j_addTestToTask" class="addTestToTask" href="<?php echo $this->url(array('id' => $this->task->getId()), 'task_add_test_ajax') ?>" title="<?php echo $this->t('Dodaj test') ?>"><i class="icon_plus icon-15"></i></a>
+                <a id="j_addTestToTask" class="addTestToTask" href="<?php echo $this->projectUrl(array('id' => $this->task->getId()), 'task_add_test_ajax') ?>" title="<?php echo $this->t('Dodaj test') ?>"><i class="icon_plus icon-15"></i></a>
               </div>
             </div>
           <?php endif; ?> 
@@ -159,24 +137,22 @@
             <div id="j_testContent">
               <ul id="j_testList">
                 <?php foreach ($this->taskTests as $taskTest): ?>
-                  <li id="j_testItem_<?php echo $taskTest->getTest()->getId() ?>">
+                  <li id="j_testItem_<?php echo $taskTest->getId() ?>">
                     <div class="clearfixDashboard history">
                       <div title="<?php echo $taskTest->getTest()->getName() ?>"  class="testlist-l">
-                        <a href="<?php echo $this->url(array('id' => $this->task->getId(), 'testId' => $taskTest->getTest()->getId()), $this->taskTestViewRouteName($taskTest->getTest()))?>"><span class="object_nr"><?php echo $taskTest->getTest()->getObjectNumber() ?></span> <?php echo $taskTest->getTest()->getName() ?></a>
+                        <a href="<?php echo $this->projectUrl(array('id' => $taskTest->getId()), $this->taskTestViewRouteName($taskTest->getTest()))?>"><span class="object_nr"><?php echo $taskTest->getTest()->getObjectNumber() ?></span> <?php echo $taskTest->getTest()->getName() ?></a>
                       </div>
                       <div class="testlist-r">
                         <span>
                           <!--<?php echo $this->t('Status')?>:-->
                           <?php if ($taskTest->getResolutionId() !== null): ?>
                             <?php echo $this->showResolutionIcon($taskTest->getResolution()) ?><!--<?php echo $taskTest->getResolution()->getName() ?>-->
-                          <?php else: ?>
-                          <span class="statusIcon" title="<?php echo $this->generalT('Nierozwiązany') ?>" style="background-color:#ef2641"></span><!--<?php echo $this->generalT('Nierozwiązany') ?>--></span>                           
                           <?php endif; ?>
                         </span>
                         <?php if ($this->activeProject->isActive() 
                                   && $this->taskUserPermission->isTestModifyPermission()
                                   && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
-                          <a class="j_deleteTestFromTask" href="<?php echo $this->url(array('id' => $this->task->getId(), 'testId' => $taskTest->getTest()->getId()), 'task_delete_test_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+                          <a class="j_deleteTestFromTask" href="<?php echo $this->projectUrl(array('id' => $taskTest->getId()), 'task_delete_test_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
                         <?php endif; ?> 
                       </div>                   
                     </div>
@@ -196,7 +172,7 @@
               <div class="search_in_filter addTest">
                 <input type="hidden" name="defectId" value="" id="j_defectId">
                 <input type="text" name="defectName" value="" id="j_defectName">
-                <a id="j_addDefectToTask" class="addTestToTask" href="<?php echo $this->url(array('id' => $this->task->getId()), 'task_add_defect_ajax') ?>" title="<?php echo $this->t('Dodaj defekt') ?>"><i class="icon_plus icon-15"></i></a>
+                <a id="j_addDefectToTask" class="addTestToTask" href="<?php echo $this->projectUrl(array('id' => $this->task->getId()), 'task_add_defect_ajax') ?>" title="<?php echo $this->t('Dodaj defekt') ?>"><i class="icon_plus icon-15"></i></a>
               </div>
             </div>
           <?php endif; ?>
@@ -212,7 +188,7 @@
  
       <div class="contentEditUser_right">   
 
-        <div class="textLabelPropertiesDiv history">
+        <div class="textLabelPropertiesDiv">
           <h5 class="break_page"><span aria-hidden="true" class="icon_clock_alt icon-20"></span> <?php echo $this->t('Historia') ?></h5>
           <?php if (count($this->history)): ?>
             <div class="contentList history">
@@ -237,12 +213,15 @@
             </div>
           <?php endif; ?>
         </div> 
+        
+        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->task->getExtraData('attachments'))); ?> 
 
-        <?php echo $this->partial('comment/partial.phtml', array(
-          'subjectId'     => $this->task->getId(),
-          'subjectType'   => Application_Model_CommentSubjectType::TASK,
-          'addCommentOn'  => $this->activeProject->isActive()
-        )); ?>         
+        <?php echo $this->partial('comment/partial-custom.phtml', array(
+          'listUrl'               => $this->projectUrl(array('taskId' => $this->task->getId()), 'comment_list_by_task_ajax'),
+          'addUrl'                => $this->projectUrl(array('subjectId' => $this->task->getId(), 'subjectType' => Application_Model_CommentSubjectType::TASK), 'comment_add_ajax'),
+          'addCommentOn'          => $this->activeProject->isActive(),
+          'showOtherSubjectsText' => 'Pokaż komentarze do testów'
+        )); ?>
 
       </div>
       
@@ -250,7 +229,8 @@
     
   </article>    
 </section>
-    
+
+<?php echo $this->partial('popups/delete-tasks.phtml'); ?>
 <?php echo $this->partial('partials/task-test-tmpl.phtml', array(
             'taskUserPermission' => $this->taskUserPermission,
             'activeProject' => $this->activeProject,
@@ -271,30 +251,40 @@
 <script type="text/javascript">
 /* <![CDATA[ */
   language.addTestToTaskMustFillField = '<?php echo $this->t('addTestToTaskMustFillField') ?>';  
-  url.taskOtherTestView = '<?php echo $this->url(array('id' => $this->task->getId(), 'testId' => 0), 'task_other_test_view')?>';
-  url.taskTestCaseView = '<?php echo $this->url(array('id' => $this->task->getId(), 'testId' => 0), 'task_test_case_view')?>';
-  url.taskExploratoryTestView = '<?php echo $this->url(array('id' => $this->task->getId(), 'testId' => 0), 'task_exploratory_test_view')?>';
-  url.deleteTestFromTask = '<?php echo $this->url(array('id' => $this->task->getId(), 'testId' => 0), 'task_delete_test_ajax')?>';
-  var autocompleteDataForTest = {
-    url: '<?php echo $this->url(array(), 'test_list_ajax') ?>',
+  url.taskOtherTestView = '<?php echo $this->projectUrl(array('id' => 0), 'task_other_test_view')?>';
+  url.taskTestCaseView = '<?php echo $this->projectUrl(array('id' => 0), 'task_test_case_view')?>';
+  url.taskExploratoryTestView = '<?php echo $this->projectUrl(array('id' => 0), 'task_exploratory_test_view')?>';
+  url.taskAutomaticTestView = '<?php echo $this->projectUrl(array('id' => 0), 'task_automatic_test_view')?>';
+  url.taskChecklistView = '<?php echo $this->projectUrl(array('id' => 0), 'task_checklist_view')?>';
+  url.deleteTestFromTask = '<?php echo $this->projectUrl(array('id' => 0), 'task_delete_test_ajax')?>';
+  
+  var autocompleteData = {
+    url: '<?php echo $this->projectUrl(array(), 'test_list_ajax') ?>',
     textInputName: '#j_testName',
-    dstName: '#j_testId',
-    minLength: '<?php echo strlen($this->activeProject->getPrefix())+2?>',
-    projectPrefix: '<?php echo $this->activeProject->getPrefix()?>-'
+    dstName: '#j_testId'
   };
   
-  language.addDefectToTaskMustFillField = '<?php echo $this->t('addDefectToTaskMustFillField') ?>';  
   url.taskDefectView = '<?php echo $this->defectUrl('0', $this->bugTracker) ?>';
-  url.deleteDefectFromTask = '<?php echo $this->url(array('id' => $this->task->getId(), 'defectId' => 0), 'task_delete_defect_ajax')?>';
+  url.deleteDefectFromTask = '<?php echo $this->projectUrl(array('id' => $this->task->getId(), 'defectId' => 0), 'task_delete_defect_ajax')?>';
+  
+<?php if ($this->bugTracker === null): ?>
+  language.addDefectToTaskMustFillField = '<?php echo $this->t('addDefectToTaskMustFillField') ?>';  
+  var autocompleteData2 = {
+    url: '<?php echo $this->projectUrl(array(), 'defect_list_ajax') ?>',
+    textInputName: '#j_defectName',
+    dstName: '#j_defectId'
+  };
+<?php else: ?>
+  language.addDefectToTaskMustFillField = '<?php echo $this->t('addDefectToTaskMustFillFieldEx') ?>';  
   var autocompleteDataForDefect = {
-    url: '<?php echo $this->url(array(), 'defect_info_ajax') ?>',
+    url: '<?php echo $this->projectUrl(array(), 'defect_info_ajax') ?>',
     textInputName: '#j_defectName',
     dstName: '#j_defectId',
-    minLength: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? 1 : strlen($this->defectProjectPrefix($this->bugTracker))+2; ?>',
+    minLength: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? 1 : strlen($this->defectProjectPrefix($this->bugTracker)) + 2; ?>',
     projectPrefix: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? '' : $this->defectProjectPrefix($this->bugTracker).'-';?>'
   };
+ <?php endif; ?>
   
   var defectTypeInternal = '<?php echo Application_Model_BugTrackerType::INTERNAL?>';
 /* ]]> */
 </script>
-

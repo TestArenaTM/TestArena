@@ -43,7 +43,7 @@
         <div class="formContainer full">
           <span>
             <?php echo $this->form->projects->renderViewHelper() ?>
-            <?php echo $this->formRequiredLabel('projects', $this->t('Projekty')) ?>
+            <?php echo $this->formRequiredLabel('projects', $this->t('Projekt')) ?>
             <?php foreach ($this->form->getErrors('projects') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
@@ -62,27 +62,31 @@
       
       <div>
         <h5 class="break_page"><span class="icon_cogs icon-20" aria-hidden="true"></span><?php echo $this->formRequiredLabel('type', $this->t('Ustawienia roli')); ?></h5>
-        <input type="checkbox" id="rsMCheck" name="rsMCheck" value="1" /><label for="rsMCheck"><?php echo $this->t('Zaznacz wszystko') ?></label>
-        <div class="checkTable">
-          <table>
-            <thead>
-              <tr>
-                <?php foreach ($this->roleActions as $actionId => $actionName): ?>
-                  <?php if (($actionId-1) % 5 == 0):?>
-                    </tr><tr>
-                  <?php endif;?>
-                  <?php $fieldName = 'roleAction_'.$actionId; ?>
-                  <td><?php echo $this->form->$fieldName->renderViewHelper() ?><label for="roleSettings-roleAction_<?php echo $actionId ?>"><?php echo $this->roleT($actionName, 'ACTION') ?></label></td>
-                <?php endforeach;?>
-              </tr>
-            </thead>
-          </table>
+        <div class="select-all">
+            <input type="checkbox" id="rsMCheck" name="rsMCheck" value="1" /><label for="rsMCheck"><?php echo $this->t('Zaznacz wszystko') ?></label>
         </div>
+        <?php foreach ($this->roleActions as $group): ?>
+          <div class="checkTable col-box">
+            <table>
+              <thead>
+                <?php foreach ($group as $actionId => $actionName): ?>
+                  <tr>
+                    <?php $fieldName = 'roleAction_'.$actionId; ?>
+                    <td>
+                      <div class="check-left"><?php echo $this->form->$fieldName->renderViewHelper() ?></div>
+                      <label for="roleSettings-roleAction_<?php echo $actionId ?>"><?php echo $this->roleT($actionName, 'ACTION') ?></label>
+                    </td>
+                  </tr>
+                <?php endforeach;?>
+              </thead>
+            </table>
+          </div>
+        <?php endforeach;?>
       </div>
       
       <div><?php echo $this->form->roleSettingsEmptyValidation->renderViewHelper() ?>
       <?php foreach ($this->form->getErrors('roleSettingsEmptyValidation') as $error): ?>
-        <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+        <div class="error_msg" style="border: 0px"><?php echo $this->errorT($error) ?></div>
       <?php endforeach; ?>
       </div>
 
@@ -95,7 +99,7 @@
       <div>
         <?php echo $this->form->csrf->renderViewHelper() ?>
         <?php foreach ($this->form->getErrors('csrf') as $error): ?>
-        <div><?php echo $this->errorT($error) ?></div>
+        <div class="error_msg" style="width: 100%;border: 0px"><?php echo $this->errorT($error) ?></div>
         <?php endforeach; ?>
       </div>
  
@@ -123,6 +127,8 @@
     
 <script type="text/javascript">
 /* <![CDATA[ */
+  language.projectsPlaceholder = '<?php echo $this->generalT('Kliknij aby wybrać projekt') ?>';
+  language.usersPlaceholder = '<?php echo $this->generalT('Kliknij aby wybrać użytkowników') ?>';
   url = {
     'projectListAjax' : '<?php echo $this->url(array(), 'admin_project_list_ajax') ?>',
     'userListAjax' : '<?php echo $this->url(array(), 'admin_user_list_ajax') ?>'

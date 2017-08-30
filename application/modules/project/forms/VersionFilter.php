@@ -38,4 +38,12 @@ class Project_Form_VersionFilter extends Custom_Form_AbstractFilter
       )
     ));
   }
+  
+  public function getDefaultValues()
+  {
+    return json_encode(array(
+      'resultCountPerPage' => 10,
+      'search' => ''
+    ));
+  }
 }

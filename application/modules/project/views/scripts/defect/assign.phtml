@@ -14,16 +14,13 @@
 
     <form name="j_endTaskRunForm" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <?php echo $this->form->backUrl->renderViewHelper() ?>
-
-
-          
         <div class="formContainer">
           <span>
-          <div class="content_label"><?php echo $this->form->assigneeId->renderViewHelper() ?><?php echo $this->form->assigneeName->renderViewHelper() ?> <a id="j_assignToMe" href="#"><?php echo $this->t('Przypisz do mnie') ?></a></div>  
-          <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?>
-          <?php foreach ($this->form->getErrors('assigneeId') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
+            <div class="content_label"><?php echo $this->form->assigneeId->renderViewHelper() ?><?php echo $this->form->assigneeName->renderViewHelper() ?> <a id="j_assignToMe" href="#"><?php echo $this->t('Przypisz do mnie') ?></a></div>  
+            <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?>
+            <?php foreach ($this->form->getErrors('assigneeId') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
           </span>
         </div>
         
@@ -61,7 +58,7 @@
   language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
   
   var autocompleteData = {
-    url: '<?php echo $this->url(array(), 'project_user_list_ajax') ?>',
+    url: '<?php echo $this->projectUrl(array(), 'project_user_list_ajax') ?>',
     textInputName: '#assigneeName',
     dstName: '#assigneeId'
   };

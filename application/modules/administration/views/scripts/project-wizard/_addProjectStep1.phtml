@@ -1,0 +1,106 @@
+<section id="content" style="padding-top: 50px;">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitleStep1') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+      
+      <div class="wizard-step">
+          <?php foreach ($this->form->breadCrumbs->getElements() as $breadcrumb): ?>
+            <span><?php echo $breadcrumb->renderViewHelper() ?></span>
+            <span class="arrow_right icon-20"></span>
+          <?php endforeach; ?>
+        </div>      
+      
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->stepOne->name->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('name', $this->t('Nazwa')) ?>
+            <?php foreach ($this->form->stepOne->getErrors('name') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->stepOne->name->getValidator('StringLength')->getMin(),
+                'max' => $this->form->stepOne->name->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->stepOne->prefix->renderViewHelper() ?><span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span>
+            <?php echo $this->formRequiredLabel('prefix', $this->t('Prefiks')) ?>
+            <?php foreach ($this->form->stepOne->getErrors('prefix') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->stepOne->prefix->getValidator('StringLength')->getMin(),
+                'max' => $this->form->stepOne->prefix->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->stepOne->openStatusColor->renderViewHelper() ?>
+             <?php echo $this->formRequiredLabel('openStatusColor', $this->t('Kolor dla statusów OPEN i REOPEN', array(
+              'open'    => $this->statusT('OPEN', 'TASK'),
+              'reopen'  => $this->statusT('REOPEN', 'TASK')
+            ))) ?>           
+            <?php foreach ($this->form->stepOne->getErrors('openStatusColor') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->stepOne->openStatusColor->getValidator('StringLength')->getMin(),
+                'max' => $this->form->stepOne->openStatusColor->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->stepOne->inProgressStatusColor->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('inProgressStatusColor', $this->t('Kolor dla statusu IN_PROGRESS', array(
+              'inProgress' => $this->statusT('IN_PROGRESS', 'TASK')
+            ))) ?>
+            <?php foreach ($this->form->stepOne->getErrors('inProgressStatusColor') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->stepOne->inProgressStatusColor->getValidator('StringLength')->getMin(),
+                'max' => $this->form->stepOne->inProgressStatusColor->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->stepOne->description->renderViewHelper() ?>
+            <?php echo $this->formLabel('description', $this->t('Opis')) ?>
+            <?php foreach ($this->form->stepOne->getErrors('description') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->stepOne->description->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                'max' => $this->form->stepOne->description->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div style="margin-top:15px">
+          <span id="save"><?php echo $this->form->submit ?></span>
+        </div>
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+        <div>
+          <?php echo $this->form->custom_wizard_csrf_check ?>
+          <?php foreach ($this->form->getErrors('custom_wizard_csrf_check') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>      
+        
+
+        
+    </form>
+
+  </article>
+</section>
+<script type="text/javascript">
+  /* <![CDATA[ */
+  language['charactersLeft'] = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+  /* ]]> */
+</script>

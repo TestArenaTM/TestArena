@@ -22,6 +22,19 @@ The full text of the GPL is in the LICENSE file.
 */
 class Project_Form_AddOtherTest extends Custom_Form_Abstract
 {  
+  protected $_projectId;
+  
+  public function __construct($options = null)
+  {    
+    if (!array_key_exists('projectId', $options))
+    {
+       throw new Exception('Project id not defined in form');
+    }
+    
+    $this->_projectId = $options['projectId'];
+    parent::__construct($options);
+  }
+  
   public function init()
   {
     parent::init();
@@ -33,6 +46,9 @@ class Project_Form_AddOtherTest extends Custom_Form_Abstract
       'validators'  => array(
         'Name',
         array('StringLength', false, array(3, 255, 'UTF-8')),
+        array('UniqueTestName', true, array(
+          'criteria' => array('project_id' => $this->_projectId)
+        ))
       )
     ));
     
@@ -77,7 +93,7 @@ class Project_Form_AddOtherTest extends Custom_Form_Abstract
     return $values;
   }
   
-  public function prepareAttachments(array $post)
+  public function preparePostData(array $post)
   {
     $result = $post;
     

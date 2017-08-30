@@ -26,8 +26,6 @@ class Application_Model_ProjectDbTable extends Custom_Model_DbTable_Abstract
 
   public function getByUserId($userId)
   {
-    $sql1 = '(SELECT COUNT(*) FROM `release` AS re WHERE re.project_id=p.id AND re.name IS NOT NULL)';
-    
     $sql = $this->select()
       ->from(array('p' => $this->_name), array(
         'id', 
@@ -37,8 +35,7 @@ class Application_Model_ProjectDbTable extends Custom_Model_DbTable_Abstract
         'name', 
         'open_status_color',
         'in_progress_status_color',
-        'description',
-        'releaseCount' => new Zend_Db_Expr($sql1)
+        'description'
       ))
       ->joinLeft(array('r' => 'role'), 'p.id=r.project_id', array())
       ->join(array('ru' => 'role_user'), 'r.id=ru.role_id', array())

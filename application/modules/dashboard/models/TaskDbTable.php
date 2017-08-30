@@ -24,7 +24,7 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
 {
   protected $_name = 'task';
   
-  public function getLimitLatestNotClosedAssigned2You(Zend_Controller_Request_Abstract $request, $limit)
+  public function getLimitLastNotClosedAssignedToMe($userId, $projectId, $releaseId, $limit)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -34,8 +34,7 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'priority',
         'modify_date',
         'due_date',
-        'title',
-        'description'
+        'title'
       ))
       ->join(array('assigner' => 'user'), 't.assigner_id = assigner.id', $this->_createAlias('assigner', array(
         'id',
@@ -43,83 +42,80 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'lastname',
         'email'
       )))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
-        'id',
-        'prefix'
-      )))
+      ->setIntegrityCheck(false);
+
+    $this->_prepareSql($sql, $projectId, $releaseId);
+    
+    $sql
       ->join(array('r' => 'role'), 'r.project_id = p.id', array())
       ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
-      ->where('t.status != ?', Application_Model_TaskStatus::CLOSED)
-      ->where('ru.user_id = ?', $request->getParam('userId'))
-      ->where('t.assignee_id = ?', $request->getParam('userId'))
+      ->where('ru.user_id = ?', $userId)
+      ->where('t.assignee_id = ?', $userId)
       ->order('t.modify_date DESC')
       ->group('t.id')
-      ->limit($limit)
-      ->setIntegrityCheck(false);
-    
-    if ($request->getParam('projectId', false))
-    {
-      $sql->where('t.project_id = ?', $request->getParam('projectId'));
-    }
-    else
-    {
-      $sql->where('p.status != ?', Application_Model_ProjectStatus::FINISHED);
-    }
+      ->limit($limit);
 
     return $this->fetchAll($sql);
   }
   
-  public function getAllAssigned2YouCntByStatus(Zend_Controller_Request_Abstract $request)
+  public function countNotClosedAssignedToMe($userId, $projectId, $releaseId)
+  {
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        'count' => new Zend_Db_Expr('COUNT(DISTINCT t.id)')
+      ))
+      ->setIntegrityCheck(false);
+
+    $this->_prepareSql($sql, $projectId, $releaseId);
+    
+    $sql
+      ->join(array('r' => 'role'), 'r.project_id = p.id', array())
+      ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
+      ->where('ru.user_id = ?', $userId)
+      ->where('t.assignee_id = ?', $userId);
+
+    return $this->getAdapter()->fetchOne($sql);
+  }
+  
+  public function getSqlAssignedToMe($userId, $projectId, $releaseId)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
         'id',
         'status'
       ))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', array())
+      ->setIntegrityCheck(false);
+
+    $this->_prepareSql($sql, $projectId, $releaseId);
+    
+    $sql
       ->join(array('r' => 'role'), 'r.project_id = p.id', array())
       ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
-      ->where('ru.user_id = ?', $request->getParam('userId'))
-      ->where('t.assignee_id = ?', $request->getParam('userId'))
-      ->group('t.id')
-      ->setIntegrityCheck(false);
-    
-    if ($request->getParam('projectId', false))
-    {
-      $sql->where('t.project_id = ?', $request->getParam('projectId'));
-    }
-    else
-    {
-      $sql->where('p.status != ?', Application_Model_ProjectStatus::FINISHED);
-    }
+      ->where('ru.user_id = ?', $userId)
+      ->where('t.assignee_id = ?', $userId)
+      ->group('t.id');
     
     return $sql;
   }
   
-  public function getAllCnt(Zend_Controller_Request_Abstract $request)
+  public function countAll($projectId, $releaseId)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
         'count' => new Zend_Db_Expr('COUNT(DISTINCT t.id)')
       ))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', array())
-      ->join(array('r' => 'role'), 'r.project_id = p.id', array())
-      ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
       ->setIntegrityCheck(false);
-    
-    if ($request->getParam('projectId', false))
-    {
-      $sql->where('t.project_id = ?', $request->getParam('projectId'));
-    }
-    else
-    {
-      $sql->where('p.status != ?', Application_Model_ProjectStatus::FINISHED);
-    }
+
+    $this->_prepareSql($sql, $projectId, $releaseId);
       
+    $sql
+      ->join(array('r' => 'role'), 'r.project_id = p.id', array())
+      ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array());
+    
     return $this->getAdapter()->fetchOne($sql);
   }
   
-  public function getLimitOverdue(Zend_Controller_Request_Abstract $request, $limit)
+  public function getLimitOverdueAssignedToMe($userId, $projectId, $releaseId, $limit)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -129,8 +125,7 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'priority',
         'modify_date',
         'due_date',
-        'title',
-        'description'
+        'title'
       ))
       ->join(array('assigner' => 'user'), 't.assigner_id = assigner.id', $this->_createAlias('assigner', array(
         'id',
@@ -138,55 +133,72 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'lastname',
         'email'
       )))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
-        'id',
-        'prefix'
-      )))
+      ->setIntegrityCheck(false);
+
+    $this->_prepareSql($sql, $projectId, $releaseId);
+    
+    $sql
       ->join(array('r' => 'role'), 'r.project_id = p.id', array())
       ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
       ->where('t.status != ?', Application_Model_TaskStatus::CLOSED)
       ->where('t.due_date < ?', date('Y-m-d H:i:s'))
-      ->where('ru.user_id = ?', $request->getParam('userId'))
+      ->where('ru.user_id = ?', $userId)
+      ->where('t.assignee_id = ?', $userId)
       ->order('t.due_date')
       ->group('t.id')
-      ->limit($limit)
-      ->setIntegrityCheck(false);
-    
-    if ($request->getParam('projectId', false))
-    {
-      $sql->where('t.project_id = ?', $request->getParam('projectId'));
-    }
-    else
-    {
-      $sql->where('p.status != ?', Application_Model_ProjectStatus::FINISHED);
-    }
+      ->limit($limit);
     
     return $this->fetchAll($sql);
   }
   
-  public function getNumberOfOverdue(Zend_Controller_Request_Abstract $request)
+  public function countOverdueAssignedToMe($userId, $projectId, $releaseId)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
         'count' => new Zend_Db_Expr('COUNT(DISTINCT t.id)')
       ))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', array())
+      ->setIntegrityCheck(false);
+
+    $this->_prepareSql($sql, $projectId, $releaseId);
+    
+    $sql
       ->join(array('r' => 'role'), 'r.project_id = p.id', array())
       ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
       ->where('t.status != ?', Application_Model_TaskStatus::CLOSED)
       ->where('t.due_date < ?', date('Y-m-d H:i:s'))
-      ->where('ru.user_id = ?', $request->getParam('userId'))
-      ->setIntegrityCheck(false);
-    
-    if ($request->getParam('projectId', false))
+      ->where('ru.user_id = ?', $userId)
+      ->where('t.assignee_id = ?', $userId);
+      
+    return $this->getAdapter()->fetchOne($sql);
+  }
+  
+  private function _prepareSql(Zend_Db_Select $sql, $projectId, $releaseId)
+  {
+    if ($releaseId > 0)
     {
-      $sql->where('t.project_id = ?', $request->getParam('projectId'));
+      $sql
+        ->join(array('re' => 'release'), 're.id = t.release_id', array())
+        ->join(array('p' => 'project'), 'p.id = re.project_id', $this->_createAlias('project', array(
+          'id',
+          'prefix'
+        )))
+        ->where('t.release_id = ?', $releaseId);
     }
     else
     {
-      $sql->where('p.status != ?', Application_Model_ProjectStatus::FINISHED);
-    }
+      $sql->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
+        'id',
+        'prefix'
+      )));
       
-    return $this->getAdapter()->fetchOne($sql);
+      if ($projectId > 0)
+      {
+        $sql->where('t.project_id = ?', $projectId);
+      }
+      else
+      {
+        $sql->where('p.status != ?', Application_Model_ProjectStatus::FINISHED);
+      }
+    }
   }
 }

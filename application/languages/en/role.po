@@ -2,134 +2,151 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-10-19 09:32+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2017-06-29 11:11+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 2.0.2\n"
 
 # template
 msgid "TEMPLATE_CUSTOM"
-msgstr "Specjalny"
+msgstr "Custom"
 
 msgid "TEMPLATE_LEADER"
-msgstr "Lider"
+msgstr "Leader"
 
 msgid "TEMPLATE_TESTER"
 msgstr "Tester"
 
 msgid "TEMPLATE_GUEST"
-msgstr "Gość"
+msgstr "Guest"
 
 msgid "TEMPLATE_PROGRAMMER"
-msgstr "Programista"
+msgstr "Programmer"
 
 # action
 msgid "ACTION_PROJECT_ATTACHMENT"
-msgstr "PROJECT_ATTACHMENT"
+msgstr "Manage attachments of project"
 
 msgid "ACTION_PROJECT_STATUS"
-msgstr "PROJECT_STATUS"
-
-msgid "ACTION_RELEASE_AND_PHASE_MANAGEMENT"
-msgstr "RELEASE_AND_PHASE_MANAGEMENT"
-
-msgid "ACTION_ENVIRONMENT_ADD"
-msgstr "ENVIRONMENT_ADD"
-
-msgid "ACTION_ENVIRONMENT_MODIFY"
-msgstr "ENVIRONMENT_MODIFY"
-
-msgid "ACTION_VERSION_ADD"
-msgstr "VERSION_ADD"
-
-msgid "ACTION_VERSION_MODIFY"
-msgstr "VERSION_MODIFY"
-
-msgid "ACTION_TEST_ADD"
-msgstr "TEST_ADD"
-
-msgid "ACTION_TEST_EDIT_CREATED_BY_YOU"
-msgstr "TEST_EDIT_CREATED_BY_YOU"
-
-msgid "ACTION_TEST_EDIT_ALL"
-msgstr "TEST_EDIT_ALL"
-
-msgid "ACTION_TASK_ADD"
-msgstr "TASK_ADD"
-
-msgid "ACTION_TASK_EDIT_CREATED_BY_YOU"
-msgstr "TASK_EDIT_CREATED_BY_YOU"
-
-msgid "ACTION_TASK_EDIT_ASSIGNED_TO_YOU"
-msgstr "TASK_EDIT_ASSIGNED_TO_YOU"
-
-msgid "ACTION_TASK_EDIT_ALL"
-msgstr "TASK_EDIT_ALL"
-
-msgid "ACTION_TASK_CHANGE_STATUS_CREATED_BY_YOU"
-msgstr "TASK_CHANGE_STATUS_CREATED_BY_YOU"
-
-msgid "ACTION_TASK_CHANGE_STATUS_ASSIGNED_TO_YOU"
-msgstr "TASK_CHANGE_STATUS_ASSIGNED_TO_YOU"
-
-msgid "ACTION_TASK_CHANGE_STATUS_ALL"
-msgstr "TASK_CHANGE_STATUS_ALL"
-
-msgid "ACTION_TASK_ASSIGN_CREATED_BY_YOU"
-msgstr "TASK_ASSIGN_CREATED_BY_YOU"
-
-msgid "ACTION_TASK_ASSIGN_ASSIGNED_TO_YOU"
-msgstr "TASK_ASSIGN_ASSIGNED_TO_YOU"
-
-msgid "ACTION_TASK_ASSIGN_ASSIGNED_BY_YOU"
-msgstr "TASK_ASSIGN_ASSIGNED_BY_YOU"
-
-msgid "ACTION_TASK_ASSIGN_ALL"
-msgstr "TASK_ASSIGN_ALL"
-
-msgid "ACTION_TASK_ATTACHMENT_CREATED_BY_YOU"
-msgstr "TASK_ATTACHMENT_CREATED_BY_YOU"
-
-msgid "ACTION_TASK_ATTACHMENT_ASSIGNED_TO_YOU"
-msgstr "TASK_ATTACHMENT_ASSIGNED_TO_YOU"
-
-msgid "ACTION_TASK_ATTACHMENT_ALL"
-msgstr "TASK_ATTACHMENT_ALL"
-
-msgid "ACTION_TASK_TEST_MODIFY_CREATED_BY_YOU"
-msgstr "TASK_TEST_MODIFY_CREATED_BY_YOU"
-
-msgid "ACTION_TASK_TEST_MODIFY_ASSIGNED_TO_YOU"
-msgstr "TASK_TEST_MODIFY_ASSIGNED_TO_YOU"
-
-msgid "ACTION_TASK_TEST_MODIFY_ALL"
-msgstr "TASK_TEST_MODIFY_ALL"
-
-msgid "ACTION_TASK_DEFECT_MODIFY_CREATED_BY_YOU"
-msgstr "TASK_DEFECT_MODIFY_CREATED_BY_YOU"
-
-msgid "ACTION_TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU"
-msgstr "TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU"
-
-msgid "ACTION_TASK_DEFECT_MODIFY_ALL"
-msgstr "TASK_DEFECT_MODIFY_ALL"
+msgstr "Manage status of project"
 
 msgid "ACTION_REPORT_GENERATE"
-msgstr "REPORT_GENERATE"
+msgstr "Generate report"
+
+msgid "ACTION_RELEASE_MANAGEMENT"
+msgstr "Manage releases"
+
+msgid "ACTION_VERSION_MANAGEMENT"
+msgstr "Manage versions"
+
+msgid "ACTION_ENVIRONMENT_MANAGEMENT"
+msgstr "Manage environments"
+
+msgid "ACTION_TAG_MANAGEMENT"
+msgstr "Manage tags"
+
+msgid "ACTION_TASK_ADD"
+msgstr "Add tasks"
+
+msgid "ACTION_TASK_ASSIGN_ALL"
+msgstr "Assign any task"
+
+msgid "ACTION_TASK_EDIT_ALL"
+msgstr "Edit any task"
+
+msgid "ACTION_TASK_DELETE_ALL"
+msgstr "Delete any task"
+
+msgid "ACTION_TASK_CHANGE_STATUS_ALL"
+msgstr "Change status of any task"
+
+msgid "ACTION_TASK_EDIT_CREATED_BY_YOU"
+msgstr "Edit tasks created by yourself"
+
+msgid "ACTION_TASK_DELETE_CREATED_BY_YOU"
+msgstr "Delete tasks created by yourself"
+
+msgid "ACTION_TASK_CHANGE_STATUS_CREATED_BY_YOU"
+msgstr "Change status of tasks created by yourself"
+
+msgid "ACTION_TASK_CHANGE_STATUS_ASSIGNED_TO_YOU"
+msgstr "Change status of tasks created by yourself"
+
+msgid "ACTION_TASK_EDIT_ASSIGNED_TO_YOU"
+msgstr "Edit tasks assigned to yourself"
+
+msgid "ACTION_TASK_DELETE_ASSIGNED_TO_YOU"
+msgstr "Delete tasks assigned to yourself"
 
 msgid "ACTION_DEFECT_ADD"
-msgstr "DEFECT_ADD"
+msgstr "Add defects"
 
-msgid "ACTION_DEFECT_EDIT_CREATED_BY_YOU"
-msgstr "DEFECT_EDIT_CREATED_BY_YOU"
+msgid "ACTION_DEFECT_ASSIGN_ALL"
+msgstr "Assign any defect"
 
 msgid "ACTION_DEFECT_EDIT_ALL"
-msgstr "DEFECT_EDIT_ALL"
+msgstr "Edit any defect"
 
+msgid "ACTION_DEFECT_DELETE_ALL"
+msgstr "Delete any defect"
+
+msgid "ACTION_DEFECT_CHANGE_STATUS_ALL"
+msgstr "Change status of any defect"
+
+msgid "ACTION_DEFECT_EDIT_CREATED_BY_YOU"
+msgstr "Edit defects created by yourself"
+
+msgid "ACTION_DEFECT_DELETE_CREATED_BY_YOU"
+msgstr "Delete defects created by yourself"
+
+msgid "ACTION_DEFECT_CHANGE_STATUS_CREATED_BY_YOU"
+msgstr "Change status of defects created by yourself"
+
+msgid "ACTION_DEFECT_DELETE_ASSIGNED_TO_YOU"
+msgstr "Delete defects assigned to yourself"
+
+msgid "ACTION_DEFECT_CHANGE_STATUS_ASSIGNED_TO_YOU"
+msgstr "Change status of defects assigned to yourself"
+
+msgid "ACTION_DEFECT_EDIT_ASSIGNED_TO_YOU"
+msgstr "Edit defects assigned to yourself"
+
+msgid "ACTION_TEST_ADD"
+msgstr "Add tests"
+
+msgid "ACTION_TEST_EDIT_ALL"
+msgstr "Edit any test"
+
+msgid "ACTION_TEST_EDIT_CREATED_BY_YOU"
+msgstr "Edit tests created by yourself"
+
+msgid "ACTION_TEST_DELETE_ALL"
+msgstr "Delete any test"
+
+msgid "ACTION_TEST_DELETE_CREATED_BY_YOU"
+msgstr "Delete tests created by yourself"
+
+msgid "ACTION_TASK_TEST_MODIFY_ALL"
+msgstr "Modify tests of ANY TASK"
+
+msgid "ACTION_TASK_TEST_MODIFY_ASSIGNED_TO_YOU"
+msgstr "Modify tests of tasks assigned to yourself"
+
+msgid "ACTION_TASK_TEST_MODIFY_CREATED_BY_YOU"
+msgstr "Modify TESTS of tasks created by yourself"
+
+msgid "ACTION_TASK_DEFECT_MODIFY_ALL"
+msgstr "Modify defects of ANY TASK"
+
+msgid "ACTION_TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU"
+msgstr "Modify defects of tasks assigned to yourself"
+
+msgid "ACTION_TASK_DEFECT_MODIFY_CREATED_BY_YOU"
+msgstr "Modify defects of tasks created by yourself"

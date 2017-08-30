@@ -108,21 +108,20 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
       return $this->render('export');
     }
     
+    $t = new Custom_Translate();
     $projectMapper = new Administration_Model_ProjectMapper();
-    $project->setProperties($values, true);
+    $project->setProperties($values, true);    
+    $project->setExtraData('fileDescription', $t->translate('Wyeksportowany projekt PROJECT.', array('project' => $project->getName())));
 
     if ($projectMapper->export($project))
     {
-      $t = new Custom_Translate();
       $session = new Zend_Session_Namespace('FileDownload');
       $session->layout = 'administration';
-      $session->messages = array($t->translate('Wyeksportowany projekt PROJECT.', array('project' => $project->getName())));
       $this->_setBackUrl('file_dwonload', $form->getBackUrl());
-      $this->redirect(array('id' => $project->getExtraData('fileId')), 'file_download');
+      $this->redirect(array('projectPrefix' => $project->getPrefix(), 'id' => $project->getExtraData('fileId')), 'file_download');
     }
     else
     {
-      $t = new Custom_Translate();
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
       $this->redirect($form->getBackUrl());
     }    
@@ -141,7 +140,7 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
       $session->layout = 'administration';
       $session->messages = array($t->translate('Wyeksportowane defekty projektu PROJECT.', array('project' => $project->getName())));
       $this->_setBackUrl('file_dwonload', $backUrl);
-      $this->redirect(array('id' => $project->getExtraData('fileId')), 'file_download');
+      $this->redirect(array('projectPrefix' => $project->getPrefix(), 'id' => $project->getExtraData('fileId')), 'file_download');
     }
     
     $this->redirect($backUrl);
@@ -183,9 +182,13 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
       return $this->render('import');
     }
     
+    $t = new Custom_Translate();
     $projectMapper = new Administration_Model_ProjectMapper();
     $project = new Application_Model_Project($form->getValues());
-    $t = new Custom_Translate();
+    $project->setResolutions(array(
+      array('name' => $t->translate('DEFAULT_SUCCESS_RESOLUTION', null, 'general'), 'color' => Zend_Registry::get('config')->defaultProject->successResolutionColor),
+      array('name' => $t->translate('DEFAULT_FAIL_RESOLUTION', null, 'general'), 'color' => Zend_Registry::get('config')->defaultProject->failResolutionColor)
+    ));
 
     if ($projectMapper->import($project))
     {
@@ -226,7 +229,6 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
     
     if (!$form->isValid($request->getPost()))
     {
-      $userMapper = new Administration_Model_UserMapper();
       $this->_setTranslateTitle();
       $this->view->form = $form;
       return $this->render('add');
@@ -235,8 +237,8 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
     $t = new Custom_Translate();
     $project = new Application_Model_Project($form->getValues());
     $project->setResolutions(array(
-      array('name' => $t->translate('DEFAULT_SUCCESS_RESOLUTION'), 'color' => Zend_Registry::get('config')->defaultProject->successResolutionColor),
-      array('name' => $t->translate('DEFAULT_FAIL_RESOLUTION'), 'color' => Zend_Registry::get('config')->defaultProject->failResolutionColor)
+      array('name' => $t->translate('DEFAULT_SUCCESS_RESOLUTION', null, 'general'), 'color' => Zend_Registry::get('config')->defaultProject->successResolutionColor),
+      array('name' => $t->translate('DEFAULT_FAIL_RESOLUTION', null, 'general'), 'color' => Zend_Registry::get('config')->defaultProject->failResolutionColor)
     ));
     $projectMapper = new Administration_Model_ProjectMapper();
 

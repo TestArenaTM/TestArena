@@ -26,17 +26,6 @@
 
         <div class="formContainer">
           <span>
-            <?php echo $this->form->phaseName->renderViewHelper() ?>
-            <div><?php echo $this->form->phaseId->renderViewHelper() ?></div>
-            <?php echo $this->formRequiredLabel('phaseName', $this->t('Faza')) ?>
-            <?php foreach ($this->form->getErrors('phaseId') as $error): ?>            
-              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-            <?php endforeach; ?>
-          </span>
-        </div>
-
-        <div class="formContainer">
-          <span>
             <?php echo $this->form->environments->renderViewHelper() ?>
             <?php echo $this->formLabel('environments', $this->t('Środowiska')) ?>  
             <?php foreach ($this->form->getErrors('environments') as $error): ?>
@@ -146,33 +135,24 @@
 /* <![CDATA[ */
   language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
   language.defaultReleaseName = '<?php echo $this->generalT('defaultReleaseName') ?>';
-  language.defaultPhaseName = '<?php echo $this->generalT('defaultPhaseName') ?>';
 
   var autocompleteData = {
-    url: '<?php echo $this->url(array(), 'project_user_list_ajax') ?>',
+    url: '<?php echo $this->projectUrl(array(), 'project_user_list_ajax') ?>',
     textInputName: '#assigneeName',
     dstName: '#assigneeId'
   };
   
   var minDate = '<?php echo $this->form->getMinDate() ?>';
   var currentUser = {id: <?php echo $this->authUser->getId() ?>, name: '<?php echo $this->authUser->getFullname().' ('.$this->authUser->getEmail().')' ?>'};
-  url.environmentListAjax = '<?php echo $this->url(array(), 'environment_list_ajax') ?>';
-  url.versionListAjax = '<?php echo $this->url(array(), 'version_list_ajax') ?>';
+  url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
+  url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';
 
   var defaultReleaseId = <?php echo $this->form->getDefaultReleaseId() ?>;
-  var defaultPhaseId = <?php echo $this->form->getDefaultPhaseId() ?>;
   
-  var autocompleteForForward = {
-    release: {
-      url: '<?php echo $this->url(array(), 'release_list_for_forward_ajax') ?>',
-      textInputName: '#releaseName',
-      dstName: '#releaseId'
-    },
-    phase: {
-      url: '<?php echo $this->url(array(), 'phase_list_for_forward_ajax') ?>',
-      textInputName: '#phaseName',
-      dstName: '#phaseId'
-    }
+  var autocompleteRelease = {
+    url: '<?php echo $this->projectUrl(array(), 'release_list_for_forward_ajax') ?>',
+    textInputName: '#releaseName',
+    dstName: '#releaseId'
   };
 /* ]]> */
 </script>

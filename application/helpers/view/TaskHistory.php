@@ -33,28 +33,41 @@ class Zend_View_Helper_TaskHistory extends Zend_View_Helper_Abstract
         }
         else
         {
-          return $this->view->generalT('utworzył(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)', array(
-            'assigneeName'  => $history->getExtraData('field1Data1'),
-            'assigneeEmail' => $history->getExtraData('field1Data2')
+          return $this->view->generalT('utworzył(a) zadanie i przypisał(a) je do użytkownika ASSIGNEE', array(
+            'assignee' => $this->_getNiceAssignee($history)
+          ));
+        }
+        
+      case Application_Model_HistoryType::ASSIGN_TASK:
+        if ($history->getUser()->getId() == $history->getField1())
+        {
+          return $this->view->generalT('przypisał(a) zadanie do siebie');
+        }
+        else
+        {
+          return $this->view->generalT('przypisał(a) zadanie do użytkownika ASSIGNEE', array(
+            'assignee' => $this->_getNiceAssignee($history)
           ));
         }
         
       case Application_Model_HistoryType::CHANGE_TASK:
+        return $this->view->generalT('zmienił(a) zadanie');
+        
+      case Application_Model_HistoryType::CHANGE_AND_ASSIGN_TASK:
         if ($history->getUser()->getId() == $history->getField1())
         {
-          return $this->view->generalT('zmienił(a) zadanie');
+          return $this->view->generalT('zmienił(a) zadanie i przypisał(a) je do siebie');
         }
         else
         {
-          return $this->view->generalT('zmienił(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)', array(
-            'assigneeName'  => $history->getExtraData('field1Data1'),
-            'assigneeEmail' => $history->getExtraData('field1Data2')
+          return $this->view->generalT('zmienił(a) zadanie i przypisał(a) je do użytkownika ASSIGNEE', array(
+            'assignee' => $this->_getNiceAssignee($history)
           ));
         }
       
       case Application_Model_HistoryType::CHANGE_TASK_STATUS:
         return $this->view->generalT('zmienił(a) status zadania na TASK_STATUS', array(
-          'taskStatus' => $this->view->statusT(new Application_Model_TaskStatus($history->getField1()), 'TASK')
+          'taskStatus' => $this->_getNiceTaskStatus($history)
         ));
       
       case Application_Model_HistoryType::ADD_TEST_TO_TASK:
@@ -63,11 +76,39 @@ class Zend_View_Helper_TaskHistory extends Zend_View_Helper_Abstract
         
         if ($test->getStatusId() != Application_Model_TestStatus::DELETED)
         {
-          $testParam = '<a href="'.$this->view->url(array('id' => $test->getId()), $this->view->testViewRouteName($test)).'">'.$testParam.'</a>';
+          $testParam = '<a href="'.$this->view->projectUrl(array('id' => $test->getId()), $this->view->testViewRouteName($test)).'">'.$testParam.'</a>';
         }
         
         return $this->view->generalT('dodał(a) test TEST do zadania', array('test' => $testParam));
       
+      case Application_Model_HistoryType::RESOLVE_TEST:
+        $test = $this->_getTest($history);
+        $testParam = $test->getName();
+        
+        if ($test->getStatusId() != Application_Model_TestStatus::DELETED)
+        {
+          $testParam = '<a href="'.$this->view->projectUrl(array('id' => $test->getId()), $this->view->testViewRouteName($test)).'">'.$testParam.'</a>';
+        }
+        
+        return $this->view->generalT('rozwiązał(a) test TEST ze statusem STATUS', array(
+          'test'   => $testParam,
+          'status' => $history->getExtraData('data4')
+        ));
+      
+      case Application_Model_HistoryType::CHANGE_TEST_STATUS:
+        $test = $this->_getTest($history);
+        $testParam = $test->getName();
+        
+        if ($test->getStatusId() != Application_Model_TestStatus::DELETED)
+        {
+          $testParam = '<a href="'.$this->view->projectUrl(array('id' => $test->getId()), $this->view->testViewRouteName($test)).'">'.$testParam.'</a>';
+        }
+        
+        return $this->view->generalT('zmienił(a) status testu TEST na status STATUS', array(
+          'test'   => $testParam,
+          'status' => $history->getExtraData('data4')
+        ));
+        
       case Application_Model_HistoryType::DELETE_TEST_FROM_TASK:
         $test = $this->_getTest($history);
         $testParam = $test->getName();
@@ -77,21 +118,21 @@ class Zend_View_Helper_TaskHistory extends Zend_View_Helper_Abstract
           $testParam = '<a href="'.$this->view->testViewRouteName($test).'">'.$testParam.'</a>';
         }
         
-        return $this->view->generalT('usunoł/eła test TEST Z zadania', array(
-          'test' => '<a href="'.$this->view->url(array('id' => $test->getId()), $this->view->testViewRouteName($test)).'">'.$testParam.'</a>'
+        return $this->view->generalT('usunął/ęła test TEST Z zadania', array(
+          'test' => '<a href="'.$this->view->projectUrl(array('id' => $test->getId()), $this->view->testViewRouteName($test)).'">'.$testParam.'</a>'
         ));
         
       case Application_Model_HistoryType::ADD_DEFECT_TO_TASK:
         $defect = $this->_getDefect($history);
         
-        $testParam = '<a href="'.$this->view->url(array('id' => $defect->getId(), 'projectId' => $defect->getProject()->getId()), 'defect_view').'">'.$defect->getTitle().'</a>';
+        $testParam = '<a href="'.$this->view->projectUrl(array('id' => $defect->getId(), 'projectId' => $defect->getProject()->getId()), 'defect_view').'">'.$defect->getTitle().'</a>';
         
         return $this->view->generalT('dodał(a) defekt DEFEKT do zadania', array('defekt' => $testParam));
         
       case Application_Model_HistoryType::DELETE_DEFECT_FROM_TASK:
         $defect = $this->_getDefect($history);
         
-        $testParam = '<a href="'.$this->view->url(array('id' => $defect->getId(), 'projectId' => $defect->getProject()->getId()), 'defect_view').'">'.$defect->getTitle().'</a>';
+        $testParam = '<a href="'.$this->view->projectUrl(array('id' => $defect->getId(), 'projectId' => $defect->getProject()->getId()), 'defect_view').'">'.$defect->getTitle().'</a>';
         
         return $this->view->generalT('usunoł/eła defekt DEFEKT z zadania', array('defekt' => $testParam));
     }
@@ -99,18 +140,28 @@ class Zend_View_Helper_TaskHistory extends Zend_View_Helper_Abstract
     return '';
   }
   
+  private function _getNiceAssignee(Application_Model_History $history)
+  {
+    return '<strong title=\"'.$history->getExtraData('data2').'\">'.$history->getExtraData('data1').'</strong>';
+  }
+  
+  private function _getNiceTaskStatus(Application_Model_History $history)
+  {
+    return '<strong>'.$this->view->statusT(new Application_Model_TaskStatus($history->getField1()), 'TASK').'</strong>';
+  }
+  
   private function _getTest(Application_Model_History $history)
   {
     $test = new Application_Model_Test();
     $test->setId($history->getField1());
-    $test->setType($history->getExtraData('field1Data1'));
-    $test->setName($history->getExtraData('field1Data2'));
-    return $test->setStatus($history->getExtraData('field1Data3'));
+    $test->setType($history->getExtraData('data1'));
+    $test->setName($history->getExtraData('data2'));
+    return $test->setStatus($history->getExtraData('data3'));
   }
   
   private function _getDefect(Application_Model_History $history)
   {
-    $bugTrackerType = $history->getExtraData('field1Data1');
+    $bugTrackerType = $history->getExtraData('data1');
     
     switch ($bugTrackerType)
     {
@@ -119,8 +170,8 @@ class Zend_View_Helper_TaskHistory extends Zend_View_Helper_Abstract
     }
     
     $defect->setId($history->getField1());
-    $defect->setTitle($history->getExtraData('field1Data2'));
+    $defect->setTitle($history->getExtraData('data2'));
     
-    return $defect->setProject('id', $history->getExtraData('field1Data3'));
+    return $defect->setProject('id', $history->getExtraData('data3'));
   }
 }

@@ -29,7 +29,10 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
  
     if (!$this->getRequest()->isXmlHttpRequest())
     {
-      $this->checkUserSession(true);
+      if ($this->_project === null)
+      {
+        throw new Custom_404Exception();
+      }
       
       if (!in_array($this->getRequest()->getActionName(), array('index', 'view')))
       {
@@ -41,16 +44,18 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
   
   private function _getFilterForm()
   {
-    return new Project_Form_EnvironmentFilter(array('action' => $this->_url(array(), 'environment_list')));
+    return new Project_Form_EnvironmentFilter(array('action' => $this->_projectUrl(array(), 'environment_list')));
   }
     
   public function indexAction()
   {
-    $request = $this->getRequest();
+    $this->_setCurrentBackUrl('environment_list');
+    $request = $this->_getRequestForFilter(Application_Model_FilterGroup::ENVIRONMENTS);
     $filterForm = $this->_getFilterForm();
     
     if ($filterForm->isValid($request->getParams()))
     {
+      $this->_filterAction($filterForm->getValues(), 'environment');
       $environmentMapper = new Project_Model_EnvironmentMapper();
       list($list, $paginator) = $environmentMapper->getAll($request);
     }
@@ -60,21 +65,28 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
       $paginator = null;
     }
     
+    $filter = $this->_user->getFilter(Application_Model_FilterGroup::ENVIRONMENTS);
+    
+    if ($filter !== null)
+    {
+      $filterForm->prepareSavedValues($filter->getData());
+    }
+    
     $this->_setTranslateTitle();
     $this->view->environments = $list;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
-    $this->view->accessEnvironmentAdd = $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_ADD);
-    $this->view->accessEnvironmentModify = $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MODIFY);
+    $this->view->accessEnvironmentManagement = $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MANAGEMENT);
   }
     
   public function viewAction()
   {
     $environment = $this->_getValidEnvironmentForView();
-    $this->_setTranslateTitle();
+    $this->_setTranslateTitle(array('name' => $environment->getName()), 'headTitle');
     $this->view->environment = $environment;
-    $this->view->accessEnvironmentModify = $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MODIFY);
+    $this->view->accessEnvironmentManagement = $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MANAGEMENT);
+    $this->view->backUrl = $this->_getBackUrl('environment_list', $this->_projectUrl(array(), 'environment_list'));
   }
   
   public function listAjaxAction()
@@ -101,7 +113,7 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
   private function _getAddEnvironmentForm()
   {
     return new Project_Form_AddEnvironment(array(
-      'action'    => $this->_url(array('projectId' => $this->_project->getId()), 'environment_add_process'),
+      'action'    => $this->_projectUrl(array('projectId' => $this->_project->getId()), 'environment_add_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
@@ -109,7 +121,7 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
   
   public function addAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_ADD, true);
+    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $this->_setTranslateTitle();
@@ -118,14 +130,14 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
 
   public function addProcessAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_ADD, true);
+    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $request = $this->getRequest();
 
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'environment_list');
+      return $this->projectRedirect(array(), 'environment_list');
     }
     
     $form = $this->_getAddEnvironmentForm();
@@ -151,13 +163,13 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
   }
   
   private function _getEditEnvironmentForm(Application_Model_Environment $environment)
   {
     $form = new Project_Form_EditEnvironment(array(
-      'action'    => $this->_url(array('id' => $environment->getId()), 'environment_edit_process'),
+      'action'    => $this->_projectUrl(array('id' => $environment->getId()), 'environment_edit_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId(),
       'id'        => $environment->getId()
@@ -168,7 +180,7 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
   
   public function editAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MODIFY, true);
+    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $environment = $this->_getValidEnvironmentForEdit();
@@ -179,14 +191,14 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
 
   public function editProcessAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MODIFY, true);
+    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $request = $this->getRequest();
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'environment_list');
+      return $this->projectRedirect(array(), 'environment_list');
     }
     
     $environment = $this->_getValidEnvironmentForEdit();
@@ -214,12 +226,12 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
   }
   
   public function deleteAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MODIFY, true);
+    $this->_checkAccess(Application_Model_RoleAction::ENVIRONMENT_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $environment = $this->_getValidEnvironment();
@@ -235,7 +247,7 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect(array(), 'environment_list');
+    return $this->projectRedirect(array(), 'environment_list');
   }
   
   private function _getValidEnvironment()
@@ -248,6 +260,7 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
     }
     
     $environment = new Application_Model_Environment($idValidator->getFilteredValues());
+    $environment->setProjectObject($this->_project);
     return $environment;
   }
   
@@ -269,9 +282,8 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
   {
     $environment = $this->_getValidEnvironment();
     $environmentMapper = new Project_Model_EnvironmentMapper();
-    $rowData = $environmentMapper->getForView($environment);
-    
-    if ($rowData === false)
+
+    if ($environmentMapper->getForView($environment) === false)
     {
       throw new Custom_404Exception();
     }

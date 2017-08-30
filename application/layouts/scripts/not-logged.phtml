@@ -3,7 +3,10 @@
   'description' => $this->description,
   'messageBox'  => $this->messageBox,
   'language'    => $this->language,
-  'locale'      => $this->locale
+  'locale'      => $this->locale,
+  'cModule'     => $this->cModule,
+  'cController'=> $this->cController,
+  'cAction'     => $this->cAction
 )); ?>
 
 <section id="content_login">
@@ -19,4 +22,4 @@
   </header>
 </section>
 
-<?php echo $this->partial('footer-not-logged.phtml', array('locale' => $this->locale));
+<?php echo $this->partial('footer-static.phtml', array('locale' => $this->locale));

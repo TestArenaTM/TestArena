@@ -33,6 +33,7 @@ class User_Model_RoleDbTable extends Custom_Model_DbTable_Abstract
       ))
       ->join(array('p' => 'project'), 'p.id = ro.project_id', $this->_createAlias('project', array(
         'id',
+        'prefix',
         'name'
       )))
       ->join(array('ru' => 'role_user'), 'ru.role_id = ro.id', array())

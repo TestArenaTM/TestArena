@@ -22,11 +22,13 @@ The full text of the GPL is in the LICENSE file.
 */
 class Application_Model_CommentSubjectType extends Custom_Model_Dictionary_Abstract
 {
-  const TASK    = 1;
-  const DEFECT  = 2;
+  const TASK       = 1;
+  const DEFECT     = 2;
+  const TASK_TEST  = 3;
   
   protected $_names = array(
-    self::TASK    => 'TASK',
-    self::DEFECT  => 'DEFECT'
+    self::TASK      => 'TASK',
+    self::DEFECT    => 'DEFECT',
+    self::TASK_TEST => 'TASK_TEST'
   );
 }

@@ -1,0 +1,54 @@
+<section id="content">
+  <!--<div class="breadcrumb">
+    <a class="icon_house_alt" href="#"></a>
+    <i class="arrow_carrot-right icon-15"></i>
+    <a href="#"><?php echo $this->generalT('Tagi') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>    
+    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
+  </div>  -->
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <nav class="button_link_nav">
+      <ul class="button_link_ul">
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
+        <?php if ($this->activeProject->isActive() && $this->accessTagManagement): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->tag->getId()), 'tag_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+          <?php if ($this->tag->getExtraData('taskCount') == 0 && $this->tag->getExtraData('defectCount') == 0): ?>
+            <li class="button_link_li"><a class="button_link j_delete_tag" href="<?php echo $this->projectUrl(array('id' => $this->tag->getId()), 'tag_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+          <?php endif; ?>
+        <?php endif; ?>
+      </ul>
+    </nav>
+    
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->tag->getName()) ?></div>
+    </div>
+    
+    <div class="contentLRtable">
+      <div class="contentProperties_left">
+
+        <div class="box_number_info">
+            <a class="number_content" href="<?php echo $this->projectUrl(array(), 'task_list').'?skipSavedFilter&tags='.$this->tag->getId() ?>">
+              <?php echo $this->escapeQuotes($this->tag->getExtraData('taskCount')) ?>
+            </a>
+          <div class="descr_number_info"><?php echo $this->t('Liczba zadań') ?></div>
+        </div>         
+        
+        <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
+        <div class="box_number_info">
+            <a class="number_content" href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&tags='.$this->tag->getId() ?>">
+              <?php echo $this->escapeQuotes($this->tag->getExtraData('defectCount')) ?>
+            </a>
+          <div class="descr_number_info"><?php echo $this->t('Liczba defektów') ?></div>
+        </div>
+        <?php endif; ?>
+        
+      </div>
+     </div>
+    
+  </article>    
+</section>
+
+<?php 
+echo $this->partial('popups/delete-tag.phtml');

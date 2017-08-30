@@ -93,7 +93,7 @@ class Project_Model_EnvironmentMapper extends Custom_Model_Mapper_Abstract
 
   public function getForEdit(Application_Model_Environment $environment)
   {
-    $row = $this->_getDbTable()->getForEdit($environment->getId());
+    $row = $this->_getDbTable()->getForEdit($environment->getId(), $environment->getProjectId());
     
     if (null === $row)
     {
@@ -107,7 +107,7 @@ class Project_Model_EnvironmentMapper extends Custom_Model_Mapper_Abstract
 
   public function getForView(Application_Model_Environment $environment)
   {
-    $row = $this->_getDbTable()->getForView($environment->getId());
+    $row = $this->_getDbTable()->getForView($environment->getId(), $environment->getProjectId());
     
     if (null === $row)
     {

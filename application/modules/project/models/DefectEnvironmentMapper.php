@@ -40,5 +40,19 @@ class Project_Model_DefectEnvironmentMapper extends Custom_Model_Mapper_Abstract
     $db->delete(array('defect_id = ?' => $defect->getId()));
     $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (defect_id, environment_id) VALUES '.$values);
     return $statement->execute($data);
+  } 
+
+  public function deleteByDefect(Application_Model_Defect $defect)
+  {
+    $this->_getDbTable()->delete(array(
+      'defect_id = ?' => $defect->getId()
+    ));
+  }
+
+  public function deleteByDefectIds(array $defectIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'defect_id IN(?)' => $defectIds
+    ));
   }
 }

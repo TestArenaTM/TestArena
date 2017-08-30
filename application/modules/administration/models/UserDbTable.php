@@ -148,6 +148,7 @@ class Administration_Model_UserDbTable extends Custom_Model_DbTable_Criteria_Abs
       ))
       ->join(array('t' => 'task'), 't.author_id = u.id', array())
       ->where('t.project_id = ?', $projectId)
+      ->where('t.status != ?', Application_Model_TaskStatus::DELETED)
       ->group(('u.id'))
       ->setIntegrityCheck(false);
 

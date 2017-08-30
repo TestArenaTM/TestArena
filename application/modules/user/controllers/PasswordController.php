@@ -190,8 +190,9 @@ class User_PasswordController extends Custom_Controller_Action_Application_Abstr
     
     $form = $this->_getRecoverPassowrdForm();
     
-    if (!$form->isValid($request->getPost()))
+    if (!$form->isValid(array_merge($request->getPost(), array('grecaptcharesponse' => $request->getPost('g-recaptcha-response')))))
     {
+      $form->getElement('grecaptcharesponse')->setValue(null);
       $this->_helper->layout->setLayout('not-logged');
       $this->_setTranslateTitle();
       $this->view->form = $form;

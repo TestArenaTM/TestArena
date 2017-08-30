@@ -1,0 +1,77 @@
+<article class="column_dashboard">
+  
+  <div class="<?php echo $this->numberOfTasksAssignedToMe > 0 ? 'col50' : 'col100'; ?>">
+    <article class="article_box dsb">
+      <h4><?php echo $this->t('Zadania przypisane do mnie') ?></h4>
+       <div>
+        <div class="dsb-content-main">
+          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter' ?>">
+            <h6><?php echo $this->numberOfTasksAssignedToMe ?></h6>
+            <small><?php echo $this->t('Wszystkich zadań') ?></small>
+            <span class="chart25 percent-dsb">
+              <div class="cloud"><?php echo $this->percentOfTasksAssignedToMe?>% <?php echo $this->t('zadań w projekcie') ?></div>
+              <span style="width:<?php echo $this->percentOfTasksAssignedToMe?>%"></span>
+            </span>
+          </a>
+        </div>             
+        <div class="dsb-content-second">         
+          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::OPEN ?>">
+            <h6><?php echo $this->numberOfOpenTasksAssignedToMe ?></h6>
+            <small><?php echo $this->t('Nowych') ?></small>
+            <span class="chart25 percent-dsb">
+              <div class="cloud"><?php echo $this->percentOfOpenTasksAssignedToMe?>%</div>
+              <span style="width:<?php echo $this->percentOfOpenTasksAssignedToMe?>%"></span>
+            </span>
+          </a>
+        </div>            
+        <div class="dsb-content-second">         
+          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::REOPEN ?>">
+            <h6><?php echo $this->numberOfReopenTasksAssignedToMe ?></h6>
+            <small><?php echo $this->t('Ponownie otwartych') ?></small>
+            <span class="chart25 percent-dsb">
+              <div class="cloud"><?php echo $this->percentOfReopenTasksAssignedToMe?>%</div>
+              <span style="width:<?php echo $this->percentOfReopenTasksAssignedToMe?>%"></span>
+            </span>
+          </a>
+        </div>
+        <div class="dsb-content-second">         
+          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::IN_PROGRESS ?>">
+            <h6><?php echo $this->numberOfInProgressTasksAssignedToMe ?></h6>
+            <small><?php echo $this->t('W toku') ?></small>
+            <span class="chart25 percent-dsb">
+              <div class="cloud"><?php echo $this->percentOfInProgressTasksAssignedToMe?>%</div>
+              <span style="width:<?php echo $this->percentOfInProgressTasksAssignedToMe?>%"></span>
+            </span>
+          </a>
+        </div>  
+        <div class="dsb-content-second">          
+          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::CLOSED ?>">
+            <h6><?php echo $this->numberOfClosedTasksAssignedToMe ?></h6>
+            <small><?php echo $this->t('Zamkniętych') ?></small>
+            <span class="chart25 percent-dsb">
+              <div class="cloud"><?php echo $this->percentOfClosedTasksAssignedToMe?>%</div>
+              <span style="width:<?php echo $this->percentOfClosedTasksAssignedToMe?>%"></span>
+            </span>
+          </a>
+        </div>             
+       </div>              
+    </article>
+  </div>
+  
+  <?php if ($this->numberOfTasksAssignedToMe > 0): ?>
+  <div class="col50" >
+    <article class="article_box dsb">
+      <h4><?php echo $this->t('Zadania przypisane do mnie') ?></h4>
+      <div>
+        <div id="chart_div" class="chartMain"></div>
+      </div>
+    </article>
+  </div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    var projectTaskChartDataJson = '<?php echo $this->json_numberOfTasksAssignedToMeGroupedByStatus?>';
+  /* ]]> */
+  </script>
+  <?php endif; ?>
+  
+</article>

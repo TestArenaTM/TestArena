@@ -1,0 +1,105 @@
+<section id="content" style="padding-top: 50px;">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitleStep1') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+        <div class="wizard-step">
+          <?php foreach ($this->form->breadCrumbs->getElements() as $breadcrumb): ?>
+            <span><?php echo $breadcrumb->renderViewHelper() ?></span>
+            <span class="arrow_right icon-20"></span>
+          <?php endforeach; ?>
+        </div>    
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->stepOne->name->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('name', $this->t('Nazwa')) ?>
+            <?php foreach ($this->form->stepOne->getErrors('name') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->stepOne->getElement('name')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->stepOne->getElement('name')->getValidator('StringLength')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->stepOne->startDate->renderViewHelper() ?><span class="calendar_icon"></span>
+            <?php echo $this->formRequiredLabel('startDate', $this->t('Data rozpoczęcia')) ?>
+            <?php foreach ($this->form->stepOne->getErrors('startDate') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'field'   => $this->t('Data zakończenia'),
+                'format'  => 'RRRR-MM-DD',
+                'date'     => $this->form->stepOne->getMinDate()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->stepOne->endDate->renderViewHelper() ?><span class="calendar_icon"></span>
+            <?php echo $this->formRequiredLabel('endDate', $this->t('Data zakończenia')) ?>
+            <?php foreach ($this->form->stepOne->getErrors('endDate') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'field'   => $this->t('Data rozpoczęcia'),
+                'format'  => 'RRRR-MM-DD',
+                'date'     => $this->form->stepOne->getMinDate()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer full">
+          <span>
+            <?php echo $this->form->stepOne->description->renderViewHelper() ?>
+            <?php echo $this->formLabel('description', $this->t('Opis')) ?>
+            <?php foreach ($this->form->stepOne->getErrors('description') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->stepOne->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                'max' => $this->form->stepOne->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+      
+        <div class="formContainer full">
+          <span>
+            <div class="checkForm">
+              <?php echo $this->form->stepOne->active->renderViewHelper() ?>
+              <?php echo $this->formLabel('active', $this->t('Aktywne')) ?>  
+              <span class="help item">?<div class="cloud"><?php echo $this->t('Aktywne wydanie - info') ?></div></span>
+              <?php foreach ($this->form->stepOne->getErrors('active') as $error): ?>
+                <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+              <?php endforeach; ?>
+            </div>
+          </span>
+        </div>
+
+         <div style="margin-top:15px">
+          <span id="save"><?php echo $this->form->submit ?></span>
+        </div>
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+          <div>
+          <?php echo $this->form->custom_wizard_csrf_check ?>
+          <?php foreach ($this->form->getErrors('custom_wizard_csrf_check') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>  
+
+    </form>
+
+  </article>    
+</section>
+
+
+
+<script type="text/javascript">
+/* <![CDATA[ */
+language['charactersLeft'] = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+maxStartDate = '<?php echo $this->release->getEndDate() ?>';
+minEndDate = '<?php echo $this->release->getStartDate() ?>';
+
+/* ]]> */
+</script>

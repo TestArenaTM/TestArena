@@ -101,11 +101,11 @@ class ErrorController extends Custom_Controller_Action_Application_Abstract
     
     $this->view->request = $errors->request;
     
-    if (!$this->checkUserSession())
+    if ($viewName == self::VIEW_PAGE_NOT_FOUND && !$this->checkUserSession())
     {
       $viewName .= '-not-logged';
     }
-    
+
     $this->render($viewName);
   }
 

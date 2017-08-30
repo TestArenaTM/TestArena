@@ -23,26 +23,23 @@ The full text of the GPL is in the LICENSE file.
 class Application_Model_TaskUserPermission extends Custom_Model_UserPermission_Abstract
 {
   static public $_taskRoleActions = array(
-    Application_Model_RoleAction::TASK_ADD,                           
-    Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU,
-    Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU,          
-    Application_Model_RoleAction::TASK_EDIT_ALL,                      
-    Application_Model_RoleAction::TASK_CHANGE_STATUS_CREATED_BY_YOU,  
-    Application_Model_RoleAction::TASK_CHANGE_STATUS_ASSIGNED_TO_YOU,
-    Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL,
-    Application_Model_RoleAction::TASK_ASSIGN_CREATED_BY_YOU,
-    Application_Model_RoleAction::TASK_ASSIGN_ASSIGNED_TO_YOU,
-    Application_Model_RoleAction::TASK_ASSIGN_ASSIGNED_BY_YOU,
+    Application_Model_RoleAction::TASK_ADD,
     Application_Model_RoleAction::TASK_ASSIGN_ALL,
-    Application_Model_RoleAction::TASK_ATTACHMENT_CREATED_BY_YOU,
-    Application_Model_RoleAction::TASK_ATTACHMENT_ASSIGNED_TO_YOU,
-    Application_Model_RoleAction::TASK_ATTACHMENT_ALL,
-    Application_Model_RoleAction::TASK_TEST_MODIFY_CREATED_BY_YOU,
-    Application_Model_RoleAction::TASK_TEST_MODIFY_ASSIGNED_TO_YOU,
+    Application_Model_RoleAction::TASK_EDIT_ALL,
+    Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU,
+    Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU,
+    Application_Model_RoleAction::TASK_DELETE_ALL,
+    Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU,
+    Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU,
+    Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL,
+    Application_Model_RoleAction::TASK_CHANGE_STATUS_CREATED_BY_YOU,
+    Application_Model_RoleAction::TASK_CHANGE_STATUS_ASSIGNED_TO_YOU,
     Application_Model_RoleAction::TASK_TEST_MODIFY_ALL,
-    Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU,
+    Application_Model_RoleAction::TASK_TEST_MODIFY_ASSIGNED_TO_YOU,
+    Application_Model_RoleAction::TASK_TEST_MODIFY_CREATED_BY_YOU,
+    Application_Model_RoleAction::TASK_DEFECT_MODIFY_ALL,
     Application_Model_RoleAction::TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU,
-    Application_Model_RoleAction::TASK_DEFECT_MODIFY_ALL
+    Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU
   );
   
   public function __construct(Application_Model_Task $task, Application_Model_User $user, array $userPermissions)
@@ -72,7 +69,10 @@ class Application_Model_TaskUserPermission extends Custom_Model_UserPermission_A
   {
     if ($this->_checkAuthorPermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_CREATED_BY_YOU)
           || $this->_checkAssigneePermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_ASSIGNED_TO_YOU)
-          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL))
+          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL)
+          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_EDIT_ALL)
+          || $this->_checkAuthorPermission(Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU)
+          || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU))
     {
       return true;
     }
@@ -82,10 +82,10 @@ class Application_Model_TaskUserPermission extends Custom_Model_UserPermission_A
   
   public function isAssignPermission()
   {
-    if ($this->_checkAuthorPermission(Application_Model_RoleAction::TASK_ASSIGN_CREATED_BY_YOU)
-          || $this->_checkAssigneePermission(Application_Model_RoleAction::TASK_ASSIGN_ASSIGNED_TO_YOU)
-          || $this->_checkAssignerPermission(Application_Model_RoleAction::TASK_ASSIGN_ASSIGNED_BY_YOU)
-          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_ASSIGN_ALL))
+    if ($this->_checkAllPermission(Application_Model_RoleAction::TASK_ASSIGN_ALL)
+      || $this->_checkAllPermission(Application_Model_RoleAction::TASK_EDIT_ALL)
+      || $this->_checkAuthorPermission(Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU)
+      || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU))
     {
       return true;
     }
@@ -95,14 +95,7 @@ class Application_Model_TaskUserPermission extends Custom_Model_UserPermission_A
   
   public function isAttachmentPermission()
   {
-    if ($this->_checkAuthorPermission(Application_Model_RoleAction::TASK_ATTACHMENT_CREATED_BY_YOU)
-          || $this->_checkAssigneePermission(Application_Model_RoleAction::TASK_ATTACHMENT_ASSIGNED_TO_YOU)
-          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_ATTACHMENT_ALL))
-    {
-      return true;
-    }
-    
-    return false;
+    return $this->isEditPermission();
   }
   
   public function isDefectModifyPermission()
@@ -129,21 +122,11 @@ class Application_Model_TaskUserPermission extends Custom_Model_UserPermission_A
     return false;
   }
   
-  private function _checkAssigneePermission($roleActionId)
+  public function isDeletePermission()
   {
-    if ($this->_object->getAssigneeId() == $this->_user->getId()
-        && true === $this->_userPermissions[$roleActionId])
-    {
-      return true;
-    }
-    
-    return false;
-  }
-  
-  private function _checkAssignerPermission($roleActionId)
-  {
-    if ($this->_object->getAssignerId() == $this->_user->getId()
-        && true === $this->_userPermissions[$roleActionId])
+    if ($this->_checkAuthorPermission(Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU)
+          || $this->_checkAssigneePermission(Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU)
+          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_DELETE_ALL))
     {
       return true;
     }

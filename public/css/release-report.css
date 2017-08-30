@@ -1,0 +1,60 @@
+body {
+  font-size:12px;
+}
+.content {
+  display: block;
+  height: 100%;
+}
+.header {
+  display: block;
+  text-align: center;
+}
+.info {
+  display: block;
+  text-align: left;
+  margin: 0 0 6px 0;
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+.tasksContainer {
+  margin-bottom: 6px;
+}
+
+.taskContent {
+  margin-bottom: 2px;
+  border: 1px solid silver;
+  padding: 0px 4px 4px 4px;
+}
+.resolution {
+  display: inline-block;
+  border: 1px solid black;
+}
+
+table {
+  border-spacing: 0;
+  text-align: center;
+  width: 100%;
+  margin-top: 6px;
+}
+thead tr th {
+  background-color: #fcfcfc;
+}
+thead tr th {
+  padding: 4px;
+  text-align: left;
+}
+
+tr {
+  border: 1px solid;
+}
+td {
+  border-top: 1px solid silver;
+  padding: 6px;
+  text-align: left;
+}
+.hideCell {
+  border-width: 0px;
+}

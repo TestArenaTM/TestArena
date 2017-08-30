@@ -14,7 +14,7 @@
             <?php if ($this->activeProject->isActive() 
                       && $this->taskUserPermission->isDefectModifyPermission()
                       && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
-              <a class="j_deleteDefectFromTask" href="<?php echo $this->url(array('id' => $this->task->getId(), 'defectId' => $defect->getId()), 'task_delete_defect_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+              <a class="j_deleteDefectFromTask" href="<?php echo $this->projectUrl(array('id' => $this->task->getId(), 'defectId' => $defect->getId()), 'task_delete_defect_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
             <?php endif; ?>
           </div>                   
         </div>
@@ -24,7 +24,7 @@
 </div>
 <script type="text/javascript">
 /* <![CDATA[ */
-  url.defectStatusAjax = '<?php echo $this->url(array(), 'defect_status_ajax') ?>';
+  url.defectStatusAjax = '<?php echo $this->projectUrl(array(), 'defect_status_ajax') ?>';
   language.defectNotExists = '<?php echo $this->generalT('Defekt nie istnieje.') ?>';
 /* ]]> */
 </script>

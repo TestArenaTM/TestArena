@@ -60,8 +60,9 @@ class ContactController extends Custom_Controller_Action_Application_Abstract
     }
     
     $form = $this->_getContactForm();
-    if (!$form->isValid($request->getPost()))
+    if (!$form->isValid(array_merge($request->getPost(), array('grecaptcharesponse' => $request->getPost('g-recaptcha-response')))))
     {
+      $form->getElement('grecaptcharesponse')->setValue(null);
       $this->_setTranslateTitle();    
       $this->view->form = $form;
       return $this->render('index');

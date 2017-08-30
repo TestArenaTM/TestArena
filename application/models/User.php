@@ -55,6 +55,8 @@ class Application_Model_User extends Custom_Model_Standard_Avatar_Abstract imple
   private $_defaultLocale     = null;
 
   private $_roleSettings = array();
+  private $_filters = array();
+  
   static private $_availableLocales = array('pl_PL', 'en_US');
 
   // <editor-fold defaultstate="collapsed" desc="Getters">
@@ -166,6 +168,16 @@ class Application_Model_User extends Custom_Model_Standard_Avatar_Abstract imple
   public function getDefaultLocale()
   {
     return $this->_defaultLocale;
+  }  
+  
+  public function getFilters()
+  {
+    return $this->_filters;
+  }  
+  
+  public function getFilter($groupId, $default = null)
+  {
+    return array_key_exists($groupId, $this->_filters) ? $this->_filters[$groupId] : $default;
   }
   // </editor-fold>
 
@@ -280,7 +292,7 @@ class Application_Model_User extends Custom_Model_Standard_Avatar_Abstract imple
     return $this;
   }
   
-  public function setDefaultProjectId($defaultProjectId)
+  public function setDefaultProjectId($defaultProjectId = 0)
   {
     $this->_defaultProjectId = $defaultProjectId;
   }
@@ -346,6 +358,12 @@ class Application_Model_User extends Custom_Model_Standard_Avatar_Abstract imple
   public function setBaseAvatarDirectoryName()
   {
     $this->_baseAvatarDirectoryName = 'user';
+  }
+  
+  public function addFilter(Application_Model_Filter $filter)
+  {
+    $this->_filters[$filter->getGroupId()] = $filter;
+    return $this;
   }
   
   static public function isAvailableLocale($language)

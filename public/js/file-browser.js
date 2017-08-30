@@ -19,11 +19,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 The full text of the GPL is in the LICENSE file.
 */
+var onSelectFiles;
+
 $(document).ready(function() {
   if (typeof config != 'undefined') {
     /* 
-     * Zmienne globalne 
+     * Funkcje pomocnicze
      */
+
     var currentPath = config.directorySeperator;
     var fileList = $('#fileList');
     var directoryList = $('#directoryList');
@@ -32,33 +35,29 @@ $(document).ready(function() {
     var totalFilesToUpload = 0;
     var numberFilesUploaded = 0;
     var fileTypes = {
-      'Image': ['png', 'jpg'],
-      'Text': ['txt']
+      'Image': ['png', 'jpg', 'gif'],
+      'Text': ['txt', 'doc', 'xls', 'csv', 'xml', 'html', 'pdf']
     };
-    
-    /* 
-     * Funkcje pomocnicze
-     */
-    
+
     /* Inicjacja */
     var init = function() {
+      $('#selectFilesButton').hide();
+      fileUploadStatus.hide();
+
       /* Tryb pracy przeglądarki plików jako wybór plików */
-      if (typeof selectFiles != 'undefined' && selectFiles && typeof onSelectFiles != 'undefined') {
+      if (config.mode > 0) {
         $('#selectFilesButton').show();
       } else {
         $('#selectFilesButton').hide();
       }
-      
-      /* Ukrycie statusu wczytywania plików */
-      fileUploadStatus.hide();
     };
 
     /* Wyświetlanie błędów */
     var showError = function(errorMsg) {
-      if (typeof config.errorMessages[errorMsg] == 'undefined') {
-        alert(errorMsg);
-      } else {
+      if (typeof config.errorMessages[errorMsg] !== 'undefined') {
         alert(config.errorMessages[errorMsg]);
+      } else {
+        alert(errorMsg);
       }
     };
     
@@ -120,7 +119,7 @@ $(document).ready(function() {
 
     /* Odświeża listę plików */
     var refreshFileList = function() {
-      $.post(config.fileListUrl, {path: currentPath}, function(data) {
+      $.post(config.fileListUrl, {path: encodeURIComponent(currentPath)}, function(data) {
         var list = jQuery.parseJSON(data);
         fileList.html('');
         var table = fileList.append('<table>').find('table');
@@ -156,7 +155,7 @@ $(document).ready(function() {
               'name': list.files[i].name,
               'fileType': getFileType(list.files[i].extension),
               'id': list.files[i].id,
-              'imagePreviewUrl': config.imagePreviewUrl.replace('0', list.files[i].id)
+              'previewImageUrl': config.previewImageUrl.replace('0', list.files[i].id)
             }]).appendTo(table);
         }
         
@@ -192,7 +191,7 @@ $(document).ready(function() {
     
     /* Usunięcie katalogu */
     $(document).on('click', '.removeDirectoryButton', function() {
-      $.post(config.removeDirectoryUrl, {path: currentPath + config.directorySeperator + $(this).attr('directoryName')}, function(data) {
+      $.post(config.removeDirectoryUrl, {path: encodeURIComponent(currentPath + config.directorySeperator + $(this).attr('directoryName'))}, function(data) {
         if (data === 'OK') {
           refreshDirectoryList();
           refreshFileList();
@@ -214,7 +213,7 @@ $(document).ready(function() {
     /* Usunięcie pliku */
     $(document).on('click', '.removeFileButton', function() {
       $.post(config.removeFileUrl, {id: getId($(this))}, function(data) {
-        if (data === 'OK') {
+        if (data == 'OK') {
           refreshFileList();
         } else {
           showError(data);
@@ -227,26 +226,26 @@ $(document).ready(function() {
     /* Podgląd obrazków */
     $(document).on({
       mouseenter: function (data) {
-        var imagePreview = $('#imagePreview_' + getId($(this)));
-        if (!imagePreview.is(':visible')) {
-          imagePreview
+        var previewImage = $('#previewImage_' + getId($(this)));
+        if (!previewImage.is(':visible')) {
+          previewImage
                   .css('left', data.clientX + 1)
                   .css('top', data.clientY + 1)
                   .show();
         }
       },
       mousemove: function (data) {
-        var imagePreview = $('#imagePreview_' + getId($(this)));
-        if (imagePreview.is(':visible')) {
-          imagePreview
+        var previewImage = $('#previewImage_' + getId($(this)));
+        if (previewImage.is(':visible')) {
+          previewImage
                   .css('left', data.clientX + 1)
                   .css('top', data.clientY + 1);
         }
       },
       mouseleave: function () {
-        var imagePreview = $('#imagePreview_' + getId($(this)));
-        if (imagePreview.is(':visible')) {
-          imagePreview.hide();
+        var previewImage = $('#previewImage_' + getId($(this)));
+        if (previewImage.is(':visible')) {
+          previewImage.hide();
         }
       }
     }, '.fileImage .file');
@@ -260,12 +259,12 @@ $(document).ready(function() {
     });
     
     /* Tworzenie katalogu */
-    $('#createDirectoryPopupButton').click(function() {
+    var createDirectory = function() {
       var directoryName = $('#directoryName');
       var value = directoryName.val().trim();
 
       if (value != '') {
-        $.post(config.createDirectoryUrl, {path: currentPath + config.directorySeperator + value}, function(data) {
+        $.post(config.createDirectoryUrl, {path: encodeURIComponent(currentPath + config.directorySeperator + value)}, function(data) {
           if (data === 'OK') {
             hidePopup();
             directoryName.val('');
@@ -279,6 +278,17 @@ $(document).ready(function() {
         showError('DIRECTORY_NAME_IS_EMPTY');
         directoryName.val('');
         directoryName.focus();
+      }
+    };
+    
+    $('#createDirectoryPopupButton').click(function() {
+      createDirectory();      
+      return false;
+    });
+    
+    $('#directoryName').keyup(function(e) {
+      if (e.keyCode == 13) {
+        createDirectory();
       }
       
       return false;
@@ -296,7 +306,7 @@ $(document).ready(function() {
     });
     
     /* Zmiana nazwy katalogu */
-    $('#renameDirectoryPopupButton').click(function() {
+    var renameDirectory = function() {
       var oldName = $('#oldDirectoryName').val();
       var newName = $('#newDirectoryName').val().trim();
       
@@ -305,8 +315,8 @@ $(document).ready(function() {
       } else {
         if (newName != '') {
           $.post(config.renameDirectoryUrl, {
-            path: currentPath + config.directorySeperator + oldName,
-            newPath: currentPath + config.directorySeperator + newName
+            path: encodeURIComponent(currentPath + config.directorySeperator + oldName),
+            newPath: encodeURIComponent(currentPath + config.directorySeperator + newName)
           }, function(data) {
             if (data === 'DESTINATION_DIRECTORY_ALREADY_EXISTS') {
               showError(data);
@@ -328,7 +338,18 @@ $(document).ready(function() {
           $('#newDirectoryName').focus();
         }
       }
-
+    };
+    
+    $('#renameDirectoryPopupButton').click(function() {
+      renameDirectory();
+      return false;
+    });
+    
+    $('#newDirectoryName').keyup(function(e) {
+      if (e.keyCode == 13) {
+        renameDirectory();
+      }
+      
       return false;
     });
     
@@ -345,7 +366,7 @@ $(document).ready(function() {
     });
     
     /* Zmiana nazwy pliku */
-    $('#renameFilePopupButton').click(function() {
+    var renameFile = function() {
       var newName = $('#newFileName').val().trim();
       
       if ($('#oldFileName').val() === newName) {
@@ -354,7 +375,7 @@ $(document).ready(function() {
         if (newName != '') {
           $.post(config.renameFileUrl, {
             id: $('#renamedFileId').val(),
-            newName: newName
+            newName: encodeURIComponent(newName)
           }, function(data) {
             hidePopup();
 
@@ -369,7 +390,18 @@ $(document).ready(function() {
           $('#newName').focus();
         }
       }
-
+    };
+    
+    $('#renameFilePopupButton').click(function() {
+      renameFile();
+      return false;
+    });
+    
+    $('#newFileName').keyup(function(e) {
+      if (e.keyCode == 13) {
+        renameFile();
+      }
+      
       return false;
     });
 
@@ -391,7 +423,7 @@ $(document).ready(function() {
       });
       
       if (files.length) {
-        onSelectFiles(files);
+        window.opener.onSelectFilesInFileBrowser(config.mode, files);
         window.close();
       } else {
         showError('NO_FILE_SELECTED');
@@ -430,8 +462,8 @@ $(document).ready(function() {
         }
       });
       
-      console.log(fileIds);
-      console.log(directories);
+      //console.log(fileIds);
+      //console.log(directories);
 
       $.post(config.removeUrl, {directories: directories, fileIds: fileIds}, function(data) {
         if (data !== 'OK') {
@@ -455,12 +487,55 @@ $(document).ready(function() {
       $('#numberFilesUploaded').html(numberFilesUploaded);
     }
     
+    /* Wyświetlenie błedów po wysyłce plików */
+    var endFilesUploaded = function() {
+      fileUploadStatus.hide();
+      var errorMsg = '';
+
+      if (uploadErrors.length > 0) {
+        errorMsg += config.errorMessages['UPLOAD_FILE_ERROR'] + uploadErrors.join("\n");
+      }
+
+      if (uploadExistsErrors.length > 0) {
+        if (errorMsg.length > 0) {
+          errorMsg += "\n\n";
+        }
+
+        errorMsg += config.errorMessages['UPLOAD_FILE_EXISTS'] + uploadExistsErrors.join("\n");
+      }
+
+      if (uploadForbiddentExtensionsErrors.length > 0) {
+        if (errorMsg.length > 0) {
+          errorMsg += "\n\n";
+        }
+
+        errorMsg += config.errorMessages['UPLOAD_FILE_FORBIDDEN_EXTENSION'] + uploadForbiddentExtensionsErrors.join("\n");
+      }
+
+      if (uploadTooLargeFiles.length > 0) {
+        if (errorMsg.length > 0) {
+          errorMsg += "\n\n";
+        }
+
+        errorMsg += config.errorMessages['UPLOADED_FILE_IS_TOO_LARGE'] + uploadTooLargeFiles.join("\n");
+      }  
+
+      if (errorMsg.length > 0) {
+        alert(errorMsg);
+      }
+
+      refreshFileList();
+    };
+    
     /* Zakończenie przesyłania pliku */
     var uploadErrors = new Array();
     var uploadExistsErrors = new Array();
+    var uploadForbiddentExtensionsErrors = new Array();
+    var uploadTooLargeFiles = new Array();
     
     function onEndFilesUploaded(event) {
-      numberFilesUploaded++;
+      numberFilesUploaded++;//console.log(event.target.response);
+      $('#numberFilesUploaded').html(numberFilesUploaded);
       var result = jQuery.parseJSON(event.target.response);
 
       if (result.status === 'ERROR') {
@@ -471,40 +546,22 @@ $(document).ready(function() {
         if (result.fileNames.exists.length > 0) {
           uploadExistsErrors[uploadExistsErrors.length] = result.fileNames.exists.join(', ');
         }
+
+        if (typeof result.fileNames.forbiddenExtensions != 'undefined' && result.fileNames.forbiddenExtensions.length > 0) {
+          uploadForbiddentExtensionsErrors[uploadForbiddentExtensionsErrors.length] = result.fileNames.forbiddenExtensions.join(', ');
+        }
       }
 
       if (totalFilesToUpload === numberFilesUploaded) {
-          var errorMsg = '';
-
-          if (uploadErrors.length > 0) {
-            errorMsg += config.errorMessages['UPLOAD_FILE_ERROR'] + ' ' + uploadErrors.join(', ');
-          }
-
-          if (uploadExistsErrors.length > 0) {
-            if (errorMsg.length > 0) {
-              errorMsg += "\r\n";
-            }
-            
-            errorMsg += config.errorMessages['UPLOAD_FILE_EXISTS'] + ' ' + uploadExistsErrors.join(', ');
-          }
-
-        if (errorMsg.length > 0) {
-          alert(errorMsg);
-        }
-        
-        $('#numberFilesUploaded').html(numberFilesUploaded);
-        fileUploadStatus.hide();
-        refreshFileList();
+        endFilesUploaded();
       }
     } 
     
     /* Rozpoczęcie przesyłania pliku */
     var startUploadFile = function(file) {
-      uploadErrors = new Array();
-      uploadExistsErrors = new Array();
       var form = new FormData();
       form.append('file', file);
-      form.append('path', currentPath);
+      form.append('path', encodeURIComponent(currentPath));
 
       // http://www.dobreprogramy.pl/_r2d2_/Upload-plikow-z-wykorzystaniem-PHP-i-AJAX,55515.html
       var xhr = new XMLHttpRequest();
@@ -524,13 +581,29 @@ $(document).ready(function() {
     
     /* Zdarzenie wywoływane po zamknięciu okienka wyboru plików */
     $('#files').change(function() {
+      uploadErrors = new Array();
+      uploadExistsErrors = new Array();
+      uploadForbiddentExtensionsErrors = new Array();
+      uploadTooLargeFiles = new Array();
+      
       fileUploadStatus.show();
       numberFilesUploaded = 0;
       totalFilesToUpload = document.getElementById('files').files.length;
       $('#totalFilesToUpload').html(totalFilesToUpload);
       
       for (var i = 0; i < totalFilesToUpload; i++) {
-        startUploadFile(document.getElementById('files').files[i]);
+        var file = document.getElementById('files').files[i];
+
+        if (file.size <= 8388608) {
+          startUploadFile(file);
+        } else {
+          numberFilesUploaded++;
+          uploadTooLargeFiles[uploadTooLargeFiles.length] = file.name;
+        }
+      }
+      
+      if (uploadTooLargeFiles.length === totalFilesToUpload) {
+        endFilesUploaded();
       }
       
       return false;

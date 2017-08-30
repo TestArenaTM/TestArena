@@ -59,9 +59,11 @@ class Administration_RoleController extends Custom_Controller_Action_Administrat
   {
     $this->_setTranslateTitle();
     
-    $roleAction    = new Application_Model_RoleAction();
+    $roleActionMapper = new Administration_Model_RoleActionMapper();
+    list($roleActions, $groupedRoleActions) = $roleActionMapper->getAllOrdered4RoleManagement();
+    
     $projectMapper = new Administration_Model_ProjectMapper();
-    $form          = $this->_getAddForm($roleAction->getNames());
+    $form          = $this->_getAddForm($roleActions);
     $projectId     = $this->_getParam('projectId', false);
     
     if ($projectId && $projectMapper->checkIfExists($projectId))
@@ -69,7 +71,7 @@ class Administration_RoleController extends Custom_Controller_Action_Administrat
       $this->view->prePopulatedProjects = $form->prepareJsonData($projectMapper->getForPopulateByIds(array($projectId), true));
     }
     
-    $this->view->roleActions              = $roleAction->getNames();
+    $this->view->roleActions              = $groupedRoleActions;
     $this->view->form                     = $form;
     $this->view->defaultRoleTypesSettings = $this->_getDefaultRoleTypesSettingsJson();
     $this->view->defaultRoleTypes         = $this->_getDefaultRoleTypesJson();
@@ -84,9 +86,9 @@ class Administration_RoleController extends Custom_Controller_Action_Administrat
       return $this->redirect(array(), 'admin_role_add');
     }
     
-    $roleAction  = new Application_Model_RoleAction();
-    $roleActions = $roleAction->getNames();
-    $form        = $this->_getAddForm($roleActions);
+    $roleActionMapper = new Administration_Model_RoleActionMapper();
+    list($roleActions, $groupedRoleActions) = $roleActionMapper->getAllOrdered4RoleManagement();
+    $form = $this->_getAddForm($roleActions);
     
     if (!$form->isValid(array_merge($request->getPost(), $request->getPost('roleSettings'))))
     {
@@ -94,7 +96,7 @@ class Administration_RoleController extends Custom_Controller_Action_Administrat
       $userMapper    = new Administration_Model_UserMapper();
       
       $this->_setTranslateTitle();
-      $this->view->roleActions              = $roleActions;
+      $this->view->roleActions              = $groupedRoleActions;
       $this->view->form                     = $form;
       $this->view->prePopulatedProjects     = $form->prepareJsonData($projectMapper->getForPopulateByIds(explode(',',$form->getValue('projects')), true));
       $this->view->prePopulatedUsers        = $form->prepareJsonData($userMapper->getForPopulateByIds(explode(',', $form->getValue('users')), true));
@@ -139,13 +141,14 @@ class Administration_RoleController extends Custom_Controller_Action_Administrat
       throw new Custom_404Exception('Role not found!');
     }
     
-    $roleAction    = new Application_Model_RoleAction();
-    $roleActions   = $roleAction->getNames();
+    $roleActionMapper = new Administration_Model_RoleActionMapper();
+    list($roleActions, $groupedRoleActions) = $roleActionMapper->getAllOrdered4RoleManagement();
+    
     $form          = $this->_getEditForm($roleActions, $role);
     
     $roleArrayData = $role->getExtraData('roleData');
     
-    $this->view->roleActions              = $roleActions;
+    $this->view->roleActions              = $groupedRoleActions;
     $this->view->prePopulatedProjects     = $form->prepareJsonRoleData($roleArrayData);
     $this->view->prePopulatedUsers        = $form->prepareJsonData($roleArrayData['users']);
     $this->view->form                     = $form;
@@ -173,8 +176,8 @@ class Administration_RoleController extends Custom_Controller_Action_Administrat
       throw new Custom_404Exception('Role not found!');
     }
     
-    $roleAction  = new Application_Model_RoleAction();
-    $roleActions = $roleAction->getNames();
+    $roleActionMapper = new Administration_Model_RoleActionMapper();
+    list($roleActions, $groupedRoleActions) = $roleActionMapper->getAllOrdered4RoleManagement();
     $form        = $this->_getEditForm($roleActions, $role);
     
     if (!$form->isValid(array_merge($request->getPost(), $request->getPost('roleSettings'))))
@@ -183,7 +186,7 @@ class Administration_RoleController extends Custom_Controller_Action_Administrat
       $userMapper    = new Administration_Model_UserMapper();
       
       $this->_setTranslateTitle();
-      $this->view->roleActions              = $roleActions;
+      $this->view->roleActions              = $groupedRoleActions;
       $this->view->prePopulatedProjects     = $form->prepareJsonData($projectMapper->getForPopulateByIds(array('id'=>$form->getValue('projects')), true));
       $this->view->prePopulatedUsers        = $form->prepareJsonData($userMapper->getForPopulateByIds(explode(',', $form->getValue('users')), true));
       $this->view->form                     = $form;

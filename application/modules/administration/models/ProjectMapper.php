@@ -85,8 +85,6 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
   {
     $db             = $this->_getDbTable();
     $adapter        = $db->getAdapter();
-    $roleMapper     = new Administration_Model_RoleMapper();
-    $roleUserMapper = new Administration_Model_RoleUserMapper();
     
     try
     {
@@ -258,22 +256,25 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
   {
     /**** Obiekt File ****/
     $file = new Application_Model_File();
-    $file->setIsTemporary(true);
     $file->setDates(1);
     $file->setName($project->getName().'_'.date('Ymd_His', strtotime($file->getCreateDate())));
     $file->setExtension('zip');
-    $file->setPath(_FILE_UPLOAD_DIR.DIRECTORY_SEPARATOR.'temp'.DIRECTORY_SEPARATOR);
+    $file->setSubpath();
+    $file->setDescription($project->getExtraData('fileDescription'));
 
-    $tempIniFilePath = $file->getPath().Utils_Text::generateToken();
+    $tempIniFilePath = $file->getNewFullPath(Utils_Text::generateToken());
     
     $csvFiles = array();
     $data = array(
-      'description' => $project->getDescription(),
-      'csvFile'     => array() 
+      'description'               => $project->getDescription(),
+      'open_status_color'         => $project->getOpenStatusColor(),
+      'in_progress_status_color'  => $project->getInProgressStatusColor(),
+      'csvFile'                   => array() 
     );
+    
     /**** project bug tracker ****/
     $data['csvFile'][] = 'project_bug_tracker.csv';
-    $csvFiles['project_bug_tracker.csv'] = $file->getPath().Utils_Text::generateToken();
+    $csvFiles['project_bug_tracker.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
     $projectBugTrackerMapper = new Administration_Model_ProjectBugTrackerMapper();
     $rows = $projectBugTrackerMapper->getForExportByProject($project);
     
@@ -291,7 +292,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
     {
       /**** Środowiska ****/
       $data['csvFile'][] = 'environment.csv';
-      $csvFiles['environment.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['environment.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $environmentMapper = new Administration_Model_EnvironmentMapper();
       $rows = $environmentMapper->getForExportByProject($project);
 
@@ -305,12 +306,50 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
       $csvFile->writeMany($rows);
       $csvFile->close();
     }
+
+    if ($project->getExtraData('exportVersions'))
+    {
+      /**** Wersje ****/
+      $data['csvFile'][] = 'versions.csv';
+      $csvFiles['versions.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
+      $versionMapper = new Administration_Model_VersionMapper();
+      $rows = $versionMapper->getForExportByProject($project);
+
+      if ($rows === false)
+      {
+        $this->_removeTempFilesForExport($csvFiles, $tempIniFilePath);
+        return false;
+      }
+
+      $csvFile = new Utils_File_Writer_Table_Csv($csvFiles['versions.csv'], $this->_prepareCsvColumnsToExport($rows));
+      $csvFile->writeMany($rows);
+      $csvFile->close();
+    }
+
+    if ($project->getExtraData('exportTags'))
+    {
+      /**** Tagi ****/
+      $data['csvFile'][] = 'tags.csv';
+      $csvFiles['tags.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
+      $tagMapper = new Administration_Model_TagMapper();
+      $rows = $tagMapper->getForExportByProject($project);
+
+      if ($rows === false)
+      {
+        $this->_removeTempFilesForExport($csvFiles, $tempIniFilePath);
+        return false;
+      }
+
+      $csvFile = new Utils_File_Writer_Table_Csv($csvFiles['tags.csv'], $this->_prepareCsvColumnsToExport($rows));
+      $csvFile->writeMany($rows);
+      $csvFile->close();
+    }
     
     if ($project->getExtraData('exportReleases'))
     {
       /**** Wydania ****/
       $data['csvFile'][] = 'release.csv';
-      $csvFiles['release.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['release.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $releaseMapper = new Administration_Model_ReleaseMapper();
       $rows = $releaseMapper->getForExportByProject($project);
 
@@ -323,32 +362,13 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
       $csvFile = new Utils_File_Writer_Table_Csv($csvFiles['release.csv'], $this->_prepareCsvColumnsToExport($rows));
       $csvFile->writeMany($rows);
       $csvFile->close();
-
-      if ($project->getExtraData('exportPhases'))
-      {
-        /**** Fazy ****/
-        $data['csvFile'][] = 'phase.csv';
-        $csvFiles['phase.csv'] = $file->getPath().Utils_Text::generateToken();
-        $phaseMapper = new Administration_Model_PhaseMapper();
-        $rows = $phaseMapper->getForExportByProject($project);
-
-        if ($rows === false)
-        {
-          $this->_removeTempFilesForExport($csvFiles, $tempIniFilePath);
-          return false;
-        }
-
-        $csvFile = new Utils_File_Writer_Table_Csv($csvFiles['phase.csv'], $this->_prepareCsvColumnsToExport($rows));
-        $csvFile->writeMany($rows);
-        $csvFile->close();
-      }
     }
 
     if ($project->getExtraData('exportUsers') && ($project->getExtraData('exportRoles') || $project->getExtraData('exportTasks')))
     {
       /**** Użytkownicy ****/
       $data['csvFile'][] = 'user.csv';
-      $csvFiles['user.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['user.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $userMapper = new Administration_Model_UserMapper();
       $rows = $userMapper->getForExportByProject($project, $project->getExtraData('exportRoles'), $project->getExtraData('exportTasks'));
 
@@ -367,7 +387,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
     {
       /**** Role ****/
       $data['csvFile'][] = 'role.csv';
-      $csvFiles['role.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['role.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $roleMapper = new Administration_Model_RoleMapper();
       $rows = $roleMapper->getForExportByProject($project);
 
@@ -383,7 +403,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
 
       /**** Ustawienia ról ****/
       $data['csvFile'][] = 'role_setting.csv';
-      $csvFiles['role_setting.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['role_setting.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $roleSettingMapper = new Administration_Model_RoleSettingMapper();
       $rows = $roleSettingMapper->getForExportByProject($project);
 
@@ -401,7 +421,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
       {
         /**** Role użytkowników ****/
         $data['csvFile'][] = 'role_user.csv';
-        $csvFiles['role_user.csv'] = $file->getPath().Utils_Text::generateToken();
+        $csvFiles['role_user.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
         $roleUserMapper = new Administration_Model_RoleUserMapper();
         $rows = $roleUserMapper->getForExportByProject($project);
 
@@ -421,7 +441,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
     {
       /**** Zadania inne ****/
       $data['csvFile'][] = 'task.csv';
-      $csvFiles['task.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['task.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $taskMapper = new Administration_Model_TaskMapper();
       $rows = $taskMapper->getForExportByProject($project);
 
@@ -437,7 +457,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
       
       /**** Przypadki testowe ****/
       $data['csvFile'][] = 'task_test_case.csv';
-      $csvFiles['task_test_case.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['task_test_case.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $tasTestCasekMapper = new Administration_Model_TaskTestCaseMapper();
       $rows = $tasTestCasekMapper->getForExportByProject($project);
 
@@ -453,7 +473,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
       
       /**** Eksploracja ****/
       $data['csvFile'][] = 'task_exploration.csv';
-      $csvFiles['task_exploration.csv'] = $file->getPath().Utils_Text::generateToken();
+      $csvFiles['task_exploration.csv'] = $file->getNewFullPath(Utils_Text::generateToken());
       $taskExplorationMapper = new Administration_Model_TaskExplorationMapper();
       $rows = $taskExplorationMapper->getForExportByProject($project);
 
@@ -591,11 +611,13 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
         
         /**** Projekt ****/
         $id = $this->_getDbTable()->insert(array(
-          'prefix'      => $project->getPrefix(),
-          'status'      => Application_Model_ProjectStatus::ACTIVE,
-          'create_date' => date('Y-m-d H:i:s'),
-          'name'        => $project->getName(),
-          'description' => $data['description']
+          'prefix'                    => $project->getPrefix(),
+          'status'                    => Application_Model_ProjectStatus::ACTIVE,
+          'create_date'               => date('Y-m-d H:i:s'),
+          'name'                      => $project->getName(),
+          'description'               => $data['description'],
+          'open_status_color'         => $data['open_status_color'],
+          'in_progress_status_color'  => $data['in_progress_status_color']
         ));
         
         if ($id <= 0)
@@ -604,6 +626,12 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
         }
         
         $project->setId($id);
+        $resolutionMapper = new Administration_Model_ResolutionMapper();
+
+        foreach ($project->getResolutions() as $resolution)
+        {
+          $resolutionMapper->add($resolution);
+        }        
         
         /**** Project bug tracker ****/
         if (($index = array_search('project_bug_tracker.csv', $data['csvFile'])) !== false)
@@ -630,6 +658,26 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
           $csv->close();
           $environmentMapper = new Administration_Model_EnvironmentMapper();
           $environmentMapper->addForImport($project, $rows);
+        }
+
+        /**** Wersje ****/
+        if (($index = array_search('versions.csv', $data['csvFile'])) !== false)
+        {
+          $csv = new Utils_File_Reader_Table_Csv($extractPath.DIRECTORY_SEPARATOR.$data['csvFile'][$index]);
+          $rows = $csv->readAll();
+          $csv->close();
+          $versionMapper = new Administration_Model_VersionMapper();
+          $versionMapper->addForImport($project, $rows);
+        }
+
+        /**** Tagi ****/
+        if (($index = array_search('tags.csv', $data['csvFile'])) !== false)
+        {
+          $csv = new Utils_File_Reader_Table_Csv($extractPath.DIRECTORY_SEPARATOR.$data['csvFile'][$index]);
+          $rows = $csv->readAll();
+          $csv->close();
+          $tagMapper = new Administration_Model_TagMapper();
+          $tagMapper->addForImport($project, $rows);
         }
 
         /**** Użytkownicy ****/
@@ -676,24 +724,6 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
           $csv->close();
           $releaseMapper = new Administration_Model_ReleaseMapper();
           $releases = $releaseMapper->addForImport($releases);
-
-          /**** Fazy ****/
-          if (($index = array_search('phase.csv', $data['csvFile'])) !== false)
-          {
-            $csv = new Utils_File_Reader_Table_Csv($extractPath.DIRECTORY_SEPARATOR.$data['csvFile'][$index]);
-            $phases = array();
-            
-            while (($row = $csv->read()) !== false)
-            {
-              $row['release_id'] = $releases[$row['release_id']]['id'];
-              $row['name'] = empty($row['name']) ? null : $row['name'];
-              $phases[] = $row;
-            }
-
-            $csv->close();
-            $phaseMapper = new Administration_Model_PhaseMapper();
-            $phaseMapper->addForImport($phases);
-          }          
         }
 
         /**** Role ****/

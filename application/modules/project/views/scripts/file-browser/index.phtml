@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title><?php echo $this->t('pageTitle') ?></title>
+		<meta name="description" content="File browser" />
+		<meta name="keywords" content="web" />
+		<meta name="author" content="TA" />
+		<link rel="shortcut icon" href="<?php echo $this->baseUrl('/img/favicon.ico?'.APP_VERSION) ?>">
+		<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('/css/file-browser.css?'.APP_VERSION) ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('/css/elegant-fonts.css?'.APP_VERSION) ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('/css/icomoon-fonts.css?'.APP_VERSION) ?>" />
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="<?php echo $this->baseUrl('/js/jquery-1.10.2.min.js') ?>"></script>
+    <script type="text/javascript" src="<?php echo $this->baseUrl('/js/jquery.tmpl.min.js') ?>"></script>
+    <script type="text/javascript" src="<?php echo $this->baseUrl('/js/file-browser.js?'.APP_VERSION) ?>"></script>
+	</head>
+  <body>
+    <div id="fileBrowser">
+      <div id="headerBar">
+        <div class="logo-upload"><span class="icon_cloud-upload"></span></div>
+        <div>
+          <input id="files" type="file" multiple="multiple" name="file[]" style="display: none;" />
+          <a class="button" id="uploadFilesButton" href="#"><?php echo $this->t('Wczytaj pliki') ?></a>
+        </div>
+        
+        <a class="button" id="createDirectoryButton" href="#"><?php echo $this->t('Utwórz katalog') ?></a>
+        <a class="button" id="selectAllButton" href="#"><?php echo $this->t('Zaznacz wszystko') ?></a>
+        <a class="button" id="unselectAllButton" href="#"><?php echo $this->t('Odznacz wszystko') ?></a>
+        <a class="button" id="deleteSelectedButton" href="#"><?php echo $this->t('Usuń zaznaczone') ?></a>
+        <!--<a class="button" id="moveSelectedButton" href="#"><?php echo $this->t('Przenieś zaznaczone') ?></a>-->
+        <a class="button" id="selectFilesButton" href="#"><?php echo $this->t('Wybierz zaznaczone') ?></a>
+        <!--<a id="closeButton" href="#"><span class="icons-switch icon-20"></span></a>-->
+        
+        <div id="fileUploadStatus">
+          <img id="isBusy" src="<?php echo $this->baseUrl('/img/is_busy.gif') ?>" />
+          <div><?php echo $this->t('Plików') ?>: <span id="numberFilesUploaded"></span>/<span id="totalFilesToUpload"></span></div>
+        </div>
+        
+      </div>
+      <div id="directoryList"></div>
+      <div id="fileList"></div>
+      <div id="statusBar">
+        <p><?php echo $this->t('Bieżacy katalog') ?>: <span id="currentPath"></span></p>
+      </div>
+    </div>
+    
+    <!-- Tło dla popupów -->
+    <div id="popupBackground"></div>
+    
+    <!-- Utworzenie nowego katalogu -->
+    <div id="createDirectoryPopup" class="popup">
+      <p><?php echo $this->t('Tworzenie nowego katalogu') ?></p>
+      <label for="directoryName"><?php echo $this->t('Nazwa') ?></label>
+      <input id="directoryName" type="text" name="directoryName" value="" maxlength="64" />
+      <a id="createDirectoryPopupButton" href="#"><?php echo $this->t('Utwórz') ?></a>
+    </div>
+    
+    <!-- Zmiana nazwy katalogu -->
+    <div id="renameDirectoryPopup" class="popup">
+      <p><?php echo $this->t('Zamiana nazwy katalogu') ?></p>
+      <input id="oldDirectoryName" type="hidden" name="oldDirectoryName" value="" />
+      <label for="newDirectoryName"><?php echo $this->t('Nazwa') ?></label>
+      <input id="newDirectoryName" type="text" name="newDirectoryName" value="" maxlength="64" />
+      <a id="renameDirectoryPopupButton" href="#"><?php echo $this->t('Zmień') ?></a>
+    </div>
+    
+    <!-- Zmiana nazwy pliku -->
+    <div id="renameFilePopup" class="popup">
+      <p><?php echo $this->t('Zamiana nazwy pliku') ?></p>
+      <input id="oldFileName" type="hidden" name="oldFileName" value="" />
+      <input id="renamedFileId" type="hidden" name="renamedFileId" value="" />
+      <label for="newFileName"><?php echo $this->t('Nazwa') ?></label>
+      <input id="newFileName" type="text" name="newFileName" value="" maxlength="64" />
+      <a id="renameFilePopupButton" href="#"><?php echo $this->t('Zmień') ?></a>
+    </div>
+    
+    <?php echo $this->partial('file-browser/partials/directory-tree-template.phtml'); ?>
+    <?php echo $this->partial('file-browser/partials/directory-template.phtml'); ?>
+    <?php echo $this->partial('file-browser/partials/file-template.phtml'); ?>
+    
+    <script>
+      /* <![CDATA[ */
+      var config = {
+        directorySeperator: "<?php echo $this->directorySeparator ?>",
+        mode: <?php echo $this->mode; ?>,
+        directoryListUrl: '<?php echo $this->projectUrl(array(), 'file_browser_directory_list_ajax') ?>',
+        fileListUrl: '<?php echo $this->projectUrl(array(), 'file_browser_file_list_ajax') ?>',
+        fileUploadUrl: '<?php echo $this->projectUrl(array(), 'file_browser_upload') ?>',
+        removeFileUrl: '<?php echo $this->projectUrl(array(), 'file_browser_remove_file') ?>',
+        removeDirectoryUrl: '<?php echo $this->projectUrl(array(), 'file_browser_remove_directory') ?>',
+        removeUrl: '<?php echo $this->projectUrl(array(), 'file_browser_remove') ?>',
+        renameFileUrl: '<?php echo $this->projectUrl(array(), 'file_browser_rename') ?>',
+        renameDirectoryUrl: '<?php echo $this->projectUrl(array(), 'file_browser_rename_directory') ?>',
+        createDirectoryUrl: '<?php echo $this->projectUrl(array(), 'file_browser_create_directory') ?>',
+        previewImageUrl: '<?php echo $this->projectUrl(array('id' => 0), 'file_preview_image') ?>',
+        downloadFileUrl: '<?php echo $this->projectUrl(array('id' => 0), 'file_download') ?>',
+        errorMessages: {
+          FILE_IS_ATTACHMENT: "<?php echo $this->t('FILE_IS_ATTACHMENT') ?>",
+          FILE_IN_DIR_IS_ATTACHMENT: "<?php echo $this->t('FILE_IN_DIR_IS_ATTACHMENT') ?>",
+          SOME_FILES_ARE_ATTACHMENTS: "<?php echo $this->t('SOME_FILES_ARE_ATTACHMENTS') ?>",
+          FILE_NOT_EXISTS: "<?php echo $this->t('FILE_NOT_EXISTS') ?>",
+          DESTINATION_FILE_ALREADY_EXISTS: "<?php echo $this->t('DESTINATION_FILE_ALREADY_EXISTS') ?>",
+          DIRECTORY_NOT_EXISTS: "<?php echo $this->t('DIRECTORY_NOT_EXISTS') ?>",
+          DESTINATION_DIRECTORY_ALREADY_EXISTS: "<?php echo $this->t('DESTINATION_DIRECTORY_ALREADY_EXISTS') ?>",
+          DIRECTORY_NAME_IS_EMPTY: "<?php echo $this->t('DIRECTORY_NAME_IS_EMPTY') ?>",
+          NEW_DIRECTORY_NAME_IS_EMPTY: "<?php echo $this->t('NEW_DIRECTORY_NAME_IS_EMPTY') ?>",
+          FILE_NAME_IS_EMPTY: "<?php echo $this->t('FILE_NAME_IS_EMPTY') ?>",
+          NO_FILE_SELECTED: "<?php echo $this->t('NO_FILE_SELECTED') ?>",
+          UPLOADED_FILE_IS_TOO_LARGE: "<?php echo $this->t('UPLOADED_FILE_IS_TOO_LARGE') ?>",
+          UPLOAD_FILE_ERROR: "<?php echo $this->t('UPLOAD_FILE_ERROR') ?>",
+          UPLOAD_FILE_EXISTS: "<?php echo $this->t('UPLOAD_FILE_EXISTS') ?>",
+          UPLOAD_FILE_FORBIDDEN_EXTENSION: "<?php echo $this->t('FILE_FORBIDDEN_EXTENSION') ?>"
+        },
+        texts: {
+          name: '<?php echo $this->t('Nazwa') ?>',
+          actions: '<?php echo $this->t('Akcje') ?>',
+          root: '<?php echo $this->t('[root]') ?>'
+        }
+      };
+      /* ]]> */
+    </script>
+  </body>
+</html>

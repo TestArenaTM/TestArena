@@ -48,6 +48,19 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     return array($list, $paginator);
   }
   
+  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  {
+    $rows = $this->_getDbTable()->getAllIds($request);    
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $list[] = $row['id'];
+    }
+    
+    return $list;
+  }
+  
   public function add(Application_Model_Defect $defect)
   {
     $db = $this->_getDbTable();
@@ -70,11 +83,6 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     if ($defect->getRelease()->getId() > 0)
     {
       $data['release_id'] = $defect->getRelease()->getId();
-      
-      if ($defect->getPhase()->getId() > 0)
-      {
-        $data['phase_id'] = $defect->getPhase()->getId();
-      }
     }
 
     try
@@ -87,6 +95,9 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
 
       $defectVersionMapper = new Project_Model_DefectVersionMapper();
       $defectVersionMapper->save($defect);
+
+      $defectTagMapper = new Project_Model_DefectTagMapper();
+      $defectTagMapper->save($defect);
 
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveDefect($defect);
@@ -113,18 +124,12 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       'priority'    => $defect->getPriorityId(),
       'title'       => $defect->getTitle(),
       'description' => $defect->getDescription(),
-      'release_id'  => null,
-      'phase_id'    => null
+      'release_id'  => null
     );
 
     if ($defect->getRelease()->getId() > 0)
     {
       $data['release_id'] = $defect->getRelease()->getId();
-      
-      if ($defect->getPhase()->getId() > 0)
-      {
-        $data['phase_id'] = $defect->getPhase()->getId();
-      }
     }
 
     try
@@ -137,6 +142,9 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       
       $defectVersionMapper = new Project_Model_DefectVersionMapper();
       $defectVersionMapper->save($defect);
+
+      $defectTagMapper = new Project_Model_DefectTagMapper();
+      $defectTagMapper->save($defect);
       
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveDefect($defect);
@@ -153,7 +161,7 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
   
   public function getForView(Application_Model_Defect $defect)
   {
-    $row = $this->_getDbTable()->getForView($defect->getId());
+    $row = $this->_getDbTable()->getForView($defect->getId(), $defect->getProjectId());
     
     if (null === $row)
     {
@@ -165,16 +173,16 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
   
   public function getForEdit(Application_Model_Defect $defect)
   {
-    $row = $this->_getDbTable()->getForEdit($defect);
+    $row = $this->_getDbTable()->getForEdit($defect->getId(), $defect->getProjectId());
     
     if (null === $row)
     {
       return false;
     }
     
+    $defect->setAssignee('id', $row->assigneeId);
     $defect->setAssigner('id', $row->assignerId);
     $defect->setAuthor('id', $row->authorId);
-
     return $defect->map($row->toArray());
   }
   
@@ -196,6 +204,98 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     }
     catch (Exception $e)
     {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      return false;
+    }
+  }
+  
+  public function delete(Application_Model_Defect $defect)
+  {
+    if ($defect->getId() === null)
+    {
+      return false;
+    }
+
+    $db = $this->_getDbTable();    
+    $adapter = $db->getAdapter();
+    
+    try
+    {
+      $adapter->beginTransaction();
+      
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->deleteByDefect($defect);
+      
+      $commentMapper = new Project_Model_CommentMapper();
+      $commentMapper->deleteByDefect($defect);
+      
+      $historyMapper = new Project_Model_HistoryMapper();
+      $historyMapper->deleteByDefect($defect);
+      
+      $defectEnvironmentMapper = new Project_Model_DefectEnvironmentMapper();
+      $defectEnvironmentMapper->deleteByDefect($defect);
+      
+      $defectTagMapper = new Project_Model_DefectTagMapper();
+      $defectTagMapper->deleteByDefect($defect);
+      
+      $defectVersionMapper = new Project_Model_DefectVersionMapper();
+      $defectVersionMapper->deleteByDefect($defect);
+      
+      $db->delete(array(
+        'id = ?' => $defect->getId()
+      ));
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      $adapter->rollBack();
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      return false;
+    }
+  }  
+  
+  public function deleteByIds(array $defectIds)
+  {
+    if (count($defectIds) == 0)
+    {
+      return true;
+    }
+
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+    
+    try
+    {
+      $adapter->beginTransaction();
+      
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->deleteByDefectIds($defectIds);
+      
+      $commentMapper = new Project_Model_CommentMapper();
+      $commentMapper->deleteByDefectIds($defectIds);
+      
+      $historyMapper = new Project_Model_HistoryMapper();
+      $historyMapper->deleteByDefectIds($defectIds);
+      
+      $defectEnvironmentMapper = new Project_Model_DefectEnvironmentMapper();
+      $defectEnvironmentMapper->deleteByDefectIds($defectIds);
+      
+      $defectTagMapper = new Project_Model_DefectTagMapper();
+      $defectTagMapper->deleteByDefectIds($defectIds);
+      
+      $defectVersionMapper = new Project_Model_DefectVersionMapper();
+      $defectVersionMapper->deleteByDefectIds($defectIds);
+      
+      $db->delete(array(
+        'id IN(?)' => $defectIds
+      ));
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      $adapter->rollBack();
       Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
       return false;
     }
@@ -420,6 +520,11 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     return $list;
   }
   
+  public function getAllAjax(Zend_Controller_Request_Abstract $request, Application_Model_Project $project)
+  {
+    return $this->_getDbTable()->getAllAjax($request, $project->getId())->toArray();
+  }
+  
   public function getByOrdinalNoForAjax(Application_Model_Defect $defect, Application_Model_Project $project)
   {
     $row = $this->_getDbTable()->getByOrdinalNoForAjax($defect->getOrdinalNo(), $project->getId());
@@ -443,5 +548,29 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
 
     $defect->setStatus($row['status']);
     return $row->toArray();
+  }
+  
+  public function getByIds4CheckAccess(array $ids)
+  {
+    if (count($ids) === 0)
+    {
+      return array();
+    }
+    
+    $rows = $this->_getDbTable()->getByIds4CheckAccess($ids);
+    
+    if (null === $rows)
+    {
+      return false;
+    }
+    
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $list[$row['id']] = new Application_Model_Defect($row);
+    }
+
+    return $list;
   }
 }

@@ -39,36 +39,49 @@ class Zend_View_Helper_PrepareTaskActions extends Zend_View_Helper_Abstract
                                                Application_Model_TaskStatus::REOPEN))
           && $taskUserPermission->isChangeStatusPermission())
       {
-        $actions[] = array('url' => $this->view->url(array('id' => $task->getId()), 'task_start'), 'text' => 'Rozpocznij'); 
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_start'), 'text' => 'Rozpocznij', 'class' => ''); 
       }
       
       if ($taskUserPermission->isChangeStatusPermission())
       {
-        $actions[] = array('url' => $this->view->url(array('id' => $task->getId()), 'task_close'), 'text' => 'Zamknij');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_close'), 'text' => 'Zamknij', 'class' => '');
       }
       
       if ($taskUserPermission->isAssignPermission())
       {
         $actions[] = null;
-        $actions[] = array('url' => $this->view->url(array('id' => $task->getId()), 'task_assign'), 'text' => 'Przypisz');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_assign'), 'text' => 'Przypisz', 'class' => '');
         
         if ($task->getAssigneeId() != $this->view->authUser->getId())
         {
-          $actions[] = array('url' => $this->view->url(array('id' => $task->getId()), 'task_assign_to_me'), 'text' => 'Przypisz do mnie');
+          $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_assign_to_me'), 'text' => 'Przypisz do mnie', 'class' => '');
         }
       }
     }
     elseif ($task->getStatusId() == Application_Model_TaskStatus::CLOSED
             && $taskUserPermission->isChangeStatusPermission())
     {
-      $actions[] = array('url' => $this->view->url(array('id' => $task->getId()), 'task_reopen'), 'text' => 'Otwórz ponownie');
+      $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_reopen'), 'text' => 'Otwórz ponownie', 'class' => '');
     }
+    
+    $isEditAction = false;
     
     if ($task->getStatusId() != Application_Model_TaskStatus::CLOSED
         && $taskUserPermission->isEditPermission())
     {
+      $isEditAction = true;
       $actions[] = null;
-      $actions[] = array('url' => $this->view->url(array('id' => $task->getId()), 'task_edit'), 'text' => 'Edytuj');
+      $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_edit'), 'text' => 'Edytuj', 'class' => '');
+    }
+    
+    if ($taskUserPermission->isDeletePermission())
+    {
+      if (!$isEditAction)
+      {
+        $actions[] =  null;
+      }
+      
+      $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_delete'), 'text' => 'Usuń', 'class' => 'j_delete_task');
     }
     
     return $actions;

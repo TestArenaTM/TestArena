@@ -1,0 +1,42 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2017-06-23 15:17+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Language: en_US\n"
+"X-Generator: Poedit 2.0.2\n"
+
+msgid "pageTitle"
+msgstr "Inny test"
+
+msgid "headTitle"
+msgstr "Inny test \"__name__\""
+
+msgid "Zadanie"
+msgstr "Zadanie"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Opis"
+msgstr "Opis"
+
+msgid "Autor"
+msgstr "Autor"
+
+msgid "Data utworzenia"
+msgstr "Data utworzenia"
+
+msgid "Rozwiąż"
+msgstr "Rozwiąż"
+
+msgid "Zmień status"
+msgstr "Zmień status"

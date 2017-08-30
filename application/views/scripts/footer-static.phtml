@@ -1,0 +1,14 @@
+    <footer id="footer_static"> 
+      <span><a href="<?php echo $this->url(array(), 'index')?>" title="<?php echo $this->generalT('Kokpit') ?>"><?php echo $this->generalT('Kokpit') ?></a></span>
+      <span><a href="<?php echo $this->url(array(), 'regulations')?>" title="<?php echo $this->generalT('Regulamin') ?>"><?php echo $this->generalT('Regulamin') ?></a></span>
+      <span><a href="http://testarena.pl/pdf/TestArenaDok.pdf" target="_blank" title="Dokumentacja"><?php echo $this->generalT('Dokumentacja') ?></a></span>
+      <span><a href="<?php echo $this->url(array(), 'contact')?>" title="<?php echo $this->generalT('Kontakt') ?>"><?php echo $this->generalT('Kontakt') ?></a></span>
+      <?php echo $this->partial('locale.phtml', array('locale' => $this->locale)); ?>
+      <br /><?php echo $this->generalT('Copyright') ?><span> (version 3.1.<?php echo APP_VERSION ?>)</span><br>
+      <span class="logo-21"><a href="http://21cn.pl" target="_blank" title="21CN.pl"></a></span>
+    </footer>
+    
+    <?php //echo $this->partial('server-page-load.phtml'); ?>
+    
+  </body>
+</html>

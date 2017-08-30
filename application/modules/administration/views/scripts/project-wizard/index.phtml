@@ -1,0 +1,17 @@
+<?php if (null !== $this->customStepViewScript) : ?>
+  <?php echo $this->partial('project-wizard/'.$this->customStepViewScript, array(
+    'form' => $this->form
+  )); ?>
+<?php else: ?>
+  <?php echo $this->partial('project-wizard/_addProjectStep1.phtml', array(
+    'form' => $this->form
+  )); ?>
+<?php endif; ?>
+
+<!--<section id="content">
+  <article class="article_in_content">
+    <h1>Registration</h1>
+
+    <?php //echo $this->form; ?>
+  </article>
+</section>-->

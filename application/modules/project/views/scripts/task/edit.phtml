@@ -12,17 +12,15 @@
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
 
-
-          
         <div class="formContainer full">
           <span>
             <?php echo $this->form->title->renderViewHelper() ?>
             <?php echo $this->formRequiredLabel('title', $this->t('Tytuł')) ?>
             <?php foreach ($this->form->getErrors('title') as $error): ?>
-                <div class="error_msg"><?php echo $this->errorT($error, array(
-                  'min' => $this->form->getElement('title')->getValidator('StringLength')->getMin(),
-                  'max' => $this->form->getElement('title')->getValidator('StringLength')->getMax()
-                )) ?></div>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('title')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('title')->getValidator('StringLength')->getMax()
+              )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>
@@ -32,10 +30,10 @@
             <?php echo $this->form->description->renderViewHelper() ?>
             <?php echo $this->formRequiredLabel('description', $this->t('Opis')) ?>
             <?php foreach ($this->form->getErrors('description') as $error): ?>
-                <div class="error_msg"><?php echo $this->errorT($error, array(
-                  'min' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
-                  'max' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
-                )) ?></div>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                'max' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+              )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>
@@ -46,17 +44,6 @@
             <div><?php echo $this->form->releaseId->renderViewHelper() ?></div>
             <?php echo $this->formLabel('releaseName', $this->t('Wydanie')) ?>
             <?php foreach ($this->form->getErrors('releaseId') as $error): ?>            
-              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-            <?php endforeach; ?>
-          </span>
-        </div>
-
-        <div class="formContainer">
-          <span>
-            <?php echo $this->form->phaseName->renderViewHelper() ?>
-            <div><?php echo $this->form->phaseId->renderViewHelper() ?></div>
-            <?php echo $this->formLabel('phaseName', $this->t('Faza')) ?>
-            <?php foreach ($this->form->getErrors('phaseId') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
           </span>
@@ -117,27 +104,18 @@
             <?php endforeach; ?>
           </span>
         </div>
-        
-        <div class="formContainer">
+
+        <div class="formContainer full">
           <span>
-            <?php echo $this->formLabel('attachments', $this->t('Załączniki')) ?>
-          <div><a class="j_taskSelectAttachments" href="#"><?php echo $this->generalT('Wybierz pliki') ?></a></div>
-          <div id="j_attachments">
-            <?php foreach ($this->form->getAttachmentIds(true) as $name): ?>
-              <?php echo $this->form->getElement($name)->renderViewHelper() ?>
+            <?php echo $this->form->tags->renderViewHelper() ?>
+            <?php echo $this->formLabel('tags', $this->t('Tagi')) ?>
+            <?php foreach ($this->form->getErrors('tags') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
-            <?php foreach ($this->form->getAttachmentNames(true) as $name): ?>
-              <?php echo $this->form->getElement($name)->renderViewHelper() ?>
-            <?php endforeach; ?>
-          </div>
-          <?php foreach ($this->form->getErrors('attachmentIds') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
-          <?php foreach ($this->form->getErrors('attachmentNames') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
           </span>
         </div>
+        
+        <?php echo $this->partial('partials/attachments-form.phtml', array('form' => $this->form)); ?>
 
         <div>
           <span id="save"><?php echo $this->formSubmit('save', $this->t('Zapisz')) ?></span>
@@ -156,51 +134,54 @@
     </form>
   </article>
 </section>
-<?php echo $this->partial('partials/attachment-object.phtml'); ?>
-
-<?php if (isset($this->prePopulatedEnvironments)) :?>
-  <script type="text/javascript">
-  /* <![CDATA[ */
-    prePopulated['environments'] = <?php echo $this->prePopulatedEnvironments?>;
-  /* ]]> */
-  </script>
-<?php endif?>
-
-<?php if (isset($this->prePopulatedVersions)) :?>
-  <script type="text/javascript">
-  /* <![CDATA[ */
-    prePopulated['versions'] = <?php echo $this->prePopulatedVersions?>;
-  /* ]]> */
-  </script>
-<?php endif?>
 
 <script type="text/javascript">
 /* <![CDATA[ */
+  <?php if (isset($this->prePopulatedEnvironments)) :?>
+    prePopulated['environments'] = <?php echo $this->prePopulatedEnvironments?>;
+  <?php endif?>
+    
+  <?php if (isset($this->prePopulatedVersions)) :?>
+    prePopulated['versions'] = <?php echo $this->prePopulatedVersions?>;
+  <?php endif?>
+  
   language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+  var currentUser = {id: <?php echo $this->authUser->getId() ?>, name: '<?php echo $this->authUser->getFullname().' ('.$this->authUser->getEmail().')' ?>'};
   
   var autocompleteData = {
-    url: '<?php echo $this->url(array(), 'project_user_list_ajax') ?>',
+    url: '<?php echo $this->projectUrl(array(), 'project_user_list_ajax') ?>',
     textInputName: '#assigneeName',
     dstName: '#assigneeId'
   };
   
-  var minDate = '<?php echo $this->form->getMinDate() ?>';
-  var maxDate = '<?php echo $this->form->getMaxDate() ?>';
-  var currentUser = {id: <?php echo $this->authUser->getId() ?>, name: '<?php echo $this->authUser->getFullname().' ('.$this->authUser->getEmail().')' ?>'};
-  url.environmentListAjax = '<?php echo $this->url(array(), 'environment_list_ajax') ?>';
-  url.versionListAjax = '<?php echo $this->url(array(), 'version_list_ajax') ?>';
+  <?php if ($this->form->getMinDate() !== null): ?>
+    var minDate = '<?php echo $this->form->getMinDate() ?>';
+  <?php endif; ?>
+    
+  <?php if ($this->form->getMaxDate() !== null): ?>
+    var maxDate = '<?php echo $this->form->getMaxDate() ?>';
+  <?php endif; ?>
   
-  var autocompleteForTask = {
-    release: {
-      url: '<?php echo $this->url(array(), 'release_list_for_forward_ajax') ?>',
-      textInputName: '#releaseName',
-      dstName: '#releaseId'
-    },
-    phase: {
-      url: '<?php echo $this->url(array(), 'phase_list_for_forward_ajax') ?>',
-      textInputName: '#phaseName',
-      dstName: '#phaseId'
-    }
+  <?php if (isset($this->prePopulatedEnvironments)) :?>
+    prePopulated['environments'] = <?php echo $this->prePopulatedEnvironments?>;
+  <?php endif?>
+
+  <?php if (isset($this->prePopulatedVersions)) :?>
+    prePopulated['versions'] = <?php echo $this->prePopulatedVersions?>;
+  <?php endif?>
+
+  <?php if (isset($this->prePopulatedTags)) :?>
+    prePopulated['tags'] = <?php echo $this->prePopulatedTags?>;
+  <?php endif?>
+
+  url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
+  url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';
+  url.tagListAjax = '<?php echo $this->projectUrl(array(), 'tag_list_ajax') ?>';
+  
+  var autocompleteRelease = {
+    url: '<?php echo $this->projectUrl(array(), 'release_list_for_forward_ajax') ?>',
+    textInputName: '#releaseName',
+    dstName: '#releaseId'
   };
 /* ]]> */
 </script>

@@ -4,20 +4,16 @@
     <routes>
        
       <index>
-        <route>/:page/:column/:sort</route>
+        <route>/:releaseId</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults> 
           <module>dashboard</module>
           <controller>index</controller>
           <action>index</action>
-          <page>1</page>
-          <column>task_name</column>
-          <sort>asc</sort>
+          <releaseId>0</releaseId>
         </defaults>
         <reqs>
-          <page>\d+</page>
-          <column>[_a-zA-Z0-9\$]+</column>
-          <sort>asc|desc</sort>
+          <releaseId>\d+</releaseId>
         </reqs>
       </index>
 
@@ -306,51 +302,59 @@
       
       <!-- Project -->      
       <project_view>
-        <route>project_view/:projectId</route>
+        <route>:projectPrefix/project_view</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>index</controller>
           <action>view</action>
-          <projectId>0</projectId>
         </defaults>
         <reqs>
-          <projectId>\d+</projectId>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
         </reqs>
       </project_view>
       
       <project_user_list_ajax>
-        <route>project_user_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/project_user_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>index</controller>
           <action>user-list-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </project_user_list_ajax>
 
       <project_add_plan_ajax>
-        <route>project_add_plan_ajax</route>
+        <route>:projectPrefix/project_add_plan_ajax</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>index</controller>
           <action>add-plan-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </project_add_plan_ajax>
 
       <project_add_documentation_ajax>
-        <route>project_add_documentation_ajax</route>
+        <route>:projectPrefix/project_add_documentation_ajax</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>index</controller>
           <action>add-documentation-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </project_add_documentation_ajax>
       
       <project_delete_attachment_ajax>
-        <route>project_delete_attachment_ajax/:id</route>
+        <route>:projectPrefix/project_delete_attachment_ajax/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -359,12 +363,52 @@
         </defaults>
         <reqs>
           <id>\d+</id>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
         </reqs>
       </project_delete_attachment_ajax>
       
+      <project_activate>
+        <route>:projectPrefix/project_activate</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>index</controller>
+          <action>activate</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </project_activate>
+       
+      <project_suspend>
+        <route>:projectPrefix/project_suspend</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>index</controller>
+          <action>suspend</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </project_suspend>
+       
+      <project_finish>
+        <route>:projectPrefix/project_finish</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>index</controller>
+          <action>finish</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </project_finish>
+      
       <!-- Release -->
       <release_list>
-        <route>releases/:page/:column/:sort</route>
+        <route>:projectPrefix/releases/:page/:column/:sort</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -372,47 +416,44 @@
           <action>index</action>
           <page>1</page>
           <column>release_start_date</column>
-          <sort>asc</sort>
+          <sort>desc</sort>
         </defaults>
         <reqs>
           <page>\d+</page>
           <column>[_a-zA-Z0-9\$]+</column>
           <sort>asc|desc</sort>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
         </reqs>
       </release_list>
       
       <release_list_ajax>
-        <route>release_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/release_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>release</controller>
           <action>list-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </release_list_ajax>
       
       <release_list_for_forward_ajax>
-        <route>release_list_for_forward_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/release_list_for_forward_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>release</controller>
           <action>list-for-forward-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </release_list_for_forward_ajax>
       
-      <release_list_for_phase_ajax>
-        <route>release_list_for_phase_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>project</module>
-          <controller>release</controller>
-          <action>list-for-phase-ajax</action>
-        </defaults>
-      </release_list_for_phase_ajax>
-      
       <release_view>
-        <route>release_view/:id</route>
+        <route>:projectPrefix/release_view/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -421,31 +462,38 @@
         </defaults>
         <reqs>
           <id>\d+</id>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
         </reqs>
       </release_view>
 
       <release_add>
-        <route>add_release</route>
+        <route>:projectPrefix/add_release</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>release</controller>
           <action>add</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </release_add>
 
       <release_add_process>
-        <route>adding_release</route>
+        <route>:projectPrefix/adding_release</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>release</controller>
           <action>add-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </release_add_process>
       
       <release_edit>
-        <route>edit_release/:id</route>
+        <route>:projectPrefix/edit_release/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -453,12 +501,13 @@
           <action>edit</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </release_edit>
       
       <release_edit_process>
-        <route>editing_release/:id</route>
+        <route>:projectPrefix/editing_release/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -466,38 +515,69 @@
           <action>edit-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </release_edit_process>
       
-      <release_clone>
-        <route>clone_release/:id</route>
+      <release_clone_multiform>
+        <route>:projectPrefix/release_clone/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
-          <controller>release</controller>
-          <action>clone</action>
+          <controller>release-clone</controller>
+          <action>index</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
-      </release_clone>
+      </release_clone_multiform>
       
-      <release_clone_process>
-        <route>cloning_release/:id</route>
+      <release_clone_multiform_process>
+        <route>:projectPrefix/release_cloning/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>release-clone</controller>
+          <action>process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </release_clone_multiform_process>
+      
+      <release_activate>
+        <route>:projectPrefix/activate_release/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>release</controller>
-          <action>clone-process</action>
+          <action>activate</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
-      </release_clone_process>
+      </release_activate>
+      
+      <release_deactivate>
+        <route>:projectPrefix/deactivate_release/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>release</controller>
+          <action>deactivate</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </release_deactivate>
       
       <release_delete>
-        <route>delete_release/:id</route>
+        <route>:projectPrefix/delete_release/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -505,132 +585,42 @@
           <action>delete</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </release_delete>
       
-      <!-- Phase -->
-      <phase_list>
-        <route>phases/:page/:column/:sort</route>
+      <release_report>
+        <route>:projectPrefix/release_report/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
-          <controller>phase</controller>
-          <action>index</action>
-          <page>1</page>
-          <column>phase_start_date</column>
-          <sort>asc</sort>
+          <controller>release</controller>
+          <action>report</action>
         </defaults>
         <reqs>
-          <page>\d+</page>
-          <column>[_a-zA-Z0-9\$]+</column>
-          <sort>asc|desc</sort>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
         </reqs>
-      </phase_list>
+      </release_report>
       
-      <phase_view>
-        <route>phase_view/:id</route>
+      <release_report_process>
+        <route>:projectPrefix/reporting_release/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
-          <controller>phase</controller>
-          <action>view</action>
+          <controller>release</controller>
+          <action>report-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
-      </phase_view>
-      
-      <phase_list_ajax>
-        <route>phase_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>project</module>
-          <controller>phase</controller>
-          <action>list-ajax</action>
-        </defaults>
-      </phase_list_ajax>
-      
-      <phase_list_for_forward_ajax>
-        <route>phase_list_for_forward_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>project</module>
-          <controller>phase</controller>
-          <action>list-for-forward-ajax</action>
-        </defaults>
-      </phase_list_for_forward_ajax>
-
-      <phase_add>
-        <route>add_phase/:releaseId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>phase</controller>
-          <action>add</action>
-          <releaseId>0</releaseId>
-        </defaults>
-        <reqs>
-          <releaseId>\d+</releaseId>
-        </reqs>
-      </phase_add>
-
-      <phase_add_process>
-        <route>adding_phase/:releaseId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>phase</controller>
-          <action>add-process</action>
-          <releaseId>0</releaseId>
-        </defaults>
-        <reqs>
-          <releaseId>\d+</releaseId>
-        </reqs>
-      </phase_add_process> 
-           
-      <phase_edit>
-        <route>edit_phase/:id</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>phase</controller>
-          <action>edit</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-        </reqs>
-      </phase_edit>
-           
-      <phase_edit_process>
-        <route>editing_phase/:id</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>phase</controller>
-          <action>edit-process</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-        </reqs>
-      </phase_edit_process>
-            
-      <phase_delete>
-        <route>delete_phase/:id</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>phase</controller>
-          <action>delete</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-        </reqs>
-      </phase_delete>
+      </release_report_process>
       
       <!-- Defect -->
       <defect_list>
-        <route>defects/:page/:column/:sort</route>
+        <route>:projectPrefix/defects/:page/:column/:sort</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -641,6 +631,7 @@
           <sort>desc</sort>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <page>\d+</page>
           <column>[_a-zA-Z0-9\$]+</column>
           <sort>asc|desc</sort>
@@ -648,62 +639,86 @@
       </defect_list>
       
       <defect_view>
-        <route>defect_view/:id/:projectId</route>
+        <route>:projectPrefix/defect_view/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>defect</controller>
           <action>view</action>
-          <projectId>0</projectId>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
-          <projectId>\d+</projectId>
         </reqs>
       </defect_view>
       
       <defect_status_ajax>
-        <route>defect_status_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/defect_status_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>defect</controller>
           <action>status-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </defect_status_ajax>
       
+      <defect_list_ajax>
+        <route>:projectPrefix/defect_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>defect</controller>
+          <action>list-ajax</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </defect_list_ajax>
+      
       <defect_info_ajax>
-        <route>defect_info_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/defect_info_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>defect</controller>
           <action>info-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </defect_info_ajax>
 
       <defect_add>
-        <route>defect_add</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/defect_add</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>defect</controller>
           <action>add</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </defect_add>
       
       <defect_add_process>
-        <route>defect_add_process</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/defect_add_process</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>defect</controller>
           <action>add-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </defect_add_process>
 
       <defect_edit>
-        <route>defect_edit/:id</route>
+        <route>:projectPrefix/defect_edit/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -711,12 +726,13 @@
           <action>edit</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_edit>
       
       <defect_edit_process>
-        <route>defect_edit_process/:id</route>
+        <route>:projectPrefix/defect_edit_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -724,12 +740,40 @@
           <action>edit-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_edit_process>
+      
+      <defect_delete>
+        <route>:projectPrefix/defect_delete/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>defect</controller>
+          <action>delete</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </defect_delete>
+      
+      <defect_multi_delete>
+        <route>:projectPrefix/defect_multi_delete</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>defect</controller>
+          <action>multi-delete</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </defect_multi_delete>
 
       <defect_assign>
-        <route>defect_assign/:id</route>
+        <route>:projectPrefix/defect_assign/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -737,12 +781,13 @@
           <action>assign</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_assign>
       
       <defect_assign_process>
-        <route>defect_assign_process/:id</route>
+        <route>:projectPrefix/defect_assign_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -750,12 +795,13 @@
           <action>assign-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_assign_process>
 
       <defect_assign_to_me>
-        <route>defect_assign_to_me/:id</route>
+        <route>:projectPrefix/defect_assign_to_me/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -763,12 +809,13 @@
           <action>assign-to-me</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_assign_to_me>
       
       <defect_start>
-        <route>defect_start/:id</route>
+        <route>:projectPrefix/defect_start/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -776,12 +823,13 @@
           <action>start</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_start>
       
       <defect_finish>
-        <route>defect_finish/:id</route>
+        <route>:projectPrefix/defect_finish/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -789,12 +837,13 @@
           <action>finish</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_finish>
 
       <defect_resolve>
-        <route>defect_resolve/:id</route>
+        <route>:projectPrefix/defect_resolve/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -802,12 +851,13 @@
           <action>resolve</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_resolve>
       
       <defect_resolve_process>
-        <route>defect_resolve_process/:id</route>
+        <route>:projectPrefix/defect_resolve_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -815,12 +865,13 @@
           <action>resolve-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_resolve_process>
 
       <defect_is_invalid>
-        <route>defect_is_invalid/:id</route>
+        <route>:projectPrefix/defect_is_invalid/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -828,12 +879,13 @@
           <action>is-invalid</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_is_invalid>
       
       <defect_is_invalid_process>
-        <route>defect_is_invalid_process/:id</route>
+        <route>:projectPrefix/defect_is_invalid_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -841,12 +893,13 @@
           <action>is-invalid-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_is_invalid_process>
 
       <defect_close>
-        <route>defect_close/:id</route>
+        <route>:projectPrefix/defect_close/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -854,12 +907,13 @@
           <action>close</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_close>
       
       <defect_close_process>
-        <route>defect_close_process/:id</route>
+        <route>:projectPrefix/defect_close_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -867,12 +921,13 @@
           <action>close-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_close_process>
 
       <defect_reopen>
-        <route>defect_reopen/:id</route>
+        <route>:projectPrefix/defect_reopen/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -880,12 +935,13 @@
           <action>reopen</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_reopen>
       
       <defect_reopen_process>
-        <route>defect_reopen_process/:id</route>
+        <route>:projectPrefix/defect_reopen_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -893,12 +949,13 @@
           <action>reopen-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_reopen_process>
       
       <defect_change_to_resolved>
-        <route>defect_change_to_resolved/:id</route>
+        <route>:projectPrefix/defect_change_to_resolved/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -906,12 +963,13 @@
           <action>change-to-resolved</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_change_to_resolved>
       
       <defect_change_to_invalid>
-        <route>defect_change_to_invalid/:id</route>
+        <route>:projectPrefix/defect_change_to_invalid/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -919,12 +977,13 @@
           <action>change-to-invalid</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_change_to_invalid>
       
       <defect_change_to_success>
-        <route>defect_change_to_success/:id</route>
+        <route>:projectPrefix/defect_change_to_success/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -932,12 +991,13 @@
           <action>change-to-success</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_change_to_success>
       
       <defect_change_to_fail>
-        <route>defect_change_to_fail/:id</route>
+        <route>:projectPrefix/defect_change_to_fail/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -945,13 +1005,14 @@
           <action>change-to-fail</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </defect_change_to_fail>
       
       <!-- Task -->
       <task_list>
-        <route>tasks/:page/:column/:sort</route>
+        <route>:projectPrefix/tasks/:page/:column/:sort</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -962,6 +1023,7 @@
           <sort>desc</sort>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <page>\d+</page>
           <column>[_a-zA-Z0-9\$]+</column>
           <sort>asc|desc</sort>
@@ -969,42 +1031,47 @@
       </task_list>
       
       <task_view>
-        <route>task_view/:id/:projectId</route>
+        <route>:projectPrefix/task_view/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>task</controller>
           <action>view</action>
-          <projectId>0</projectId>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
-          <projectId>\d+</projectId>
         </reqs>
       </task_view>
 
       <task_add>
-        <route>task_add</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/task_add</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>task</controller>
           <action>add</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </task_add>
       
       <task_add_process>
-        <route>task_add_process</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/task_add_process</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>task</controller>
           <action>add-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </task_add_process>
 
       <task_edit>
-        <route>task_edit/:id</route>
+        <route>:projectPrefix/task_edit/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1012,12 +1079,13 @@
           <action>edit</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_edit>
       
       <task_edit_process>
-        <route>task_edit_process/:id</route>
+        <route>:projectPrefix/task_edit_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1025,12 +1093,40 @@
           <action>edit-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_edit_process>
       
+      <task_delete>
+        <route>:projectPrefix/task_delete/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task</controller>
+          <action>delete</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_delete>
+      
+      <task_multi_delete>
+        <route>:projectPrefix/task_multi_delete</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task</controller>
+          <action>multi-delete</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </task_multi_delete>
+      
       <task_start>
-        <route>task_start/:id</route>
+        <route>:projectPrefix/task_start/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1038,12 +1134,13 @@
           <action>start</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_start>
 
       <task_assign>
-        <route>task_assign/:id</route>
+        <route>:projectPrefix/task_assign/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1051,12 +1148,13 @@
           <action>assign</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_assign>
       
       <task_assign_process>
-        <route>task_assign_process/:id</route>
+        <route>:projectPrefix/task_assign_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1064,12 +1162,13 @@
           <action>assign-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_assign_process>
 
       <task_assign_to_me>
-        <route>task_assign_to_me/:id</route>
+        <route>:projectPrefix/task_assign_to_me/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1077,12 +1176,13 @@
           <action>assign-to-me</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_assign_to_me>
 
       <task_close>
-        <route>task_close/:id</route>
+        <route>:projectPrefix/task_close/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1090,12 +1190,13 @@
           <action>close</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_close>
       
       <task_close_process>
-        <route>task_close_process/:id</route>
+        <route>:projectPrefix/task_close_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1103,12 +1204,13 @@
           <action>close-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_close_process>
 
       <task_reopen>
-        <route>task_reopen/:id</route>
+        <route>:projectPrefix/task_reopen/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1116,12 +1218,13 @@
           <action>reopen</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_reopen>
       
       <task_reopen_process>
-        <route>task_reopen_process/:id</route>
+        <route>:projectPrefix/task_reopen_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1129,163 +1232,13 @@
           <action>reopen-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
-      </task_reopen_process>
+      </task_reopen_process>      
       
-      <task_change_resolution>
-        <route>task_change_resolution/:id</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>change-resolution</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-        </reqs>
-      </task_change_resolution>
-      
-      <task_change_resolution_process>
-        <route>task_change_resolution_process/:id</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>change-resolution-process</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-        </reqs>
-      </task_change_resolution_process>
-      
-      <task_other_test_view>
-        <route>task_other_test_view/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>view-other-test</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_other_test_view>
-      
-      <task_test_case_view>
-        <route>task_test_case_view/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>view-test-case</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_test_case_view>
-      
-      <task_exploratory_test_view>
-        <route>task_exploratory_test_view/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>view-exploratory-test</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_exploratory_test_view>
-
-      <task_test_resolve>
-        <route>task_test_resolve/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>resolve-test</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_test_resolve>
-      
-      <task_test_resolve_process>
-        <route>task_test_resolve_process/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>resolve-test-process</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_test_resolve_process>
-
-      <task_test_change>
-        <route>task_test_change/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>change-test</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_test_change>
-      
-      <task_test_change_process>
-        <route>task_test_change_process/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>change-test-process</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_test_change_process>
-
-      <task_add_test_ajax>
-        <route>task_add_test_ajax/:id</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>add-test-ajax</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-        </reqs>
-      </task_add_test_ajax>
-
-      <task_delete_test_ajax>
-        <route>task_delete_test_ajax/:id/:testId</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>project</module>
-          <controller>task</controller>
-          <action>delete-test-ajax</action>
-        </defaults>
-        <reqs>
-          <id>\d+</id>
-          <testId>\d+</testId>
-        </reqs>
-      </task_delete_test_ajax>
-
       <task_add_defect_ajax>
-        <route>task_add_defect_ajax/:id</route>
+        <route>:projectPrefix/task_add_defect_ajax/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1293,12 +1246,13 @@
           <action>add-defect-ajax</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </task_add_defect_ajax>
 
       <task_delete_defect_ajax>
-        <route>task_delete_defect_ajax/:id/:defectId</route>
+        <route>:projectPrefix/task_delete_defect_ajax/:id/:defectId</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1306,26 +1260,224 @@
           <action>delete-defect-ajax</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
           <defectId>\d+</defectId>
         </reqs>
       </task_delete_defect_ajax>
       
+      <!-- Task Test -->      
+      <task_other_test_view>
+        <route>:projectPrefix/task_other_test_view/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>view-other-test</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_other_test_view>
+      
+      <task_test_case_view>
+        <route>:projectPrefix/task_test_case_view/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>view-test-case</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_test_case_view>
+      
+      <task_exploratory_test_view>
+        <route>:projectPrefix/task_exploratory_test_view/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>view-exploratory-test</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_exploratory_test_view>
+      
+      <task_automatic_test_view>
+        <route>:projectPrefix/task_automatic_test_view/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>view-automatic-test</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_automatic_test_view>
+      
+      <task_checklist_view>
+        <route>:projectPrefix/task_checklist_view/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>view-checklist</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_checklist_view>
+
+      <task_test_resolve>
+        <route>:projectPrefix/task_test_resolve/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>resolve-test</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_test_resolve>
+      
+      <task_test_resolve_process>
+        <route>:projectPrefix/task_test_resolve_process/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>resolve-test-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_test_resolve_process>
+
+      <task_test_change>
+        <route>:projectPrefix/task_test_change/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>change-test</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_test_change>
+      
+      <task_test_change_process>
+        <route>:projectPrefix/task_test_change_process/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>change-test-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_test_change_process>
+
+      <task_add_test_ajax>
+        <route>:projectPrefix/task_add_test_ajax/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>add-test-ajax</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_add_test_ajax>
+
+      <task_delete_test_ajax>
+        <route>:projectPrefix/task_delete_test_ajax/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-test</controller>
+          <action>delete-test-ajax</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_delete_test_ajax>
+
+      <!-- Task Checklist Item -->
+      <task_checklist_item_change_status_to_none>
+        <route>:projectPrefix/task_checklist_item_change_status_to_none/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-checklist-item</controller>
+          <action>change-status-to-none</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_checklist_item_change_status_to_none>
+
+      <task_checklist_item_change_status_to_resolve>
+        <route>:projectPrefix/task_checklist_item_change_status_to_resolve/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-checklist-item</controller>
+          <action>change-status-to-resolve</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_checklist_item_change_status_to_resolve>
+
+      <task_checklist_item_change_status_to_unresolve>
+        <route>:projectPrefix/task_checklist_item_change_status_to_unresolve/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>task-checklist-item</controller>
+          <action>change-status-to-unresolve</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </task_checklist_item_change_status_to_unresolve>
+
       <!-- Test -->
       <test_list>
-        <route>tests/:projectId/:page/:column/:sort</route>
+        <route>:projectPrefix/tests/:page/:column/:sort</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>index</action>
-          <projectId>0</projectId>
           <page>1</page>
           <column>test_name</column>
           <sort>asc</sort>
         </defaults>
         <reqs>
-          <projectId>\d+</projectId>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <page>\d+</page>
           <column>[_a-zA-Z0-9\$]+</column>
           <sort>asc|desc</sort>
@@ -1333,17 +1485,21 @@
       </test_list>
       
       <test_list_ajax>
-        <route>test_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>list-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </test_list_ajax>
       
+      <!-- NIEUŻYWANE -->
       <test_forward_to_execute>
-        <route>test/forward_to_execute/:id</route>
+        <route>:projectPrefix/test/forward_to_execute/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1351,12 +1507,14 @@
           <action>forward-to-execute</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_forward_to_execute>
       
+      <!-- NIEUŻYWANE -->
       <test_forward_to_execute_process>
-        <route>test/forward_to_execute_process/:id</route>
+        <route>:projectPrefix/test/forward_to_execute_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1364,32 +1522,41 @@
           <action>forward-to-execute-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_forward_to_execute_process>
 
+      <!-- NIEUŻYWANE -->
       <test_group_forward_to_execute>
-        <route>test/group_forward_to_execute</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/group_forward_to_execute</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>group-forward-to-execute</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </test_group_forward_to_execute>
       
+      <!-- NIEUŻYWANE -->
       <test_group_forward_to_execute_process>
-        <route>test/group_forward_to_execute_process</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/group_forward_to_execute_process</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>group-forward-to-execute-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </test_group_forward_to_execute_process>
       
       <test_delete>
-        <route>test/delete/:id</route>
+        <route>:projectPrefix/test/delete/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1397,72 +1564,166 @@
           <action>delete</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_delete>
       
+      <test_multi_delete>
+        <route>:projectPrefix/test_multi_delete</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>multi-delete</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </test_multi_delete>
+      
       <test_add_other_test>
-        <route>test/add_other_test</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/add_other_test/:id</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>add-other-test</action>
+          <id>0</id>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
       </test_add_other_test>
       
       <test_add_other_test_process>
-        <route>test/adding_other_test</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/adding_other_test</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>add-other-test-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </test_add_other_test_process>
       
       <test_add_test_case>
-        <route>test/add_test_case</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/add_test_case/:id</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>add-test-case</action>
+          <id>0</id>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
       </test_add_test_case>
       
       <test_add_test_case_process>
-        <route>test/adding_test_case</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/adding_test_case</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>add-test-case-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </test_add_test_case_process>
       
       <test_add_exploratory_test>
-        <route>test/add_exploratory_test</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/add_exploratory_test/:id</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>add-exploratory-test</action>
+          <id>0</id>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
       </test_add_exploratory_test>
       
       <test_add_exploratory_test_process>
-        <route>test/adding_exploratory_test</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/test/adding_exploratory_test</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>test</controller>
           <action>add-exploratory-test-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </test_add_exploratory_test_process>
       
+      <test_add_automatic_test>
+        <route>:projectPrefix/test/add_automatic_test/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>add-automatic-test</action>
+          <id>0</id>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_add_automatic_test>
+      
+      <test_add_automatic_test_process>
+        <route>:projectPrefix/test/adding_automatic_test</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>add-automatic-test-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </test_add_automatic_test_process>
+      
+      <test_add_checklist>
+        <route>:projectPrefix/test/add_checklist/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>add-checklist</action>
+          <id>0</id>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_add_checklist>
+      
+      <test_add_checklist_process>
+        <route>:projectPrefix/test/adding_checklist</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>add-checklist-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </test_add_checklist_process>
+      
       <test_edit_other_test>
-        <route>test/edit_other_test/:id</route>
+        <route>:projectPrefix/test/edit_other_test/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1470,12 +1731,13 @@
           <action>edit-other-test</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_edit_other_test>
       
       <test_edit_other_test_process>
-        <route>test/editing_other_test/:id</route>
+        <route>:projectPrefix/test/editing_other_test/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1483,12 +1745,13 @@
           <action>edit-other-test-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_edit_other_test_process>
       
       <test_edit_test_case>
-        <route>test/edit_test_case/:id</route>
+        <route>:projectPrefix/test/edit_test_case/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1496,12 +1759,13 @@
           <action>edit-test-case</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_edit_test_case>
       
       <test_edit_test_case_process>
-        <route>test/editing_test_case/:id</route>
+        <route>:projectPrefix/test/editing_test_case/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1509,12 +1773,13 @@
           <action>edit-test-case-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_edit_test_case_process>
       
       <test_edit_exploratory_test>
-        <route>test/edit_exploratory_test/:id</route>
+        <route>:projectPrefix/test/edit_exploratory_test/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1522,12 +1787,13 @@
           <action>edit-exploratory-test</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_edit_exploratory_test>
       
       <test_edit_exploratory_test_process>
-        <route>test/editing_exploratory_test_process/:id</route>
+        <route>:projectPrefix/test/editing_exploratory_test_process/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1535,12 +1801,69 @@
           <action>edit-exploratory-test-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_edit_exploratory_test_process>
       
+      <test_edit_automatic_test>
+        <route>:projectPrefix/test/edit_automatic_test/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>edit-automatic-test</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_edit_automatic_test>
+      
+      <test_edit_automatic_test_process>
+        <route>:projectPrefix/test/editing_automatic_test/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>edit-automatic-test-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_edit_automatic_test_process>
+      
+      <test_edit_checklist>
+        <route>:projectPrefix/test/edit_checklist/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>edit-checklist</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_edit_checklist>
+      
+      <test_edit_checklist_process>
+        <route>:projectPrefix/test/editing_checklist/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>edit-checklist-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_edit_checklist_process>
+      
       <test_view_other_test>
-        <route>test/view_other_test/:id</route>
+        <route>:projectPrefix/test/view_other_test/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1548,12 +1871,13 @@
           <action>view-other-test</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_view_other_test>
       
       <test_view_test_case>
-        <route>test/view_test_case/:id</route>
+        <route>:projectPrefix/test/view_test_case/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1561,12 +1885,13 @@
           <action>view-test-case</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_view_test_case>
       
       <test_view_exploratory_test>
-        <route>test/view_exploratory_test/:id</route>
+        <route>:projectPrefix/test/view_exploratory_test/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -1574,9 +1899,38 @@
           <action>view-exploratory-test</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </test_view_exploratory_test>
+      
+      <test_view_automatic_test>
+        <route>:projectPrefix/test/view_automatic_test/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>view-automatic-test</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_view_automatic_test>
+      
+      <test_view_checklist>
+        <route>:projectPrefix/test/view_checklist/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>test</controller>
+          <action>view-checklist</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </test_view_checklist>
        
       <!-- Admin -->
       <admin_index>
@@ -1824,26 +2178,6 @@
           <action>add-process</action>
         </defaults>
       </admin_project_add_process>
-      
-      <admin_project_wizard_add>
-        <route>administration/project_wizard_add</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>administration</module>
-          <controller>project-wizard</controller>
-          <action>index</action>
-        </defaults>
-      </admin_project_wizard_add>
-      
-      <admin_project_wizard_add_process>
-        <route>administration/project_wizard_add_process</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>administration</module>
-          <controller>project-wizard</controller>
-          <action>process</action>
-        </defaults>
-      </admin_project_wizard_add_process>
             
       <admin_project_edit>
         <route>administration/edit_project/:id</route>
@@ -2237,188 +2571,6 @@
           <id>\d+</id>
         </reqs>
       </admin_resolution_delete>
-      
-      <!-- Reports -->
-      <report_list>
-        <route>raporty</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>index</controller>
-          <action>index</action>
-        </defaults>
-      </report_list>
-      
-      <report_task_run_statuses_for_project>
-        <route>raport/statusy_zadan_dla_projektu</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>project</controller>
-          <action>index</action>
-        </defaults>
-      </report_task_run_statuses_for_project>
-      
-      <report_export_task_run_statuses_for_project>
-        <route>report_export_task_run_statuses_for_project</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>project</controller>
-          <action>export</action>
-        </defaults>
-      </report_export_task_run_statuses_for_project>
-      
-      <report_task_run_statuses_for_releases>
-        <route>raport/statusy_zadan_dla_wydan/:page</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>report</module>
-          <controller>release</controller>
-          <action>index</action>
-          <page>1</page>
-        </defaults>
-        <reqs>
-          <page>\d+</page>
-        </reqs>
-      </report_task_run_statuses_for_releases>
-      
-      <report_export_all_task_run_statuses_for_releases>
-        <route>report_export_all_task_run_statuses_for_releases</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>release</controller>
-          <action>export-all</action>
-        </defaults>
-      </report_export_all_task_run_statuses_for_releases>
-      
-      <report_task_run_statuses_for_phases>
-        <route>raport/statusy_zadan_dla_faz/:page</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>report</module>
-          <controller>phase</controller>
-          <action>index</action>
-          <page>1</page>
-        </defaults>
-        <reqs>
-          <page>\d+</page>
-        </reqs>
-      </report_task_run_statuses_for_phases>
-      
-      <report_export_all_task_run_statuses_for_phases>
-        <route>report_export_all_task_run_statuses_for_phases</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>phase</controller>
-          <action>export-all</action>
-        </defaults>
-      </report_export_all_task_run_statuses_for_phases>
-      
-      <report_task_run_statuses_for_environments>
-        <route>raport/statusy_zadan_dla_srodowisk/:page</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>report</module>
-          <controller>environment</controller>
-          <action>index</action>
-          <page>1</page>
-        </defaults>
-        <reqs>
-          <page>\d+</page>
-        </reqs>
-      </report_task_run_statuses_for_environments>
-      
-      <report_export_all_task_run_statuses_for_environments>
-        <route>report_export_all_task_run_statuses_for_environments</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>environment</controller>
-          <action>export-all</action>
-        </defaults>
-      </report_export_all_task_run_statuses_for_environments>
-      
-      <report_task_run_statuses_by_type>
-        <route>raport/statusy_zadan_wedlug_typu</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>task</controller>
-          <action>list-by-type</action>
-        </defaults>
-      </report_task_run_statuses_by_type>
-      
-      <report_export_all_task_run_statuses_by_type>
-        <route>report_export_all_task_run_statuses_by_type</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>task</controller>
-          <action>export-all-by-type</action>
-        </defaults>
-      </report_export_all_task_run_statuses_by_type>
-      
-      <report_task_run_statuses_by_priority>
-        <route>raport/statusy_zadan_wedlug_priorytetu</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>task-run</controller>
-          <action>list-by-priority</action>
-        </defaults>
-      </report_task_run_statuses_by_priority>
-      
-      <report_export_all_task_run_statuses_by_priority>
-        <route>report_export_all_task_run_statuses_by_priority</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>task-run</controller>
-          <action>export-all-by-priority</action>
-        </defaults>
-      </report_export_all_task_run_statuses_by_priority>
-      
-      <report_task_run_statuses_for_users>
-        <route>raport/statusy_zadan_dla_uzytkownikow/:page</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>report</module>
-          <controller>user</controller>
-          <action>index</action>
-          <page>1</page>
-        </defaults>
-        <reqs>
-          <page>\d+</page>
-        </reqs>
-      </report_task_run_statuses_for_users>
-      
-      <report_export_all_task_run_statuses_for_users>
-        <route>report_export_all_task_run_statuses_for_users</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>report</module>
-          <controller>user</controller>
-          <action>export-all</action>
-        </defaults>
-      </report_export_all_task_run_statuses_for_users>
-      
-      <report_user_task_run_list>
-        <route>raport/zadania_uzytkownika/:assigneeId/:page</route>
-        <type>Zend_Controller_Router_Route</type>
-        <defaults>
-          <module>report</module>
-          <controller>task-run</controller>
-          <action>user-task-run-list</action>
-          <page>1</page>
-        </defaults>
-        <reqs>
-          <assigneeId>\d+</assigneeId>
-          <page>\d+</page>
-        </reqs>
-      </report_user_task_run_list>
 
       <!-- Messages --> 
       <message_list>
@@ -2507,7 +2659,7 @@
       
       <!-- Environment -->
       <environment_list>
-        <route>environments/:page/:column/:sort</route>
+        <route>:projectPrefix/environments/:page/:column/:sort</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2518,6 +2670,7 @@
           <sort>asc</sort>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <page>\d+</page>
           <column>[_a-zA-Z0-9\$]+</column>
           <sort>asc|desc</sort>
@@ -2525,17 +2678,20 @@
       </environment_list>
                         
       <environment_list_ajax>
-        <route>environment_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/environment_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>environment</controller>
           <action>list-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </environment_list_ajax>
       
       <environment_view>
-        <route>environment_view/:id</route>
+        <route>:projectPrefix/environment_view/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2548,27 +2704,33 @@
       </environment_view>
 
       <environment_add>
-        <route>add_environment</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/add_environment</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>environment</controller>
           <action>add</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </environment_add>
 
       <environment_add_process>
-        <route>adding_environmen</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/adding_environmen</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>environment</controller>
           <action>add-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </environment_add_process>
       
       <environment_edit>
-        <route>edit_environment/:id</route>
+        <route>:projectPrefix/edit_environment/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2576,12 +2738,13 @@
           <action>edit</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </environment_edit>
       
       <environment_edit_process>
-        <route>editing_environment/:id</route>
+        <route>:projectPrefix/editing_environment/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2589,12 +2752,13 @@
           <action>edit-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </environment_edit_process>
       
       <environment_delete>
-        <route>delete_environment/:id</route>
+        <route>:projectPrefix/delete_environment/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2602,13 +2766,14 @@
           <action>delete</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </environment_delete>
       
       <!-- Version -->
       <version_list>
-        <route>versions/:page/:column/:sort</route>
+        <route>:projectPrefix/versions/:page/:column/:sort</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2619,6 +2784,7 @@
           <sort>asc</sort>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <page>\d+</page>
           <column>[_a-zA-Z0-9\$]+</column>
           <sort>asc|desc</sort>
@@ -2626,17 +2792,20 @@
       </version_list>
                         
       <version_list_ajax>
-        <route>version_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/version_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>version</controller>
           <action>list-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </version_list_ajax>
       
       <version_view>
-        <route>version_view/:id</route>
+        <route>:projectPrefix/version_view/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2644,32 +2813,39 @@
           <action>view</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </version_view>
 
       <version_add>
-        <route>add_version</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/add_version</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>version</controller>
           <action>add</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </version_add>
 
       <version_add_process>
-        <route>adding_version</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/adding_version</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
           <controller>version</controller>
           <action>add-process</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </version_add_process>
       
       <version_edit>
-        <route>edit_version/:id</route>
+        <route>:projectPrefix/edit_version/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2677,12 +2853,13 @@
           <action>edit</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </version_edit>
       
       <version_edit_process>
-        <route>editing_version/:id</route>
+        <route>:projectPrefix/editing_version/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2690,12 +2867,13 @@
           <action>edit-process</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </version_edit_process>
       
       <version_delete>
-        <route>delete_version/:id</route>
+        <route>:projectPrefix/delete_version/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>project</module>
@@ -2703,60 +2881,226 @@
           <action>delete</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <id>\d+</id>
         </reqs>
       </version_delete>
       
-      <!-- Comments -->
-      <comment_list_by_subject_ajax>
-        <route>comment_list_by_subject_ajax/:subjectId/:subjectType</route>
+      <!-- Tag -->
+      <tag_list>
+        <route>:projectPrefix/tags/:page/:column/:sort</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>index</action>
+          <page>1</page>
+          <column>tag_name</column>
+          <sort>asc</sort>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <page>\d+</page>
+          <column>[_a-zA-Z0-9\$]+</column>
+          <sort>asc|desc</sort>
+        </reqs>
+      </tag_list>
+                        
+      <tag_list_ajax>
+        <route>:projectPrefix/tag_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>list-ajax</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </tag_list_ajax>
+      
+      <tag_view>
+        <route>:projectPrefix/tag_view/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>view</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </tag_view>
+
+      <tag_add>
+        <route>:projectPrefix/add_tag</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>add</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </tag_add>
+
+      <tag_add_process>
+        <route>:projectPrefix/adding_tag</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>add-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
+      </tag_add_process>
+      
+      <tag_edit>
+        <route>:projectPrefix/edit_tag/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>edit</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </tag_edit>
+      
+      <tag_edit_process>
+        <route>:projectPrefix/editing_tag/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>edit-process</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </tag_edit_process>
+      
+      <tag_delete>
+        <route>:projectPrefix/delete_tag/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>tag</controller>
+          <action>delete</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <id>\d+</id>
+        </reqs>
+      </tag_delete>
+
+      <!-- MultiSelect -->
+      <multi_select_load_ajax>
+        <route>multi_select_load_ajax</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>default</module>
+          <controller>multi-select</controller>
+          <action>load-ajax</action>
+        </defaults>
+      </multi_select_load_ajax>
+      
+      <multi_select_save_ajax>
+        <route>multi_select_save_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>default</module>
+          <controller>multi-select</controller>
+          <action>save-ajax</action>
+        </defaults>
+      </multi_select_save_ajax>
+      
+      <multi_select_clear_ajax>
+        <route>multi_select_clear_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>default</module>
+          <controller>multi-select</controller>
+          <action>clear-ajax</action>
+        </defaults>
+      </multi_select_clear_ajax>
+      
+      <!-- Comments -->
+      <comment_list_by_subject_ajax>
+        <route>:projectPrefix/comment_list_by_subject_ajax/:subjectId/:subjectType</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
           <controller>comment</controller>
           <action>list-by-subject-ajax</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <subjectId>\d+</subjectId>
           <subjectType>\d+</subjectType>
         </reqs>
       </comment_list_by_subject_ajax>
       
-      <comment_add_ajax>
-        <route>comment_add_ajax/:subjectId/:subjectType</route>
+      <comment_list_by_task_ajax>
+        <route>:projectPrefix/comment_list_by_task_ajax/:taskId</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
-          <module>default</module>
+          <module>project</module>
+          <controller>comment</controller>
+          <action>list-by-task-ajax</action>
+        </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <taskId>\d+</taskId>
+        </reqs>
+      </comment_list_by_task_ajax>
+      
+      <comment_add_ajax>
+        <route>:projectPrefix/comment_add_ajax/:subjectId/:subjectType</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
           <controller>comment</controller>
           <action>add-ajax</action>
         </defaults>
         <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
           <subjectId>\d+</subjectId>
           <subjectType>\d+</subjectType>
         </reqs>
       </comment_add_ajax>
       
       <comment_save_ajax>
-        <route>comment_save_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/comment_save_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
-          <module>default</module>
+          <module>project</module>
           <controller>comment</controller>
           <action>save-ajax</action>
         </defaults>
       </comment_save_ajax>
       
       <comment_delete_ajax>
-        <route>comment_delete_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
+        <route>:projectPrefix/comment_delete_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
         <defaults>
-          <module>default</module>
+          <module>project</module>
           <controller>comment</controller>
           <action>delete-ajax</action>
         </defaults>
+        <reqs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+        </reqs>
       </comment_delete_ajax>
       
-      <!-- File -->      
+      <!-- File -->
       <file_download>
         <route>file_download/:id</route>
         <type>Zend_Controller_Router_Route</type>
@@ -2765,7 +3109,7 @@
           <controller>file</controller>
           <action>download</action>
         </defaults>
-        <reqs>
+        <reqs>          
           <id>\d+</id>
         </reqs>
       </file_download>
@@ -2778,123 +3122,169 @@
           <controller>file</controller>
           <action>download-process</action>
         </defaults>
-        <reqs>
+        <reqs>          
           <id>\d+</id>
         </reqs>
-      </file_download_process>
+      </file_download_process>     
       
-      <file_upload>
-        <route>file_upload</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>upload</action>
-        </defaults>
-      </file_upload> 
-      
-      <file_remove_file>
-        <route>file_remove_file</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>remove-file</action>
-        </defaults>
-      </file_remove_file>  
-      
-      <file_remove_directory>
-        <route>file_remove_directory</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>remove-directory</action>
-        </defaults>
-      </file_remove_directory>  
-      
-      <file_remove>
-        <route>file_remove</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>remove</action>
-        </defaults>
-      </file_remove>  
-      
-      <file_rename>
-        <route>file_rename</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>rename</action>
-        </defaults>
-      </file_rename>  
-      
-      <file_rename_directory>
-        <route>file_rename_directory</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>rename-directory</action>
-        </defaults>
-      </file_rename_directory>  
-      
-      <file_create_directory>
-        <route>file_create_directory</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>create-directory</action>
-        </defaults>
-      </file_create_directory> 
-      
-      <file_browser>
-        <route>file_browser</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>browser</action>
-        </defaults>
-      </file_browser> 
-      
-      <file_list_ajax>
-        <route>file_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>file-list-ajax</action>
-        </defaults>
-      </file_list_ajax> 
-      
-      <file_directory_list_ajax>
-        <route>file_directory_list_ajax</route>
-        <type>Zend_Controller_Router_Route_Static</type>
-        <defaults>
-          <module>default</module>
-          <controller>file</controller>
-          <action>directory-list-ajax</action>
-        </defaults>
-      </file_directory_list_ajax> 
-      
-      <file_image_preview>
-        <route>file_image_preview/:id</route>
+      <file_thumbnail>
+        <route>file_thumbnail/:id</route>
         <type>Zend_Controller_Router_Route</type>
         <defaults>
           <module>default</module>
           <controller>file</controller>
-          <action>image-preview</action>
+          <action>thumbnail</action>
+        </defaults>
+        <reqs>          
+          <id>\d+</id>
+        </reqs>
+      </file_thumbnail>
+      
+      <file_preview_image>
+        <route>file_preview_image/:id</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>default</module>
+          <controller>file</controller>
+          <action>preview-image</action>
         </defaults>
         <reqs>
           <id>\d+</id>
         </reqs>
-      </file_image_preview> 
+      </file_preview_image> 
+      
+      <!-- File Browser -->      
+      <file_browser>
+        <route>:projectPrefix/file_browser/:mode</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>index</action>
+          <mode>0</mode>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>
+          <mode>\d+</mode>       
+        </regs>
+      </file_browser>
+      
+      <file_browser_file_list_ajax>
+        <route>:projectPrefix/file_browser/file_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>file-list-ajax</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_file_list_ajax> 
+      
+      <file_browser_directory_list_ajax>
+        <route>:projectPrefix/file_browser/directory_list_ajax</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>directory-list-ajax</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_directory_list_ajax> 
+      
+      <file_browser_upload>
+        <route>:projectPrefix/file_browser/upload</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>upload</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_upload> 
+      
+      <file_browser_remove_file>
+        <route>:projectPrefix/file_browser/remove_file</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>remove-file</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_remove_file>  
+      
+      <file_browser_remove_directory>
+        <route>:projectPrefix/file_browser/remove_directory</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>remove-directory</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_remove_directory>  
+      
+      <file_browser_remove>
+        <route>:projectPrefix/file_browser/remove</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>remove</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_remove>  
+      
+      <file_browser_rename>
+        <route>:projectPrefix/file_browser/rename</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>rename</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_rename>  
+      
+      <file_browser_rename_directory>
+        <route>:projectPrefix/file_browser/rename_directory</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>rename-directory</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_rename_directory>  
+      
+      <file_browser_create_directory>
+        <route>:projectPrefix/file_browser/create_directory</route>
+        <type>Zend_Controller_Router_Route</type>
+        <defaults>
+          <module>project</module>
+          <controller>file-browser</controller>
+          <action>create-directory</action>
+        </defaults>
+        <regs>
+          <projectPrefix>[a-z\d]{0,6}</projectPrefix>          
+        </regs>
+      </file_browser_create_directory> 
       
     </routes>
   </items>

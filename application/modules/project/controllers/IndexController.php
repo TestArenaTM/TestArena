@@ -33,9 +33,7 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
         throw new Custom_404Exception();
       }
       
-      $this->checkUserSession(true);
-      
-      if (!in_array($this->getRequest()->getActionName(), array('view')))
+      if (!in_array($this->getRequest()->getActionName(), array('view', 'activate', 'suspend', 'finish')))
       {
         $this->_project->checkFinished();
         $this->_project->checkSuspended();
@@ -64,7 +62,65 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
     $this->_setTranslateTitle();
     $this->view->roles = $roleMapper->getListByProjectId($this->_project);
     $this->view->attachments = $attachmentMapper->getForProject($this->_project);
-    $this->view->addAttachmentAccess = $this->_checkAccess(Application_Model_RoleAction::PROJECT_ATTACHMENT);
+    $this->view->accessAddAttachment = $this->_checkAccess(Application_Model_RoleAction::PROJECT_ATTACHMENT);
+    $this->view->accessProjectStatus = $this->_checkProjectStatusAccess(false);
+  }
+  
+  public function activateAction()
+  {
+    $this->_checkProjectStatusAccess();
+    
+    $projectMapper = new Project_Model_ProjectMapper();
+    $t = new Custom_Translate();
+    
+    if ($projectMapper->activate($this->_project))
+    {
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+    
+    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+  }
+  
+  public function suspendAction()
+  {
+    $this->_checkProjectStatusAccess();
+    
+    $projectMapper = new Project_Model_ProjectMapper();
+    $t = new Custom_Translate();
+    
+    if ($projectMapper->suspend($this->_project))
+    {
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+    
+    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER')); 
+  }
+  
+  public function finishAction()
+  {
+    $this->_checkProjectStatusAccess();
+    
+    $projectMapper = new Project_Model_ProjectMapper();
+    $t = new Custom_Translate();
+    
+    if ($projectMapper->finish($this->_project))
+    {
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+    
+    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER')); 
   }
   
   public function addPlanAjaxAction()
@@ -77,6 +133,7 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
     $this->checkUserSession(true, true);
     $this->_checkAccess(Application_Model_RoleAction::PROJECT_ATTACHMENT, true);
     $ids = explode('_', $this->getRequest()->getPost('ids', ''));
+    $t = new Custom_Translate();
     
     if (count($ids))
     {
@@ -92,7 +149,7 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
         if ($attachmentMapper->save4Project($attachment) === false)
         {
           $result['status'] = 'ERROR';
-          $result['errors'][] = 'Can not add attachment!';
+          $result['errors'][] = $t->translate("attachmentCanNotAdd", null, 'error');
         }
       }
       
@@ -103,7 +160,7 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
     }
     else
     {
-      $result['errors'][] = 'Not set ids!';
+      $result['errors'][] = $t->translate("attachmentNotSetIds", null, 'error');
     }
       
     echo json_encode($result);
@@ -120,6 +177,7 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
     $this->checkUserSession(true, true);
     $this->_checkAccess(Application_Model_RoleAction::PROJECT_ATTACHMENT, true);
     $ids = explode('_', $this->getRequest()->getPost('ids', ''));
+    $t = new Custom_Translate();
     
     if (count($ids))
     {
@@ -135,7 +193,7 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
         if ($attachmentMapper->save4Project($attachment) === false)
         {
           $result['status'] = 'ERROR';
-          $result['errors'][] = 'Can not add attachment!';
+          $result['errors'][] = $t->translate("attachmentCanNotAdd", null, 'error');
         }
       }
       
@@ -146,7 +204,7 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
     }
     else
     {
-      $result['errors'][] = 'Not set ids!';
+      $result['errors'][] = $t->translate("attachmentNotSetIds", null, 'error');
     }
       
     echo json_encode($result);
@@ -174,10 +232,27 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
     }
     else
     {
-      $result['errors'][] = 'Not set id!';
+      $t = new Custom_Translate();
+      $result['errors'][] = $t->translate("attachmentNotSetIds", null, 'error');
     }
       
     echo json_encode($result);
     exit;
+  }
+  
+  private function _checkProjectStatusAccess($throwException = true)
+  {
+    if ($this->_project->getStatusId() == Application_Model_ProjectStatus::FINISHED
+        || !$this->_checkAccess(Application_Model_RoleAction::PROJECT_STATUS))
+    {
+      if ($throwException)
+      {
+        $this->_throwTaskAccessDeniedException();
+      }
+      
+      return false;
+    }
+    
+    return true;
   }
 }

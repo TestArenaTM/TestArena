@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-09-21 10:52+0100\n"
+"PO-Revision-Date: 2017-06-26 10:47+0200\n"
 "Last-Translator: \n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.2\n"
+"X-Generator: Poedit 1.8.12\n"
 
 msgid "pageTitle"
 msgstr "Projekt"
@@ -41,6 +41,15 @@ msgstr "Wydania"
 msgid "Dodaj załącznik"
 msgstr "Dodaj załącznik"
 
+msgid "Zawieś"
+msgstr "Zawieś"
+
+msgid "Aktywuj"
+msgstr "Aktywuj"
+
+msgid "Zakończ"
+msgstr "Zakończ"
+
 msgid "Plan"
 msgstr "Plan"
 
@@ -61,4 +70,3 @@ msgstr "Usuń"
 
 msgid "Załączniki"
 msgstr "Załączniki"
-

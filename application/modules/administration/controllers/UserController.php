@@ -191,7 +191,7 @@ class Administration_UserController extends Custom_Controller_Action_Administrat
     {
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
-
+    
     $this->redirect($form->getBackUrl());
   }
   

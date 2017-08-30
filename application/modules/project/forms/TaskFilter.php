@@ -24,8 +24,8 @@ class Project_Form_TaskFilter extends Custom_Form_AbstractFilter
 {  
   protected $_userList;
   protected $_releaseList;
-  protected $_phaseList;
   protected $_environmentList;
+  protected $_versionList;
   protected $_project;
   
   public function __construct($options = null)
@@ -40,14 +40,14 @@ class Project_Form_TaskFilter extends Custom_Form_AbstractFilter
       throw new Exception('Release list is not defined in form.');
     }
 
-    if (!array_key_exists('phaseList', $options))
-    {
-      throw new Exception('Phase list is not defined in form.');
-    }
-
     if (!array_key_exists('environmentList', $options))
     {
       throw new Exception('Environment list is not defined in form.');
+    }
+
+    if (!array_key_exists('versionList', $options))
+    {
+      throw new Exception('Version list is not defined in form.');
     }
 
     if (!array_key_exists('project', $options))
@@ -57,8 +57,8 @@ class Project_Form_TaskFilter extends Custom_Form_AbstractFilter
 
     $this->_userList = $options['userList'];
     $this->_releaseList = $options['releaseList'];
-    $this->_phaseList = $options['phaseList'];
     $this->_environmentList = $options['environmentList'];
+    $this->_versionList = $options['versionList'];
     $this->_project = $options['project'];
     parent::__construct($options);
   }
@@ -119,16 +119,6 @@ class Project_Form_TaskFilter extends Custom_Form_AbstractFilter
     
     $this->getElement('release')->addMultiOptions($this->_releaseList);
     
-    $this->addElement('select', 'phase', array( 
-      'required'    => false,
-      'multiOptions' => array(
-        0  => $t->translate('[Wszystkie]', array(), 'general'),
-        -1 => $t->translate('[Bez fazy]', array(), 'general')
-      )
-    ));
-    
-    $this->getElement('phase')->addMultiOptions($this->_phaseList);
-    
     $this->addElement('select', 'assigner', array( 
       'required'    => false,
       'multiOptions' => array(
@@ -156,9 +146,76 @@ class Project_Form_TaskFilter extends Custom_Form_AbstractFilter
     
     $this->getElement('environment')->addMultiOptions($this->_environmentList);
     
+    $this->addElement('select', 'version', array( 
+      'required'    => false,
+      'multiOptions' => array(
+        0 => $t->translate('[Wszystkie]', array(), 'general')
+      )
+    ));
+    
+    $this->getElement('version')->addMultiOptions($this->_versionList);
+    
+    $this->addElement('text', 'tags', array(
+      'required'   => false,
+      'class'      => 'autocomplete', 
+      'filters'    => array('StringTrim'),
+      'validators' => array(
+        array('Tags', false, array(
+          'criteria' => array('project_id' => $this->_projectId))
+      ))
+    ));
+    
     $this->addElement('checkbox', 'exceededDueDate', array(
       'required'       => false,
       'uncheckedValue' => ''
+    ));
+  }
+  
+  public function prePopulateTags(array $tags)
+  {
+    $result = array();
+    $htmlSpecialCharsFilter = new Custom_Filter_HtmlSpecialCharsDefault();
+    
+    if (count($tags) > 0)
+    {
+      foreach($tags as $tag)
+      {
+        $result[] = array(
+          'name' => $htmlSpecialCharsFilter->filter($tag['name']),
+          'id'   => $tag['id']
+        );
+      }
+    }
+    
+    return json_encode($result);
+  }
+  
+  public function getValues($suppressArrayNotation = false)
+  {
+    $values = parent::getValues($suppressArrayNotation);
+    $values['tags'] = strlen($values['tags']) ? explode(',', $values['tags']) : array();
+    return $values;
+  }
+  
+  public function getTags()
+  {
+    return explode(',', $this->getValue('tags'));
+  }
+  
+  public function getDefaultValues()
+  {
+    return json_encode(array(
+      'resultCountPerPage' => 10,
+      'search' => '',
+      'status' => 0,
+      'priority' => 0,
+      'release' => 0,
+      'assigner' => 0,
+      'assignee' => 0,
+      'environment' => 0,
+      'version' => 0,
+      'tags' => array('type' => 'tokenInput', 'values' => ''),
+      'exceededDueDate' => false
     ));
   }
 }

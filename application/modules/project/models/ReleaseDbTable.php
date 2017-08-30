@@ -25,9 +25,9 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
   protected $_name = 'release';
   
   public function getSqlAll(Zend_Controller_Request_Abstract $request)
-  {
-    $sql1 = '(SELECT (SELECT COUNT(*) FROM task AS t1 WHERE t1.release_id = r.id AND t1.phase_id IS NULL)+'
-           .'(SELECT COUNT(*) FROM task AS t2 INNER JOIN phase AS ph2 ON ph2.id = t2.phase_id WHERE ph2.release_id = r.id))';
+  { 
+    $sqlDefectCnt = '(SELECT COUNT(*) FROM defect AS d WHERE d.release_id = r.id)';
+    $sqlTaskCnt = '(SELECT COUNT(*) FROM task AS t WHERE t.release_id = r.id)';
     
     $sql = $this->select()
       ->from(array('r' => $this->_name), array(
@@ -35,15 +35,16 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
         'start_date',
         'end_date',
         'name',
-        'description',
-        'taskCount' => new Zend_Db_Expr($sql1)
+        'active',
+        'defectCount' => new Zend_Db_Expr($sqlDefectCnt),
+        'taskCount' => new Zend_Db_Expr($sqlTaskCnt)
       ))
       ->group('r.id')
       ->setIntegrityCheck(false);
 
     $this->_setWhereCriteria($sql, $request);
     $this->_setOrderConditions($sql, $request);    
-    
+
     return $sql;
   }
   
@@ -53,6 +54,50 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
       ->from(array('r' => $this->_name), array(Zend_Paginator_Adapter_DbSelect::ROW_COUNT_COLUMN => 'COUNT(*)'));    
     $this->_setWhereCriteria($sql, $request);
     return $sql;
+  }
+  
+  public function getForView($id,$projectId)
+  {
+    $sqlDefectCnt = '(SELECT COUNT(*) FROM defect AS d WHERE d.release_id = r.id)';
+    $sqlTaskCnt = '(SELECT COUNT(*) FROM task AS t WHERE t.release_id = r.id)';
+    
+    $sql = $this->select()
+      ->from(array('r' => $this->_name), array(
+        'id',
+        'name',
+        'start_date',
+        'end_date',
+        'description',
+        'active',
+        'defectCount' => new Zend_Db_Expr($sqlDefectCnt),
+        'taskCount' => new Zend_Db_Expr($sqlTaskCnt)
+      ))
+      ->where('r.id = ?', $id)
+      ->where('r.project_id = ?', $projectId)
+
+      ->group('r.id')
+      ->limit(1)
+      ->setIntegrityCheck(false);
+
+    return $this->fetchRow($sql);
+  }
+  
+  public function getForEdit($id, $projectId)
+  {
+    $sql = $this->select()
+      ->from(array('r' => $this->_name), array(
+        'name',
+        'start_date',
+        'end_date',
+        'description',
+        'active'
+      ))
+      ->where('r.id = ?', $id)
+      ->where('r.project_id = ?', $projectId)
+
+      ->limit(1);
+    
+    return $this->fetchRow($sql);
   }
   
   public function getAllAjax(Zend_Controller_Request_Abstract $request)
@@ -84,29 +129,11 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
         'startDate' => 'start_date',
         'endDate' => 'end_date'
       ))
-      ->where('r.end_date >= ?', date('Y-m-d'))
+      //->where('r.end_date >= ?', date('Y-m-d'))
       ->order('r.name');
     
     $this->_setWhereCriteria($sql, $request);
 
-    return $this->fetchAll($sql);
-  }
-  
-  public function getForPhaseAjax(Zend_Controller_Request_Abstract $request)
-  {
-    $this->_setRequest($request);
-    
-    $sql = $this->select()
-      ->from(array('r' => $this->_name), array(
-        'id',
-        'name',
-        'startDate' => 'start_date',
-        'endDate' => 'end_date'
-      ))
-      ->order('r.name')
-      ->setIntegrityCheck(false);
-    
-    $this->_setWhereCriteria($sql, $request);
     return $this->fetchAll($sql);
   }
   
@@ -138,28 +165,13 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
     return $this->fetchAll($sql);
   }
   
-  public function getForPhase($id)
-  {
-    $sql = $this->select()
-      ->from(array('r' => $this->_name), array(
-        'id',
-        'name',
-        'start_date',
-        'end_date',
-      ))
-      ->where('r.id = ?', $id)
-      ->limit(1);
-    
-    return $this->fetchRow($sql);
-  }
-  
   public function getForTask($id, $projectId)
   {
     $sql = $this->select()
       ->from(array('r' => $this->_name), array(
         'name',
         'start_date',
-        'end_date',
+        'end_date'
       ))
       ->where('r.id = ?', $id)
       ->where('r.project_id = ?', $projectId)
@@ -168,55 +180,35 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
     return $this->fetchRow($sql);
   }
   
-  public function getByPhase($phaseId)
+  public function getActive($projectId)
   {
     $sql = $this->select()
       ->from(array('r' => $this->_name), array(
         'id',
-        'name'
+        'name',
+        'start_date',
+        'end_date'
       ))
-      ->join(array('ph' => 'phase'), 'ph.release_id = r.id', array())
-      ->where('ph.id = ?', $phaseId)
+      ->where('r.project_id = ?', $projectId)
+      ->where('r.active = 1')
       ->limit(1)
       ->setIntegrityCheck(false);
     
     return $this->fetchRow($sql);
   }
   
-  public function getForView($id)
+  public function getBasicById($id)
   {
-    $sql1 = '(SELECT COUNT(*) FROM task AS t1 WHERE t1.release_id = r.id AND t1.phase_id IS NULL)';
-    $sql2 = '(SELECT COUNT(*) FROM task AS t2 INNER JOIN phase AS ph2 ON ph2.id = t2.phase_id WHERE ph2.release_id = r.id)';
-    
     $sql = $this->select()
       ->from(array('r' => $this->_name), array(
         'id',
         'name',
         'start_date',
-        'end_date',
-        'description',
-        'releaseTaskCount' => new Zend_Db_Expr($sql1),
-        'phaseTaskCount' => new Zend_Db_Expr($sql2)
+        'end_date'
       ))
       ->where('r.id = ?', $id)
-      ->group('r.id')
       ->limit(1)
       ->setIntegrityCheck(false);
-    
-    return $this->fetchRow($sql);
-  }
-  
-  public function getForEdit($id)
-  {
-    $sql = $this->select()
-      ->from(array('r' => $this->_name), array(
-        'name',
-        'start_date',
-        'end_date',
-        'description'
-      ))
-      ->where('r.id = ?', $id)
-      ->limit(1);
     
     return $this->fetchRow($sql);
   }

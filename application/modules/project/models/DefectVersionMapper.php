@@ -42,4 +42,18 @@ class Project_Model_DefectVersionMapper extends Custom_Model_Mapper_Abstract
     $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (defect_id, version_id) VALUES '.$values);
     return $statement->execute($data);
   }
+
+  public function deleteByDefect(Application_Model_Defect $defect)
+  {
+    $this->_getDbTable()->delete(array(
+      'defect_id = ?' => $defect->getId()
+    ));
+  }
+
+  public function deleteByDefectIds(array $defectIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'defect_id IN(?)' => $defectIds
+    ));
+  }
 }

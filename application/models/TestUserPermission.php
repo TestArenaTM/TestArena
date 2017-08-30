@@ -25,7 +25,9 @@ class Application_Model_TestUserPermission extends Custom_Model_UserPermission_A
   static public $_testRoleActions = array(
     Application_Model_RoleAction::TEST_ADD,
     Application_Model_RoleAction::TEST_EDIT_CREATED_BY_YOU,
-    Application_Model_RoleAction::TEST_EDIT_ALL
+    Application_Model_RoleAction::TEST_EDIT_ALL,
+    Application_Model_RoleAction::TEST_DELETE_CREATED_BY_YOU,
+    Application_Model_RoleAction::TEST_DELETE_ALL
   );
   
   public function __construct(Application_Model_Test $test, Application_Model_User $user, array $userPermissions)
@@ -43,6 +45,17 @@ class Application_Model_TestUserPermission extends Custom_Model_UserPermission_A
   {
     if ($this->_checkAuthorPermission(Application_Model_RoleAction::TEST_EDIT_CREATED_BY_YOU)
           || $this->_checkAllPermission(Application_Model_RoleAction::TEST_EDIT_ALL))
+    {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  public function isDeletePermission()
+  {
+    if ($this->_checkAuthorPermission(Application_Model_RoleAction::TEST_DELETE_CREATED_BY_YOU)
+          || $this->_checkAllPermission(Application_Model_RoleAction::TEST_DELETE_ALL))
     {
       return true;
     }

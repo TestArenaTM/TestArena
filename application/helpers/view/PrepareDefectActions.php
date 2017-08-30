@@ -31,92 +31,90 @@ class Zend_View_Helper_PrepareDefectActions extends Zend_View_Helper_Abstract
     
     $actions = array();
     
-    if (in_array($defect->getStatusId(), array(
-      Application_Model_DefectStatus::OPEN, 
-      Application_Model_DefectStatus::REOPEN, 
-      Application_Model_DefectStatus::IN_PROGRESS
-    )))
+    if ($defectUserPermission->isChangeStatusPermission())
     {
-      /* OPEN, REOPEN, IN_PROGRESS */
-      if (in_array($defect->getStatusId(), array(
-        Application_Model_DefectStatus::OPEN, 
-        Application_Model_DefectStatus::REOPEN
-      )))
+      if (in_array($defect->getStatusId(), array(Application_Model_DefectStatus::OPEN, 
+                                                 Application_Model_DefectStatus::REOPEN, 
+                                                 Application_Model_DefectStatus::IN_PROGRESS)))
       {
-        $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_start'), 'text' => 'Rozpocznij'); 
-      }
+        if (in_array($defect->getStatusId(), array(Application_Model_DefectStatus::OPEN, 
+                                                   Application_Model_DefectStatus::REOPEN)))
+        {
+          $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_start'), 'text' => 'Rozpocznij'); 
+        }
 
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_finish'), 'text' => 'Zakończ');
-      $actions[] = null;
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_resolve'), 'text' => 'Rozwiąż');
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_is_invalid'), 'text' => 'Jest niepoprawny');
-      $actions[] = null;
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_close'), 'text' => 'Zamknij');
-    }
-    elseif (in_array($defect->getStatusId(), array(
-      Application_Model_DefectStatus::FINISHED
-    )))
-    {
-      /* FINISHED */
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_resolve'), 'text' => 'Rozwiąż');
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_is_invalid'), 'text' => 'Jest niepoprawny');
-      $actions[] = null;
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_close'), 'text' => 'Zamknij');
-    }
-    elseif (in_array($defect->getStatusId(), array(
-      Application_Model_DefectStatus::RESOLVED, 
-      Application_Model_DefectStatus::INVALID
-    )))
-    {
-      /* RESOLVED, INVALID */
-      if ($defect->getStatusId() == Application_Model_DefectStatus::RESOLVED)
-      {
-        $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_change_to_invalid'), 'text' => 'Zmień na "Niepoprawny"');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_finish'), 'text' => 'Zakończ');
+        $actions[] = null;
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_resolve'), 'text' => 'Rozwiąż');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_is_invalid'), 'text' => 'Jest niepoprawny');
+        $actions[] = null;
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_close'), 'text' => 'Zamknij');
       }
-      else
+      elseif (in_array($defect->getStatusId(), array(Application_Model_DefectStatus::FINISHED)))
       {
-        $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_change_to_resolved'), 'text' => 'Zmień na "Rozwiązany"');
+        /* FINISHED */
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_resolve'), 'text' => 'Rozwiąż');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_is_invalid'), 'text' => 'Jest niepoprawny');
+        $actions[] = null;
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_close'), 'text' => 'Zamknij');
       }
+      elseif (in_array($defect->getStatusId(), array(Application_Model_DefectStatus::RESOLVED, 
+                                                     Application_Model_DefectStatus::INVALID)))
+      {
+        /* RESOLVED, INVALID */
+        if ($defect->getStatusId() == Application_Model_DefectStatus::RESOLVED)
+        {
+          $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_change_to_invalid'), 'text' => 'Zmień na "Niepoprawny"');
+        }
+        else
+        {
+          $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_change_to_resolved'), 'text' => 'Zmień na "Rozwiązany"');
+        }
 
-      $actions[] = null;
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_reopen'), 'text' => 'Otwórz ponownie');
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_close'), 'text' => 'Zamknij');
-    }
-    elseif (in_array($defect->getStatusId(), array(
-      Application_Model_DefectStatus::SUCCESS
-    )))
-    {
-      /* SUCCESS */
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_reopen'), 'text' => 'Otwórz ponownie');
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_change_to_fail'), 'text' => 'Zmień na "Zamknięty negatywnie"');
-    }
-    elseif (in_array($defect->getStatusId(), array(
-      Application_Model_DefectStatus::FAIL
-    )))
-    {
-      /* FAIL */
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_reopen'), 'text' => 'Otwórz ponownie');
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_change_to_success'), 'text' => 'Zmień na "Zamknięty pozytywnie"');
+        $actions[] = null;
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_reopen'), 'text' => 'Otwórz ponownie');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_close'), 'text' => 'Zamknij');
+      }
+      elseif (in_array($defect->getStatusId(), array(Application_Model_DefectStatus::SUCCESS)))
+      {
+        /* SUCCESS */
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_reopen'), 'text' => 'Otwórz ponownie');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_change_to_fail'), 'text' => 'Zmień na "Zamknięty negatywnie"');
+      }
+      elseif (in_array($defect->getStatusId(), array(Application_Model_DefectStatus::FAIL)))
+      {
+        /* FAIL */
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_reopen'), 'text' => 'Otwórz ponownie');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_change_to_success'), 'text' => 'Zmień na "Zamknięty pozytywnie"');
+      }
     }
 
-    if (!in_array($defect->getStatusId(), array(
-      Application_Model_DefectStatus::SUCCESS,
-      Application_Model_DefectStatus::FAIL
-    )))
+    if (!in_array($defect->getStatusId(), array(Application_Model_DefectStatus::SUCCESS,
+                                                Application_Model_DefectStatus::FAIL)))
     {
       /* NOT CLOSED */
-      $actions[] = null;
-      $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_assign'), 'text' => 'Przypisz');
       
-      if ($defect->getAssigneeId() != $this->view->authUser->getId())
+      if ($defectUserPermission->isAssignPermission())
       {
-        $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_assign_to_me'), 'text' => 'Przypisz do mnie');
+        $actions[] = null;
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_assign'), 'text' => 'Przypisz');
+      
+        if ($defect->getAssigneeId() != $this->view->authUser->getId())
+        {
+          $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_assign_to_me'), 'text' => 'Przypisz do mnie');
+        }
       }
       
       if ($defectUserPermission->isEditPermission())
       {
         $actions[] = null;
-        $actions[] = array('url' => $this->view->url(array('id' => $defect->getId()), 'defect_edit'), 'text' => 'Edytuj');
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_edit'), 'text' => 'Edytuj');
+      }  
+      
+      if ($defectUserPermission->isDeletePermission())
+      {
+        $actions[] = null;
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_delete'), 'text' => 'Usuń', 'class' => 'j_delete_defect');
       }  
     }
     

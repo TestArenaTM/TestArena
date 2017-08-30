@@ -1,0 +1,25 @@
+<?php if (null !== $this->customStepViewScript) : ?>
+  <?php echo $this->partial('release-clone/'.$this->customStepViewScript, array(
+    'form' => $this->form,
+    'release' => $this->release,
+    'prePopulatedEnvironments' => $this->prePopulatedEnvironments,
+    'prePopulatedVersions' => $this->prePopulatedVersions,
+    'activeProject' => $this->activeProject
+  )); ?>
+<?php else: ?>
+  <?php echo $this->partial('release-clone/_releaseCloneStep1.phtml', array(
+    'form' => $this->form,
+    'release' => $this->release,
+    'prePopulatedEnvironments' => $this->prePopulatedEnvironments,
+    'prePopulatedVersions' => $this->prePopulatedVersions,
+    'activeProject' => $this->activeProject
+  )); ?>
+<?php endif; ?>
+
+<!--<section id="content">
+  <article class="article_in_content">
+    <h1>Registration</h1>
+
+    <?php //echo $this->form; ?>
+  </article>
+</section>-->

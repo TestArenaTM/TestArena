@@ -1,0 +1,39 @@
+<?php if (count($this->overdueTasksAssignedToMe)): ?>
+  <article class="article_right_box dsb">
+    <h4><?php echo $this->t('Moje zadania z przekroczonym terminem') ?> <span class="redMessage"><?php echo $this->numberOfOverdueTasksAssignedToMe ?></span></h4>
+    <div class="PanelList">
+      <ul>
+        <?php foreach ($this->overdueTasksAssignedToMe as $task): ?>
+          <li>
+            <a href="<?php echo $this->projectUrl(array('projectPrefix' => $task->getProject()->getPrefix(), 'id' => $task->getId()), 'task_view') ?>">
+              <div class="clearfix">
+                <div class="avatar">
+                  <img class="avatar" alt="<?php echo $this->escapeQuotes($task->getAssigner()->getFullname()) ?>" src="<?php echo $task->getAssigner()->getAvatarUrl(true) ?>">
+                </div>
+                <div class="author">
+                  <strong><?php echo $this->escapeQuotes($task->getAssigner()->getFullname()) ?></strong>
+                </div>
+                <div class="snippet preview">
+                  <span><span class="object_nr"><?php echo $task->getObjectNumber() ?></span> <?php echo $this->escapeQuotes($task->getTitle()) ?></span>
+                </div>
+                <div class="snippet preview">
+                  <span class="timestamp exceeded"><?php echo $this->timeAgo($task->getDueDate(), 'exceeded') ?></span>
+                </div>
+              </div>
+            </a>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+      <?php if ($this->activeProject !== null && $this->numberOfOverdueTasksAssignedToMe > 5): ?>
+        <a class="view_all_text" href="<?php echo $this->projectUrl(array('projectPrefix' => $this->activeProject->getPrefix(), 'column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&exceededDueDate=1' ?>"><?php echo $this->t('Pokaż wszystkie...') ?></a>
+      <?php endif; ?>
+    </div>
+  </article>
+<?php else: ?>
+  <article class="article_right_box dsb">
+    <h4><?php echo $this->t('Moje zadania z przekroczonym terminem') ?></h4>
+    <div class="PanelList">
+      <p><?php echo $this->t('Brak zadań') ?></p>
+    </div>
+  </article>      
+<?php endif;

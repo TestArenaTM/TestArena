@@ -25,7 +25,6 @@ class Project_Form_GroupForwardToExecuteTask extends Custom_Form_Abstract
   private $_ids = array();
   private $_projectId = null;
   private $_defaultReleaseId = null;
-  private $_defaultPhaseId = null;
   private $_minDate;
   private $_maxDate = null;
   
@@ -44,13 +43,6 @@ class Project_Form_GroupForwardToExecuteTask extends Custom_Form_Abstract
     }
     
     $this->_defaultReleaseId = $options['defaultReleaseId'];
-    
-    if (!array_key_exists('defaultPhaseId', $options) || $options['defaultPhaseId'] <= 0)
-    {
-       throw new Exception('Phase id is not defined in form.');
-    }
-    
-    $this->_defaultPhaseId = $options['defaultPhaseId'];
 
     if (array_key_exists('ids', $options['post']))
     {
@@ -107,22 +99,6 @@ class Project_Form_GroupForwardToExecuteTask extends Custom_Form_Abstract
       'validators'  => array(
         'Id',
         array('ReleaseExists', true)
-      )
-    ));
-    
-    $this->addElement('text', 'phaseName', array(
-      'required'  => false,
-      'class'     => 'autocomplete', 
-      'maxlength' => 255,
-      'value'     => $t->translate('defaultPhaseName', array(), 'general')
-    ));
-    
-    $this->addElement('hidden', 'phaseId', array(
-      'required'    => true,
-      'value'       => $this->_defaultPhaseId,
-      'validators'  => array(
-        'Id',
-        array('PhaseExists', true)
       )
     ));
 
@@ -286,10 +262,5 @@ class Project_Form_GroupForwardToExecuteTask extends Custom_Form_Abstract
   public function getDefaultReleaseId()
   {
     return $this->_defaultReleaseId;
-  }
-  
-  public function getDefaultPhaseId()
-  {
-    return $this->_defaultPhaseId;
   }
 }

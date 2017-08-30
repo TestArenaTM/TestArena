@@ -33,20 +33,11 @@ class Project_Form_AddTask extends Custom_Form_Abstract
        throw new Exception('Project id not defined in form.');
     }
     
-    $this->_projectId = $options['projectId'];    
-    $nowDate = date('Y-m-d');
-    
-    if (!isset($options['minDate']) || strtotime($options['minDate']) < strtotime($nowDate))
-    {
-      $this->_minDate = $nowDate;
-    }
-    else
+    $this->_projectId = $options['projectId'];   
+
+    if (isset($options['minDate']) && isset($options['maxDate']))
     {
       $this->_minDate = $options['minDate'];
-    }
-    
-    if (array_key_exists('maxDate', $options))
-    {
       $this->_maxDate = $options['maxDate'];
     }
     
@@ -87,26 +78,10 @@ class Project_Form_AddTask extends Custom_Form_Abstract
     
     $this->addElement('hidden', 'releaseId', array(
       'required'    => false,
-      'value'       => 0,
+      'value'       => '',
       'validators'  => array(
         'Id',
         array('ReleaseExists', true)
-      )
-    ));
-    
-    $this->addElement('text', 'phaseName', array(
-      'required'  => false,
-      'class'     => 'autocomplete', 
-      'maxlength' => 255,
-      'value'     => ''
-    ));
-    
-    $this->addElement('hidden', 'phaseId', array(
-      'required'    => false,
-      'value'       => 0,
-      'validators'  => array(
-        'Id',
-        array('PhaseExists', true)
       )
     ));
     
@@ -126,6 +101,16 @@ class Project_Form_AddTask extends Custom_Form_Abstract
       'filters'    => array('StringTrim'),
       'validators' => array(
         array('Versions', false, array(
+          'criteria' => array('project_id' => $this->_projectId))
+      ))
+    ));
+    
+    $this->addElement('text', 'tags', array(
+      'required'   => false,
+      'class'      => 'autocomplete', 
+      'filters'    => array('StringTrim'),
+      'validators' => array(
+        array('Tags', false, array(
           'criteria' => array('project_id' => $this->_projectId))
       ))
     ));
@@ -151,7 +136,7 @@ class Project_Form_AddTask extends Custom_Form_Abstract
       )
     ));
     
-    if ($this->_maxDate === null)
+    if ($this->_maxDate !== null)
     {
       $this->getElement('dueDate')->addValidator('DateBetween', false, array(
         'min'      => $this->_minDate,
@@ -238,11 +223,31 @@ class Project_Form_AddTask extends Custom_Form_Abstract
     return json_encode($result);
   }
   
+  public function prePopulateTags(array $tags)
+  {
+    $result = array();
+    $htmlSpecialCharsFilter = new Custom_Filter_HtmlSpecialCharsDefault();
+    
+    if (count($tags) > 0)
+    {
+      foreach($tags as $tag)
+      {
+        $result[] = array(
+          'name' => $htmlSpecialCharsFilter->filter($tag['name']),
+          'id'   => $tag['id']
+        );
+      }
+    }
+    
+    return json_encode($result);
+  }
+  
   public function getValues($suppressArrayNotation = false)
   {
     $values = parent::getValues($suppressArrayNotation);
     $values['environments'] = strlen($values['environments']) ? explode(',', $values['environments']) : array();
     $values['versions'] = strlen($values['versions']) ? explode(',', $values['versions']) : array();
+    $values['tags'] = strlen($values['tags']) ? explode(',', $values['tags']) : array();
     
     if (!isset($values['attachmentIds']))
     {
@@ -361,5 +366,10 @@ class Project_Form_AddTask extends Custom_Form_Abstract
   public function getVersions()
   {
     return explode(',', $this->getValue('versions'));
+  }
+  
+  public function getTags()
+  {
+    return explode(',', $this->getValue('tags'));
   }
 }

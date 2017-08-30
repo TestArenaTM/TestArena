@@ -32,9 +32,10 @@ abstract class Custom_Model_DbTable_Abstract extends Zend_Db_Table_Abstract
   {
     $result = array();
     
-    foreach ($names as $name)
+    foreach ($names as $key => $name)
     {
-      $result[$prefix.self::TABLE_CONNECTOR.$name] = $name;
+      $key = is_numeric($key) ? $name : $key;
+      $result[$prefix.self::TABLE_CONNECTOR.$key] = $name;
     }
     
     return $result;

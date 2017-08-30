@@ -1,0 +1,16 @@
+<script id="j_commentItem" type="text/x-jquery-tmpl" >
+<div id="comment_${id}" class="comment{{if otherSubject}} otherSubject{{/if}}" comment_id="${id}">
+  <div class="comment_content">
+    <div class="avatar_comment"><img class="avatar" src="${avatarUrl}" /></div>
+    <div class="comment_info">
+      <p class="comment_user">${userName}</p>
+      <p class="comment_date">{{if modifyDate == '0000-00-00 00:00:00'}}${createDate}{{else}}${modifyDate}{{/if}}
+      {{if isOwner}}
+      <span class="comment_editdeletereport"><a class="j_editComment" comment_id="${id}" style="display: none;" href="#" title="<?php echo $this->generalT('Edytuj') ?>" alt="<?php echo $this->generalT('Edytuj') ?>"></a> <a class="j_deleteComment" comment_id="${id}" style="display: none;" href="#" title="<?php echo $this->generalT('Usuń') ?>" alt="<?php echo $this->generalT('Usuń') ?>"></a></span>
+      {{/if}}
+    </div>
+    <a class="comment_subject" href="${subjectUrl}">${subjectName}</a>
+    <div id="j_comment_content_${id}" class="comment_text">{{html content}}</div>
+  </div>
+</div>
+</script>

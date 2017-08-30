@@ -28,7 +28,10 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
  
     if (!$this->getRequest()->isXmlHttpRequest())
     {
-      $this->checkUserSession(true);
+      if ($this->_project === null)
+      {
+        throw new Custom_404Exception();
+      }
     
       if (!in_array($this->getRequest()->getActionName(), array('index', 'view')))
       {
@@ -40,16 +43,18 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
   
   private function _getFilterForm()
   {
-    return new Project_Form_VersionFilter(array('action' => $this->_url(array(), 'version_list')));
+    return new Project_Form_VersionFilter(array('action' => $this->_projectUrl(array(), 'version_list')));
   }
     
   public function indexAction()
   {
-    $request = $this->getRequest();
+    $this->_setCurrentBackUrl('version_list');
+    $request = $this->_getRequestForFilter(Application_Model_FilterGroup::VERSIONS);
     $filterForm = $this->_getFilterForm();
     
     if ($filterForm->isValid($request->getParams()))
     {
+      $this->_filterAction($filterForm->getValues(), 'version');
       $versionMapper = new Project_Model_VersionMapper();
       list($list, $paginator) = $versionMapper->getAll($request);
     }
@@ -59,21 +64,28 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
       $paginator = null;
     }
     
+    $filter = $this->_user->getFilter(Application_Model_FilterGroup::VERSIONS);
+    
+    if ($filter !== null)
+    {
+      $filterForm->prepareSavedValues($filter->getData());
+    }
+    
     $this->_setTranslateTitle();
     $this->view->versions = $list;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
-    $this->view->accessVersionAdd = $this->_checkAccess(Application_Model_RoleAction::VERSION_ADD);
-    $this->view->accessVersionModify = $this->_checkAccess(Application_Model_RoleAction::VERSION_MODIFY);
+    $this->view->accessVersionManagement = $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT);
   }
     
   public function viewAction()
   {
     $version = $this->_getValidVersionForView();
-    $this->_setTranslateTitle();
+    $this->_setTranslateTitle(array('name' => $version->getName()), 'headTitle');
     $this->view->version = $version;
-    $this->view->accessVersionModify = $this->_checkAccess(Application_Model_RoleAction::VERSION_MODIFY);
+    $this->view->accessVersionManagement = $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT);
+    $this->view->backUrl = $this->_getBackUrl('version_list', $this->_projectUrl(array(), 'version_list'));
   }
   
   public function listAjaxAction()
@@ -100,7 +112,7 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
   private function _getAddVersionForm()
   {
     return new Project_Form_AddVersion(array(
-      'action'    => $this->_url(array('projectId' => $this->_project->getId()), 'version_add_process'),
+      'action'    => $this->_projectUrl(array('projectId' => $this->_project->getId()), 'version_add_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
@@ -108,7 +120,7 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
   
   public function addAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::VERSION_ADD, true);
+    $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $this->_setTranslateTitle();
@@ -117,14 +129,14 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
 
   public function addProcessAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::VERSION_ADD, true);
+    $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $request = $this->getRequest();
 
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'version_list');
+      return $this->projectRedirect(array(), 'version_list');
     }
     
     $form = $this->_getAddVersionForm();
@@ -150,13 +162,13 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
   }
   
   private function _getEditVersionForm(Application_Model_Version $version)
   {
     $form = new Project_Form_EditVersion(array(
-      'action'    => $this->_url(array('id' => $version->getId()), 'version_edit_process'),
+      'action'    => $this->_projectUrl(array('id' => $version->getId()), 'version_edit_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId(),
       'id'        => $version->getId()
@@ -167,7 +179,7 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
   
   public function editAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::VERSION_MODIFY, true);
+    $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $version = $this->_getValidVersionForEdit();
@@ -178,14 +190,14 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
 
   public function editProcessAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::VERSION_MODIFY, true);
+    $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $request = $this->getRequest();
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'version_list');
+      return $this->projectRedirect(array(), 'version_list');
     }
     
     $version = $this->_getValidVersionForEdit();
@@ -213,12 +225,12 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
   }
   
   public function deleteAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::VERSION_MODIFY, true);
+    $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $version = $this->_getValidVersion();
@@ -234,7 +246,7 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect(array(), 'version_list');
+    return $this->projectRedirect(array(), 'version_list');
   }
   
   private function _getValidVersion()
@@ -247,6 +259,7 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
     }
     
     $version = new Application_Model_Version($idValidator->getFilteredValues());
+    $version->setProjectObject($this->_project);
     return $version;
   }
   

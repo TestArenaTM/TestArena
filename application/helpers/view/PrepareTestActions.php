@@ -31,14 +31,15 @@ class Zend_View_Helper_PrepareTestActions extends Zend_View_Helper_Abstract
     
     $actions = array();
     
-    //$actions[] = array('url' => $this->view->url(array('id' => $test->getId()), 'test_forward_to_execute'), 'text' => 'Przekaż do wykonania');
+    //$actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId()), 'test_forward_to_execute'), 'text' => 'Przekaż do wykonania');
     
     if ($test->getStatusId() == Application_Model_TestStatus::ACTIVE
-        && $testUserPermission->isEditPermission())
+        && ($testUserPermission->isEditPermission() || $testUserPermission->isDeletePermission()))
     {
       //$actions[] = null;
-      $actions[] = array('url' => $this->view->url(array('id' => $test->getId()), $this->view->testEditRouteName($test)), 'text' => 'Edytuj');
-      $actions[] = array('class' => 'j_delete_test', 'url' => $this->view->url(array('id' => $test->getId()), 'test_delete'), 'text' => 'Usuń');
+      $actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId()), $this->view->testEditRouteName($test)), 'text' => 'Edytuj');
+      $actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId()), $this->view->testAddRouteName($test)), 'text' => 'Klonuj');
+      $actions[] = array('class' => 'j_delete_test', 'url' => $this->view->projectUrl(array('id' => $test->getId()), 'test_delete'), 'text' => 'Usuń');
     }
     
     

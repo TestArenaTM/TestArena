@@ -1,203 +1,81 @@
 <section id="content">
   <article class="article_in_content dashboard">
-    
-    <?php if ($this->allTasksAssigned2YouCnt > 0): ?>
-      <article class="column_dashboard">
-        <div class="col50" >
-          <article class="article_box dsb">
-           <h4><?php echo $this->t('Zadania przypisane do mnie') ?></h4>
-           <div>
-            <div id="chart_div" class="chartMain"></div>
-          </div>
-          </article>
-        </div>
 
-        <div class="col50">
-          <article class="article_box dsb">
-            <h4><?php echo $this->t('Zadania przypisane do mnie') ?></h4>
-             <div>
-              <div class="dsb-content-main">
-            <?php if (isset($this->activeProject)): ?>
-                <a href="<?php echo $this->url(array('column' => 'task_due_date'), 'task_list').'?assignee='.$this->authUser->getId() ?>"><h6><?php echo $this->allTasksAssigned2YouCnt ?></h6><small><?php echo $this->t('Wszystkich zadań') ?></small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allTasksAssigned2YouCntPrct?>% <?php echo $this->t('zadań w projektcie') ?></div><span style="width:<?php echo $this->allTasksAssigned2YouCntPrct?>%"></span></span></a>
-            <?php else: ?>
-                <h6><?php echo $this->allTasksAssigned2YouCnt ?></h6><small>Wszystkich zadań</small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allTasksAssigned2YouCntPrct?>% <?php echo $this->t('zadań w projektach aktywnych') ?></div><span style="width:<?php echo $this->allTasksAssigned2YouCntPrct?>%"></span></span>
-            <?php endif; ?>
-              </div>             
-              <div class="dsb-content-second">         
-            <?php if (isset($this->activeProject)): ?>
-            <a href="<?php echo $this->url(array('column' => 'task_due_date'), 'task_list').'?status='.Application_Model_TaskStatus::OPEN.'&assignee='.$this->authUser->getId() ?>"><h6><?php echo $this->allOpenTasksAssigned2YouCnt ?></h6><small><?php echo $this->t('Otwartych') ?></small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allOpenTasksAssigned2YouCntPrct?>%</div><span style="width:<?php echo $this->allOpenTasksAssigned2YouCntPrct?>%"></span></span></a>
-            <?php else: ?>
-                <h6><?php echo $this->allOpenTasksAssigned2YouCnt ?></h6><small><?php echo $this->t('Otwartych') ?></small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allOpenTasksAssigned2YouCntPrct?>%</div><span style="width:<?php echo $this->allOpenTasksAssigned2YouCntPrct?>%"></span></span>
-            <?php endif; ?>
-              </div>
-              <div class="dsb-content-second">         
-            <?php if (isset($this->activeProject)): ?>
-                <a href="<?php echo $this->url(array('column' => 'task_due_date'), 'task_list').'?status='.Application_Model_TaskStatus::IN_PROGRESS.'&assignee='.$this->authUser->getId() ?>"><h6><?php echo $this->allInProgressTasksAssigned2YouCnt ?></h6><small><?php echo $this->t('W toku') ?></small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allInProgressTasksAssigned2YouCntPrct?>%</div><span style="width:<?php echo $this->allInProgressTasksAssigned2YouCntPrct?>%"></span></span></a>
-            <?php else: ?>
-                <h6><?php echo $this->allInProgressTasksAssigned2YouCnt ?></h6><small><?php echo $this->t('W toku') ?></small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allInProgressTasksAssigned2YouCntPrct?>%</div><span style="width:<?php echo $this->allInProgressTasksAssigned2YouCntPrct?>%"></span></span>
-            <?php endif; ?>
-              </div>  
-              <div class="dsb-content-second">          
-            <?php if (isset($this->activeProject)): ?>
-                <a href="<?php echo $this->url(array('column' => 'task_due_date'), 'task_list').'?status='.Application_Model_TaskStatus::CLOSED.'&assignee='.$this->authUser->getId() ?>"><h6><?php echo $this->allClosedTasksAssigned2YouCnt ?></h6><small><?php echo $this->t('Zamkniętych') ?></small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allClosedTasksAssigned2YouCntPrct?>%</div><span style="width:<?php echo $this->allClosedTasksAssigned2YouCntPrct?>%"></span></span></a>
-            <?php else: ?>
-                <h6><?php echo $this->allClosedTasksAssigned2YouCnt ?></h6><small><?php echo $this->t('Zamkniętych') ?></small><span class="chart25 percent-dsb"><div class="cloud"><?php echo $this->allClosedTasksAssigned2YouCntPrct?>%</div><span style="width:<?php echo $this->allClosedTasksAssigned2YouCntPrct?>%"></span></span>
-            <?php endif; ?>
-              </div>             
-             </div>              
-          </article>
-        </div>
-      </article>
-    <?php endif;?>
-    
-    <article class="article_left">
-      <article class="article_left_box dsb">
-        <h4><?php echo $this->t('Najnowsze zadania') ?></h4>
+    <?php if ($this->filterForm !== null): ?>   
+    <?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
+    <article class="column_dashboard">
+      <form name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
         
-        <?php if (count($this->latestNotClosedTasksAssigned2You)): ?>
-          <div class="contentList">
-            <ul>
-              <?php foreach ($this->latestNotClosedTasksAssigned2You as $task): ?>
-                <li>
-                  <div class="clearfixDashboard">
-                    <div class="avatarBig">
-                      <img class="avatarBig" alt="<?php echo $task->getAssigner()->getFullname() ?>" src="<?php echo $task->getAssigner()->getAvatarUrl(true) ?>">
-                    </div>
-                    <div class="author">
-                      <?php echo $task->getAssigner()->getFullname() ?>
-                    </div>
-                    <div class="snippet_action_contentList">
-                      <span class="snippet_action_contentList snippet_action_text"><?php echo $this->t('przekazał ci zadanie do wykonania') ?>
-                        <a href="<?php echo $this->url(array('id' => $task->getId(), 'projectId' => $task->getProject()->getId()), 'task_view') ?>">
-                          <span class="object_nr"><?php echo $task->getObjectNumber() ?></span> <?php echo $task->getTitle() ?>
-                        </a>
-                      </span>
-                      <span class="snippet_description_contentList"><?php echo $this->escapeQuotes($task->getDescription()) ?></span>
-                      <!--<a class="snippet_more_contentList" href="<?php echo $this->url(array('id' => $task->getId(), 'projectId' => $task->getProject()->getId()), 'task_view') ?>">
-                        <?php echo $this->t('Czytaj więcej...') ?>
-                      </a>-->
-                      <div class="activity-item-info">
-                        <span class="timestamp"><span class="time_icon"></span><?php echo $this->timeAgo($task->getModifyDate()) ?></span>
-                        <div class="activity-item-actions">
-                          <span class="activity-item-action">
-                            <a class="activity-item-comment-link" href="<?php echo $this->url(array('id' => $task->getId(), 'projectId' => $task->getProject()->getId()), 'task_view').'#comments' ?>">
-                              <span class="comm_icon"></span><?php echo $this->t('Komentarze') ?>
-                            </a>
-                          </span>
-                        </div>
-                        <div class="activity-item-action-status-container hidden"></div>
-                      </div>                     
-                    </div>                   
-                  </div>
-                </li>
-              <?php endforeach; ?>
-            </ul>
-            <?php if (isset($this->activeProject)): ?>
-              <a class="show_more" href="<?php echo $this->url(array(), 'task_list') ?>"><span><?php echo $this->t('Pokaż wszystkie...') ?></span></a>
-            <?php endif; ?>
-          </div>
-        <?php else: ?>
-          <div class="empty-text"><?php echo $this->t('Brak zadań.') ?></div>
-        <?php endif; ?>
-      </article>
+        <?php echo $this->filterForm->onlyActiveRelease->renderViewHelper() ?>
+        <?php echo $this->formLabel('onlyActiveRelease', $this->t('Pokaż tylko dla aktywnego wydania NAME', array('name' => $this->activeRelease->getName()))) ?>
+        
+      </form>
     </article>
-    
-    <article class="article_right">
+    <?php endif;?>
+        
+    <?php        
+    if ($this->activeProject === null)
+    {
+      echo $this->partial('partials/task-statistics.phtml', array(
+        'authUser' => $this->authUser,
+        'mainLinkPart' => $this->mainLinkPart,
+        'numberOfTasksAssignedToMe' => $this->numberOfTasksAssignedToMe,
+        'percentOfTasksAssignedToMe' => $this->percentOfTasksAssignedToMe,
+        'numberOfOpenTasksAssignedToMe' => $this->numberOfOpenTasksAssignedToMe,
+        'percentOfOpenTasksAssignedToMe' => $this->percentOfOpenTasksAssignedToMe,
+        'numberOfReopenTasksAssignedToMe' => $this->numberOfReopenTasksAssignedToMe,
+        'percentOfReopenTasksAssignedToMe' => $this->percentOfReopenTasksAssignedToMe,
+        'numberOfInProgressTasksAssignedToMe' => $this->numberOfInProgressTasksAssignedToMe,
+        'percentOfInProgressTasksAssignedToMe' => $this->percentOfInProgressTasksAssignedToMe,
+        'numberOfClosedTasksAssignedToMe' => $this->numberOfClosedTasksAssignedToMe,
+        'percentOfClosedTasksAssignedToMe' => $this->percentOfClosedTasksAssignedToMe,
+        'json_numberOfTasksAssignedToMeGroupedByStatus' => $this->json_numberOfTasksAssignedToMeGroupedByStatus
+      ));
+    }
+    else
+    {
+      echo $this->partial('partials/task-statistics-active-project.phtml', array(
+        'authUser' => $this->authUser,
+        'activeProject' => $this->activeProject,
+        'mainLinkPart' => $this->mainLinkPart,
+        'numberOfTasksAssignedToMe' => $this->numberOfTasksAssignedToMe,
+        'percentOfTasksAssignedToMe' => $this->percentOfTasksAssignedToMe,
+        'numberOfOpenTasksAssignedToMe' => $this->numberOfOpenTasksAssignedToMe,
+        'percentOfOpenTasksAssignedToMe' => $this->percentOfOpenTasksAssignedToMe,
+        'numberOfReopenTasksAssignedToMe' => $this->numberOfReopenTasksAssignedToMe,
+        'percentOfReopenTasksAssignedToMe' => $this->percentOfReopenTasksAssignedToMe,
+        'numberOfInProgressTasksAssignedToMe' => $this->numberOfInProgressTasksAssignedToMe,
+        'percentOfInProgressTasksAssignedToMe' => $this->percentOfInProgressTasksAssignedToMe,
+        'numberOfClosedTasksAssignedToMe' => $this->numberOfClosedTasksAssignedToMe,
+        'percentOfClosedTasksAssignedToMe' => $this->percentOfClosedTasksAssignedToMe,
+        'json_numberOfTasksAssignedToMeGroupedByStatus' => $this->json_numberOfTasksAssignedToMeGroupedByStatus
+      ));
+    }
+    ?>
+    <article class="article_left">
+      <?php echo $this->partial('partials/my-tasks.phtml', array(
+        'activeProject' => $this->activeProject,
+        'mainLinkPart' => $this->mainLinkPart,
+        'lastNotClosedTasksAssignedToMe' => $this->lastNotClosedTasksAssignedToMe,
+        'numberOfNotClosedTasksAssignedToMe' => $this->numberOfNotClosedTasksAssignedToMe        
+      )); ?>
+    </article> 
 
-    <?php if (count($this->latestMessages)): ?>
-      <article class="article_right_box dsb">
-        <h4><?php echo $this->t('Ostatnie otrzymane wiadomości') ?>
-          <?php if (!empty($this->numberOfUnreadMessages)): ?>
-            <span class="redMessage"><?php echo $this->numberOfUnreadMessages ?></span>
-          <?php endif; ?>
-        </h4>
-        <div class="PanelList">
-          <ul>
-            <?php foreach ($this->latestMessages as $message): ?>
-              <li>
-                <a href="<?php echo $this->url(array('item_id' => $message->getThreadId()), 'message_list') ?>">
-                  <div class="clearfix">
-                    <?php if ($message->getToStatusId() == Application_Model_MessageToStatus::UNREAD): ?>
-                      <span class="newMessage"><?php echo $this->t('nowa') ?></span>
-                    <?php endif; ?>
-                    <div class="avatar">
-                      <img class="avatar" alt="<?php echo $this->escapeQuotes($message->getSender()->getFullname()) ?>" src="<?php echo $message->getSender()->getAvatarUrl(true) ?>">
-                    </div>
-                    <div class="author">
-                      <strong><?php echo $this->escapeQuotes($message->getSender()->getFullname()) ?></strong>
-                    </div>
-                    <div class="snippet preview">
-                      <span><strong><?php echo nl2br($this->purifier->purify($message->getSubject())) ?></strong></span>
-                    </div>                    
-                    <div class="snippet preview">
-                      <span><?php echo nl2br($this->purifier->purify($message->getContent())) ?></span>
-                    </div>
-                  </div>
-                </a>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-          <a class="view_all_text" href="<?php echo $this->url(array(), 'message_list') ?>"><?php echo $this->t('Pokaż wszystkie...') ?></a>
-        </div>
-      </article>
-    <?php else: ?>
-      <article class="article_right_box dsb">
-        <h4><?php echo $this->t('Ostatnie otrzymane wiadomości') ?></h4>
-        <div class="PanelList">
-          <p><?php echo $this->t('Brak wiadomości.') ?></p>
-        </div>
-      </article>
-    <?php endif; ?>
+    <article class="article_right">
+      <?php echo $this->partial('partials/my-overdue-tasks.phtml', array(
+        'activeProject' => $this->activeProject,
+        'mainLinkPart' => $this->mainLinkPart,
+        'overdueTasksAssignedToMe' => $this->overdueTasksAssignedToMe,
+        'numberOfOverdueTasksAssignedToMe' => $this->numberOfOverdueTasksAssignedToMe
+      )); ?>
       
-      <?php if (count($this->overdueTasks)): ?>
-        <article class="article_right_box dsb">
-          <h4><?php echo $this->t('Zadania z przekroczonym terminem realizacji') ?>  <span class="redMessage"><?php echo $this->numberOfOverdueTasks ?></span></h4>
-          <div class="PanelList">
-            <ul>
-              <?php foreach ($this->overdueTasks as $task): ?>
-                <li>
-                  <a href="<?php echo $this->url(array('id' => $task->getId(), 'projectId' => $task->getProject()->getId()), 'task_view') ?>">
-                    <div class="clearfix">
-                      <div class="avatar">
-                        <img class="avatar" alt="<?php echo $this->escapeQuotes($task->getAssigner()->getFullname()) ?>" src="<?php echo $task->getAssigner()->getAvatarUrl(true) ?>">
-                      </div>
-                      <div class="author">
-                        <strong><?php echo $this->escapeQuotes($task->getAssigner()->getFullname()) ?></strong>
-                      </div>
-                      <div class="snippet preview">
-                        <span><span class="object_nr"><?php echo $task->getObjectNumber() ?></span> <?php echo $this->escapeQuotes($task->getTitle()) ?></span>
-                      </div>
-                      <div class="snippet preview">
-                        <span class="timestamp exceeded"><?php echo $this->timeAgo($task->getDueDate(), 'exceeded') ?></span>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-              <?php endforeach; ?>
-            </ul>
-            <?php if (isset($this->activeProject)): ?>
-              <a class="view_all_text" href="<?php echo $this->url(array('column' => 'task_due_date'), 'task_list').'?exceededDueDate=1' ?>"><?php echo $this->t('Pokaż wszystkie...') ?></a>
-            <?php endif; ?>
-          </div>
-        </article>
-    <?php else: ?>
-      <article class="article_right_box dsb">
-        <h4><?php echo $this->t('Zadania z przekroczonym terminem realizacji') ?></h4>
-        <div class="PanelList">
-          <p><?php echo $this->t('Brak zadań z przekroczonym terminem.') ?></p>
-        </div>
-      </article>      
-      <?php endif; ?>
-      
+      <?php echo $this->partial('partials/my-messages.phtml', array(
+        'activeProject' => $this->activeProject,
+        'latestMessages' => $this->latestMessages,
+        'numberOfUnreadMessages' => $this->numberOfUnreadMessages,
+        'purifier' => $this->purifier
+      )); ?>
     </article> 
     
   </article>
 </section>
-
-<?php if ($this->allTasksAssigned2YouCnt > 0): ?>
-  <script type="text/javascript">
-  /* <![CDATA[ */
-    var projectTaskChartDataJson = '<?php echo $this->projectTaskChartDataJson?>';
-  /* ]]> */
-  </script>
-<?php endif;?>

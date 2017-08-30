@@ -12,29 +12,30 @@
     <?php if ($this->activeProject->isActive()): ?>
     <nav class="button_link_nav">
       <ul class="button_link_ul">
-        <?php if ($this->accessEnvironmentAdd): ?>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->activeProject->getId()), 'environment_add')?>" ><?php echo $this->t('Dodaj środowisko') ?></a></li>
+        <?php if ($this->accessEnvironmentManagement): ?>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('projectId' => $this->activeProject->getId()), 'environment_add')?>" ><?php echo $this->t('Dodaj środowisko') ?></a></li>
         <?php endif; ?>
       </ul>
     </nav>
     <?php endif; ?>
 
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
-
+      <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
+      
       <div class="search_text">
         <div class="filter">
-          <div><?php echo $this->formLabel('search', $this->t('Szukaj')) ?></div>
+          <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
           <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
         </div>
       </div>
 
       <div class="search_filter">
         <div class="filter">
-          <div><?php echo $this->formLabel('resultCountPerPage', $this->t('Wyniki')) ?></div>
+          <div><?php echo $this->formLabel('resultCountPerPage', $this->generalT('Wyniki')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
         </div>
 
-        <div class="filterButton"><?php echo $this->formButton('j_filterButton', $this->t('Filtruj')) ?></div>
+        <?php echo $this->partial('partials/filter-buttons.phtml'); ?>
       </div>
 
     </form>
@@ -45,7 +46,6 @@
         <thead>
           <tr>
             <th><?php echo $this->sortingControl('Nazwa', 'environment_name', 'sorting.phtml', $this->request) ?></th>
-            <th><?php echo $this->t('Opis') ?></th>
             <th><?php echo $this->sortingControl('Liczba zadań', 'environment_taskCount', 'sorting.phtml', $this->request) ?></th>
             <th><?php echo $this->sortingControl('Liczba defektów', 'environment_defectCount', 'sorting.phtml', $this->request) ?></th>
             <?php if ($this->activeProject->isActive()): ?>
@@ -56,31 +56,40 @@
         <tbody>
           <?php foreach ($this->environments as $environment): ?>
           <tr>
-            <td><a href="<?php echo $this->url(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a></td>
-            <td class="t_description"><?php echo $this->escapeQuotes($environment->getDescription()) ?></td>
-            <td class="t_number"><?php echo $environment->getExtraData('taskCount') ?></td>
-            <td class="t_number"><?php echo $environment->getExtraData('defectCount') ?></td>
+            <td><a href="<?php echo $this->projectUrl(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a></td>
+            <td class="t_number">
+              <a href="<?php echo $this->projectUrl(array(), 'task_list').'?skipSavedFilter&environment='.$environment->getId() ?>">
+                <?php echo $environment->getExtraData('taskCount') ?>
+              </a>
+            </td>
+            <td class="t_number">
+              <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
+                <a href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&environment='.$environment->getId() ?>">
+                  <?php echo $environment->getExtraData('defectCount') ?>
+                </a>
+              <?php else: ?>
+                <?php echo $environment->getExtraData('defectCount') ?>
+              <?php endif; ?>
+            </td>
             <?php if ($this->activeProject->isActive()): ?>
             <td>
-              <nav>
-                <ul class="action_list">
-                  <div class="popbox">
-                    <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
-                    <div class='collapse'>
-                      <ul class="box">
-                        <?php if ($this->accessEnvironmentModify): ?>
-                          <li><a href="<?php echo $this->url(array('id' => $environment->getId()), 'environment_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+              <?php if ($this->accessEnvironmentManagement): ?>
+                <nav>
+                  <ul class="action_list">
+                    <div class="popbox">
+                      <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                      <div class='collapse'>
+                        <ul class="box">
+                          <li><a href="<?php echo $this->projectUrl(array('id' => $environment->getId()), 'environment_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
                           <?php if ($environment->getExtraData('taskCount') == 0 && $environment->getExtraData('defectCount') == 0): ?>
-                            <li><a class="j_delete_environment" href="<?php echo $this->url(array('id' => $environment->getId()), 'environment_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+                            <li><a class="j_delete_environment" href="<?php echo $this->projectUrl(array('id' => $environment->getId()), 'environment_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
                           <?php endif; ?>
-                        <?php endif; ?>
-                        <li><a href="<?php echo $this->url(array(), 'task_list').'?environment='.$environment->getId() ?>" ><?php echo $this->t('Zadania') ?></a></li>
-                        <li><a href="<?php echo $this->url(array(), 'defect_list').'?environment='.$environment->getId() ?>" ><?php echo $this->t('Defekty') ?></a></li>
-                      </ul> 
-                    </div>
-                  </div>                
-                </ul>
-              </nav>
+                        </ul> 
+                      </div>
+                    </div>                
+                  </ul>
+                </nav>
+              <?php endif; ?>
             </td>
             <?php endif; ?>
           </tr>
@@ -91,10 +100,15 @@
       <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
 
     <?php else: ?>
-      <div class="empty-text"><?php echo $this->t('Brak środowisk.') ?></div>
+      <div class="empty-text"><?php echo $this->t('Brak środowisk') ?></div>
     <?php endif; ?>
   </article>    
 </section>
 
-<?php 
-echo $this->partial('popups/delete-environment.phtml');
+<?php echo $this->partial('popups/delete-environment.phtml'); ?>
+<script type="text/javascript">
+/* <![CDATA[ */
+  var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
+  var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
+/* ]]> */
+</script>

@@ -22,6 +22,19 @@ The full text of the GPL is in the LICENSE file.
 */
 class Project_Form_EditTestCase extends Project_Form_AddTestCase
 {
+  private $_familyId;  
+  
+  public function __construct($options = null)
+  {
+    if (!array_key_exists('familyId', $options))
+    {
+       throw new Exception('Test family id not defined in form');
+    }
+    
+    $this->_familyId = $options['familyId'];
+    parent::__construct($options);
+  }
+  
   public function init()
   {
     parent::init();
@@ -30,6 +43,13 @@ class Project_Form_EditTestCase extends Project_Form_AddTestCase
       'required'       => false,
       'uncheckedValue' => ''        
     ));
+    
+    $this->getElement('name')
+      ->removeValidator('UniqueTestName')
+      ->addValidator('UniqueTestName', true, array(
+        'criteria'  => array('project_id' => $this->_projectId),
+        'exclude'   => $this->_familyId
+      ));
     
     $this->getElement('csrf')->setAttrib('salt', 'edit_test_case');
   }

@@ -27,12 +27,18 @@ class Application_Model_HistorySubjectType extends Custom_Model_Dictionary_Abstr
   const TEST_CASE         = 3;
   const EXPLORATORY_TEST  = 4;
   const DEFECT            = 5;
+  const TASK_TEST         = 6;
+  const AUTOMATIC_TEST    = 7;
+  const CHECKLIST         = 8;
   
   protected $_names = array(
     self::TASK              => 'TASK',
     self::OTHER_TEST        => 'OTHER_TEST',
     self::TEST_CASE         => 'TEST_CASE',
     self::EXPLORATORY_TEST  => 'EXPLORATORY_TEST',
-    self::DEFECT            => 'DEFECT'
+    self::DEFECT            => 'DEFECT',
+    self::TASK_TEST         => 'TASK_TEST',
+    self::AUTOMATIC_TEST    => 'AUTOMATIC_TEST',
+    self::CHECKLIST         => 'CHECKLIST'
   );
 }

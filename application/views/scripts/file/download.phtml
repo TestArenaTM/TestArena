@@ -1,13 +1,7 @@
 <section id="content">
   <article class="article_in_content">
     <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
-    <?php if (isset($this->messages)): ?>
-      <?php foreach ($this->messages as $message): ?>
-        <p><?php echo $message ?></p>
-      <?php endforeach; ?>
-    <?php endif; ?>
-        
+    <p><?php echo strlen($this->file->getDescription()) ? $this->file->getDescription() : $this->file->getFullName(); ?></p>        
     <br />
 
     <p>

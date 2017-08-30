@@ -33,31 +33,54 @@ class Zend_View_Helper_DefectHistory extends Zend_View_Helper_Abstract
         }
         else
         {
-          return $this->view->generalT('utworzył(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)', array(
-            'assigneeName'  => $history->getExtraData('field1Data1'),
-            'assigneeEmail' => $history->getExtraData('field1Data2')
+          return $this->view->generalT('utworzył(a) defekt i przypisał(a) go użytkownika ASSIGNEE', array(
+            'assignee' => $this->_getNiceAssignee($history)
+          ));
+        }
+        
+      case Application_Model_HistoryType::ASSIGN_DEFECT:
+        if ($history->getUser()->getId() == $history->getField1())
+        {
+          return $this->view->generalT('przypisał(a) defekt do siebie');
+        }
+        else
+        {
+          return $this->view->generalT('przypisał(a) defekt do użytkownika ASSIGNEE', array(
+            'assignee' => $this->_getNiceAssignee($history)
           ));
         }
         
       case Application_Model_HistoryType::CHANGE_DEFECT:
+        return $this->view->generalT('zmienił(a) defekt');
+        
+      case Application_Model_HistoryType::CHANGE_AND_ASSIGN_DEFECT:
         if ($history->getUser()->getId() == $history->getField1())
         {
-          return $this->view->generalT('zmienił(a) defekt');
+          return $this->view->generalT('zmienił(a) defekt i przypisał(a) go do siebie');
         }
         else
         {
-          return $this->view->generalT('zmienił(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)', array(
-            'assigneeName'  => $history->getExtraData('field1Data1'),
-            'assigneeEmail' => $history->getExtraData('field1Data2')
+          return $this->view->generalT('zmienił(a) defekt i przypisał(a) go do użytkownika ASSIGNEE', array(
+            'assignee' => $this->_getNiceAssignee($history)
           ));
         }
       
       case Application_Model_HistoryType::CHANGE_DEFECT_STATUS:
         return $this->view->generalT('zmienił(a) status defektu na DEFECT_STATUS', array(
-          'defectStatus' => $this->view->statusT(new Application_Model_DefectStatus($history->getField1()), 'DEFECT')
+          'defectStatus' => $this->_getNiceDefectStatus($history)
         ));
     }
   
     return '';
+  }
+  
+  private function _getNiceAssignee(Application_Model_History $history)
+  {
+    return '<strong title=\"'.$history->getExtraData('data2').'\">'.$history->getExtraData('data1').'</strong>';
+  }
+  
+  private function _getNiceDefectStatus(Application_Model_History $history)
+  {
+    return '<strong>'.$this->view->statusT(new Application_Model_DefectStatus($history->getField1()), 'DEFECT').'</strong>';
   }
 }

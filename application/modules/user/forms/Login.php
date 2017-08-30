@@ -65,18 +65,15 @@ class User_Form_Login extends Custom_Form_Abstract
        
     if ($this->_turnOnCaptcha)
     {
-      $this->addElement('captcha', 'captcha', array(
-        'required'  => true,
-        'captcha'   => array(
-          'captcha' => 'Image',
-          'wordLen' => 6,
-          'timeout' => 300,
-          'font'    => _FRONT_PUBLIC_DIR . '/css/fonts/Oswald.otf',  
-          'imgDir'  => _FRONT_PUBLIC_DIR . '/captcha/',  
-          'imgUrl'  => Zend_Registry::get('config')->baseUrl . '/captcha/'
-        ),
-        'decorators' => array('Captcha') 
-      ));
+      $recaptchaConfigData = Zend_Registry::get('config')->recaptcha;
+      $recaptchaOptions = array(
+        'siteKey'   => $recaptchaConfigData->publicKey,
+        'secretKey' => $recaptchaConfigData->privateKey,
+      );
+
+      $recaptcha = new Custom_Form_Element_Recaptcha('grecaptcharesponse', $recaptchaOptions);
+
+      $this->addElement($recaptcha);
     }
     
     $this->addElement('hash', 'csrf', array(
@@ -88,14 +85,14 @@ class User_Form_Login extends Custom_Form_Abstract
   
   public function isValid($data)
   {
-    if ($this->_turnOnCaptcha && (!isset($this->_session->turnOnCaptcha) || $this->_session->turnOnCaptcha == false))
+    /*if ($this->_turnOnCaptcha && (!isset($this->_session->turnOnCaptcha) || $this->_session->turnOnCaptcha == false))
     {
-      $this->getElement('captcha')->getCaptcha()->generate();
+      $this->getElement('grecaptcharesponse')->getCaptcha()->generate();
       $data['captcha'] = array(
         'id'    => $this->getElement('captcha')->getCaptcha()->getId(),
         'input' => $this->getElement('captcha')->getCaptcha()->getWord()
       );
-    }
+    }*/
 
     $this->_session->turnOnCaptcha = $this->_turnOnCaptcha;
 

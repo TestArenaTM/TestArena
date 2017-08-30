@@ -74,7 +74,7 @@
                           <?php endif; ?>
                           <li><a class="j_finish_project" href="<?php echo $this->url(array('id' => $project->getId()), 'admin_project_finish') ?>"><?php echo $this->t('Zakończ') ?></a></li>
                         <?php endif; ?>
-                        <li><a href="<?php echo $this->url(array('projectId' => $project->getId()), 'admin_bug_tracker_list') ?>"><?php echo $this->t('Narzedzia śledzenia defektów') ?></a></li>
+                        <li><a href="<?php echo $this->url(array('projectId' => $project->getId()), 'admin_bug_tracker_list') ?>"><?php echo $this->t('Narzędzia śledzenia defektów') ?></a></li>
                         <li><a href="<?php echo $this->url(array('projectId' => $project->getId()), 'admin_resolution_list') ?>"><?php echo $this->t('Statusy rozwiązań') ?></a></li>
                         <li><a href="<?php echo $this->url(array('id' => $project->getId()), 'admin_project_export') ?>"><?php echo $this->t('Eksportuj') ?></a></li>
                         <!--<li><a href="<?php echo $this->url(array('id' => $project->getId()), 'admin_project_export_defects') ?>"><?php echo $this->t('Eksportuj defekty') ?></a></li>-->
@@ -92,7 +92,7 @@
     <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
 
     <?php else: ?>
-      <div class="empty-text"><?php echo $this->t('Brak projektów.') ?></div>
+      <div class="empty-text"><?php echo $this->t('Brak projektów') ?></div>
     <?php endif; ?>
   </article>    
 </section>

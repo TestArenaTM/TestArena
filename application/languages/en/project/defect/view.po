@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-08-19 14:03+0200\n"
-"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"PO-Revision-Date: 2017-07-10 15:20+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,10 +12,13 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 2.0.2\n"
 
 msgid "pageTitle"
 msgstr "Defect"
+
+msgid "headTitle"
+msgstr "Defect '__name__'"
 
 msgid "Status"
 msgstr "Status"
@@ -29,32 +32,29 @@ msgstr "Environments"
 msgid "Wersje"
 msgstr "Versions"
 
+msgid "Tagi"
+msgstr "Tags"
+
 msgid "Opis"
 msgstr "Description"
 
 msgid "Wydanie"
 msgstr "Release"
 
-msgid "Faza"
-msgstr "Phase"
-
-msgid "Przydzielił"
+msgid "Przypisał"
 msgstr "Assigned by"
 
-msgid "Przydzielone do"
+msgid "Przypisane do"
 msgstr "Assigned to"
 
 msgid "Data utworzenia"
-msgstr "Date of creating"
+msgstr "Date of creation"
 
 msgid "Data modyfikacji"
 msgstr "Date of modifying"
 
 msgid "Historia"
 msgstr "History"
-
-msgid "Załączniki"
-msgstr "Attachments"
 
 msgid "Rozpocznij"
 msgstr "Start"
@@ -94,3 +94,6 @@ msgstr "Assign to me"
 
 msgid "Edytuj"
 msgstr "Edit"
+
+msgid "Usuń"
+msgstr "Delete"

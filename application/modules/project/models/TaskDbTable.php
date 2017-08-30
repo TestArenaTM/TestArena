@@ -26,6 +26,8 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
   
   public function getSqlAll(Zend_Controller_Request_Abstract $request)
   {
+    $attachmentCount = '(SELECT COUNT(*) FROM attachment AS a WHERE a.subject_id = t.id AND a.type = '.Application_Model_AttachmentType::TASK_ATTACHMENT.')';
+    
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
         'id',
@@ -37,16 +39,13 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'due_date',
         'title',
         'assigner'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assigner.firstname, " ", assigner.lastname)'),
-        'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)')
+        'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)'),
+        'attachmentCount' => new Zend_Db_Expr($attachmentCount)
       ))
       ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
         'prefix'
       )))
       ->joinLeft(array('r' => 'release'), 'r.id = t.release_id', $this->_createAlias('release', array(
-        'id',
-        'name'
-      )))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = t.phase_id', $this->_createAlias('phase', array(
         'id',
         'name'
       )))
@@ -73,48 +72,37 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'name',
         'color'
       )))
-      ->joinLeft(array('te' => 'task_environment'), 'te.task_id = t.id', array())
-      //->where('t.assignee_id = ?', $request->getParam('userId'))
+      ->join(array('te' => 'task_environment'), 'te.task_id = t.id', array())
+      ->join(array('tv' => 'task_version'), 'tv.task_id = t.id', array())
+      ->joinLeft(array('tt' => 'task_tag'), 'tt.task_id = t.id', array())
       ->group('t.id')
       ->setIntegrityCheck(false);
+    
     $this->_setWhereCriteria($sql, $request);
-
-    //$sql = $this->union($sql)->group('id');
     $this->_setOrderConditions($sql, $request);
-
     return $sql;
   }
   
   public function getSqlAllCount(Zend_Controller_Request_Abstract $request)
   {
-    $sql1 = $this->select()
-      ->from(array('t' => $this->_name), array('id'))
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        Zend_Paginator_Adapter_DbSelect::ROW_COUNT_COLUMN => 'COUNT(DISTINCT t.id)'
+      ))
       ->joinLeft(array('r' => 'release'), 'r.id = t.release_id', array())
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = t.phase_id', array())
-      ->joinLeft(array('te' => 'task_environment'), 'te.task_id = t.id', array()) 
-      ->where('t.assigner_id = ?', $request->getParam('userId'));
+      ->join(array('te' => 'task_environment'), 'te.task_id = t.id', array())
+      ->join(array('tv' => 'task_version'), 'tv.task_id = t.id', array())
+      ->joinLeft(array('tt' => 'task_tag'), 'tt.task_id = t.id', array())
+      ->setIntegrityCheck(false);
 
-    $this->_setWhereCriteria($sql1, $request);
-
-    $sql2 = $this->select()
-      ->from(array('t' => $this->_name), array('id'))
-      ->joinLeft(array('r' => 'release'), 'r.id = t.release_id', array())
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = t.phase_id', array())
-      ->joinLeft(array('te' => 'task_environment'), 'te.task_id = t.id', array())
-      ->where('t.assignee_id = ?', $request->getParam('userId'));
-
-    $this->_setWhereCriteria($sql2, $request);
+    $this->_setWhereCriteria($sql, $request);
     
-    return $this->select()->from(
-      $this->select()->from($this->select()->union(array('('.$sql1.')', '('.$sql2.')'), Zend_Db_Select::SQL_UNION_ALL))
-        ->group('id')
-        ->setIntegrityCheck(false), array(Zend_Paginator_Adapter_DbSelect::ROW_COUNT_COLUMN => 'COUNT(DISTINCT id)'))
-        ->setIntegrityCheck(false);
+    return $sql;
   }
   
   public function getAllIds(Zend_Controller_Request_Abstract $request)
   {
-    $sql[0] = $this->select()
+    $sql = $this->select()
       ->from(array('t' => $this->_name), array(
         'id',
         'ordinal_no',
@@ -134,10 +122,6 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'name'
       )))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = t.phase_id', $this->_createAlias('phase', array(
-        'id',
-        'name'
-      )))
       ->join(array('assigner' => 'user'), 'assigner.id = t.assigner_id', $this->_createAlias('assigner', array(
         'id',
         'email',
@@ -150,60 +134,19 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'firstname',
         'lastname'
       )))
-      ->joinLeft(array('te' => 'task_environment'), 'te.task_id = t.id', array())
-      ->where('t.assignee_id = ?', $request->getParam('userId'))
+      ->join(array('te' => 'task_environment'), 'te.task_id = t.id', array())
+      ->join(array('tv' => 'task_version'), 'tv.task_id = t.id', array())
+      ->joinLeft(array('tt' => 'task_tag'), 'tt.task_id = t.id', array())
+      //->where('t.assignee_id = ?', $request->getParam('userId'))
+      ->group('t.id')
       ->setIntegrityCheck(false);
 
-    $this->_setWhereCriteria($sql[0], $request);
-
-    $sql[1] = $this->select()
-      ->from(array('t' => $this->_name), array(
-        'id',
-        'ordinal_no',
-        'status',
-        'priority',
-        'create_date',
-        'modify_date',
-        'due_date',
-        'title',
-        'assigner'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assigner.firstname, " ", assigner.lastname)'),
-        'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)')
-      ))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
-        'prefix'
-      )))
-      ->joinLeft(array('r' => 'release'), 'r.id = t.release_id', $this->_createAlias('release', array(
-        'id',
-        'name'
-      )))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = t.phase_id', $this->_createAlias('phase', array(
-        'id',
-        'name'
-      )))
-      ->join(array('assigner' => 'user'), 'assigner.id = t.assigner_id', $this->_createAlias('assigner', array(
-        'id',
-        'email',
-        'firstname',
-        'lastname'
-      )))
-      ->join(array('assignee' => 'user'), 'assignee.id = t.assignee_id', $this->_createAlias('assignee', array(
-        'id',
-        'email',
-        'firstname',
-        'lastname'
-      )))
-      ->joinLeft(array('te' => 'task_environment'), 'te.task_id = t.id', array())
-      ->where('t.assigner_id = ?', $request->getParam('userId'))
-      ->setIntegrityCheck(false);
-
-    $this->_setWhereCriteria($sql[1], $request);    
-    $sql = $this->union($sql)->group('id');
-
+    $this->_setWhereCriteria($sql, $request);  
     $this->_setOrderConditions($sql, $request);
     return $this->fetchAll($sql);
   }
   
-  public function getForEdit(Application_Model_Task $task)
+  public function getForEdit($id, $projectId)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -213,10 +156,6 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'title',
         'description',
         'assigneeName' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname, " (", assignee.email, ")")')
-      ))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = t.phase_id', array(
-        'phaseId' => 'id',
-        'phaseName' => 'name'
       ))
       ->joinLeft(array('r' => 'release'), 'r.id = t.release_id', array(
         'releaseId' => 'id',
@@ -231,8 +170,8 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->join(array('author' => 'user'), 'author.id = t.author_id', array(
         'authorId' => 'id'
       ))
-      ->where('t.id = ?', $task->getId())
-      ->where('t.project_id = ?', $task->getProject()->getId())
+      ->where('t.id = ?', $id)
+      ->where('t.project_id = ?', $projectId)
       ->where('t.status != ?', Application_Model_TaskStatus::CLOSED)
       ->limit(1)
       ->group('t.id')
@@ -244,7 +183,7 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
   public function getAllByRelease(Application_Model_Release $release, $returnSql = false)
   {
     $sql = $this->select()
-      ->from(array('ta' => $this->_name), array(
+      ->from(array('t' => $this->_name), array(
         'id',
         'priority',
         'title',
@@ -252,20 +191,20 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'resolution$id' => 'resolution_id',
         'author$id' => 'author_id'
       ))
-      ->joinLeft(array('tt' => 'task_test'), 'ta.id = tt.task_id', $this->_createAlias('taskTest', array(
+      ->joinLeft(array('tt' => 'task_test'), 't.id = tt.task_id', $this->_createAlias('taskTest', array(
         'resolution_id'
       )))
       ->joinLeft(array('te' => 'test'), 'te.id = tt.test_id', $this->_createAlias('test', array(
         'id',
         'status'
       )))
-      ->joinLeft(array('at' => 'attachment'), 'at.type = '.Application_Model_AttachmentType::TASK_ATTACHMENT.' AND at.subject_id = ta.id', $this->_createAlias('attachment', array(
+      ->joinLeft(array('at' => 'attachment'), 'at.type = '.Application_Model_AttachmentType::TASK_ATTACHMENT.' AND at.subject_id = t.id', $this->_createAlias('attachment', array(
         'file_id',
         'create_date'
       )))
-      ->where('ta.project_id = ?', $release->getProjectId())
-      ->where('ta.release_id = ?', $release->getExtraData('oldReleaseId'))
-      ->order('ta.id ASC')
+      ->where('t.project_id = ?', $release->getProjectId())
+      ->where('t.release_id = ?', $release->getExtraData('oldReleaseId')) 
+      ->order('t.id ASC')
       ->setIntegrityCheck(false);
     
     if ($returnSql)
@@ -278,7 +217,57 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
     }
   }
   
-  public function getByIds(array $ids)
+  public function getAllByReleaseByIds(array $ids, Application_Model_Release $release, $returnSql = false)
+  {
+    $taskVersionsSql = (count(array_filter(explode(',', $release->getExtraData('versions', null))))) 
+                        ? 'NULL'
+                        : '(SELECT GROUP_CONCAT(version_id) FROM task_version tv INNER JOIN version AS v ON tv.version_id = v.id WHERE tv.task_id = t.id)';
+    
+    $taskEnvironmentsSql = (count(array_filter(explode(',', $release->getExtraData('environments', null))))) 
+                            ? 'NULL'
+                            : '(SELECT GROUP_CONCAT(environment_id) FROM task_environment te INNER JOIN environment AS e ON te.environment_id = e.id WHERE te.task_id = t.id)';
+        
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        'id',
+        'priority',
+        'title',
+        'description',
+        'resolution$id' => 'resolution_id',
+        'author$id' => 'author_id',
+        'tags' => new Zend_Db_Expr('(SELECT GROUP_CONCAT(tag_id) FROM task_tag ttg INNER JOIN tag AS tg ON tg.id = ttg.tag_id WHERE ttg.task_id = t.id)'),
+        'environments' => new Zend_Db_Expr($taskEnvironmentsSql),
+        'versions' => new Zend_Db_Expr($taskVersionsSql)
+      ))
+      ->joinLeft(array('tt' => 'task_test'), 't.id = tt.task_id', $this->_createAlias('taskTest', array(
+        'resolution_id',
+      )))
+      ->joinLeft(array('te' => 'test'), 'te.id = tt.test_id', $this->_createAlias('test', array(
+        'id',
+        'status',
+        'checklist_items' => new Zend_Db_Expr('(SELECT GROUP_CONCAT(id) FROM checklist_item ci WHERE ci.test_id = te.id)')
+      )))
+      ->joinLeft(array('at' => 'attachment'), 'at.type = '.Application_Model_AttachmentType::TASK_ATTACHMENT.' AND at.subject_id = t.id', $this->_createAlias('attachment', array(
+        'file_id',
+        'create_date'
+      )))
+      ->where('t.project_id = ?', $release->getProjectId())
+      ->where('t.release_id = ?', $release->getExtraData('oldReleaseId'))
+      ->where('t.id IN (?)', $ids)      
+      ->order('t.id ASC')
+      ->setIntegrityCheck(false);
+    
+    if ($returnSql)
+    {
+      return $sql;
+    }
+    else
+    {
+      return $this->fetchAll($sql);
+    }
+  }
+  
+  public function getByIds(array $ids, $returnSql = false)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -294,7 +283,33 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
         'prefix'
       )))
-      ->where('t.id IN (?)', $ids)
+      ->where('t.id IN (?)', $ids)      
+      ->limit(count($ids))
+      ->group('t.id')
+      ->setIntegrityCheck(false);
+
+    if ($returnSql)
+    {
+      return $sql;
+    }
+    else
+    {
+      return $this->fetchAll($sql);
+    }
+  }
+  
+  public function getByIds4CheckAccess(array $ids)
+  {
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        'id',
+        'status',
+        'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
+        'assigner'.self::TABLE_CONNECTOR.'id' => 'assigner_id',
+        'assignee'.self::TABLE_CONNECTOR.'id' => 'assignee_id',
+        'author'.self::TABLE_CONNECTOR.'id' => 'author_id'
+      ))
+      ->where('t.id IN (?)', $ids)      
       ->limit(count($ids))
       ->group('t.id')
       ->setIntegrityCheck(false);
@@ -302,7 +317,7 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
     return $this->fetchAll($sql);
   }
   
-  public function getForView($id)
+  public function getForView($id, $projectId)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -315,14 +330,6 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'title',
         'description'
       ))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
-        'id',
-        'prefix'
-      )))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = t.phase_id', $this->_createAlias('phase', array(
-        'id',
-        'name'
-      )))
       ->joinLeft(array('r' => 'release'), 'r.id = t.release_id', $this->_createAlias('release', array(
         'id',
         'name'
@@ -351,10 +358,115 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'color'
       )))
       ->where('t.id = ?', $id)
+      ->where('t.project_id = ?', $projectId)
       ->group('t.id')
       ->limit(1)
       ->setIntegrityCheck(false);
     
     return $this->fetchRow($sql);
+  }  
+  
+  public function getForPdfReportByRelease(Application_Model_Release $release)
+  {
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        'id',
+        'ordinal_no',
+        'title',
+        'environments' => new Zend_Db_Expr('GROUP_CONCAT(DISTINCT e.name SEPARATOR ", ")'),
+        'versions' => new Zend_Db_Expr('GROUP_CONCAT(DISTINCT v.name SEPARATOR ", ")')
+      ))
+      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
+        'prefix'
+      )))
+      ->joinLeft(array('r' => 'resolution'), 'r.id = t.resolution_id', $this->_createAlias('resolution', array(
+        'id',
+        'name',
+        'color'
+      )))
+      ->join(array('te' => 'task_environment'), 'te.task_id = t.id', array())
+      ->join(array('e' => 'environment'), 'e.id = te.environment_id', array())
+      ->join(array('tv' => 'task_version'), 'tv.task_id = t.id', array())
+      ->join(array('v' => 'version'), 'v.id = tv.version_id', array())
+      ->where('t.release_id = ?', $release->getId())
+      ->group('t.id')
+      ->order('t.id ASC')
+      ->setIntegrityCheck(false);
+
+    return $this->fetchAll($sql);
+  } 
+  
+  public function getForCsvReportByRelease(Application_Model_Release $release)
+  {
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        'id',
+        'ordinal_no',
+        'title'
+      ))
+      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
+        'prefix'
+      )))
+      ->where('t.release_id = ?', $release->getId())
+      ->group('t.id')
+      ->order('t.id ASC')
+      ->setIntegrityCheck(false);
+
+    return $this->fetchAll($sql);
+  }
+  
+  public function getTasks4ReleaseCloneByRelease(Application_Model_Release $release, $returnSql = false)
+  {
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        'id',
+        'ordinal_no',
+        'status',
+        'priority',
+        'create_date',
+        'modify_date',
+        'due_date',
+        'title',
+        'assigner'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assigner.firstname, " ", assigner.lastname)'),
+        'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)')
+      ))
+      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
+        'prefix'
+      )))
+      ->joinLeft(array('r' => 'release'), 'r.id = t.release_id', $this->_createAlias('release', array(
+        'id',
+        'name'
+      )))
+      ->join(array('assigner' => 'user'), 'assigner.id = t.assigner_id', $this->_createAlias('assigner', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->join(array('assignee' => 'user'), 'assignee.id = t.assignee_id', $this->_createAlias('assignee', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->joinLeft('resolution', 'resolution.id = t.resolution_id', $this->_createAlias('resolution', array(
+        'id',
+        'name',
+        'color'
+      )))
+      ->joinLeft(array('te' => 'task_environment'), 'te.task_id = t.id', array())
+      //->where('t.assignee_id = ?', $request->getParam('userId'))
+      ->where('t.release_id = ?', $release->getId())
+      ->group('t.id')
+      ->setIntegrityCheck(false);
+    
+    if ($returnSql)
+    {
+      return $sql;
+    }
+    else
+    {
+      return $this->fetchAll($sql);
+    }
   }
 }

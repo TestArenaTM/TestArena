@@ -77,8 +77,10 @@ a {
     z-index: 1035;
 }
 #headerBar div {
-  display: inline-block;
+    display: inline-block;
+    vertical-align: middle;
 }
+
 #statusBar {
     background-color: #333;
     bottom: 0;
@@ -167,7 +169,7 @@ a {
 .actions a {
   margin: 1px 2px;
 }
-.imagePreview {
+.previewImage {
   display: none;
   position: absolute;
   left: 0;
@@ -178,8 +180,9 @@ a {
   z-index: 2000;
   border: 1px solid silver;
 }
-.imagePreview img {
+.previewImage img {
   width: 200px;
+  height: auto;
 }
 #headerBar a {
     background-color: transparent;
@@ -229,4 +232,18 @@ a {
     max-width: 375px;
     white-space: pre-line;
     word-wrap: break-word;
+}
+#fileUploadStatus img {
+    max-width: 31px;
+    display: inline-block;
+    line-height: 1;
+    float: left;
+}
+#fileUploadStatus div {
+    color: #fff;
+    vertical-align: middle !important;
+    line-height: 3.3;
+    font-size: 11px;
+    position: relative;
+    margin-left: 8px;
 }

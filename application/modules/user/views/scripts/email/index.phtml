@@ -29,7 +29,7 @@
         <div class="formContainer half">
           <span>
             <?php echo $this->form->password->renderViewHelper() ?>
-            <?php echo $this->formRequiredLabel('password', $this->t('Hasło')) ?>
+            <?php echo $this->formRequiredLabel('password', $this->t('Aktualne hasło')) ?>
             <?php foreach ($this->form->getErrors('password') as $error): ?>
             <span class="arrow_msg"></span>
             <div class="error_msg"><?php echo $this->errorT($error, array(

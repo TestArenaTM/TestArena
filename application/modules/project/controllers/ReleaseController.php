@@ -25,12 +25,15 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
   public function preDispatch()
   {
     parent::preDispatch();
-    
+
     if (!$this->getRequest()->isXmlHttpRequest())
     {
-      $this->checkUserSession(true);
+      if ($this->_project === null)
+      {
+        throw new Custom_404Exception();
+      }
       
-      if (!in_array($this->getRequest()->getActionName(), array('index', 'view')))
+      if (!in_array($this->getRequest()->getActionName(), array('index', 'view', 'report')))
       {
         $this->_project->checkFinished();
         $this->_project->checkSuspended();
@@ -40,32 +43,43 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
   
   private function _getFilterForm()
   {
-    return new Project_Form_ReleaseFilter(array('action' => $this->_url(array(), 'release_list')));
+    return new Project_Form_ReleaseFilter(array('action' => $this->_projectUrl(array(), 'release_list')));
   }
     
   public function indexAction()
   {
-    $request = $this->getRequest();
+    $this->_setCurrentBackUrl('release_list');
+    $this->_setCurrentBackUrl('release_activate');
+    $request = $this->_getRequestForFilter(Application_Model_FilterGroup::RELEASES);
     $filterForm = $this->_getFilterForm();
     
     if ($filterForm->isValid($request->getParams()))
     {
+      $this->_filterAction($filterForm->getValues(), 'release');
       $releaseMapper = new Project_Model_ReleaseMapper();
       list($list, $paginator) = $releaseMapper->getAll($request);
-      $this->_setCurrentBackUrl('releaseDelete');
     }
     else
     {
       $list = array();
       $paginator = null;
     } 
+    
+    $filter = $this->_user->getFilter(Application_Model_FilterGroup::RELEASES);
+    
+    if ($filter !== null)
+    {
+      $filterForm->prepareSavedValues($filter->getData());
+    }
 
+    $this->_filterAction($filterForm->getValues());
     $this->_setTranslateTitle();
     $this->view->releases = $list;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
-    $this->view->accessReleaseAndPhaseManagement = $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT);
+    $this->view->accessReleaseManagement = $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT); 
+    $this->view->accessReportGenerate = $this->_checkAccess(Application_Model_RoleAction::REPORT_GENERATE); 
   }
   
   public function listAjaxAction()
@@ -85,28 +99,22 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
     echo json_encode($result);
     exit;
   }
-  
-  public function listForPhaseAjaxAction()
-  {
-    $this->checkUserSession(true, true);
-    $releaseMapper = new Project_Model_ReleaseMapper();
-    $result = $releaseMapper->getForPhaseAjax($this->getRequest());    
-    echo json_encode($result);
-    exit;
-  }
     
   public function viewAction()
   {
     $release = $this->_getValidReleaseForView();
-    $this->_setTranslateTitle();
+    $this->_setCurrentBackUrl('release_activate');
+    $this->_setTranslateTitle(array('name' => $release->getName()), 'headTitle');
     $this->view->release = $release;
-    $this->view->accessReleaseAndPhaseManagement = $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT);
+    $this->view->accessReleaseManagement = $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT);
+    $this->view->accessReportGenerate = $this->_checkAccess(Application_Model_RoleAction::REPORT_GENERATE); 
+    $this->view->backUrl = $this->_getBackUrl('release_list', $this->_projectUrl(array(), 'release_list'));
   }
     
   private function _getAddReleaseForm()
   {
     return new Project_Form_AddRelease(array(
-      'action'    => $this->_url(array('projectId' => $this->_project->getId()), 'release_add_process'),
+      'action'    => $this->_projectUrl(array('projectId' => $this->_project->getId()), 'release_add_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
@@ -114,7 +122,7 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
   
   public function addAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT, true);
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
     
     $this->_setTranslateTitle();
     $this->view->form = $this->_getAddReleaseForm();
@@ -122,13 +130,13 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
 
   public function addProcessAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT, true);
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
     
     $request = $this->getRequest();
 
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'release_list');
+      return $this->projectRedirect(array(), 'release_list');
     }
     
     $form = $this->_getAddReleaseForm();
@@ -154,13 +162,13 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
   }
   
   private function _getEditReleaseForm(Application_Model_Release $release)
   {
     $form = new Project_Form_EditRelease(array(
-      'action'    => $this->_url(array(
+      'action'    => $this->_projectUrl(array(
         'projectId' => $this->_project->getId(), 
         'id'        => $release->getId()), 'release_edit_process'),
       'method'    => 'post',
@@ -173,7 +181,7 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
   
   public function editAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT, true);
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $release = $this->_getValidReleaseForEdit();
@@ -184,14 +192,14 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
 
   public function editProcessAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT, true);
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $request = $this->getRequest();
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'release_list');
+      return $this->projectRedirect(array(), 'release_list');
     }
     
     $release = $this->_getValidReleaseForEdit();
@@ -218,12 +226,56 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
+  }
+  
+  public function activateAction()
+  {
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
+    
+    $this->_project->checkFinished();
+    $release = $this->_getValidReleaseForView();
+
+    $t = new Custom_Translate();
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    
+    if ($releaseMapper->activate($release))
+    {
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+
+    return $this->projectRedirect($this->_getBackUrl('release_activate', $this->_projectUrl(array(), 'release_list')));
+  }
+  
+  public function deactivateAction()
+  {
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
+    
+    $this->_project->checkFinished();
+    $release = $this->_getValidReleaseForView();
+
+    $t = new Custom_Translate();
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    
+    if ($releaseMapper->deactivate($release))
+    {
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+
+    return $this->projectRedirect($this->_getBackUrl('release_activate', $this->_projectUrl(array(), 'release_list')));
   }
   
   public function deleteAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT, true);
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $release = $this->_getValidReleaseForView();
@@ -245,13 +297,76 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($this->_getBackUrl('releaseDelete', $this->_url(array(), 'release_list')));
+    return $this->projectRedirect($this->_getBackUrl('release_list', $this->_projectUrl(array(), 'release_list')));
   }
   
-  private function _getCloneReleaseForm(Application_Model_Release $release)
+  private function _getReleaseReportForm(Application_Model_Release $release)
+  {
+    $form = new Project_Form_ReleaseReport(array(
+      'action'    => $this->_projectUrl(array(
+        'id'        => $release->getId()), 'release_report_process'),
+      'method'    => 'post'
+    ));
+
+    return $form->populate(array(
+      'type' => $release->getExtraData('type')
+    ));
+  }
+  
+  public function reportAction()
+  {
+    $release = $this->_getValidReleaseForReport();
+    $this->_setTranslateTitle();
+    $this->view->form = $this->_getReleaseReportForm($release);
+    $this->view->release = $release;
+  }
+
+  public function reportProcessAction()
+  {
+    $request = $this->getRequest();
+    
+    if (!$request->isPost())
+    {
+      return $this->projectRedirect(array(), 'release_list');
+    }
+    
+    $release = $this->_getValidReleaseForReport();
+    $form = $this->_getReleaseReportForm($release);
+    
+    if (!$form->isValid($request->getPost()))
+    {
+      $this->_setTranslateTitle();
+      $this->view->form = $form;
+      $this->view->release = $release;
+      return $this->render('report');
+    }
+    
+    $t = new Custom_Translate();
+    $release->setProperties($form->getValues());
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    $release->setExtraData('fileName', $t->translate('raport'));
+    $release->setExtraData('fileDescription', $t->translate('Raport z wydania RELEASE.', array('release' => $release->getName())));
+    
+    if ($releaseMapper->createReport($release))
+    {
+      $t = new Custom_Translate();
+      $session = new Zend_Session_Namespace('FileDownload');
+      $session->layout = 'project';
+      $this->_setBackUrl('file_dwonload', $form->getBackUrl());
+      $this->projectRedirect(array('id' => $release->getExtraData('fileId')), 'file_download');
+    }
+    else
+    {
+      $t = new Custom_Translate();
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+      $this->projectRedirect($form->getBackUrl());
+    }
+  }    
+  
+  /*private function _getCloneReleaseForm(Application_Model_Release $release)
   {
     $form = new Project_Form_CloneRelease(array(
-      'action'    => $this->_url(array('id' => $release->getId()), 'release_clone_process'),
+      'action'    => $this->_projectUrl(array('id' => $release->getId()), 'release_clone_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId(),
       'id'        => $release->getId()
@@ -262,25 +377,25 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
   
   public function cloneAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT, true);
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $release = $this->_getValidReleaseForClone();
     $this->_setTranslateTitle();
     $this->view->form = $this->_getCloneReleaseForm($release);
     $this->view->release = $release;
-  }
+  }*/
   
-  public function cloneProcessAction()
+  /*public function cloneProcessAction()
   {
-    $this->_checkAccess(Application_Model_RoleAction::RELEASE_AND_PHASE_MANAGEMENT, true);
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
     
     $this->_project->checkFinished();
     $request = $this->getRequest();
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'release_list');
+      return $this->projectRedirect(array(), 'release_list');
     }
     
     $release = $this->_getValidReleaseForClone();
@@ -313,8 +428,8 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
-  }
+    $this->projectRedirect($form->getBackUrl());
+  }*/
   
   private function _getValidRelease()
   {
@@ -344,7 +459,7 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
     return $release->setExtraData('rowData', $rowData);
   }
   
-  private function _getValidReleaseForClone()
+  /*private function _getValidReleaseForClone()
   {
     $release = $this->_getValidRelease();
     $releaseMapper = new Project_Model_ReleaseMapper();
@@ -360,18 +475,32 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
     $release->setEndDate(null);
     
     return $release->setExtraData('rowData', $rowData);
-  }
+  }*/
   
   private function _getValidReleaseForView()
   {
     $release = $this->_getValidRelease();
     $releaseMapper = new Project_Model_ReleaseMapper();
-    $release = $releaseMapper->getForView($release);
     
-    if ($release === false)
+    if ($releaseMapper->getForView($release) === false)
     {
       throw new Custom_404Exception();
     }
+    
+    return $release->setProjectObject($this->_project);
+  }
+  
+  private function _getValidReleaseForReport()
+  {
+    $release = $this->_getValidRelease();
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    
+    if ($releaseMapper->getForView($release) === false)
+    {
+      throw new Custom_404Exception();
+    }
+    
+    $this->_checkAccess(Application_Model_RoleAction::REPORT_GENERATE, true);
     
     return $release->setProjectObject($this->_project);
   }

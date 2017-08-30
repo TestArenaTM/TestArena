@@ -1,0 +1,30 @@
+<?php if (count($this->attachments)): ?>
+<div>
+  <h5 class="break_page"><span aria-hidden="true" class="icon_link_alt icon-20"></span><?php echo $this->generalT('Załączniki') ?></h5>
+  <?php foreach ($this->attachments as $file): ?>       
+  <div class="attachement-list">
+    <ul>
+      <li>
+      <div class="attachment-thumb">
+        <?php if ($file->isSupportedImage()):?>
+        <a href="<?php echo $this->projectUrl(array('id' => $file->getId()), 'file_preview_image') ?>" data-lightbox="imageGallery" data-title="<?php echo $file->getFullName() ?>" href="#">
+        <?php else: ?>
+        <a href="<?php echo $this->projectUrl(array('id' => $file->getId()), 'file_download') ?>">
+        <?php endif;?>
+          <img class="imageGallery" src="<?php echo $this->projectUrl(array('id' => $file->getId()), 'file_thumbnail') ?>" alt="<?php echo $file->getFullName() ?>" />
+        </a>
+      </div>
+      <div class="attachment-info">
+        <div class="attachment-file-name">
+          <?php echo $file->getFullName() ?>
+        </div>
+        <div class="attachment-action-bar">
+          <span class="list-file-download"><a href="<?php echo $this->projectUrl(array('id' => $file->getId()), 'file_download') ?>"><i class="icon_download"></i> <?php echo $this->generalT('Pobierz') ?></a></span>
+        </div>
+      </div>
+      </li>
+    </ul>
+  </div>          
+  <?php endforeach; ?>
+</div>
+<?php endif;

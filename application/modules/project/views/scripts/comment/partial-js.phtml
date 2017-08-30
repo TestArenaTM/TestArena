@@ -1,0 +1,21 @@
+<script type="text/javascript">
+  var commentData = {
+    'addOn' : <?php echo (int)$this->addCommentOn ?>
+  };
+  
+  url['commentList'] = '<?php echo $this->listUrl ?>';
+  <?php if ($this->addCommentOn): ?>
+  url['commentAdd'] = '<?php echo $this->addUrl ?>';
+  url['commentSave'] = '<?php echo $this->projectUrl(array(), 'comment_save_ajax') ?>';
+  url['commentDelete'] = '<?php echo $this->projectUrl(array(), 'comment_delete_ajax') ?>';
+  <?php endif; ?>
+  language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
+</script>
+
+<?php 
+if ($this->addCommentOn)
+{
+  echo $this->partial('popups/field-is-empty.phtml');
+}
+
+echo $this->partial('comment/content-template.phtml');

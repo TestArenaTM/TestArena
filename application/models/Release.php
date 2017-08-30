@@ -22,6 +22,9 @@ The full text of the GPL is in the LICENSE file.
 */
 class Application_Model_Release extends Custom_Model_Standard_Abstract implements Custom_Interface_StarEndDate
 {
+  const PDF_REPORT = 1;
+  const CSV_REPORT = 2;  
+
   protected $_map = array(
     'start_date'  => 'startDate',
     'end_date'    => 'endDate'    
@@ -33,6 +36,7 @@ class Application_Model_Release extends Custom_Model_Standard_Abstract implement
   private $_endDate     = null;
   private $_name        = null;
   private $_description = null;
+  private $_active      = null;
   
   private $_phases = array();
   
@@ -59,7 +63,7 @@ class Application_Model_Release extends Custom_Model_Standard_Abstract implement
 
   public function getEndDate($asTime = false)
   {
-    return $asTime ? strtotime($this->_endDate.' 23:59:59') : $this->_endDate;
+    return $asTime ? strtotime($this->_endDate.' 23:59:59') : $this->_endDate; 
   }
   
   public function getName()
@@ -86,12 +90,17 @@ class Application_Model_Release extends Custom_Model_Standard_Abstract implement
   {
     return count($this->getPhases()) > 0;
   }
+  
+  public function isActive()
+  {
+    return $this->_active;
+  }
   // </editor-fold>
   
   // <editor-fold defaultstate="collapsed" desc="Setters">
   public function setId($id)
   {
-    $this->_id = (int)$id;
+    $this->_id = $id;
   }
 
   public function setProject($propertyName, $propertyValue)
@@ -134,6 +143,11 @@ class Application_Model_Release extends Custom_Model_Standard_Abstract implement
   public function setDescription($description)
   {
     $this->_description = $description;
+  }
+  
+  public function setActive($active)
+  {
+    $this->_active = (bool)$active;
   }
   
   public function setPhases($phases)

@@ -1,0 +1,155 @@
+<section id="content" style="padding-top: 50px;">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitleStep2') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+        
+        <div class="wizard-step" style="margin-bottom: 20px">
+          <?php foreach ($this->form->breadCrumbs->getElements() as $breadcrumb): ?>
+            <span><?php echo $breadcrumb->renderViewHelper() ?></span>
+            <span class="arrow_right icon-20"></span>
+          <?php endforeach; ?>
+        </div>      
+        
+        <div id="jSortableTasks">
+          <div class="sortable-list-selected-container">
+            <h1><?php echo $this->t('Zadania do wyboru') ?></h1>
+            <div class="sortableColumn sortableFloatLeft sortableFirst" style="width: 100%">
+                <ul class="sortable-list">
+                    <?php foreach(Zend_Registry::get('tasks') as $task):?>
+                      <?php $inputName = 'task_'.$task->getId(); ?>
+                      <?php $element = $this->form->stepTwo->$inputName; ?>
+                      <?php if (null === $element->getValue()): ?>
+                        <li class="sortable-item">
+                          <?php echo $element->renderViewHelper() ?>
+                          <?php echo $this->showTaskStatusIcon($task) ?>
+                          <?php echo $this->escapeQuotes($task->getObjectNumber()) ?>&nbsp;<?php echo $this->escapeQuotes($task->getTitle()) ?>
+                        </li>
+                      <?php endif;?> 
+                    <?php endforeach;?>
+                </ul>
+            </div>
+          </div>
+            
+          <div style="margin-left: 2%; margin-top: 15px; float:left;">
+            <div>
+              <button class="cancel-all"><?php echo $this->t('Żadne') ?></button>
+              <button class="move-all"><?php echo $this->t('Wszystkie') ?></button>
+            </div>
+          </div>
+          
+          <div class="sortable-list-selected-container">
+            <h1 ><?php echo $this->t('Wybrane zadania dla nowego wydania') ?></h1>
+            <div class="sortableColumn sortableFloatLeft" style="width:100%;">
+                <ul class="sortable-list-selected">
+                    <?php foreach(Zend_Registry::get('tasks') as $task):?>
+                      <?php $inputName = 'task_'.$task->getId(); ?>
+                      <?php $element = $this->form->stepTwo->$inputName; ?>
+                      <?php unset($element->disabled);
+                      ?>
+                      <?php if (null !== $element->getValue()): ?>
+                        <li class="sortable-item">
+                          <?php echo $element->renderViewHelper() ?>
+                          <?php echo $this->showTaskStatusIcon($task) ?>
+                          <?php echo $this->escapeQuotes($task->getObjectNumber()) ?>&nbsp;<?php echo $this->escapeQuotes($task->getTitle()) ?>
+                        </li>
+                      <?php endif;?> 
+                    <?php endforeach;?>
+                </ul>
+            </div>
+          </div>
+          <div class="sortableClearer">&nbsp;</div>
+        </div>
+        
+        <div style="margin-left: 2%; margin-top: 15px;">
+            <h1 ><?php echo $this->t('Właściwości nowych zadań') ?></h1>
+        </div>
+        
+        <div class="formContainer" <?php if ($this->form->stepTwo->dueDate->getAttrib('disabled') == 'disabled'): ?>style="display: none"<?php endif;?>>
+          <span>
+            <?php echo $this->form->stepTwo->dueDate->renderViewHelper() ?><span class="calendar_icon"></span>
+            <?php echo $this->formRequiredLabel('dueDate', $this->t('Termin realizacji')) ?>
+            <?php foreach ($this->form->stepTwo->getErrors('dueDate') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min'     => $this->form->stepTwo->getMinDate(),
+                'max'     => $this->form->stepTwo->getMaxDate(),
+                'format'  => 'RRRR-MM-DD',
+                'date'    => $this->form->stepTwo->getMinDate()
+              )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+        
+        <div class="formContainer" <?php if ($this->form->stepTwo->environments->getAttrib('disabled') == 'disabled'): ?>style="display: none"<?php endif;?>>
+          <span>
+            <?php echo $this->form->stepTwo->environments->renderViewHelper() ?>
+            <?php echo $this->formLabel('environments', $this->t('Środowiska')) ?>
+            <span class="help item">?<div class="cloud"><?php echo $this->t('Środowiska - info') ?></div></span>
+            <?php foreach ($this->form->stepTwo->getErrors('environments') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer" <?php if ($this->form->stepTwo->versions->getAttrib('disabled') == 'disabled'): ?>style="display: none"<?php endif;?>>
+          <span>
+            <?php echo $this->form->stepTwo->versions->renderViewHelper() ?>
+            <?php echo $this->formLabel('versions', $this->t('Wersje')) ?>
+            <span class="help item">?<div class="cloud"><?php echo $this->t('Wersje - info') ?></div></span>
+            <?php foreach ($this->form->stepTwo->getErrors('versions') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div>
+          <div><?php echo $this->form->stepTwo->step->renderViewHelper() ?></div>
+          <span id="save"><?php echo $this->form->submit ?></span>
+        </div>
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+        <div>
+          <?php echo $this->form->custom_wizard_csrf_check ?>
+          <?php foreach ($this->form->getErrors('custom_wizard_csrf_check') as $error): ?>
+            <div><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>
+    
+    </form>
+  </article>    
+</section>
+<?php if (isset($this->prePopulatedEnvironments)) :?>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    prePopulated['environments'] = <?php echo $this->prePopulatedEnvironments?>;
+  /* ]]> */
+  </script>
+<?php endif?>
+
+<?php if (isset($this->prePopulatedVersions)) :?>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    prePopulated['versions'] = <?php echo $this->prePopulatedVersions?>;
+  /* ]]> */
+  </script>
+<?php endif?>
+<script type="text/javascript">
+  /* <![CDATA[ */
+  var cloneStep2 = true;
+  
+  url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
+  url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';
+  
+  <?php if ($this->form->stepTwo->getMinDate() !== null): ?>
+    var minDate = '<?php echo $this->form->stepTwo->getMinDate() ?>';
+  <?php endif; ?>
+    
+  <?php if ($this->form->stepTwo->getMaxDate() !== null): ?>
+    var maxDate = '<?php echo $this->form->stepTwo->getMaxDate() ?>';
+  <?php endif; ?>
+/* ]]> */  
+</script>
+
+
+
+  

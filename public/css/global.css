@@ -41,7 +41,7 @@ The full text of the GPL is in the LICENSE file.
 @media (max-width: 1490px) {
 .checkTable table {
     font-size: 10px !important;
-    width: 500px;
+    width: 100%;
 }
 .t_name {
     max-width: 50px;
@@ -403,6 +403,10 @@ a {
 a:hover {
   color: #ff0054;
   text-decoration: none;
+}
+a.disabled, a.disabled:hover {
+  cursor: default;
+  color: silver;
 }
 h1 {
   margin: 0px;
@@ -1102,7 +1106,7 @@ form.signin .remb .remember {
 	background: -moz-linear-gradient(center top, #f3f3f3, #dddddd);
 	background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), to(#dddddd));
 	background:  -o-linear-gradient(top, #f3f3f3, #dddddd);
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f3f3f3', EndColorStr='#dddddd');
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f3f3f3', EndColorStr='#dddddd');
 	border-color:#000; 
 	border-width:1px;
 	-moz-border-radius: 4px;
@@ -1118,6 +1122,13 @@ form.signin .remb .remember {
 .button:hover {
   background:#ddd; 
 }
+.button.disabled:hover {
+	background: -moz-linear-gradient(center top, #f3f3f3, #dddddd);
+	background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), to(#dddddd));
+	background:  -o-linear-gradient(top, #f3f3f3, #dddddd);
+}
+
+
 #text input{
     border-color: -moz-use-text-color -moz-use-text-color #ddd;
     border-style: none none solid;
@@ -1282,6 +1293,10 @@ form.signin .remb .remember {
 .action_list_th {
     text-align: center;
     width: 51px;
+}
+.attachment_column {
+    text-align: center;
+    width: 20px;
 }
 .button_link_nav {
     display: inline-block;
@@ -1458,7 +1473,7 @@ form.signin .remb .remember {
     border: 1px solid #FFFFFF !important;
 }
 
-.environmentBox, .environmentBox:hover, .versionBox, .versionBox:hover {  
+.tagBox, .tagBox:hover, .tagBox, .tagBox:hover {  
     background-color: #fff;
     border: 1px solid #000;
     border-radius: 3px;
@@ -1472,7 +1487,7 @@ form.signin .remb .remember {
     text-decoration: none;
 }
 
-.environmentBox:hover, .versionBox:hover {  
+.tagBox:hover, .tagBox:hover {  
   background-color: #1275d6;
   border: 1px solid #1275d6;
   color: #fff;
@@ -2153,79 +2168,93 @@ strong > small {
     margin-top: -38px;  
 }
 .comment_user {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 18px;
-    padding-left: 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 18px;
+  padding-left: 0;
 }
 .comment_date {
-    color: #999;
-    font-size: 12px;
-    font-weight: 400;
+  color: #999;
+  font-size: 12px;
+  font-weight: 400;
 }
 .comment_text, .comment_edit, .comment_abuse {
-    display: table;
-    font-size: 12px;
-    font-weight: normal;
-    line-height: 20px;
-    margin-left: 7px;
-    word-wrap: break-word;
+  display: table;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 20px;
+  margin-left: 7px;
+  word-wrap: break-word;
 }
 .comment_text {
-    background-color: #eee;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    display: table;
-    font-size: 14px;
-    font-weight: 400;
-    margin: 18px 0 5px;
-    padding: 13px;
-    text-align: left;
-    width: auto;
+  background-color: #eee;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  display: table;
+  font-size: 14px;
+  font-weight: 400;
+  margin: 18px 0 5px;
+  padding: 13px;
+  text-align: left;
+  width: auto;
 }
 .comment_text::before {
-    border-bottom: 9px solid #eee;
-    border-left: 9px solid transparent;
-    border-right: 9px solid transparent;
-    content: "";
-    height: 0;
-    margin-top: -23px;
-    position: absolute;
-    width: 0;
+  border-bottom: 9px solid #eee;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  content: "";
+  height: 0;
+  margin-top: -23px;
+  position: absolute;
+  width: 0;
 }
 .comment_edit {
-    color: #BEBEBE;
-    font-size: 9px;
-    font-style: italic;
+  color: #BEBEBE;
+  font-size: 9px;
+  font-style: italic;
 }
 .comment_abuse {
-    font-style: italic;
-    color: #BEBEBE;
+  font-style: italic;
+  color: #BEBEBE;
 }
 .comment_info{
-    width: 100%;
-    height: 33px;
+  width: 100%;
+  height: 33px;
 }
 .comment_editdeletereport {
-    float:right;
-    line-height: 16px;
-    font-weight: normal;
-    display: inline-block;
+  float:right;
+  line-height: 16px;
+  font-weight: normal;
+  display: inline-block;
 }
 .comment_editdeletereport a {
-    color:#B5B5B5;
+  color:#B5B5B5;
 }
 .comment_editdeletereport a:hover {
-    color:#000;
+  color:#000;
 }
 .comment_content {
-    font-size: 9px;  
+  font-size: 9px;  
 }
 .comment_modify {
     color:#ccc;
 }
+.comment_subject {
+  display: block;
+  font-size: 12px;
+  color: #1275d6;
+  padding: 0;
+
+  
+}
 #j_commentForm {
-    display: inline;
+  display: inline;
+}
+#j_showOtherSubjects {
+  margin-top: 8px;
+}
+.comment.otherSubject {
+  display: none;
 }
 .j_editComment, .j_deleteComment {
     background: url("../img/comment_icon.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
@@ -2507,7 +2536,7 @@ textarea + span {
     background-color: #fe8200 !important;
 }
 .defectStatus_SUCCESS {
-    background-color: #25e28b !important;
+    background-color: #25a28b !important;
 }
 .defectStatus_FAIL {
     background-color: #ee4c4c !important;
@@ -2950,6 +2979,12 @@ a.j_editUsers:hover {
     text-align: center;
     width: 60px;
 }
+.attachement-list ul li .attachment-thumb img {
+    height: 50px;
+    width: 50px;
+    margin-top: 5px;
+    border-radius: 4px;
+}
 .attachement-list ul li .attachment-info {
     padding-left: 16px;
 }
@@ -2962,7 +2997,7 @@ a.j_editUsers:hover {
     margin-bottom: 3px;
 }
 .attachement-list ul li .attachment-thumb a:hover {
-    background-color: #000;
+    background-color: #13adf4;
     color: #fff;
     transition: all 0.2s ease-out 0s;
 }
@@ -3006,7 +3041,7 @@ a.j_editUsers:hover {
 
 .box_number_info {
     border: 1px solid #eee;
-    display: block;
+    display: inline-block;
     text-align: center;
     width: 140px;
 }
@@ -3351,6 +3386,9 @@ a.j_editUsers:hover {
 .column_dashboard > .col50 {
   width: 50%;
 }
+.column_dashboard > .col100 {
+  width: 100%;
+}
 .article_box.dsb > div {
     padding: 17px;
 }
@@ -3470,6 +3508,67 @@ li.token-input-input-token-facebook {
     padding: 0;
     width: 100%;
 }
+
+
+.filter.custom-auto {
+    vertical-align: top;
+    line-height: 1.9;
+    display: block;
+}
+.filter.custom-auto ul.token-input-list-facebook {
+    background-color: #fff;
+    cursor: text;
+    display: inline-block;
+    font-family: "Roboto",Verdana;
+    font-size: 12px;
+    height: auto !important;
+    list-style-type: none;
+    margin: 1px 0 0;
+    min-height: 1px;
+    padding: 0;
+    width: auto !important;
+    z-index: 999;
+    
+}
+.filter.custom-auto li.token-input-token-facebook {
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 3px;
+    color: #000;
+    cursor: default;
+    display: inline-block !important;
+    font-size: 11px;
+    font-weight: 600;
+    height: auto !important;
+    margin: 0 6px 0 0;
+    overflow: visible;
+    padding: 1px 6px;
+    white-space: nowrap;
+    float: none;
+}
+.filter.custom-auto li.token-input-input-token-facebook {
+    display: inline-block;
+    float: left;
+    list-style-type: none;
+    margin: 0 5px 0 0;
+    padding: 0;
+    min-width: 90px;
+    border: 1px solid #bdc7d8;
+    border-radius: 3px;
+    width: auto !important;
+}
+.filter.custom-auto ul.token-input-list-facebook li input {
+    padding: 4px 8px !important;
+}
+.filter.custom-auto ul.token-input-list-facebook li input {
+    min-width: 90px !important;
+    width:  auto !important;
+}
+
+
+
+
+
 .object_nr {
     background-color: #999;
     border-radius: 3px;
@@ -3719,3 +3818,119 @@ li.token-input-input-token-facebook {
     border-top: 1px solid #555;
     margin-bottom: -2px;
 }
+
+/* Sortable lists - start */
+#jSortableTasks {
+    margin-top: 5px;
+}
+
+/* Floats */
+
+.sortableFloatLeft {
+    float: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 300px;
+    background-color: #F1F2F5;
+}
+
+.sortableFloatRight {
+    float: right;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 300px;
+    background-color: #F1F2F5;
+}
+
+.sortableClear,.sortableClearer {clear: both;}
+.sortableClearer {
+	display: block;
+	font-size: 0;
+	height: 0;
+	line-height: 0;
+}
+
+
+/*
+	Example specifics
+------------------------------------------------------------------- */
+/* Columns */
+
+.sortableColumn {
+	margin-left: 2%;
+	width: 32%;
+}
+.sortableColumn.first {margin-left: 0;}
+
+/* Sortable items */
+
+.sortable-list, .sortable-list-selected {
+	background-color: #F1F2F5;
+	list-style: none;
+	margin: 0;
+	min-height: 250px;
+	padding: 10px;
+}
+.sortable-item {
+	background-color: #FFF;
+	border: 1px solid #000;
+	cursor: move;
+	display: block;
+	font-weight: bold;
+	margin-bottom: 5px;
+	padding: 5px 0;
+	text-align: center;
+}
+
+/* Item placeholder (visual helper) */
+
+.sortablePlaceholder {
+	background-color: #BFB;
+	border: 1px dashed #666;
+	height: 40px;
+	margin-bottom: 5px;
+}
+
+/* Sortable lists -end*/
+
+.check-left {
+    display: inline-block;
+    float: left;
+    min-height: 50px;
+}
+.col-box {
+    display: block;
+    vertical-align: top;
+    width: 25%;
+    margin-top: 30px;
+    float: left;
+}
+
+
+.sortable-list-selected-container {
+    width: 32%;
+    display: inline-block;
+    float: left;
+}
+.sortable-list-selected-container h1 {
+    margin-left: 2%;
+    color: #aaa;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 400;
+}
+
+.message_sender {
+    background-color: #eaeaea;
+    text-align: right;
+    /*color: white;*/
+}
+
+.message_sender img {
+    float: right;
+}
+
+.message_arrow {
+    width: 30px;
+}
+

@@ -29,9 +29,9 @@
           
         <div class="formContainer export">
           <span>
-            <?php echo $this->form->exportReleases->renderViewHelper() ?>
-              <?php echo $this->formLabel('exportReleases', $this->t('Wydania')) ?>
-            <?php foreach ($this->form->getErrors('exportReleases') as $error): ?>
+            <?php echo $this->form->exportVersions->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportVersions', $this->t('Wersje')) ?>
+            <?php foreach ($this->form->getErrors('exportVersions') as $error): ?>
               <div><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
           </span>
@@ -39,9 +39,19 @@
           
         <div class="formContainer export">
           <span>
-            <?php echo $this->form->exportPhases->renderViewHelper() ?>
-              <?php echo $this->formLabel('exportPhases', $this->t('Fazy')) ?>
-            <?php foreach ($this->form->getErrors('exportPhases') as $error): ?>
+            <?php echo $this->form->exportTags->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportTags', $this->t('Tagi')) ?>
+            <?php foreach ($this->form->getErrors('exportTags') as $error): ?>
+              <div><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer export">
+          <span>
+            <?php echo $this->form->exportReleases->renderViewHelper() ?>
+              <?php echo $this->formLabel('exportReleases', $this->t('Wydania')) ?>
+            <?php foreach ($this->form->getErrors('exportReleases') as $error): ?>
               <div><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
           </span>
@@ -59,11 +69,11 @@
           
         <!--<div class="formContainer export">
           <span>
-            <?php echo $this->form->exportTasks->renderViewHelper() ?>
-              <?php echo $this->formLabel('exportTasks', $this->t('Zadania')) ?>
-            <?php foreach ($this->form->getErrors('exportTasks') as $error): ?>
-              <div><?php echo $this->errorT($error) ?></div>
-            <?php endforeach; ?>
+            <?php //echo $this->form->exportTasks->renderViewHelper() ?>
+              <?php //echo $this->formLabel('exportTasks', $this->t('Zadania')) ?>
+            <?php //foreach ($this->form->getErrors('exportTasks') as $error): ?>
+              <div><?php //echo $this->errorT($error) ?></div>
+            <?php //endforeach; ?>
           </span>
         </div>-->
           

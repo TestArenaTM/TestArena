@@ -60,4 +60,18 @@ class Project_Model_TaskVersionMapper extends Custom_Model_Mapper_Abstract
     $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (task_id, version_id) VALUES '.$values);
     return $statement->execute($data);
   }
+
+  public function deleteByTask(Application_Model_Task $task)
+  {
+    $this->_getDbTable()->delete(array(
+      'task_id = ?' => $task->getId()
+    ));
+  }
+
+  public function deleteByTaskIds(array $taskIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'task_id IN(?)' => $taskIds
+    ));
+  }
 }

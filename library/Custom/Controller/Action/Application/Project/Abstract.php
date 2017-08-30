@@ -25,44 +25,78 @@ abstract class Custom_Controller_Action_Application_Project_Abstract extends Cus
   public function preDispatch()
   {
     parent::preDispatch();
-    
-    //if (!$this->getRequest()->isXmlHttpRequest())
+    $this->_helper->layout->setLayout('project');    
+    $this->checkUserSession(true, $this->getRequest()->isXmlHttpRequest());
+    $this->_setActiveProjectByPrefix();
+  }
+  
+  private function _setActiveProjectByPrefix()
+  {
+    $request = $this->getRequest();
+    $projectPrefix = $request->getParam('projectPrefix', null);
+
+    if ($projectPrefix === null || !array_key_exists($projectPrefix, $this->_projectsByPrefix))
     {
-      $this->_setActiveProjectById();
+      throw new Custom_404Exception();
+    }
+
+    if ($this->_project === null || $this->_project->getId() != $this->_projectsByPrefix[$projectPrefix]->getId())
+    {
+      $this->_project = $this->_projectsByPrefix[$projectPrefix];
+
+      $userMapper = new Application_Model_UserMapper();
+      $this->_user->setDefaultProjectId($this->_project->getId());
+      $userMapper->changeDefaultProjectId($this->_user);
+      
+      $this->_projectsForm->getElement('activeProject')->setValue($this->_project->getId());
+      $request->setParam('projectId', $this->_project->getId());
+      $this->view->activeProject = $this->_project;
+    }
+  }
+
+  protected function _setRoleSettings()
+  {
+    if ($this->_isActiveProject())
+    {
+      $roleSettingsMapper = new Application_Model_RoleSettingMapper();
+      $roleSettings       = $roleSettingsMapper->getUserRoleSettings($this->_user, $this->_project);
+      $this->_user->setRoleSettings($roleSettings);
     }
   }
   
-  protected function _setActiveProjectById()
+  protected function _checkAccess($roleActionId, $throwException = false)
   {
-    $idValidator = new Application_Model_Validator_ProjectId();
+    $roleAcl = new Application_Model_RoleAcl();
     
-    if ($idValidator->isValid($this->_getAllParams()))
+    if (true === $roleAcl->isAccessAllowed($roleActionId, $this->_user))
     {
-      $projectId = $idValidator->getFilteredValue('projectId');
-      
-      if ($this->_project === null || $this->_project->getId() != $projectId)
+      return true;
+    }
+    else
+    {
+      if ($throwException)
       {
-        if (!array_key_exists($projectId, $this->_projects))
-        {
-          $this->redirect(array(), 'index');
-        }
-        $this->_helper->layout->setLayout('project');
-        
-        $this->_project = new Application_Model_Project($this->_projects[$projectId]);
-        
-        $userMapper = new Application_Model_UserMapper();
-        $this->_user->setDefaultProjectId($this->_project->getId());
-        $userMapper->changeDefaultProjectId($this->_user);
-        
-        $this->view->projectsForm->getElement('activeProject')->setValue($this->_project->getId());
+        $this->_throwTaskAccessDeniedException();
       }
       
-      $this->view->activeProject = $this->_project;
+      return false;
+    }
+  }
+  
+  protected function _checkMultipleAccess(array $roleActionIds)
+  {
+    $access = array();
+    
+    foreach ($roleActionIds as $id)
+    {
+      $access[$id] = $this->_checkAccess($id);
     }
     
-    if ($this->_project instanceof Application_Model_Project)
-    {
-      $this->getRequest()->setParam('projectId', $this->_project->getId());
-    }
+    return $access;
+  }
+  
+  protected function _isActiveProject()
+  {
+    return (null === $this->_project) ? false : true ;
   }
 }

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-08-04 08:19+0200\n"
-"Last-Translator: Paweł Piaskowy <pawel@piaskowy>\n"
+"PO-Revision-Date: 2017-08-10 14:44+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,25 +12,16 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 2.0.3\n"
 
 msgid "pageTitle"
 msgstr "Tasks"
 
 msgid "Dodaj zadanie"
-msgstr "Add task"
-
-msgid "Szukaj"
-msgstr "Search"
-
-msgid "Wyniki"
-msgstr "Result"
+msgstr "Add a task"
 
 msgid "Przekroczony termin"
 msgstr "Deadline missed"
-
-msgid "Filtruj"
-msgstr "Filter"
 
 msgid "Nr obiektu"
 msgstr "Object number"
@@ -41,17 +32,14 @@ msgstr "Title"
 msgid "Wydanie"
 msgstr "Release"
 
-msgid "Faza"
-msgstr "Phase"
-
 msgid "Status"
 msgstr "Status"
 
 msgid "Priorytet"
-msgstr "Priority"
+msgstr "P"
 
 msgid "Data utworzenia"
-msgstr "Date of creating"
+msgstr "Date of creation"
 
 msgid "Data modyfikacji"
 msgstr "Date of modifying"
@@ -59,20 +47,29 @@ msgstr "Date of modifying"
 msgid "Termin realizacji"
 msgstr "Deadline"
 
-msgid "Przydzielił"
+msgid "Przypisał"
 msgstr "Assigned by"
 
-msgid "Przydzielone do"
+msgid "Przypisane do"
 msgstr "Assigned to"
 
 msgid "Środowisko"
 msgstr "Environment"
+
+msgid "Wersja"
+msgstr "Version"
+
+msgid "Tagi"
+msgstr "Tags"
 
 msgid "Akcje"
 msgstr "Actions"
 
 msgid "Edytuj"
 msgstr "Edit"
+
+msgid "Usuń"
+msgstr "Delete"
 
 msgid "Rozpocznij"
 msgstr "Start"
@@ -89,8 +86,11 @@ msgstr "Close"
 msgid "Otwórz ponownie"
 msgstr "Reopen"
 
-msgid "Brak zadań."
-msgstr "No tasks available..."
+msgid "Usuń wybrane"
+msgstr "Delete selected"
+
+msgid "Brak zadań"
+msgstr "No tasks available"
 
 msgid "Przekroczony termin realizacji"
 msgstr "Deadline missed"

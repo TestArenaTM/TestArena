@@ -78,8 +78,18 @@ class Application_Form_Contact extends Custom_Form_Abstract
         array('StringLengthOneCharacterLineBreaks', false, array(1, 4000, 'UTF-8')),
       ),
     ));
+    
+    $recaptchaConfigData = Zend_Registry::get('config')->recaptcha;
+    $recaptchaOptions = array(
+      'siteKey'   => $recaptchaConfigData->publicKey,
+      'secretKey' => $recaptchaConfigData->privateKey,
+    );
+    
+    $recaptcha = new Custom_Form_Element_Recaptcha('grecaptcharesponse', $recaptchaOptions);
+    
+    $this->addElement($recaptcha);
         
-    $this->addElement('captcha', 'captcha', array(
+    /*$this->addElement('captcha', 'captcha', array(
       'required'  => true,
       'captcha'   => array(
         'captcha' => 'Image',
@@ -90,7 +100,7 @@ class Application_Form_Contact extends Custom_Form_Abstract
         'imgUrl'  => Zend_Registry::get('config')->baseUrl . '/captcha/'
       ),
       'decorators' => array('Captcha') 
-    ));
+    ));*/
 
     $this->addElement('hash', 'csrf', array(
       'ignore'  => true,

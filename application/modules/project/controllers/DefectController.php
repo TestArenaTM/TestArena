@@ -28,12 +28,10 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     
     if (!$this->getRequest()->isXmlHttpRequest())
     {
-      if ($this->_project === null)
+      if ($this->_project === null || $this->_project->getBugTracker()->getBugTrackerTypeId() != Application_Model_BugTrackerType::INTERNAL)
       {
         throw new Custom_404Exception();
       }
-      
-      $this->checkUserSession(true);
       
       if (!in_array($this->getRequest()->getActionName(), array('index', 'view')))
       {
@@ -44,52 +42,64 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
   }
   
   private function _getFilterForm()
-  {
+  {    
     $userMapper = new Project_Model_UserMapper();
     $releaseMapper = new Project_Model_ReleaseMapper();
-    $phaseMapper = new Project_Model_PhaseMapper();
     $environmentMapper = new Project_Model_EnvironmentMapper();
-    $request = $this->getRequest();
-    
+    $versionMapper = new Project_Model_VersionMapper();
+      
     $release = new Application_Model_Release();
-    $release->setId($request->getParam('release', null));
-    $phase = new Application_Model_Phase();
-    $phase->setId($request->getParam('phase', null));
-    
-    if (!$release->getId() && $phase->getId())
-    {
-      $release = $releaseMapper->getByPhase($phase);
-      $request->setParam('release', $release->getId());
-    }
-    
-    $releaseList = $releaseMapper->getByProjectAsOptions($this->_project);
-    $phaseList = $phaseMapper->getByReleaseAsOptions($release);
+    $release->setId($this->getRequest()->getParam('release', null));
     
     return new Project_Form_DefectFilter(array(
-      'action'          => $this->_url(array(), 'defect_list'),
+      'action'          => $this->_projectUrl(array(), 'defect_list'),
       'userList'        => $userMapper->getByProjectAsOptions($this->_project),
-      'releaseList'     => $releaseList,
-      'phaseList'       => $phaseList,
+      'releaseList'     => $releaseMapper->getByProjectAsOptions($this->_project),
       'environmentList' => $environmentMapper->getByProjectAsOptions($this->_project),
+      'versionList'     => $versionMapper->getByProjectAsOptions($this->_project),
       'project'         => $this->_project
     ));
   }
     
   public function indexAction()
   {
-    $request = $this->getRequest();
+    $this->_setCurrentBackUrl('defect_list');
+    $this->_setCurrentBackUrl('defect_assignToMe');
+    $this->_setCurrentBackUrl('defect_changeStatus');
+    $request = $this->_getRequestForFilter(Application_Model_FilterGroup::DEFECTS);
     $filterForm = $this->_getFilterForm();
 
     if ($filterForm->isValid($request->getParams()))
     {
+      $this->_filterAction($filterForm->getValues(), 'defect'.$this->_project->getId());
       $defectMapper = new Project_Model_DefectMapper();
       list($list, $paginator) = $defectMapper->getAll($request, $this->_project);
+      
+      $allIds = $defectMapper->getAllIds($request);
     }
     else
     {
-      $list = array();
+      $list = $allIds = array();
       $paginator = null;
     }
+    
+    $filter = $this->_user->getFilter(Application_Model_FilterGroup::DEFECTS);
+    
+    if ($filter !== null)
+    {
+      $savedValues = $filter->getData();
+      
+      if (array_key_exists('tags', $savedValues) && is_array($savedValues['tags']) && count($savedValues['tags']) > 0)
+      {
+        $tagMapper = new Project_Model_TagMapper();
+        $savedValues['tags'] = $tagMapper->getForFilterByIds($savedValues['tags']);
+      }
+      
+      $filterForm->prepareSavedValues($savedValues);
+    }
+
+    $tagMapper = new Project_Model_TagMapper();
+    $this->view->prePopulatedTags = $filterForm->prePopulateTags($tagMapper->getForPopulateByIds($filterForm->getTags()));
     
     $this->_setTranslateTitle();
     $this->view->defects = $list;
@@ -97,34 +107,41 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
     $this->view->defectUserPermissions = $this->_getAccessPermissionsForDefects();
+    $this->view->allIds = $allIds;
   }
     
   public function viewAction()
   {
-    $this->_setCurrentBackUrl('file_dwonload');
-    
-    $defect = $this->_getValidDefect();
-    $defectMapper = new Project_Model_DefectMapper();
-    $defect = $defectMapper->getForView($defect);
+    $defect = $this->_getValidDefectForView();
 
-    if ($defect === false)
-    {
-      throw new Custom_404Exception();
-    }
+    $this->_setCurrentBackUrl('file_dwonload');
+    $this->_setCurrentBackUrl('defect_assignToMe');
 
     $fileMapper = new Project_Model_FileMapper();
-    $defect->setExtraData('attachments', $fileMapper->getAllByDefect($defect));
+    $defect->setExtraData('attachments', $fileMapper->getListByDefect($defect));
     
-    $historyMapper = new Application_Model_HistoryMapper();
+    $historyMapper = new Project_Model_HistoryMapper();
     $environmentMapper = new Project_Model_EnvironmentMapper();
     $versionMapper = new Project_Model_VersionMapper();
+    $tagMapper = new Project_Model_TagMapper();
     
-    $this->_setTranslateTitle();
+    $this->_setTranslateTitle(array('name' => $defect->getTitle()), 'headTitle');
+    $this->view->backUrl = $this->_getBackUrl('defect_list', $this->_projectUrl(array(), 'defect_list'));
     $this->view->defect = $defect;
     $this->view->environments = $environmentMapper->getByDefect($defect);
     $this->view->versions = $versionMapper->getByDefect($defect);
+    $this->view->tags = $tagMapper->getByDefect($defect);
     $this->view->history = $historyMapper->getByDefect($defect);
     $this->view->defectUserPermission = new Application_Model_DefectUserPermission($defect, $this->_user, $this->_getAccessPermissionsForDefects());
+  }
+  
+  public function listAjaxAction()
+  {
+    $this->checkUserSession(true, true);
+    $defectMapper = new Project_Model_DefectMapper();
+    $result = $defectMapper->getAllAjax($this->getRequest(), $this->_project);    
+    echo json_encode($result);
+    exit;
   }
   
   public function infoAjaxAction()
@@ -308,11 +325,24 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
   
   private function _getAddForm()
   {
-    return new Project_Form_AddDefect(array(
-      'action'    => $this->_url(array(), 'defect_add_process'),
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    $release = $releaseMapper->getActive($this->_project);
+
+    $form = new Project_Form_AddDefect(array(
+      'action'    => $this->_projectUrl(array(), 'defect_add_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
+    
+    if (isset($release) && $release->getId() > 0)
+    {
+      $form->populate(array(
+        'releaseId'   => $release->getId(),
+        'releaseName' => $release->getName()
+      ));
+    }
+    
+    return $form;
   }  
 
   public function addAction()
@@ -331,7 +361,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'defect_add');
+      return $this->projectRedirect(array(), 'defect_add');
     }
     
     $form = $this->_getAddForm();
@@ -341,18 +371,19 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     {
       $environmentMapper = new Project_Model_EnvironmentMapper();
       $versionMapper = new Project_Model_VersionMapper();
+      $tagMapper = new Project_Model_TagMapper();
 
       $this->_setTranslateTitle();
       $this->view->form = $form;
       $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByIds($form->getEnvironments()));
       $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByIds($form->getVersions()));
+      $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByIds($form->getTags()));
       return $this->render('add'); 
     }
     
     $defect = new Application_Model_Defect($form->getValues());
     $defect->setProjectObject($this->_project);
     $defect->setRelease('id', $form->getValue('releaseId'));
-    $defect->setPhase('id', $form->getValue('phaseId'));
     $defect->setAssignee('id', $form->getValue('assigneeId'));
     $defect->setAssigner('id', $this->_user->getId());
     $defect->setAuthor('id', $this->_user->getId());
@@ -367,7 +398,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CREATE_DEFECT);
       $history->setField1($defect->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -376,17 +407,20 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect(array('id' => $defect->getId()), 'defect_view');
+    $this->projectRedirect(array('id' => $defect->getId()), 'defect_view');
   }
   
   private function _getEditForm(Application_Model_Defect $defect)
   {
     $form = new Project_Form_EditDefect(array(
-      'action'    => $this->_url(array('id' => $defect->getId()), 'defect_edit_process'),
+      'action'    => $this->_projectUrl(array('id' => $defect->getId()), 'defect_edit_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
-    return $form->populate($defect->getExtraData('rowData'));
+    
+    $form->populate($defect->getExtraData('rowData'));
+    
+    return $form;
   }
 
   public function editAction()
@@ -394,6 +428,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     $defect = $this->_getValidDefectForEdit();
     $environmentMapper = new Project_Model_EnvironmentMapper();
     $versionMapper = new Project_Model_VersionMapper();
+    $tagMapper = new Project_Model_TagMapper();
     $form = $this->_getEditForm($defect);
     $rowData = $defect->getExtraData('rowData');
     $form->populate($form->prepareAttachmentsFromDb($rowData['attachments']));
@@ -403,6 +438,8 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     $this->view->defect = $defect;
     $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByDefect($defect));
     $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByDefect($defect));
+    $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByDefect($defect));
+    $this->accessAssing = $this->_checkAccess(Application_Model_RoleAction::DEFECT_ASSIGN_ALL);
   }
   
   public function editProcessAction()
@@ -412,27 +449,42 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'defect_run_list');
+      return $this->projectRedirect(array(), 'defect_run_list');
     }
     
     $form = $this->_getEditForm($defect);
     $post = $form->prepareAttachments($request->getPost());
-
+    
     if (!$form->isValid($post))
     {
       $environmentMapper = new Project_Model_EnvironmentMapper();
       $versionMapper = new Project_Model_VersionMapper();
+      $tagMapper = new Project_Model_TagMapper();
       
       $this->_setTranslateTitle();
       $this->view->form = $form;
       $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByIds($form->getEnvironments()));
       $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByIds($form->getVersions()));
+      $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByIds($form->getTags()));
+      
       return $this->render('edit'); 
     }
 
+    if ($defect->getAssigneeId() != $form->getValue('assigneeId'))
+    {
+      $historyType = Application_Model_HistoryType::CHANGE_AND_ASSIGN_DEFECT;
+    }
+    else
+    {
+      $historyType = Application_Model_HistoryType::CHANGE_DEFECT;
+    }
+    /*elseif (ZMIENIŁO SIĘ TYLKO PRZYPISANIE)
+    {
+      $historyType = Application_Model_HistoryType::ASSIGN_TASK;
+    }*/
+
     $defect->setDbProperties($form->getValues());
     $defect->setRelease('id', $form->getValue('releaseId'));
-    $defect->setPhase('id', $form->getValue('phaseId'));
     $defect->setAssignee('id', $form->getValue('assigneeId'));
     $defect->setAssigner('id', $this->_user->getId());
 
@@ -444,9 +496,9 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($defect);
-      $history->setType(Application_Model_HistoryType::CHANGE_DEFECT);
+      $history->setType($historyType);
       $history->setField1($defect->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -455,7 +507,51 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->projectRedirect($form->getBackUrl());
+  }
+  
+  public function deleteAction()
+  {
+    $defect = $this->_getValidDefectForDelete();
+    $defectMapper = new Project_Model_DefectMapper();
+    $t = new Custom_Translate();
+
+    if ($defectMapper->delete($defect))
+    {
+      $this->_removeIdFromMultiSelectIds('defect', $defect->getId());
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+
+    return $this->projectRedirect($this->_getBackUrl('defect_list', $this->_projectUrl(array(), 'defect_list')));
+  }
+  
+  public function multiDeleteAction()
+  {
+    $multiSelectName = 'defect'.$this->_project->getId();
+    $defectIds = $this->_getMultiSelectIds($multiSelectName, false);
+    
+    $defectMapper = new Project_Model_DefectMapper();
+    $defects = $defectMapper->getByIds4CheckAccess($defectIds);
+    
+    $this->_checkDeletePermissions4MultipleDefects($defects);
+    
+    $t = new Custom_Translate();
+    
+    if ($defectMapper->deleteByIds($defectIds))
+    {    
+      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+      $this->_clearMultiSelectIds($multiSelectName);
+    }
+    else
+    {
+      $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+    }
+    
+    return $this->projectRedirect(array(), 'defect_list');
   }
   
   public function startAction()
@@ -477,7 +573,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT_STATUS);
       $history->setField1(Application_Model_DefectStatus::IN_PROGRESS);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -486,7 +582,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('defect_changeStatus', $this->_projectUrl(array(), 'defect_list')));
   }
   
   public function finishAction()
@@ -508,7 +604,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT_STATUS);
       $history->setField1(Application_Model_DefectStatus::FINISHED);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -517,13 +613,13 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('defect_changeStatus', $this->_projectUrl(array(), 'defect_list')));
   }
   
   private function _getResolveForm(Application_Model_Defect $defect)
   {
     $form = new Project_Form_ResolveDefect(array(
-      'action'      => $this->_url(array('id' => $defect->getId()), 'defect_resolve_process'),
+      'action'      => $this->_projectUrl(array('id' => $defect->getId()), 'defect_resolve_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId()
     ));
@@ -536,7 +632,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
   
   public function resolveAction()
   {
-    $defect = $this->_getValidDefectForAssign();
+    $defect = $this->_getValidDefectForChangeStatus();
     $form = $this->_getResolveForm($defect);
     
     $this->_setTranslateTitle();
@@ -546,12 +642,12 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
   
   public function resolveProcessAction()
   {
-    $defect = $this->_getValidDefectForAssign();
+    $defect = $this->_getValidDefectForChangeStatus();
     $request = $this->getRequest();
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $defect->getId()), 'defect_resolve');
+      return $this->projectRedirect(array('id' => $defect->getId()), 'defect_resolve');
     }
     
     $form = $this->_getResolveForm($defect);
@@ -577,7 +673,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT);
       $history->setField1($defect->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -586,13 +682,13 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   private function _getIsInvalidForm(Application_Model_Defect $defect)
   {
     $form = new Project_Form_IsInvalidDefect(array(
-      'action'      => $this->_url(array('id' => $defect->getId()), 'defect_is_invalid_process'),
+      'action'      => $this->_projectUrl(array('id' => $defect->getId()), 'defect_is_invalid_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId()
     ));
@@ -605,7 +701,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
   
   public function isInvalidAction()
   {
-    $defect = $this->_getValidDefectForAssign();
+    $defect = $this->_getValidDefectForChangeStatus();
     $form = $this->_getIsInvalidForm($defect);
     
     $this->_setTranslateTitle();
@@ -615,12 +711,12 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
   
   public function isInvalidProcessAction()
   {
-    $defect = $this->_getValidDefectForAssign();
+    $defect = $this->_getValidDefectForChangeStatus();
     $request = $this->getRequest();
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $defect->getId()), 'defect_is_invalid');
+      return $this->projectRedirect(array('id' => $defect->getId()), 'defect_is_invalid');
     }
     
     $form = $this->_getIsInvalidForm($defect);
@@ -646,7 +742,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT);
       $history->setField1($defect->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -655,7 +751,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   public function changeToResolvedAction()
@@ -677,7 +773,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT_STATUS);
       $history->setField1(Application_Model_DefectStatus::RESOLVED);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -686,7 +782,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('defect_changeStatus', $this->_projectUrl(array(), 'defect_list')));
   }
   
   public function changeToInvalidAction()
@@ -708,7 +804,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT_STATUS);
       $history->setField1(Application_Model_DefectStatus::INVALID);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -717,13 +813,13 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('defect_changeStatus', $this->_projectUrl(array(), 'defect_list')));
   }
   
   private function _getCloseForm(Application_Model_Defect $defect)
   {
     $form = new Project_Form_CloseDefect(array(
-      'action'      => $this->_url(array('id' => $defect->getId()), 'defect_close_process'),
+      'action'      => $this->_projectUrl(array('id' => $defect->getId()), 'defect_close_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId()
     ));
@@ -764,7 +860,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $defect->getId()), 'defect_close');
+      return $this->projectRedirect(array('id' => $defect->getId()), 'defect_close');
     }
 
     $form = $this->_getCloseForm($defect);
@@ -793,7 +889,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT_STATUS);
       $history->setField1($defect->getStatusId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -802,7 +898,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   public function changeToSuccessAction()
@@ -824,7 +920,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT_STATUS);
       $history->setField1(Application_Model_DefectStatus::SUCCESS);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -833,7 +929,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('defect_changeStatus', $this->_projectUrl(array(), 'defect_list')));
   }
   
   public function changeToFailAction()
@@ -855,7 +951,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT_STATUS);
       $history->setField1(Application_Model_DefectStatus::FAIL);
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -864,13 +960,13 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('defect_changeStatus', $this->_projectUrl(array(), 'defect_list')));
   }
   
   private function _getReopenForm(Application_Model_Defect $defect)
   {
     $form = new Project_Form_ReopenDefect(array(
-      'action'      => $this->_url(array('id' => $defect->getId()), 'defect_reopen_process'),
+      'action'      => $this->_projectUrl(array('id' => $defect->getId()), 'defect_reopen_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId()
     ));
@@ -920,7 +1016,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $defect->getId()), 'defect_reopen');
+      return $this->projectRedirect(array('id' => $defect->getId()), 'defect_reopen');
     }
     
     $form = $this->_getReopenForm($defect);
@@ -946,7 +1042,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setSubjectObject($defect);
       $history->setType(Application_Model_HistoryType::CHANGE_DEFECT);
       $history->setField1($defect->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -955,13 +1051,13 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   private function _getAssignForm(Application_Model_Defect $defect)
   {
     $form = new Project_Form_AssignDefect(array(
-      'action'      => $this->_url(array('id' => $defect->getId()), 'defect_assign_process'),
+      'action'      => $this->_projectUrl(array('id' => $defect->getId()), 'defect_assign_process'),
       'method'      => 'post',
       'projectId'   => $this->_project->getId()
     ));
@@ -989,7 +1085,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $defect->getId()), 'defect_assign');
+      return $this->projectRedirect(array('id' => $defect->getId()), 'defect_assign');
     }
     
     $form = $this->_getAssignForm($defect);
@@ -1013,9 +1109,9 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($defect);
-      $history->setType(Application_Model_HistoryType::CHANGE_DEFECT);
+      $history->setType(Application_Model_HistoryType::ASSIGN_DEFECT);
       $history->setField1($defect->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -1024,7 +1120,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($form->getBackUrl());
+    return $this->projectRedirect($form->getBackUrl());
   }
   
   public function assignToMeAction()
@@ -1045,9 +1141,9 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($defect);
-      $history->setType(Application_Model_HistoryType::CHANGE_DEFECT);
+      $history->setType(Application_Model_HistoryType::ASSIGN_DEFECT);
       $history->setField1($defect->getAssigneeId());
-      $historyMapper = new Application_Model_HistoryMapper();
+      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
@@ -1056,7 +1152,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
 
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->projectRedirect($this->_getBackUrl('defect_assignToMe', $this->_projectUrl(array(), 'defect_list')));
   }
   
   private function _getValidDefect()
@@ -1075,6 +1171,19 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     return $defect;
   }
   
+  private function _getValidDefectForView()
+  {
+    $defect = $this->_getValidDefect();
+    $defectMapper = new Project_Model_DefectMapper();
+    
+    if ($defectMapper->getForView($defect) === false)
+    {
+      throw new Custom_404Exception();
+    }
+    
+    return $defect;
+  }
+  
   private function _getValidDefectForEdit()
   {
     $defect = $this->_getValidDefect();
@@ -1089,19 +1198,22 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
     $this->_checkEditPermissions($defect);
     
     $fileMapper = new Project_Model_FileMapper();
-    $rowData['attachments'] = $fileMapper->getAllByDefect($defect);
+    $rowData['attachments'] = $fileMapper->getListByDefect($defect);
     return $defect->setExtraData('rowData', $rowData);
+  }
+  
+  private function _getValidDefectForDelete()
+  {
+    $defect = $this->_getValidDefectForView();
+    $this->_checkDeletePermissions($defect);
+    return $defect;
   }
   
   private function _getValidDefectForAssign()
   {
-    $defect = $this->_getValidDefect();
-    $defectMapper = new Project_Model_DefectMapper();
-    $defect = $defectMapper->getForView($defect);
+    $defect = $this->_getValidDefectForView();
     
-    if ($defect === false 
-      || $defect->getProject()->getId() != $this->_project->getId()
-      || in_array($defect->getStatusId(), array(
+    if (in_array($defect->getStatusId(), array(
         Application_Model_DefectStatus::SUCCESS,
         Application_Model_DefectStatus::FAIL
     )))
@@ -1109,19 +1221,33 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       throw new Custom_404Exception();
     }
     
+    $this->_checkAssignPermissions($defect);
+    
+    return $defect;
+  }
+  
+  private function _getValidDefectForChangeStatus()
+  {
+    $defect = $this->_getValidDefectForView();
+    
+    if (in_array($defect->getStatusId(), array(
+        Application_Model_DefectStatus::SUCCESS,
+        Application_Model_DefectStatus::FAIL
+    )))
+    {
+      throw new Custom_404Exception();
+    }
+    
+    $this->_checkChangeStatusPermissions($defect);
+    
     return $defect;
   }
   
   private function getValidDefectForMinorModification()
   {
-    $defect = $this->_getValidDefect();
-    $defectMapper = new Project_Model_DefectMapper();
-    $defect = $defectMapper->getForView($defect);
+    $defect = $this->_getValidDefectForView();
     
-    if ($defect === false || $defect->getProject()->getId() != $this->_project->getId())
-    {
-      throw new Custom_404Exception();
-    }
+    $this->_checkChangeStatusPermissions($defect);
     
     return $defect;
   }
@@ -1130,12 +1256,84 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
   {
     $roleActionsForEdit = array(
       Application_Model_RoleAction::DEFECT_EDIT_CREATED_BY_YOU,
-      Application_Model_RoleAction::DEFECT_EDIT_ALL
+      Application_Model_RoleAction::DEFECT_EDIT_ALL,
+      Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU
     );
     
     $defectUserPermission = new Application_Model_DefectUserPermission($defect, $this->_user, $this->_checkMultipleAccess($roleActionsForEdit));
     
     if (false === $defectUserPermission->isEditPermission())
+    {
+      $this->_throwTaskAccessDeniedException();
+    }
+  }
+  
+  private function _checkDeletePermissions(Application_Model_Defect $defect)
+  {
+    $roleActionsForAssign = array(
+      Application_Model_RoleAction::DEFECT_DELETE_ALL,
+      Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU,
+      Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU
+    );
+    
+    $defectUserPermission = new Application_Model_DefectUserPermission($defect, $this->_user, $this->_checkMultipleAccess($roleActionsForAssign));
+    
+    if (false === $defectUserPermission->isDeletePermission())
+    {
+      $this->_throwTaskAccessDeniedException();
+    }
+  }
+  
+  private function _checkDeletePermissions4MultipleDefects(array $defects)
+  {
+    $roleActionsForAssign = array(
+      Application_Model_RoleAction::DEFECT_DELETE_ALL,
+      Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU,
+      Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU
+    );
+    
+    foreach ($defects as $defect)
+    {
+      $defectUserPermission = new Application_Model_DefectUserPermission($defect, $this->_user, $this->_checkMultipleAccess($roleActionsForAssign));
+    
+      if (false === $defectUserPermission->isDeletePermission())
+      {
+        $this->_throwDefectAccessDeniedException();
+      }
+    }
+  }
+  
+  private function _checkAssignPermissions(Application_Model_Defect $defect)
+  {
+    $roleActionsForEdit = array(
+      Application_Model_RoleAction::DEFECT_ASSIGN_ALL,
+      Application_Model_RoleAction::DEFECT_EDIT_CREATED_BY_YOU,
+      Application_Model_RoleAction::DEFECT_EDIT_ALL,
+      Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU
+    );
+    
+    $defectUserPermission = new Application_Model_DefectUserPermission($defect, $this->_user, $this->_checkMultipleAccess($roleActionsForEdit));
+    
+    if (false === $defectUserPermission->isAssignPermission())
+    {
+      $this->_throwTaskAccessDeniedException();
+    }
+  }
+  
+  private function _checkChangeStatusPermissions(Application_Model_Defect $defect)
+  {
+    $roleActionsForEdit = array(
+      Application_Model_RoleAction::DEFECT_CHANGE_STATUS_ALL,
+      Application_Model_RoleAction::DEFECT_CHANGE_STATUS_ASSIGNED_TO_YOU,
+      Application_Model_RoleAction::DEFECT_CHANGE_STATUS_CREATED_BY_YOU,
+      Application_Model_RoleAction::DEFECT_EDIT_CREATED_BY_YOU,
+      Application_Model_RoleAction::DEFECT_EDIT_ALL,
+      Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU
+    );
+    
+    $defectUserPermission = new Application_Model_DefectUserPermission($defect, $this->_user, $this->_checkMultipleAccess($roleActionsForEdit));
+    
+    if (false === $defectUserPermission->isChangeStatusPermission())
     {
       $this->_throwTaskAccessDeniedException();
     }

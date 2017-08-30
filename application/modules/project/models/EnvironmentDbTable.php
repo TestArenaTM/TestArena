@@ -27,15 +27,15 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
   public function getSqlAll(Zend_Controller_Request_Abstract $request)
   {
     $sqlDefectCnt = '(SELECT COUNT(de.defect_id) FROM defect_environment AS de WHERE de.environment_id=e.id)';
+    $sqlTaskCnt = '(SELECT COUNT(*) FROM task_environment AS te INNER JOIN task AS t ON t.id=te.task_id WHERE te.environment_id=e.id)';
     
     $sql = $this->select()
       ->from(array('e' => $this->_name), array(
         'id',
         'name',
-        'description',
-        'defectCount' => new Zend_Db_Expr($sqlDefectCnt)
+        'defectCount' => new Zend_Db_Expr($sqlDefectCnt),
+        'taskCount' => new Zend_Db_Expr($sqlTaskCnt)
       ))
-      ->joinLeft(array('te' => 'task_environment'), 'te.environment_id = e.id', array('taskCount' => 'COUNT(te.task_id)'))
       ->group('e.id')
       ->setIntegrityCheck(false);
       
@@ -99,7 +99,7 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
     return $this->fetchAll($sql);
   }
   
-  public function getForEdit($id)
+  public function getForEdit($id, $projectId)
   {
     $sql = $this->select()
       ->from(array('e' => $this->_name), array(
@@ -107,28 +107,31 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
         'description'
       ))
       ->where('e.id = ?', $id)
+      ->where('e.project_id = ?', $projectId)
       ->limit(1);
     
     return $this->fetchRow($sql);
   }
   
-  public function getForView($id)
+  public function getForView($id, $projectId)
   {
     $sqlDefectCnt = '(SELECT COUNT(de.defect_id) FROM defect_environment AS de WHERE de.environment_id=e.id)';
+    $sqlTaskCnt = '(SELECT COUNT(*) FROM task_environment AS te INNER JOIN task AS t ON t.id=te.task_id WHERE te.environment_id=e.id)';
     
     $sql = $this->select()
       ->from(array('e' => $this->_name), array(
         'id',
         'name',
         'description',
-        'defectCount' => new Zend_Db_Expr($sqlDefectCnt)
+        'defectCount' => new Zend_Db_Expr($sqlDefectCnt),
+        'taskCount' => new Zend_Db_Expr($sqlTaskCnt)
       ))      
-      ->joinLeft(array('te' => 'task_environment'), 'te.environment_id = e.id', array('taskCount' => 'COUNT(te.task_id)'))
       ->group('e.id')
       ->where('e.id = ?', $id)
+      ->where('e.project_id = ?', $projectId)
       ->limit(1)
       ->setIntegrityCheck(false);
-    
+
     return $this->fetchRow($sql);
   }
   

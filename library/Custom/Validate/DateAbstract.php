@@ -23,6 +23,8 @@ abstract class Custom_Validate_DateAbstract extends Zend_Validate_Abstract
     
     if (is_array($context))
     {
+      $context = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator($context)), true);
+    
       if (isset($context[$this->_fieldName]) && $this->_check($value, $context[$this->_fieldName]))
       {
         return true;

@@ -141,6 +141,14 @@ class Application_Model_History extends Custom_Model_Standard_Abstract
         $this->setSubjectType(Application_Model_HistorySubjectType::EXPLORATORY_TEST);
         break;
       
+      case 'Application_Model_AutomaticTest':
+        $this->setSubjectType(Application_Model_HistorySubjectType::AUTOMATIC_TEST);
+        break;
+      
+      case 'Application_Model_Checklist':
+        $this->setSubjectType(Application_Model_HistorySubjectType::CHECKLIST);
+        break;
+      
       case 'Application_Model_Defect':
         $this->setSubjectType(Application_Model_HistorySubjectType::DEFECT);
         break;

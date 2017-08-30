@@ -1,0 +1,75 @@
+<html>
+<head>
+</head>
+<body>
+  <div class="content">
+    <div class="header">
+      <h1><?php echo $this->pdfT($this->name, 'Raport z wydania') ?></h1>
+    </div>
+    
+    <div class="info">
+      <div><strong><?php echo $this->pdfT($this->name, 'Wydanie') ?>:</strong> <?php echo $this->release->getName() ?></div>
+      <div><strong><?php echo $this->pdfT($this->name, 'Projekt') ?>:</strong> <?php echo $this->release->getProject()->getName() ?></div>
+      <div><strong><?php echo $this->pdfT($this->name, 'Data rozpoczęcia') ?>:</strong> <?php echo $this->release->getStartDate() ?></div>
+      <div><strong><?php echo $this->pdfT($this->name, 'Data zakończenia') ?>:</strong> <?php echo $this->release->getEndDate() ?></div>
+      <div><strong><?php echo $this->pdfT($this->name, 'Data wygenerowania') ?>:</strong> <?php echo date('Y-m-d H:i:s') ?></div>
+    </div>
+
+    <div class="tasksContainer">
+      <?php foreach ($this->tasks as $task): ?>
+      <div class="taskContent">
+        <h3>
+          <?php echo $this->escapeQuotes($task->getObjectNumber()) ?>
+          <?php echo $task->getTitle() ?>
+        </h3>
+        <div>
+          <strong><?php echo $this->pdfT($this->name, 'Rozwiązanie') ?>:</strong>
+          <?php if ($task->getResolution()->getId() > 0): ?>
+            <span class="resolution" style="background-color:<?php echo $task->getResolution()->getColor()?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <?php echo $task->getResolution()->getName() ?>
+          <?php else: ?>-<?php endif; ?>
+        </div>
+        <div>
+          <strong><?php echo $this->pdfT($this->name, 'Środowiska') ?>:</strong>
+          <?php echo $task->getExtraData('environments') ?>
+        </div>
+        <div>
+          <strong><?php echo $this->pdfT($this->name, 'Wersje') ?>:</strong>
+          <?php echo $task->getExtraData('versions') ?>
+        </div>
+
+        <?php if (count($task->getTaskTests()) > 0): ?>
+        <table>
+          <thead>
+            <tr>
+              <th><?php echo $this->pdfT($this->name, 'Test') ?></th>
+              <th width="30%"><?php echo $this->pdfT($this->name, 'Rozwiązanie') ?></th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($task->getTaskTests() as $taskTest): ?>
+            <tr>
+              <td>
+                <?php echo $this->escapeQuotes($taskTest->getTest()->getObjectNumber()) ?>
+                <?php echo $taskTest->getTest()->getName() ?>
+              </td>
+              <td>
+                <?php if ($taskTest->getResolution()->getId() > 0): ?>
+                  <span class="resolution" style="background-color:<?php echo $taskTest->getResolution()->getColor()?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                  <?php echo $taskTest->getResolution()->getName() ?>
+                <?php else: ?>
+                  <?php echo $this->pdfT($this->name, 'Nierozwiązany') ?>
+                <?php endif; ?>
+              </td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>	
+        <?php endif; ?>
+      </div>
+      <?php endforeach; ?>
+    </div>
+    
+  </div>
+</body>
+</html>

@@ -12,8 +12,6 @@
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
 
- 
-
         <div class="formContainer">
           <span>
             <?php echo $this->form->name->renderViewHelper() ?>
@@ -47,7 +45,7 @@
           </span>
         </div>
           
-        <div class="formContainer">
+        <div class="formContainer full">
           <span>
             <div class="checkForm">
               <?php echo $this->form->newVersion->renderViewHelper() ?>
@@ -59,25 +57,7 @@
           </span>
         </div>
         
-        <div class="formContainer">
-          <span><?php echo $this->formLabel('attachments', $this->t('Załączniki')) ?>
-          <div><a class="j_taskSelectAttachments" href="#"><?php echo $this->generalT('Wybierz pliki') ?></a></div>
-          <div id="j_attachments">
-            <?php foreach ($this->form->getAttachmentIds(true) as $name): ?>
-              <?php echo $this->form->getElement($name)->renderViewHelper() ?>
-            <?php endforeach; ?>
-            <?php foreach ($this->form->getAttachmentNames(true) as $name): ?>
-              <?php echo $this->form->getElement($name)->renderViewHelper() ?>
-            <?php endforeach; ?>
-          </div>
-          <?php foreach ($this->form->getErrors('attachmentIds') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
-          <?php foreach ($this->form->getErrors('attachmentNames') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
-          </span>
-        </div>
+        <?php echo $this->partial('partials/attachments-form.phtml', array('form' => $this->form)); ?>
 
         <div>
           <span id="save"><?php echo $this->formSubmit('add', $this->t('Zapisz')) ?></span>
@@ -95,7 +75,6 @@
     </form>
   </article>
 </section>
-<?php echo $this->partial('partials/attachment-object.phtml'); ?>
 
 <script type="text/javascript">
 /* <![CDATA[ */

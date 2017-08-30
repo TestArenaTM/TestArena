@@ -26,6 +26,8 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
   
   public function getSqlAll(Zend_Controller_Request_Abstract $request)
   {
+    $attachmentCount = '(SELECT COUNT(*) FROM attachment AS a WHERE a.subject_id = d.id AND a.type = '.Application_Model_AttachmentType::DEFECT_ATTACHMENT.')';
+    
     $sql = $this->select()
       ->from(array('d' => $this->_name), array(
         'id',
@@ -36,16 +38,13 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'modify_date',
         'title',
         'assigner'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assigner.firstname, " ", assigner.lastname)'),
-        'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)')
+        'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)'),
+        'attachmentCount' => new Zend_Db_Expr($attachmentCount)
       ))
       ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
         'prefix'
       )))
       ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', $this->_createAlias('release', array(
-        'id',
-        'name'
-      )))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = d.phase_id', $this->_createAlias('phase', array(
         'id',
         'name'
       )))
@@ -67,7 +66,9 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'firstname',
         'lastname'
       )))
-      ->joinLeft(array('de' => 'defect_environment'), 'de.defect_id = d.id', array())
+      ->join(array('de' => 'defect_environment'), 'de.defect_id = d.id', array())
+      ->join(array('dv' => 'defect_version'), 'dv.defect_id = d.id', array())
+      ->joinLeft(array('dt' => 'defect_tag'), 'dt.defect_id = d.id', array())
       ->group('d.id')
       ->setIntegrityCheck(false);
 
@@ -82,14 +83,65 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
     $sql = $this->select()
       ->from(array('d' => $this->_name), array(Zend_Paginator_Adapter_DbSelect::ROW_COUNT_COLUMN => 'COUNT(DISTINCT d.id)'))
       ->join(array('r' => 'release'), 'r.id = d.release_id', array())
-      ->join(array('ph' => 'phase'), 'ph.id = d.phase_id', array())
-      ->joinLeft(array('de' => 'defect_environment'), 'de.defect_id = d.id', array());
+      ->join(array('de' => 'defect_environment'), 'de.defect_id = d.id', array())
+      ->join(array('dv' => 'defect_version'), 'dv.defect_id = d.id', array())
+      ->joinLeft(array('dt' => 'defect_tag'), 'dt.defect_id = d.id', array());
 
     $this->_setWhereCriteria($sql, $request);
     return $sql;
   }
   
-  public function getForView($id)
+  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  {
+    $sql = $this->select()
+      ->from(array('d' => $this->_name), array(
+        'id',
+        'ordinal_no',
+        'status',
+        'priority',
+        'create_date',
+        'title',
+        'assigner'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assigner.firstname, " ", assigner.lastname)'),
+        'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)')
+      ))
+      ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
+        'prefix'
+      )))
+      ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', $this->_createAlias('release', array(
+        'id',
+        'name'
+      )))
+      ->join(array('assigner' => 'user'), 'assigner.id = d.assigner_id', $this->_createAlias('assigner', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->join(array('assignee' => 'user'), 'assignee.id = d.assignee_id', $this->_createAlias('assignee', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->join(array('author' => 'user'), 'author.id = d.author_id', $this->_createAlias('author', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->join(array('de' => 'defect_environment'), 'de.defect_id = d.id', array())
+      ->join(array('dv' => 'defect_version'), 'dv.defect_id = d.id', array())
+      ->joinLeft(array('dt' => 'defect_tag'), 'dt.defect_id = d.id', array())
+      ->group('d.id')
+      ->setIntegrityCheck(false);
+
+    $this->_setWhereCriteria($sql, $request);
+    $this->_setOrderConditions($sql, $request);
+
+    return $this->fetchAll($sql);
+  }
+  
+  public function getForView($id, $projectId)
   {
     $sql = $this->select()
       ->from(array('d' => $this->_name), array(
@@ -102,14 +154,6 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'title',
         'description'
       ))
-      ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
-        'id',
-        'prefix'
-      )))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = d.phase_id', $this->_createAlias('phase', array(
-        'id',
-        'name'
-      )))
       ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', $this->_createAlias('release', array(
         'id',
         'name'
@@ -133,26 +177,24 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'lastname'
       )))
       ->where('d.id = ?', $id)
+      ->where('d.project_id = ?', $projectId)
       ->group('d.id')
       ->limit(1)
       ->setIntegrityCheck(false);
-    
+
     return $this->fetchRow($sql);
   }
   
-  public function getForEdit(Application_Model_Defect $defect)
+  public function getForEdit($id, $projectId)
   {
     $sql = $this->select()
       ->from(array('d' => $this->_name), array(
         'id',
+        'project_id',
         'priority',
         'title',
         'description',
         'assigneeName' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname, " (", assignee.email, ")")')
-      ))
-      ->joinLeft(array('ph' => 'phase'), 'ph.id = d.phase_id', array(
-        'phaseId' => 'id',
-        'phaseName' => 'name'
       ))
       ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', array(
         'releaseId' => 'id',
@@ -167,8 +209,8 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->join(array('author' => 'user'), 'author.id = d.author_id', array(
         'authorId' => 'id'
       ))
-      ->where('d.id = ?', $defect->getId())
-      ->where('d.project_id = ?', $defect->getProject()->getId())
+      ->where('d.id = ?', $id)
+      ->where('d.project_id = ?', $projectId)
       ->where('d.status NOT IN(?)', array(
         Application_Model_DefectStatus::SUCCESS,
         Application_Model_DefectStatus::FAIL
@@ -176,34 +218,8 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->limit(1)
       ->group('d.id')
       ->setIntegrityCheck(false);
-  
-    return $this->fetchRow($sql);
-  }
-  
-  
-  
-  public function getByIds(array $ids)
-  {
-    $sql = $this->select()
-      ->from(array('t' => $this->_name), array(
-        'id',
-        'ordinal_no',
-        'status',
-        'priority',
-        'create_date',
-        'due_date',
-        'title',
-        'description',
-      ))
-      ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('project', array(
-        'prefix'
-      )))
-      ->where('t.id IN (?)', $ids)
-      ->limit(count($ids))
-      ->group('t.id')
-      ->setIntegrityCheck(false);
 
-    return $this->fetchAll($sql);
+    return $this->fetchRow($sql);
   }
   
   public function getByTask($taskId)
@@ -227,6 +243,25 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
 
     return $this->fetchAll($sql);
   }
+  
+  public function getAllAjax(Zend_Controller_Request_Abstract $request, $projectId)
+  {
+    $this->_setRequest($request);
+    
+    $sql = $this->select()
+      ->from(array('d' => $this->_name), array(
+        'id',
+        'name' => new Zend_Db_Expr('CONCAT(p.prefix, "-", d.ordinal_no, " ", d.title)')
+      ))
+      ->join(array('p' => 'project'), 'd.project_id = p.id', array())
+      ->where('d.project_id = ?', $projectId)
+      ->group('d.id')
+      ->order('d.title')
+      ->setIntegrityCheck(false);
+      
+    $this->_setWhereCriteria($sql, $request);      
+    return $this->fetchAll($sql);
+  }  
   
   public function getByOrdinalNoForAjax($ordinalNo, $projectId)
   {    
@@ -260,5 +295,24 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->setIntegrityCheck(false);
 
     return $this->fetchRow($sql);
+  }
+  
+  public function getByIds4CheckAccess(array $ids)
+  {
+    $sql = $this->select()
+      ->from(array('d' => $this->_name), array(
+        'id',
+        'status',
+        'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
+        'assigner'.self::TABLE_CONNECTOR.'id' => 'assigner_id',
+        'assignee'.self::TABLE_CONNECTOR.'id' => 'assignee_id',
+        'author'.self::TABLE_CONNECTOR.'id' => 'author_id'
+      ))
+      ->where('d.id IN (?)', $ids)      
+      ->limit(count($ids))
+      ->group('d.id')
+      ->setIntegrityCheck(false);
+    
+    return $this->fetchAll($sql);
   }
 }

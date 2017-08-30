@@ -74,7 +74,8 @@ class Project_Model_VersionMapper extends Custom_Model_Mapper_Abstract
   {
     $data = array(
       'project_id'  => $version->getProjectId(),
-      'name'        => $version->getName()
+      'name'        => $version->getName(),
+      'description' => $version->getDescription()
     );
     
     try
@@ -92,7 +93,7 @@ class Project_Model_VersionMapper extends Custom_Model_Mapper_Abstract
 
   public function getForEdit(Application_Model_Version $version)
   {
-    $row = $this->_getDbTable()->getForEdit($version->getId());
+    $row = $this->_getDbTable()->getForEdit($version->getId(), $version->getProjectId());
     
     if (null === $row)
     {
@@ -106,7 +107,7 @@ class Project_Model_VersionMapper extends Custom_Model_Mapper_Abstract
 
   public function getForView(Application_Model_Version $version)
   {
-    $row = $this->_getDbTable()->getForView($version->getId());
+    $row = $this->_getDbTable()->getForView($version->getId(), $version->getProjectId());
     
     if (null === $row)
     {
@@ -126,7 +127,8 @@ class Project_Model_VersionMapper extends Custom_Model_Mapper_Abstract
     try
     {
       $data = array(
-        'name'        => $version->getName()       
+        'name'        => $version->getName()    ,
+        'description' => $version->getDescription()   
       );
     
       $where = array(

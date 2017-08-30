@@ -1,0 +1,21 @@
+<div id="comments" style="display: none;">
+  <h5 class="break_page"><span aria-hidden="true" class="icon_chat_alt icon-20"></span><?php echo $this->generalT('Komentarze') ?></h5>
+  <?php if ($this->addCommentOn): ?>
+  <div id="j_commentIsBusy"><img src="<?php echo $this->baseUrl('/img/is_busy.gif') ?>" /> <?php echo $this->generalT('Proszę czekać...') ?></div>
+  <div id="j_commentForm">
+    <div class="commentForm"><?php echo $this->formTextarea('j_commentContent', '', array('maxlength' => 1000)) ?></div>
+    <div class="comment_button">
+      <a id="j_addComment" href="#"><?php echo $this->generalT('Dodaj') ?></a>
+      <a id="j_saveComment" href="#"><?php echo $this->generalT('Zapisz') ?></a>
+      <a id="j_cancelEditComment" href="#"><?php echo $this->generalT('Anuluj') ?></a>
+    </div>
+  </div>
+  <?php endif; ?>
+  <div id="j_commentList" class="comment_box"></div>
+</div>
+
+<?php echo $this->partial('comment/partial-js.phtml', array(
+  'listUrl'       => $this->projectUrl(array('subjectId' => $this->subjectId, 'subjectType' => $this->subjectType), 'comment_list_by_subject_ajax'),
+  'addUrl'        => $this->projectUrl(array('subjectId' => $this->subjectId, 'subjectType' => $this->subjectType), 'comment_add_ajax'),
+  'addCommentOn'  => $this->addCommentOn
+));

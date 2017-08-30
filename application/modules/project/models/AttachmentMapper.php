@@ -189,4 +189,43 @@ class Project_Model_AttachmentMapper extends Custom_Model_Mapper_Abstract
       'id = ?' => $attachment->getId()
     ));
   }
+
+  public function deleteByFileIds(array $fileIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'file_id IN(?)' => $fileIds
+    ));
+  }
+
+  public function deleteByTask(Application_Model_Task $task)
+  {
+    $this->_getDbTable()->delete(array(
+      'subject_id = ?' => $task->getId(),
+      'type = ?' => Application_Model_AttachmentType::TASK_ATTACHMENT
+    ));
+  }
+
+  public function deleteByTaskIds(array $taskIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'subject_id IN(?)' => $taskIds,
+      'type = ?' => Application_Model_AttachmentType::TASK_ATTACHMENT
+    ));
+  }
+
+  public function deleteByDefect(Application_Model_Defect $defect)
+  {
+    $this->_getDbTable()->delete(array(
+      'subject_id = ?' => $defect->getId(),
+      'type = ?' => Application_Model_AttachmentType::DEFECT_ATTACHMENT
+    ));
+  }
+
+  public function deleteByDefectIds(array $defectIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'subject_id IN(?)' => $defectIds,
+      'type = ?' => Application_Model_AttachmentType::DEFECT_ATTACHMENT
+    ));
+  }
 }

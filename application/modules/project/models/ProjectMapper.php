@@ -56,4 +56,61 @@ class Project_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
     
     return $result;
   }
+  
+  public function activate(Application_Model_Project $project)
+  {
+    if ($project->getId() === null)
+    {
+      return false;
+    }
+    
+    $data = array(
+      'status' => Application_Model_ProjectStatus::ACTIVE
+    );
+    
+    $where = array(
+      'status = ?' => Application_Model_ProjectStatus::SUSPENDED,
+      'id = ?'      => $project->getId()
+    );
+    
+    return $this->_getDbTable()->update($data, $where) == 1;
+  }
+  
+  public function suspend(Application_Model_Project $project)
+  {
+    if ($project->getId() === null)
+    {
+      return false;
+    }
+    
+    $data = array(
+      'status' => Application_Model_ProjectStatus::SUSPENDED
+    );
+    
+    $where = array(
+      'status = ?' => Application_Model_ProjectStatus::ACTIVE,
+      'id = ?'     => $project->getId()
+    );
+    
+    return $this->_getDbTable()->update($data, $where) == 1;
+  }
+  
+  public function finish(Application_Model_Project $project)
+  {
+    if ($project->getId() === null)
+    {
+      return false;
+    }
+    
+    $data = array(
+      'status' => Application_Model_ProjectStatus::FINISHED
+    );
+    
+    $where = array(
+      'status != ?' => Application_Model_ProjectStatus::FINISHED,
+      'id = ?'      => $project->getId()
+    );
+    
+    return $this->_getDbTable()->update($data, $where) == 1;
+  }
 }

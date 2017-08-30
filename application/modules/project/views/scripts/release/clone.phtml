@@ -13,7 +13,6 @@
 
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
 
-
         <div class="formContainer full">
           <span>
             <?php echo $this->form->name->renderViewHelper() ?>
@@ -68,19 +67,6 @@
           </span>
         </div>
       
-        <div class="formContainer">
-          <span>
-            <?php echo $this->form->phaseName->renderViewHelper() ?>
-            <?php echo $this->formLabel('phaseName', $this->t('Faza')) ?>
-            <?php foreach ($this->form->getErrors('phaseName') as $error): ?>
-              <div class="error_msg"><?php echo $this->errorT($error, array(
-                'min' => $this->form->getElement('phaseName')->getValidator('StringLength')->getMin(),
-                'max' => $this->form->getElement('phaseName')->getValidator('StringLength')->getMax()
-              )) ?></div>
-            <?php endforeach; ?>
-          </span>
-        </div>
-
         <div class="formContainer">
           <span>
             <?php echo $this->form->environments->renderViewHelper() ?>
@@ -140,7 +126,7 @@
 language['charactersLeft'] = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
 maxStartDate = '<?php echo $this->release->getEndDate() ?>';
 minEndDate = '<?php echo $this->release->getStartDate() ?>';
-url.environmentListAjax = '<?php echo $this->url(array(), 'environment_list_ajax') ?>';
-url.versionListAjax = '<?php echo $this->url(array(), 'version_list_ajax') ?>';
+url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
+url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';
 /* ]]> */
 </script>

@@ -56,7 +56,6 @@ class Zend_View_Helper_TimeAgo extends Zend_View_Helper_Abstract
   {
     $date = new Zend_Date($date, 'YYYY-MM-dd HH:mm:ss');
     $diff = Zend_Date::now()->sub($date)->toValue();
-
     $diffMinute = floor($diff / self::MINUTE);
     
     if ($diffMinute == 0)
@@ -102,8 +101,8 @@ class Zend_View_Helper_TimeAgo extends Zend_View_Helper_Abstract
             $monthNow = $nowDate->get('MM');
             $diffMonth = 0;
 
-            $year = $date->get('YYYY');
-            $yearNow = $nowDate->get('YYYY');
+            $year = $date->get('yyyy');
+            $yearNow = $nowDate->get('yyyy');
             $diffYear = $yearNow - $year;
 
             if($diffYear == 0)

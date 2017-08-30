@@ -1,10 +1,13 @@
 RewriteEngine On
 
+#RewriteCond %{REMOTE_ADDR} !^87\.205\.99\.155$
+#RewriteCond %{REQUEST_URI} !\.(css|ico|jpeg|jpg|png)$ 
+#RewriteRule ^.*$ tech_break_pl.html [NC,L]
+
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
 RewriteRule !.(js|css|otf|ttf|woff|ico|png|jpg|jpeg|jpe|jif|jfif|jfijpg|bmp|gif|txt|doc|docx|xls|xlsx|pdf|rtf|xml|csv|avi|mp4|mpeg|mp3|exe|zip)$ index.php
-
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d

@@ -32,7 +32,6 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
   private $_ordinalNo   = null;
   private $_project     = null;
   private $_release     = null;
-  private $_phase       = null;
   private $_assigner    = null;
   private $_assignee    = null;
   private $_createDate  = null;
@@ -58,15 +57,15 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
   {
     return $this->_project;
   }
+  
+  public function getProjectId()
+  {
+    return $this->_project->getId();
+  }
 
   public function getRelease()
   {
     return $this->_release;
-  }
-  
-  public function getPhase()
-  {
-    return $this->_phase;
   }
 
   public function getCreateDate($showOnlyDate = false)
@@ -193,20 +192,6 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     else
     {
       $this->getRelease()->setProperty($propertyName, $propertyValue);
-    }
-    
-    return $this;
-  }
-  
-  public function setPhase($propertyName, $propertyValue)
-  {
-    if (null === $this->_phase)
-    {
-      $this->_phase = new Application_Model_Phase(array($propertyName => $propertyValue));
-    }
-    else
-    {
-      $this->getPhase()->setProperty($propertyName, $propertyValue);
     }
     
     return $this;

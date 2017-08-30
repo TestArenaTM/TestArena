@@ -33,7 +33,6 @@ class Project_Form_AddRelease extends Custom_Form_Abstract
     }
     
     $this->_projectId = $options['projectId'];
-    $this->_minDate = date('Y-m-d');
     parent::__construct($options);
   }
   
@@ -60,8 +59,7 @@ class Project_Form_AddRelease extends Custom_Form_Abstract
       'filters'     => array('StringTrim'),
       'validators'  => array(
         array('Date', true, array('format' => 'YYYY-mm-dd')),
-        array('DateEarlierToField', false, array('fieldName' => 'endDate', 'inclusive' => true)),
-        array('DateLater', false, array('date' => $this->_minDate, 'inclusive' => true))
+        array('DateEarlierToField', false, array('fieldName' => 'endDate', 'inclusive' => true))
       )
     ));
     
@@ -71,8 +69,7 @@ class Project_Form_AddRelease extends Custom_Form_Abstract
       'filters'     => array('StringTrim'),
       'validators'  => array(
         array('Date', true, array('format' => 'YYYY-mm-dd')),
-        array('DateLaterToField', false, array('fieldName' => 'startDate', 'inclusive' => true)),
-        array('DateLater', false, array('date' => $this->_minDate, 'inclusive' => true))
+        array('DateLaterToField', false, array('fieldName' => 'startDate', 'inclusive' => true))
       )
     ));
     
@@ -84,6 +81,12 @@ class Project_Form_AddRelease extends Custom_Form_Abstract
         'SimpleText',
         array('StringLengthOneCharacterLineBreaks', false, array(1, 160, 'UTF-8'))
       ),
+    ));
+    
+    $this->addElement('checkbox', 'active', array(
+      'required'       => false,
+      'checkedValue'   => '1',
+      'uncheckedValue' => '0'
     ));
     
     $this->addElement('hash', 'csrf', array(

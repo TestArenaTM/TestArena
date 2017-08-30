@@ -58,6 +58,39 @@ abstract class Custom_Model_UserPermission_Abstract
     return false;
   }
   
+  protected function _checkAssignedToYouPermission($roleActionId)
+  {
+    if ($this->_object->getAssignerId() == $this->_user->getId()
+        && true === $this->_userPermissions[$roleActionId])
+    {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  protected function _checkAssigneePermission($roleActionId)
+  {
+    if ($this->_object->getAssigneeId() == $this->_user->getId()
+        && true === $this->_userPermissions[$roleActionId])
+    {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  protected function _checkAssignerPermission($roleActionId)
+  {
+    if ($this->_object->getAssignerId() == $this->_user->getId()
+        && true === $this->_userPermissions[$roleActionId])
+    {
+      return true;
+    }
+    
+    return false;
+  }
+  
   public function __set($name, $value)
   {
     throw new Exception('Set exception!');

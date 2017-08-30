@@ -40,6 +40,11 @@ class Application_Model_Environment extends Custom_Model_Standard_Abstract
   {
     return $this->_project;
   }
+  
+  public function getProjectId()
+  {
+    return $this->_project->getId();
+  }
 
   public function getName()
   {

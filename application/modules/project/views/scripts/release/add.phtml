@@ -12,8 +12,7 @@
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
 
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
-
-
+      
         <div class="formContainer full">
           <span>
             <?php echo $this->form->name->renderViewHelper() ?>
@@ -65,6 +64,19 @@
                 'max' => $this->form->getElement('description')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
               )) ?></div>
             <?php endforeach; ?>
+          </span>
+        </div>
+          
+        <div class="formContainer full">
+          <span>
+            <div class="checkForm">
+              <?php echo $this->form->active->renderViewHelper() ?>
+              <?php echo $this->formLabel('active', $this->t('Aktywne')) ?>  
+              <span class="help item">?<div class="cloud"><?php echo $this->t('Aktywne wydanie - info') ?></div></span>
+              <?php foreach ($this->form->getErrors('active') as $error): ?>
+                <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+              <?php endforeach; ?>
+            </div>
           </span>
         </div>
 

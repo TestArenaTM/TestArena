@@ -23,6 +23,10 @@ The full text of the GPL is in the LICENSE file.
 class Application_Model_ExploratoryTest extends Application_Model_Test implements Custom_Interface_Test
 {
   protected $_map = array(
+    'ordinal_no'      => 'ordinalNo',
+    'create_date'     => 'createDate',
+    'family_id'       => 'familyId',
+    'current_version' => 'currentVersion',
     'test_card'       => 'testCard',
     'create_date'     => 'createDate',
     'family_id'       => 'familyId',

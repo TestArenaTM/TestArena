@@ -1,0 +1,114 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Lizzie\n"
+"POT-Creation-Date: 2012-03-16 10:18+0100\n"
+"PO-Revision-Date: 2017-07-11 10:20+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
+"Language-Team: 21CN <biuro@21cn.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Language: pl_PL\n"
+"X-Generator: Poedit 2.0.2\n"
+
+msgid "pageTitle"
+msgstr "Przeglądarka plików"
+
+msgid "Wczytaj pliki"
+msgstr "Wczytaj pliki"
+
+msgid "Utwórz katalog"
+msgstr "Utwórz katalog"
+
+msgid "Wybierz zaznaczone"
+msgstr "Wybierz zaznaczone"
+
+msgid "Zaznacz wszystko"
+msgstr "Zaznacz wszystko"
+
+msgid "Odznacz wszystko"
+msgstr "Odznacz wszystko"
+
+msgid "Usuń zaznaczone"
+msgstr "Usuń zaznaczone"
+
+msgid "Przenieś zaznaczone"
+msgstr "Przenieś zaznaczone"
+
+msgid "Plików"
+msgstr "Plików"
+
+msgid "Bieżacy katalog"
+msgstr "Bieżący katalog"
+
+msgid "Tworzenie nowego katalogu"
+msgstr "Tworzenie nowego katalogu"
+
+msgid "Nazwa"
+msgstr "Nazwa"
+
+msgid "Utwórz"
+msgstr "Utwórz"
+
+msgid "Zamiana nazwy katalogu"
+msgstr "Zamiana nazwy katalogu"
+
+msgid "Zmień"
+msgstr "Zmień"
+
+msgid "Zamiana nazwy pliku"
+msgstr "Zamiana nazwy pliku"
+
+msgid "FILE_IS_ATTACHMENT"
+msgstr "Nie można usunąć pliku, gdyż jest w użyciu."
+
+msgid "FILE_IN_DIR_IS_ATTACHMENT"
+msgstr "Nie można usunąć katalogu, gdyż przynajmniej jeden plik w tym katalogu jest w użyciu."
+
+msgid "SOME_FILES_ARE_ATTACHMENTS"
+msgstr "Przynajmniej jeden plik jest w użyciu i dlatego przynajmniej jeden plik i/lub katalog nie został usunięty."
+
+msgid "FILE_NOT_EXISTS"
+msgstr "Plik nie istnieje w systemie plików."
+
+msgid "DESTINATION_FILE_ALREADY_EXISTS"
+msgstr "Plik o podanej nazwie już istnieje."
+
+msgid "DIRECTORY_NOT_EXISTS"
+msgstr "Katalog nie istnieje w systemie plików."
+
+msgid "DESTINATION_DIRECTORY_ALREADY_EXISTS"
+msgstr "Katalog o podanej nazwie już istnieje."
+
+msgid "DIRECTORY_NAME_IS_EMPTY"
+msgstr "Musisz podać nazwę katalogu."
+
+msgid "NEW_DIRECTORY_NAME_IS_EMPTY"
+msgstr "Musisz podać nową nazwę katalogu."
+
+msgid "FILE_NAME_IS_EMPTY"
+msgstr "Musisz podać nazwę pliku."
+
+msgid "NO_FILE_SELECTED"
+msgstr "Musisz wybrać przynajmniej jeden plik."
+
+msgid "UPLOADED_FILE_IS_TOO_LARGE"
+msgstr "Przynajmniej jeden z przesyłanych plików posiada za duży rozmiar. Maksymalny rozmiar pliku to 8MB.\\n\\nLista plików:\\n"
+
+msgid "UPLOAD_FILE_ERROR"
+msgstr "Podczas przesyłania plików wystąpił nieoczekiwany błąd.\\n\\nLista plików:\\n"
+
+msgid "UPLOAD_FILE_EXISTS"
+msgstr "Przynajmniej jeden z przesyłanych plików ma nazwę, która już istnieje w podanej lokalizacji.\\n\\nLista plików:\\n"
+
+msgid "FILE_FORBIDDEN_EXTENSION"
+msgstr "Przynajmniej jeden z przesyłanych plików posiada niedozwolone rozszerzenie. Dozwolone rozszerzenia: jpg, jpeg, png, gif, doc, xls, csv, txt, xml, html, pdf.\\n\\nLista plików:\\n"
+
+msgid "Akcje"
+msgstr "Akcje"
+
+msgid "[root]"
+msgstr "[główny katalog]"

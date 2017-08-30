@@ -24,7 +24,9 @@ class Zend_View_Helper_TestEditRouteName extends Zend_View_Helper_Abstract
 {
   const ROUTE_OTHER_TEST_EDIT       = 'test_edit_other_test';
   const ROUTE_TEST_CASE_EDIT        = 'test_edit_test_case';
-  const ROUTE_EXPLORATORY_TEST_EDIT = 'test_edit_exploratory_test';
+  const ROUTE_EXPLORATORY_TEST_EDIT = 'test_edit_exploratory_test';  
+  const ROUTE_AUTOMATIC_TEST_EDIT   = 'test_edit_automatic_test';
+  const ROUTE_CHECKLIST_VIEW        = 'test_edit_checklist';
   
   public function testEditRouteName(Custom_Interface_Test $test)
   {
@@ -38,6 +40,12 @@ class Zend_View_Helper_TestEditRouteName extends Zend_View_Helper_Abstract
         
       case Application_Model_TestType::EXPLORATORY_TEST:
         return self::ROUTE_EXPLORATORY_TEST_EDIT;
+        
+      case Application_Model_TestType::AUTOMATIC_TEST:
+        return self::ROUTE_AUTOMATIC_TEST_EDIT;
+      
+      case Application_Model_TestType::CHECKLIST:
+        return self::ROUTE_CHECKLIST_VIEW;
     }
     
     return null;

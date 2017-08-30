@@ -15,24 +15,33 @@
       ->appendStylesheet($this->baseUrl('/css/token-input.css'))
       ->appendStylesheet($this->baseUrl('/css/token-input-facebook.css'))
       ->appendStylesheet($this->baseUrl('/css/ui-lightness/jquery-ui-1.10.3.custom.min.css'))
+      ->appendStylesheet($this->baseUrl('/css/jquery-ui-timepicker-addon.min.css'))
       ->appendStylesheet($this->baseUrl('/css/spectrum.css'))
       ->appendStylesheet($this->baseUrl('/css/elegant-fonts.css'))
       ->appendStylesheet($this->baseUrl('/css/icomoon-fonts.css'))
+      ->appendStylesheet($this->baseUrl('/css/lightbox.min.css'))
       ->appendStylesheet($this->baseUrl('/css/global.css?'.APP_VERSION)) 
       ->appendStylesheet($this->baseUrl('/css/popbox.css'))?>
     
-  <?php $this->headScript()
+    <?php $this->headScript()
       ->appendFile('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
       ->appendFile($this->baseUrl('/js/jquery-ui-1.10.3.custom.min.js'))
-      ->appendFile($this->baseUrl('/js/jquery-ui-timepicker-addon.min.js'))
+      ->appendFile($this->baseUrl('/js/jquery-ui-timepicker-addon.min.js?2'))
       ->appendFile($this->baseUrl('/js/jquery.tokeninput.js'))
       ->appendFile($this->baseUrl('/js/jquery.tinyscrollbar.min.js'))
       ->appendFile($this->baseUrl('/js/jquery.tmpl.min.js'))
       ->appendFile($this->baseUrl('/js/jquery.jscroll.min.js'))
+      ->appendFile($this->baseUrl('/js/lightbox.js'))
       ->appendFile($this->baseUrl('/js/chosen.jquery.js'))
       ->appendFile($this->baseUrl('/js/spectrum.js'))
-      ->appendFile($this->baseUrl('/js/global.js?'.APP_VERSION))
-      ->appendFile($this->baseUrl('/js/popbox.js'))?>
+      ->appendFile($this->baseUrl('/js/popbox.js'))
+      ->appendFile($this->baseUrl('/js/global.js?'.APP_VERSION))?>  
+  
+    <?php if ($this->cModule == 'dashboard' && $this->cController == 'index' && $this->cAction == 'index'): ?>
+      <?php $this->headScript()
+        ->appendFile('https://www.google.com/jsapi')
+        ->appendFile('/js/google_chart.js?2'); ?>
+    <?php endif;?>
   
     <?php if ($this->language == 'pl')
     {
@@ -41,16 +50,20 @@
         ->appendFile($this->baseUrl('/js/i18n/jquery.ui.timepicker-pl.js'))
         ->appendFile($this->baseUrl('/js/i18n/jquery.spectrum-pl.js'));
     } ?>
-  
-    <?php if ($this->cModule == 'dashboard' && $this->cController == 'index' && $this->cAction == 'index'): ?>
-      <?php $this->headScript()
-        ->appendFile('https://www.google.com/jsapi')
-        ->appendFile('/js/google_chart.js'); ?>
-    <?php endif;?>
     
     <?php echo $this->headScript() ?>
     <link href='http://fonts.googleapis.com/css?family=Dosis:200,700,800&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <?php if (getenv('APPLICATION_ENV') == 'pawel_piaskowy'): ?>
+      <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');</script>
+    <?php endif; ?>
+    
+    <?php if (($this->cModule == 'user' && $this->cController == 'login' && ($this->cAction == 'index' || $this->cAction == 'process'))
+              || ($this->cModule == 'user' && $this->cController == 'password' && ($this->cAction == 'recover' || $this->cAction == 'recover-process'))
+              || ($this->cModule == 'default' && $this->cController == 'contact' && ($this->cAction == 'index' || $this->cAction == 'process'))): ?>
+      <script src="https://www.google.com/recaptcha/api.js?hl=pl"></script>
+    <?php endif;?>  
+      
   </head>
 <body>
 
@@ -61,7 +74,7 @@
   language.enterPhraseSearched = '<?php echo $this->generalT('Wpisz szukaną frazę') ?>';
   language.noResults = '<?php echo $this->generalT('Brak rezultatów') ?>';
   language.searching = '<?php echo $this->generalT('Wyszukiwanie...') ?>';
-  url.fileBrowser = '<?php echo $this->url(array(), 'file_browser') ?>';
+  language.lightBoxLabel = '<?php echo $this->generalT('lightBoxLabel') ?>';
 </script>
 
 <?php echo $this->partial('message-box.phtml', array('messageBox' => $this->messageBox)) ?>

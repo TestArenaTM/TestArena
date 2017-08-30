@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-07-07 13:57+0200\n"
-"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
+"PO-Revision-Date: 2017-08-10 14:44+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.2\n"
+"X-Generator: Poedit 2.0.3\n"
 
 msgid "pageTitle"
 msgstr "Test base"
@@ -26,17 +26,14 @@ msgstr "Test case"
 msgid "Test eksploracyjny"
 msgstr "Exploratory test"
 
+msgid "Test automatyczny"
+msgstr "Automatic test"
+
+msgid "Listę kontrolną"
+msgstr "Checklist"
+
 msgid "Inny test"
 msgstr "Other test"
-
-msgid "Szukaj"
-msgstr "Search"
-
-msgid "Wyniki"
-msgstr "Results"
-
-msgid "Filtruj"
-msgstr "Filter"
 
 msgid "Nr obiektu"
 msgstr "Object number"
@@ -51,7 +48,7 @@ msgid "Autor"
 msgstr "Author"
 
 msgid "Data utworzenia"
-msgstr "Date of creating"
+msgstr "Date of creation"
 
 msgid "Akcje"
 msgstr "Actions"
@@ -65,8 +62,14 @@ msgstr "Assign more..."
 msgid "Edytuj"
 msgstr "Edit"
 
+msgid "Klonuj"
+msgstr "Clone"
+
 msgid "Usuń"
 msgstr "Delete"
 
-msgid "Brak elementów bazy testów."
-msgstr "No elements available."
+msgid "Usuń wybrane"
+msgstr "Delete selected"
+
+msgid "Brak elementów bazy testów"
+msgstr "No elements available"

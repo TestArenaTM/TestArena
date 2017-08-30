@@ -46,13 +46,14 @@
 
         <div class="formContainer full">
           <span>
-            <?php echo $this->formRequiredLabel('captcha', $this->t('Prosimy o przepisanie znaków z obrazka.')) ?>
-            <?php echo $this->form->captcha->render() ?>
-                        <?php foreach ($this->form->getErrors('captcha') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php echo $this->form->grecaptcharesponse->renderViewHelper() ?>
+            <?php foreach ($this->form->getErrors('grecaptcharesponse') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
           </span>
         </div>
+        
+        
 
           <div>
             <span id="save"><?php echo $this->formSubmit('send', $this->t('Wyślij')) ?></span>
@@ -61,7 +62,7 @@
           <div>
             <?php echo $this->form->csrf->renderViewHelper() ?>
             <?php foreach ($this->form->getErrors('csrf') as $error): ?>
-            <div><?php echo $this->errorT($error) ?></div>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
           </div>
 

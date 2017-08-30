@@ -1,0 +1,31 @@
+<section id="content">
+  <article class="article_in_content">
+    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+        <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
+        <div style="display: inline-block">
+          <span>
+            <div class="multiSelectBox">
+              <div><?php echo $this->formLabel('allProjectSettings', $this->t('Zaznacz wszystko')) ?><?php echo $this->form->allProjectSettings->renderViewHelper() ?></div>
+              <div><?php echo $this->form->activeSettings->renderViewHelper() ?></div>
+            </div>  
+          </span>
+        </div>
+
+        <div>
+          <span id="save"><?php echo $this->formSubmit('save', $this->t('Zapisz')) ?></span>
+          <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
+        </div>
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+
+        <div>
+          <?php echo $this->form->csrf->renderViewHelper() ?>
+          <?php foreach ($this->form->getErrors('csrf') as $error): ?>
+          <div><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </div>  
+    
+    </form>
+  </article>    
+</section>

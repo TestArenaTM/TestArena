@@ -1,0 +1,12 @@
+<script type="text/javascript">
+/* <![CDATA[ */
+  var multiSelectConfig = {
+    allIds: [<?php echo implode(',', $this->allIds); ?>],
+    urls: {
+      load: '<?php echo $this->url(array(), 'multi_select_load_ajax') ?>',
+      save: '<?php echo $this->url(array(), 'multi_select_save_ajax') ?>',
+      clear: '<?php echo $this->url(array(), 'multi_select_clear_ajax') ?>'
+    }
+  };
+/* ]]> */
+</script>

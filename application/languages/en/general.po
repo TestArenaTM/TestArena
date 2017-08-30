@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2015-10-19 10:58+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2017-08-29 10:28+0200\n"
+"Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,14 +12,14 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: pl_PL\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 2.0.3\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 msgid "headTitle"
-msgstr "TestArena Demo"
+msgstr "TestArena"
 
 msgid "headKeywords"
-msgstr "it, testing, case, test case, test case management, releases, phases, projects, software, project management, test competence, 21cn, smilgin"
+msgstr "it, testing, case, test case, test case management, releases, projects, software, project management, test competence, 21cn, smilgin"
 
 msgid "headDescription"
 msgstr "Free tool for test case management"
@@ -65,6 +65,39 @@ msgstr "Save"
 
 msgid "Anuluj"
 msgstr "Cancel"
+
+msgid "Powrót"
+msgstr "Back"
+
+msgid "Szukaj"
+msgstr "Search"
+
+msgid "Wyniki"
+msgstr "Result"
+
+msgid "Filtruj"
+msgstr "Filter"
+
+msgid "Filtruj - opis"
+msgstr "Filter based on selected filters"
+
+msgid "Filtruj i zapisz"
+msgstr "Filter and save"
+
+msgid "Filtruj i zapisz - opis"
+msgstr "Filters based on selected filters and saves selected filters for reuse"
+
+msgid "Wyczyść"
+msgstr "Clear"
+
+msgid "Wyczyść - opis"
+msgstr "Clears filters to zero state"
+
+msgid "Przywróć"
+msgstr "Restore"
+
+msgid "Przywróć - opis"
+msgstr "Restores saved filters"
 
 msgid "Eksportuj"
 msgstr "Export"
@@ -117,6 +150,9 @@ msgstr "Abort"
 msgid "Gotowe"
 msgstr "Done"
 
+msgid "Załączniki"
+msgstr "Attachments"
+
 msgid "Wybierz pliki"
 msgstr "Select file"
 
@@ -151,14 +187,14 @@ msgstr "Project"
 msgid "Wydania"
 msgstr "Releases"
 
-msgid "Fazy"
-msgstr "Phases"
-
 msgid "Środowiska"
 msgstr "Environments"
 
 msgid "Wersje"
 msgstr "Versions"
+
+msgid "Tagi"
+msgstr "Tags"
 
 msgid "Zadania"
 msgstr "Tasks"
@@ -249,6 +285,18 @@ msgstr "No results"
 
 msgid "Wyszukiwanie..."
 msgstr "Searching..."
+
+msgid "Kliknij aby wybrać projekty"
+msgstr "Click to select projects"
+
+msgid "Kliknij aby wybrać projekt"
+msgstr "Click to select project"
+
+msgid "Kliknij aby wybrać użytkowników"
+msgstr "Click to select users"
+
+msgid "lightBoxLabel"
+msgstr "Image %1 of %2"
 
 # pola wymagane
 msgid "Pole wymagane"
@@ -402,22 +450,37 @@ msgstr "Project suspended"
 msgid "utworzył(a) zadanie"
 msgstr "created the task"
 
+msgid "utworzył(a) zadanie i przypisał(a) je do użytkownika ASSIGNEE"
+msgstr "created the task and assigned to the user __assignee__"
+
 msgid "zmienił(a) zadanie"
-msgstr "change the task"
+msgstr "changed the task"
 
-msgid "utworzył(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "created the task and assigned to the user <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "zmienił(a) zadanie i przypisał(a) je do siebie"
+msgstr "changed the task and assigned to yourself"
 
-msgid "zmienił(a) zadanie i przekazał(a) je do wykonania użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "changed the task and assigned to the user <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "zmienił(a) zadanie i przypisał(a) je do użytkownika ASSIGNEE"
+msgstr "changed the task and assigned to the user __assignee__"
+
+msgid "przypisał(a) zadanie do siebie"
+msgstr "assigned the task to yourself"
+
+msgid "przypisał(a) zadanie do użytkownika ASSIGNEE"
+msgstr "assigned  the task to the user __assignee__"
 
 msgid "zmienił(a) status zadania na TASK_STATUS"
-msgstr "changed status of the task to <strong>__taskStatus__</strong>"
+msgstr "changed status of the task to __taskStatus__"
 
 msgid "dodał(a) test TEST do zadania"
 msgstr "added test __test__ to task"
 
-msgid "usunoł/eła test TEST Z zadania"
+msgid "rozwiązał(a) test TEST ze statusem STATUS"
+msgstr "solved the test __test__ with the status __status__"
+
+msgid "zmienił(a) status testu TEST na status STATUS"
+msgstr "changed status of the test __test__ to status __status__"
+
+msgid "usunął/ęła test TEST Z zadania"
 msgstr "deleted test __test__ from task"
 
 msgid "utworzył(a) defekt"
@@ -426,14 +489,14 @@ msgstr "created the defect"
 msgid "zmienił(a) defekt"
 msgstr "change the defect"
 
-msgid "utworzył(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "created the defect and assigned to the user <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "utworzył(a) defekt i przypisał(a) go użytkownika ASSIGNEE"
+msgstr "created the defect and assigned to the user __assignee__"
 
-msgid "zmienił(a) defekt i przypisał(a) go użytkownikowi ASSIGNEE_NAME (ASSIGNEE_EMAIL)"
-msgstr "changed the defect and assigned to the user <strong title=\"__assigneeEmail__\">__assigneeName__ </strong>"
+msgid "zmienił(a) defekt i przypisał(a) go użytkownika ASSIGNEE"
+msgstr "changed the defect and assigned to the user __assignee__"
 
 msgid "zmienił(a) status defektu na DEFECT_STATUS"
-msgstr "changed status of the defect to <strong>__defectStatus__</strong>"
+msgstr "changed status of the defect to __defectStatus__"
 
 msgid "dodał(a) defekt DEFEKT do zadania"
 msgstr "added defect __defekt__ to task"
@@ -443,12 +506,28 @@ msgstr "deleted defect __defekt__ from task"
 
 # Task filter
 msgid "[Bez wydania]"
-msgstr "[Without reelase]"
-
-msgid "[Bez fazy]"
-msgstr "[Without phase]"
+msgstr "[Without release]"
 
 # Breadcrumb
 msgid "Profil"
 msgstr "Profile"
 
+# Mutiselect on list
+msgid "Wybierz wszystkie na tej stronie"
+msgstr "Select all on this page"
+
+msgid "Wybierz wszystkie"
+msgstr "Select all"
+
+msgid "Wyczyść wybrane"
+msgstr "Clear selected"
+
+msgid "Liczba wybranych elementów"
+msgstr "Number of selected elements"
+
+# Default project colors
+msgid "DEFAULT_SUCCESS_RESOLUTION"
+msgstr "Success"
+
+msgid "DEFAULT_FAIL_RESOLUTION"
+msgstr "Fail"

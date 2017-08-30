@@ -34,18 +34,15 @@ class User_Form_RecoverPassword extends Custom_Form_Abstract
       )
     ));
     
-    $this->addElement('captcha', 'captcha', array(
-      'required'  => true,
-      'captcha'   => array(
-        'captcha' => 'Image',
-        'wordLen' => 6,
-        'timeout' => 300,
-        'font'    => _FRONT_PUBLIC_DIR . '/css/fonts/Oswald.otf',  
-        'imgDir'  => _FRONT_PUBLIC_DIR . '/captcha/',  
-        'imgUrl'  => Zend_Registry::get('config')->baseUrl . '/captcha/'
-      ),
-      'decorators' => array('Captcha') 
-    ));
+    $recaptchaConfigData = Zend_Registry::get('config')->recaptcha;
+    $recaptchaOptions = array(
+      'siteKey'   => $recaptchaConfigData->publicKey,
+      'secretKey' => $recaptchaConfigData->privateKey,
+    );
+    
+    $recaptcha = new Custom_Form_Element_Recaptcha('grecaptcharesponse', $recaptchaOptions);
+    
+    $this->addElement($recaptcha);
     
    $this->addElement('hash', 'csrf', array(
       'ignore'  => true,

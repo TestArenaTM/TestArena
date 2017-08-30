@@ -9,6 +9,10 @@
   'cAction'     => $this->cAction
 )); ?>
 
+<script type='text/javascript'>
+  url.fileBrowser = '<?php echo $this->projectUrl(array(), 'file_browser') ?>';
+</script>
+
 <header id="head-top" class="head-top-main">
   <div class="top_left">
     <?php echo $this->partial('/partials/projects-form.phtml', array(
@@ -40,17 +44,17 @@
   <a id="header_logo" href="<?php echo $this->url(array(), 'index')?>" ></a>
   <div id="wrapper">
     <ul class="menu">
-      <li class="item1"><a href="<?php echo $this->url(array(), 'index')?>"<?php if ($this->activeMenu == 'dashboard'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_grid-2x2 icon-20"></span><?php echo $this->generalT('Kokpit') ?></a></li>
-      <li class="item3"><a href="<?php echo $this->url(array(), 'project_view')?>"<?php if ($this->activeMenu == 'project'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_puzzle_alt icon-20"></span><?php echo $this->generalT('Projekt') ?></a></li>
-      <li class="item3"><a href="<?php echo $this->url(array(), 'release_list')?>"<?php if ($this->activeMenu == 'releases'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_flowchart_alt icon-20"></span><?php echo $this->generalT('Wydania') ?></a></li>
-      <?php if ($this->activeProject->getExtraData('releaseCount') > 0): ?>
-      <li class="item3"><a href="<?php echo $this->url(array(), 'phase_list')?>"<?php if ($this->activeMenu == 'phases'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-flow-children icon-20"></span><?php echo $this->generalT('Fazy') ?></a></li>
+      <li class="item1"><a href="<?php echo $this->projectUrl(array(), 'index')?>"<?php if ($this->activeMenu == 'dashboard'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_grid-2x2 icon-20"></span><?php echo $this->generalT('Kokpit') ?></a></li>
+      <li class="item3"><a href="<?php echo $this->projectUrl(array(), 'project_view')?>"<?php if ($this->activeMenu == 'project'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_puzzle_alt icon-20"></span><?php echo $this->generalT('Projekt') ?></a></li>
+      <li class="item3"><a href="<?php echo $this->projectUrl(array(), 'release_list')?>"<?php if ($this->activeMenu == 'releases'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_flowchart_alt icon-20"></span><?php echo $this->generalT('Wydania') ?></a></li>
+      <li class="item4"><a href="<?php echo $this->projectUrl(array(), 'environment_list')?>"<?php if ($this->activeMenu == 'environments'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_genius icon-20"></span><?php echo $this->generalT('Środowiska') ?></a></li>
+      <li class="item4"><a href="<?php echo $this->projectUrl(array(), 'version_list')?>"<?php if ($this->activeMenu == 'versions'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-sort-numeric-asc icon-20"></span><?php echo $this->generalT('Wersje') ?></a></li>
+      <li class="item4"><a href="<?php echo $this->projectUrl(array(), 'tag_list')?>"<?php if ($this->activeMenu == 'tags'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_tags icon-20"></span><?php echo $this->generalT('Tagi') ?></a></li>
+      <li class="item6"><a href="<?php echo $this->projectUrl(array(), 'task_list', true)?>"<?php if ($this->activeMenu == 'tasks'): ?> class="activeMenu"<?php endif; ?>><span class="icon_tool icon-20"></span><?php echo $this->generalT('Zadania') ?></a></li>
+      <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
+      <li class="item6"><a href="<?php echo $this->projectUrl(array(), 'defect_list', true)?>"<?php if ($this->activeMenu == 'defects'): ?> class="activeMenu"<?php endif; ?>><span class="icon_error-triangle icon-20"></span><?php echo $this->generalT('Defekty') ?></a></li>
       <?php endif; ?>
-      <li class="item4"><a href="<?php echo $this->url(array(), 'environment_list')?>"<?php if ($this->activeMenu == 'environments'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icon_genius icon-20"></span><?php echo $this->generalT('Środowiska') ?></a></li>
-      <li class="item4"><a href="<?php echo $this->url(array(), 'version_list')?>"<?php if ($this->activeMenu == 'versions'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-sort-numeric-asc icon-20"></span><?php echo $this->generalT('Wersje') ?></a></li>
-      <li class="item6"><a href="<?php echo $this->url(array(), 'task_list', true)?>"<?php if ($this->activeMenu == 'tasks'): ?> class="activeMenu"<?php endif; ?>><span class="icon_tool icon-20"></span><?php echo $this->generalT('Zadania') ?></a></li>
-      <li class="item6"><a href="<?php echo $this->url(array(), 'defect_list', true)?>"<?php if ($this->activeMenu == 'defects'): ?> class="activeMenu"<?php endif; ?>><span class="icon_error-triangle icon-20"></span><?php echo $this->generalT('Defekty') ?></a></li>
-      <li class="item5"><a href="<?php echo $this->url(array(), 'test_list', true)?>"<?php if ($this->activeMenu == 'tests'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-database icon-20"></span><?php echo $this->generalT('Baza testów') ?></a></li>
+      <li class="item5"><a href="<?php echo $this->projectUrl(array(), 'test_list', true)?>"<?php if ($this->activeMenu == 'tests'): ?> class="activeMenu"<?php endif; ?>><span aria-hidden="true" class="icons-database icon-20"></span><?php echo $this->generalT('Baza testów') ?></a></li>
       <li class="item9"><a class="j_openFileBrowser" href="#"><span aria-hidden="true" class="icon_cloud-upload icon-20"></span><?php echo $this->generalT('Pliki') ?></a></li> 
     </ul>
   </div>

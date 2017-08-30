@@ -1,4 +1,4 @@
-Installation Guide
+Installation Guide (TestArena v.3.1.1076)
 
 1. Recommended requirements:
 - PHP 5.6
@@ -18,6 +18,7 @@ Additional apache modules:
 - database
 - mailbox
 - website adress (domain)
+- recaptcha V2 publicKey and privateKey at http://www.google.com/recaptcha/admin
 2.3. Direct a domain assigned in step 2.2 to the directory /public which contains the main index.php file.
 2.4. Import the file located at /docs/change_log/testarena_db.sql to the created database.
 2.5. Set write permissions for the following directories:
@@ -36,4 +37,7 @@ Additional apache modules:
 3. Predefined log in data:
 	Login: administrator@testarena.pl
 	Password: 12qwAS
+	
+4. Migration steps from 3.0 to 3.1:
+	In release 3.1.1076 there are many changes to application structure and logic. Anyone who want's to migrate from older versions of TestArena, please contact us at http://testarena.pl/kontakt to get help with migration.	
 	

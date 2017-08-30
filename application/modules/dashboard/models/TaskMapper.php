@@ -24,9 +24,10 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
 {
   protected $_dbTableClass = 'Dashboard_Model_TaskDbTable';
   
-  public function getLimitLatestNotClosedAssigned2You(Zend_Controller_Request_Abstract $request, $limit = 5)
+  public function getLimitLastNotClosedAssignedToMe(Application_Model_User $user, 
+    Application_Model_Project $project, Application_Model_Release $release, $limit = 5)
   {
-    $rows = $this->_getDbTable()->getLimitLatestNotClosedAssigned2You($request, $limit);
+    $rows = $this->_getDbTable()->getLimitLastNotClosedAssignedToMe($user->getId(), $project->getId(), $release->getId(), $limit);
     
     if ($rows === null)
     {
@@ -39,30 +40,36 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     {
       $list[] = new Application_Model_Task($row);
     }
-    
+
     return $list;
   }
   
-  public function getAllCnt(Zend_Controller_Request_Abstract $request)
+  public function countNotClosedAssignedToMe(Application_Model_User $user, 
+    Application_Model_Project $project, Application_Model_Release $release)
   {
-    return $this->_getDbTable()->getAllCnt($request);
+    return $this->_getDbTable()->countNotClosedAssignedToMe($user->getId(), $project->getId(), $release->getId());
   }
   
-  public function getAllAssigned2YouCntByStatus(Zend_Controller_Request_Abstract $request)
+  public function countAll(Application_Model_Project $project, Application_Model_Release $release)
   {
+    return $this->_getDbTable()->countAll($project->getId(), $release->getId());
+  }
+  
+  public function countAssignedToMeGroupedByStatus(Application_Model_User $user, 
+    Application_Model_Project $project, Application_Model_Release $release)
+  {  
     $db = $this->_getDbTable();
-    $adapter = $db->getAdapter();
-    
-    $sql = $db->getAllAssigned2YouCntByStatus($request);
-    
+    $adapter = $db->getAdapter();    
+    $sql = $db->getSqlAssignedToMe($user->getId(), $project->getId(), $release->getId());
+    $stmt = $adapter->query($sql);
+
     $result = array(
       'all'        => 0,
       'open'       => 0,
+      'reopen'     => 0,
       'inProgress' => 0,
       'closed'     => 0
     );
-    
-    $stmt = $adapter->query($sql);
     
     while ($row = $stmt->fetch())
     {      
@@ -71,7 +78,7 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
           $result['open']++;
           break;
         case Application_Model_TaskStatus::REOPEN:
-          $result['open']++;
+          $result['reopen']++;
           break;
         case Application_Model_TaskStatus::IN_PROGRESS:
           $result['inProgress']++;
@@ -86,9 +93,10 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     return $result;
   }
   
-  public function getLimitOverdue(Zend_Controller_Request_Abstract $request, $limit = 5)
+  public function getLimitOverdueAssignedToMe(Application_Model_User $user, 
+    Application_Model_Project $project, Application_Model_Release $release, $limit = 5)
   {
-    $rows = $this->_getDbTable()->getLimitOverdue($request, $limit);
+    $rows = $this->_getDbTable()->getLimitOverdueAssignedToMe($user->getId(), $project->getId(), $release->getId(), $limit);
     
     if ($rows === null)
     {
@@ -105,8 +113,9 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     return $list;
   }
   
-  public function getNumberOfOverdue(Zend_Controller_Request_Abstract $request)
+  public function countOverdueAssignedToMe(Application_Model_User $user, 
+    Application_Model_Project $project, Application_Model_Release $release)
   {
-    return $this->_getDbTable()->getNumberOfOverdue($request);
+    return $this->_getDbTable()->countOverdueAssignedToMe($user->getId(), $project->getId(), $release->getId());
   }
 }

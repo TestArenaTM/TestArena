@@ -24,7 +24,7 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
 {
   protected $_dbTableClass = 'Project_Model_TestDbTable';
   
-  public function getAll(Zend_Controller_Request_Abstract $request)
+  public function getAll(Zend_Controller_Request_Abstract $request, Application_Model_Project $project)
   {
     $db = $this->_getDbTable();
     
@@ -41,10 +41,24 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     foreach ($paginator->getCurrentItems() as $row)
     {
       $test = new Application_Model_Test($row);
+      $test->setProjectObject($project);
       $list[$test->getId()] = $test;
     }
     
     return array($list, $paginator);
+  }
+  
+  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  {
+    $rows = $this->_getDbTable()->getAllIds($request);    
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $list[] = $row['id'];
+    }
+    
+    return $list;
   }
   
   public function getAllAjax(Zend_Controller_Request_Abstract $request, Application_Model_Project $project)
@@ -52,6 +66,28 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     return $this->_getDbTable()->getAllAjax($request, $project->getId())->toArray();
   }
   
+  public function getPreviousNextByTest(Custom_Interface_Test $test)
+  {
+    $rows = $this->_getDbTable()->getPreviousNextByTest($test->getId(), $test->getProjectId());
+    
+    foreach($rows as $row)
+    {
+      $rowArray = $row->toArray();
+      
+      if ($rowArray['isNext'])
+      {
+        $test->setNext(new Application_Model_Test($rowArray));
+      }
+      else
+      {
+        $test->setPrevious(new Application_Model_Test($rowArray));
+      }
+    }
+    
+    return $test;
+  }  
+  
+  /* get for view */
   public function getForViewInTask(Application_Model_Test $test, Application_Model_Project $project)
   {
     $row = $this->_getDbTable()->getForViewInTask($test->getId(), $project->getId());
@@ -60,8 +96,19 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     {
       return false;
     }
+    
+    $test->setDbProperties($row->toArray());
+    
+    if ($test->getTypeId() == Application_Model_TestType::CHECKLIST)
+    {
+      $checklist = new Application_Model_Checklist();
+      $checklist->setDbProperties($row->toArray());
 
-    return $test->setDbProperties($row->toArray());
+      $checklistItemMapper = new Project_Model_ChecklistItemMapper();
+      return $checklist->setItems($checklistItemMapper->getAllByTest($checklist));
+    }
+    
+    return $test;
   }
   
   public function getForView(Application_Model_Test $test)
@@ -88,6 +135,58 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     return $test->setDbProperties($row->toArray());
   }
   
+  public function getTestCaseForView(Application_Model_TestCase $testCase)
+  {
+    $row = $this->_getDbTable()->getTestCaseForView($testCase->getId(), $testCase->getProjectId());
+    
+    if (null === $row)
+    {
+      return false;
+    }
+    
+    return $testCase->setDbProperties($row->toArray()); 
+  }
+  
+  public function getExploratoryTestForView(Application_Model_ExploratoryTest $exploratoryTest)
+  {
+    $row = $this->_getDbTable()->getExploratoryTestForView($exploratoryTest->getId(), $exploratoryTest->getProjectId());
+
+    if (null === $row)
+    {
+      return false;
+    }
+    
+    return $exploratoryTest->setDbProperties($row->toArray()); 
+  }
+  
+  public function getAutomaticTestForView(Application_Model_AutomaticTest $automaticTest)
+  {
+    $row = $this->_getDbTable()->getAutomaticTestForView($automaticTest->getId(), $automaticTest->getProjectId());
+    
+    if (null === $row)
+    {
+      return false;
+    }
+    
+    return $automaticTest->setDbProperties($row->toArray());
+  }
+  
+  public function getChecklistForView(Application_Model_Checklist $checklist)
+  {
+    $row = $this->_getDbTable()->getChecklistForView($checklist->getId(), $checklist->getProjectId());
+    
+    if (null === $row)
+    {
+      return false;
+    }
+
+    $checklistItemMapper = new Project_Model_ChecklistItemMapper();
+    $checklist->setItems($checklistItemMapper->getAllByTest($checklist));
+
+    return $checklist->setDbProperties($row->toArray());
+  }
+  
+  /* get for edit */
   public function getOtherTestForEdit(Application_Model_Test $test)
   {
     $row = $this->_getDbTable()->getOtherTestForEdit($test->getId(), $test->getProjectId());
@@ -100,18 +199,6 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     $rowData = $row->toArray();
     $test->setDbProperties($rowData);
     return $test->map($rowData);
-  }
-  
-  public function getTestCaseForView(Application_Model_TestCase $testCase)
-  {
-    $row = $this->_getDbTable()->getTestCaseForView($testCase->getId(), $testCase->getProjectId());
-    
-    if (null === $row)
-    {
-      return false;
-    }
-    
-    return $testCase->setDbProperties($row->toArray()); 
   }
   
   public function getTestCaseForEdit(Application_Model_TestCase $testCase)
@@ -128,18 +215,6 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     return $testCase->map($rowData);
   }
   
-  public function getExploratoryTestForView(Application_Model_ExploratoryTest $exploratoryTest)
-  {
-    $row = $this->_getDbTable()->getExploratoryTestForView($exploratoryTest->getId(), $exploratoryTest->getProjectId());
-    
-    if (null === $row)
-    {
-      return false;
-    }
-    
-    return $exploratoryTest->setDbProperties($row->toArray()); 
-  }
-  
   public function getExploratoryTestForEdit(Application_Model_ExploratoryTest $exploratoryTest)
   {
     $row = $this->_getDbTable()->getExploratoryTestForEdit($exploratoryTest->getId(), $exploratoryTest->getProjectId());
@@ -154,27 +229,35 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     return $exploratoryTest->map($rowData);
   }
   
-  public function getPreviousNextByTest(Custom_Interface_Test $test)
+  public function getAutomaticTestForEdit(Application_Model_AutomaticTest $automaticTest)
   {
-    $rows = $this->_getDbTable()->getPreviousNextByTest($test->getId(), $test->getProjectId());
+    $row = $this->_getDbTable()->getAutomaticTestForEdit($automaticTest->getId(), $automaticTest->getProjectId());
     
-    foreach($rows as $row)
+    if (null === $row)
     {
-      $rowArray = $row->toArray();
-      
-      if ($rowArray['isNext'])
-      {
-        $test->setNext(new Application_Model_Test($rowArray));
-      }
-      else
-      {
-        $test->setPrevious(new Application_Model_Test($rowArray));
-      }
+      return false;
     }
     
-    return $test;
-  }  
+    $rowData = $row->toArray();
+    $automaticTest->setDbProperties($rowData);
+    return $automaticTest->map($rowData);
+  }
+  
+  public function getChecklistForEdit(Application_Model_Checklist $checklist)
+  {
+    $row = $this->_getDbTable()->getChecklistForEdit($checklist->getId(), $checklist->getProjectId());
+    
+    if (null === $row)
+    {
+      return false;
+    }
+    
+    $rowData = $row->toArray();
+    $checklist->setDbProperties($rowData);
+    return $checklist->map($rowData);
+  }
    
+  /* add */
   /**
    * UWAGA! Metoda musi być uruchamina wewnątrz transakcji.
    * @param Application_Model_Test $test
@@ -190,7 +273,8 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
       'create_date'     => date('Y-m-d H:i:s'),
       'name'            => $test->getName(),
       'description'     => $test->getDescription(),
-      'current_version' => (int)$test->getCurrentVersion()
+      'current_version' => (int)$test->getCurrentVersion(),
+      'ordinal_no'      => 0
     );
     
     $test->setId($db->insert($data));
@@ -271,6 +355,55 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     }
   }
   
+  public function addAutomaticTest(Application_Model_AutomaticTest $automaticTest)
+  {
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+    $automaticTest->setStatus(Application_Model_TestStatus::ACTIVE);
+    $automaticTest->setType(Application_Model_TestType::AUTOMATIC_TEST);
+    
+    try
+    {
+      $adapter->beginTransaction();
+      $this->addTest($automaticTest);
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($automaticTest);
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
+  }
+  
+  public function addChecklist(Application_Model_Checklist $checklist)
+  {
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+    $checklist->setStatus(Application_Model_TestStatus::ACTIVE);
+    $checklist->setType(Application_Model_TestType::CHECKLIST);
+    
+    try
+    {
+      $adapter->beginTransaction();
+      $this->addTest($checklist);
+      $checklistItemMapper = new Project_Model_ChecklistItemMapper();
+      $checklistItemMapper->save($checklist);
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($checklist);
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {echo $e->getTraceAsString();die;
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
+  }
+  
+  /* edit */
   public function editOtherTestCore(Application_Model_Test $testOther)
   {
     if ($testOther->isNewVersion()) 
@@ -305,48 +438,6 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     }
   }
   
-  public function addOtherTestVersion(Application_Model_Test $test)
-  {
-    $db = $this->_getDbTable();
-    $adapter = $db->getAdapter();
-    
-    $dataOldVersion = array(
-      'current_version' => false
-    );
-    
-    $dataNewVersion = array(
-      'project_id'      => $test->getProjectId(),
-      'status'          => Application_Model_TestStatus::ACTIVE,
-      'type'            => Application_Model_TestType::OTHER_TEST,
-      'author_id'       => $test->getAuthorId(),
-      'name'            => $test->getName(),
-      'description'     => $test->getDescription(),
-      'create_date'     => date('Y-m-d H:i:s'),
-      'current_version' => true
-    );
-    
-    try
-    {
-      $adapter->beginTransaction();
-      
-      $db->update($dataOldVersion, array('id = ?' => $test->getId()));
-      
-      $test->setId($db->insert($dataNewVersion));
-      $db->update(array('family_id' => $test->getFamilyId()), array('id = ?' => $test->getId()));
-      
-      $attachmentMapper = new Project_Model_AttachmentMapper();
-      $attachmentMapper->saveTest($test);
-      
-      return $adapter->commit();
-    }
-    catch (Exception $e)
-    {
-      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
-      $adapter->rollback();
-      return false;
-    }
-  }
-  
   public function editTestCaseCore(Application_Model_TestCase $testCase)
   {
     if ($testCase->isNewVersion()) 
@@ -376,51 +467,6 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
       
       $testCaseMapper = new Project_Model_TestCaseMapper();
       $testCaseMapper->edit($testCase);
-      
-      $attachmentMapper = new Project_Model_AttachmentMapper();
-      $attachmentMapper->saveTest($testCase);
-      
-      return $adapter->commit();
-    }
-    catch (Exception $e)
-    {
-      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
-      $adapter->rollback();
-      return false;
-    }
-  }
-  
-  public function addTestCaseVersion(Application_Model_TestCase $testCase)
-  {
-    $db = $this->_getDbTable();
-    $adapter = $db->getAdapter();
-    
-    $dataOldVersion = array(
-      'current_version' => false
-    );
-    
-    $dataNewVersion = array(
-      'project_id'      => $testCase->getProjectId(),
-      'status'          => Application_Model_TestStatus::ACTIVE,
-      'type'            => Application_Model_TestType::TEST_CASE,
-      'author_id'       => $testCase->getAuthorId(),
-      'name'            => $testCase->getName(),
-      'description'     => $testCase->getDescription(),
-      'create_date'     => date('Y-m-d H:i:s'),
-      'current_version' => true
-    );
-    
-    try
-    {
-      $adapter->beginTransaction();
-      
-      $db->update($dataOldVersion, array('id = ?' => $testCase->getId()));
-      
-      $testCase->setId($db->insert($dataNewVersion));
-      $db->update(array('family_id' => $testCase->getFamilyId()), array('id = ?' => $testCase->getId()));
-      
-      $testCaseMapper = new Project_Model_TestCaseMapper();
-      $testCaseMapper->add($testCase);
       
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveTest($testCase);
@@ -477,6 +523,164 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     }
   }
   
+  public function editAutomaticTestCore(Application_Model_AutomaticTest $testAutomatic)
+  {
+    if ($testAutomatic->isNewVersion()) 
+    {
+      return $this->addAutomaticTestVersion($testAutomatic);
+    }
+    
+    return $this->editAutomaticTest($testAutomatic);
+  }
+  
+  public function editAutomaticTest(Application_Model_AutomaticTest $testAutomatic)
+  {
+    $db = $this->_getDbTable();
+    
+    $data = array(
+      'project_id'  => $testAutomatic->getProjectId(),
+      'name'        => $testAutomatic->getName(),
+      'description' => $testAutomatic->getDescription()
+    );
+    
+    try
+    {
+      $db->update($data, array('id = ?' => $testAutomatic->getId()));
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($testAutomatic);
+      return true;
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      return false;
+    }
+  }
+  
+  public function editChecklistCore(Application_Model_Checklist $checklist)
+  {
+    if ($checklist->isNewVersion()) 
+    {
+      return $this->addChecklistVersion($checklist);
+    }
+    
+    return $this->editChecklist($checklist);
+  }
+  
+  public function editChecklist(Application_Model_Checklist $checklist)
+  {
+    $db = $this->_getDbTable();
+    
+    $data = array(
+      'project_id'  => $checklist->getProjectId(),
+      'name'        => $checklist->getName(),
+      'description' => $checklist->getDescription()
+    );
+    
+    try
+    {
+      $db->update($data, array('id = ?' => $checklist->getId()));
+      $checklistItemMapper = new Project_Model_ChecklistItemMapper();
+      $checklistItemMapper->save($checklist);
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($checklist);
+      return true;
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      return false;
+    }
+  }
+  
+  /* add new version */
+  public function addOtherTestVersion(Application_Model_Test $test)
+  {
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+    
+    $dataOldVersion = array(
+      'current_version' => false
+    );
+    
+    $dataNewVersion = array(
+      'project_id'      => $test->getProjectId(),
+      'status'          => Application_Model_TestStatus::ACTIVE,
+      'type'            => Application_Model_TestType::OTHER_TEST,
+      'author_id'       => $test->getAuthorId(),
+      'name'            => $test->getName(),
+      'description'     => $test->getDescription(),
+      'create_date'     => date('Y-m-d H:i:s'),
+      'current_version' => true,
+      'ordinal_no'      => $test->getOrdinalNo(),
+      'family_id'       => $test->getFamilyId()
+    );
+
+    try
+    {
+      $adapter->beginTransaction();
+      
+      $db->update($dataOldVersion, array('id = ?' => $test->getId()));      
+      $test->setId($db->insert($dataNewVersion));
+      
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($test);
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
+  }
+  
+  public function addTestCaseVersion(Application_Model_TestCase $testCase)
+  {
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+    
+    $dataOldVersion = array(
+      'current_version' => false
+    );
+    
+    $dataNewVersion = array(
+      'project_id'      => $testCase->getProjectId(),
+      'status'          => Application_Model_TestStatus::ACTIVE,
+      'type'            => Application_Model_TestType::TEST_CASE,
+      'author_id'       => $testCase->getAuthorId(),
+      'name'            => $testCase->getName(),
+      'description'     => $testCase->getDescription(),
+      'create_date'     => date('Y-m-d H:i:s'),
+      'current_version' => true,
+      'ordinal_no'      => $testCase->getOrdinalNo(),
+      'family_id'       => $testCase->getFamilyId()
+    );
+    
+    try
+    {
+      $adapter->beginTransaction();
+      
+      $db->update($dataOldVersion, array('id = ?' => $testCase->getId()));      
+      $testCase->setId($db->insert($dataNewVersion));
+      
+      $testCaseMapper = new Project_Model_TestCaseMapper();
+      $testCaseMapper->add($testCase);
+      
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($testCase);
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
+  }
+  
   public function addTestExplorationVersion(Application_Model_ExploratoryTest $exploratoryTest)
   {
     $db = $this->_getDbTable();
@@ -494,17 +698,17 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
       'name'            => $exploratoryTest->getName(),
       'description'     => '',
       'create_date'     => date('Y-m-d H:i:s'),
-      'current_version' => true
+      'current_version' => true,
+      'ordinal_no'      => $exploratoryTest->getOrdinalNo(),
+      'family_id'       => $exploratoryTest->getFamilyId()
     );
     
     try
     {
       $adapter->beginTransaction();
       
-      $db->update($dataOldVersion, array('id = ?' => $exploratoryTest->getId()));
-      
+      $db->update($dataOldVersion, array('id = ?' => $exploratoryTest->getId()));      
       $exploratoryTest->setId($db->insert($dataNewVersion));
-      $db->update(array('family_id' => $exploratoryTest->getFamilyId()), array('id = ?' => $exploratoryTest->getId()));
       
       $exploratoryTestMapper = new Project_Model_ExploratoryTestMapper();
       $exploratoryTestMapper->add($exploratoryTest);
@@ -521,7 +725,95 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
       return false;
     }
   }
+  
+  public function addAutomaticTestVersion(Application_Model_AutomaticTest $automaticTest)
+  {
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+    
+    $dataOldVersion = array(
+      'current_version' => false
+    );
+    
+    $dataNewVersion = array(
+      'project_id'      => $automaticTest->getProjectId(),
+      'status'          => Application_Model_TestStatus::ACTIVE,
+      'type'            => Application_Model_TestType::AUTOMATIC_TEST,
+      'author_id'       => $automaticTest->getAuthorId(),
+      'name'            => $automaticTest->getName(),
+      'description'     => $automaticTest->getDescription(),
+      'create_date'     => date('Y-m-d H:i:s'),
+      'current_version' => true,
+      'ordinal_no'      => $automaticTest->getOrdinalNo(),
+      'family_id'       => $automaticTest->getFamilyId()
+    );
+    
+    try
+    {
+      $adapter->beginTransaction();
+      
+      $db->update($dataOldVersion, array('id = ?' => $automaticTest->getId()));      
+      $automaticTest->setId($db->insert($dataNewVersion));
+      
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($automaticTest);
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
+  }
+  
+  public function addChecklistVersion(Application_Model_Checklist $checklist)
+  {
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+    
+    $dataOldVersion = array(
+      'current_version' => false
+    );
+    
+    $dataNewVersion = array(
+      'project_id'      => $checklist->getProjectId(),
+      'status'          => Application_Model_TestStatus::ACTIVE,
+      'type'            => Application_Model_TestType::CHECKLIST,
+      'author_id'       => $checklist->getAuthorId(),
+      'name'            => $checklist->getName(),
+      'description'     => $checklist->getDescription(),
+      'create_date'     => date('Y-m-d H:i:s'),
+      'current_version' => true,
+      'ordinal_no'      => $checklist->getOrdinalNo(),
+      'family_id'       => $checklist->getFamilyId()
+    );
+    
+    try
+    {
+      $adapter->beginTransaction();
+      
+      $db->update($dataOldVersion, array('id = ?' => $checklist->getId()));      
+      $checklist->setId($db->insert($dataNewVersion));
 
+      $checklistItemMapper = new Project_Model_ChecklistItemMapper();
+      $checklistItemMapper->save($checklist);
+      
+      $attachmentMapper = new Project_Model_AttachmentMapper();
+      $attachmentMapper->saveTest($checklist);
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
+  }
+
+  /* delete */
   public function delete(Custom_Interface_Test $test)
   {
     if (null === $test->getId())
@@ -541,5 +833,50 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     );
     
     return $db->update($data, $where) == 1;
+  }
+  
+  public function deleteByIds(array $testIds)
+  {
+    if (count($testIds) == 0)
+    {
+      return true;
+    }
+    
+    $db = $this->_getDbTable();
+    
+    $data = array(
+      'status' => Application_Model_TestStatus::DELETED
+    );
+    
+    $where = array(
+      'id IN(?)'  => $testIds
+    );
+    
+    $db->update($data, $where);
+    return true;
+  }
+  
+  public function getByIds4CheckAccess(array $ids)
+  {
+    if (count($ids) === 0)
+    {
+      return array();
+    }
+    
+    $rows = $this->_getDbTable()->getByIds4CheckAccess($ids);
+    
+    if (null === $rows)
+    {
+      return false;
+    }
+    
+    $list = array();
+    
+    foreach ($rows->toArray() as $row)
+    {
+      $list[$row['id']] = new Application_Model_Test($row);
+    }
+
+    return $list;
   }
 }

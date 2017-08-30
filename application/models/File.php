@@ -23,18 +23,18 @@ The full text of the GPL is in the LICENSE file.
 class Application_Model_File extends Custom_Model_Standard_Abstract
 {
   protected $_map = array(
-    'is_temporary'  => 'isTemporary',
     'create_date'   => 'createDate',
     'remove_date'   => 'removeDate',    
   );
   
   private $_id          = null;
-  private $_isTemporary = null;
+  private $_project     = null;
   private $_name        = null;
   private $_extension   = null;
-  private $_path        = null;
+  private $_subpath     = null;
   private $_createDate  = null;
   private $_removeDate  = null;
+  private $_description = null;
   
   // <editor-fold defaultstate="collapsed" desc="Getters">
   public function getId()
@@ -42,9 +42,9 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     return $this->_id;
   }
   
-  function getIsTemporary()
+  function getProject()
   {
-    return $this->_isTemporary;
+    return $this->_project;
   }
     
   public function getName()
@@ -57,6 +57,60 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     return $this->_extension;
   }
   
+  public function getFullName()
+  {
+    return strlen($this->getExtension()) > 0 ? $this->getName().'.'.$this->getExtension() : $this->getName();
+  }
+  
+  // Przykładowy wygląd ścieżki: \temp\ \74\
+  public function getDefaultSubpath()
+  {
+    $path = DIRECTORY_SEPARATOR;
+    
+    if ($this->_project !== null && $this->_project->getId() > 0)
+    {
+      $path .= $this->_project->getId();
+    }
+    else
+    {
+      $path .= 'temp';
+    }
+    
+    return $path;
+  }
+  
+  // Przykładowy wygląd ścieżki: C:\www\testarena\files
+  public function getMainPath()
+  {
+    return _FILE_UPLOAD_DIR.$this->getDefaultSubpath();
+  }
+  
+  // Przykładowy wygląd ścieżki: \74\images\
+  public function getSubpath()
+  {
+    return $this->_subpath;
+  }
+  
+  // Przykładowy wygląd ścieżki: C:\www\testarena\files\74\images\fileName.ext
+  public function getFullPath($systemNameEncoding = false)
+  {
+    $fullPath = $this->getMainPath().$this->getSubpath().$this->getFullName();
+    
+    if ($systemNameEncoding)
+    {
+      $encoding = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'CP1250' : 'ISO-8859-2';
+      $fullPath = iconv('UTF-8', $encoding, $fullPath);
+    }
+
+    return $fullPath;
+  }
+  
+  // Przykładowy wygląd ścieżki: C:\www\testarena\files\74\images\newFileName
+  public function getNewFullPath($fileName)
+  {
+    return $this->getMainPath().$this->getSubpath().$fileName;
+  }
+  
   public function getCreateDate()
   {
     return $this->_createDate;
@@ -66,6 +120,11 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
   {
     return $this->_removeDate;
   }
+  
+  public function getDescription()
+  {
+    return $this->_description;
+  }
   // </editor-fold>
 
   // <editor-fold defaultstate="collapsed" desc="Setters">
@@ -74,15 +133,34 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     $this->_id = (int)$id;
     return $this;
   }
-  
-  function setIsTemporary($isTemporary)
+
+  public function setProject($propertyName, $propertyValue)
   {
-    $this->_isTemporary = (int)$isTemporary;
+    if (null === $this->_project)
+    {
+      $this->_project = new Application_Model_Project(array($propertyName => $propertyValue));
+    }
+    else
+    {
+      $this->getProject()->setProperty($propertyName, $propertyValue);
+    }
+    
+    return $this;
+  }
+
+  public function setProjectObject(Application_Model_Project $project)
+  {
+    $this->_project = $project;
     return $this;
   }
   
-  public function setName($name)
+  public function setName($name, $filter = false)
   {
+    if ($filter)
+    {
+      $name = str_replace(array('<', '>', ':', '"', '/', '\\', '|', '*', '?'), '_', $name);
+    }
+
     $this->_name = $name;
     return $this;
   }
@@ -93,10 +171,19 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     return $this;
   }
   
-  public function setPath($path)
+  public function setSubpath($subpath = false)
   {
-    $this->_path = $path;
+    $this->_subpath = $subpath === false ? DIRECTORY_SEPARATOR : $subpath;
     return $this;
+  }
+  
+  public function setSubpathByFullPath($fullPath)
+  {
+    $info = pathinfo($fullPath);
+    $this->setName($info['filename']);
+    $this->setExtension($info['extension']);
+    $mainPathLength = strlen($this->getMainPath());
+    $this->setSubpath(substr($info['dirname'], $mainPathLength, strlen($info['dirname']) - $mainPathLength).DIRECTORY_SEPARATOR);
   }
 
   public function setCreateDate($date)
@@ -113,7 +200,12 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     }
     return $this;
   }
-  // </editor-fold>  
+
+  public function setDescription($description)
+  {
+    $this->_description = $description;
+    return $this;
+  } 
   
   public function setDates($removeDayOffset = false)
   {
@@ -129,40 +221,24 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     
     $this->setRemoveDate($removeDate);
   }
+  // </editor-fold> 
   
-  public function setByFullPath($fullPath)
+  public function isTemporary()
   {
-    $info = pathinfo($fullPath);
-    $this->setName($info['filename']);
-    $this->setExtension($info['extension']);
-    $this->setPath($info['dirname'].DIRECTORY_SEPARATOR);
+    return $this->_project === null;
   }
   
-  public function getFullName()
+  public function isSupportedImage()
   {
-    return $this->getName().'.'.$this->getExtension();
-  }
-  
-  public function getPath()
-  {
-    return $this->_path;
-  }
-  
-  public function getFullPath($systemNameEncoding = false)
-  {
-    if ($systemNameEncoding)
+    try
+    {    
+      $image = new Utils_Image($this->getFullPath(true));
+    }
+    catch (Utils_Image_Exception $e)
     {
-      $encoding = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'CP1250' : 'ISO-8859-2';
-      return iconv('UTF-8', $encoding, $this->getPath().$this->getFullName());
+      return false;
     }
     
-    return $this->getPath().$this->getFullName();
-  }
-  
-  public function getSubPath(Application_Model_Project $project)
-  {
-    $fullPath = $this->getFullPath();
-    $startIndex = strlen(_FILE_UPLOAD_DIR.DIRECTORY_SEPARATOR.$project->getId());
-    return substr($fullPath, $startIndex, strlen($fullPath) - $startIndex);
+    return true;
   }
 }

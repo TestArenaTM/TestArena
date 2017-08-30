@@ -13,8 +13,6 @@
     <form name="j_endTaskRunForm" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <?php echo $this->form->backUrl->renderViewHelper() ?>
 
-
-
         <div class="formContainer">
           <span>
             <?php echo $this->form->environments->renderViewHelper() ?>
@@ -91,8 +89,8 @@
 
 <script type="text/javascript">
 /* <![CDATA[ */
-  url.environmentListAjax = '<?php echo $this->url(array(), 'environment_list_ajax') ?>';
-  url.versionListAjax = '<?php echo $this->url(array(), 'version_list_ajax') ?>';  
+  url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
+  url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';  
   language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
 /* ]]> */
 </script>

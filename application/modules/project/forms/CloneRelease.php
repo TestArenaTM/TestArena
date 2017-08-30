@@ -39,84 +39,11 @@ class Project_Form_CloneRelease extends Project_Form_AddRelease
   {
     parent::init();
     
-    $this->addElement('text', 'phaseName', array(
-      'required'    => false,
-      'maxlength'   => 64,
-      'filters'     => array('StringTrim'),
-      'validators'  => array(
-        'Name',
-        array('StringLength', false, array(2, 64, 'UTF-8'))
-      )
-    ));
-    
-    $this->addElement('text', 'environments', array(
-      'required'   => true,
-      'class'      => 'autocomplete', 
-      'filters'    => array('StringTrim'),
-      'validators' => array(
-        array('Environments', false, array(
-          'criteria' => array('project_id' => $this->_projectId))
-      ))
-    ));
-    
-    $this->addElement('text', 'versions', array(
-      'required'   => true,
-      'class'      => 'autocomplete', 
-      'filters'    => array('StringTrim'),
-      'validators' => array(
-        array('Versions', false, array(
-          'criteria' => array('project_id' => $this->_projectId))
-      ))
-    ));
-    
-    $this->getElement('csrf')->setAttrib('salt', 'clone_release');
-  }
-  
-  public function getEnvironments()
-  {
-    return explode(',', $this->getValue('environments'));
-  }
-  
-  public function getVersions()
-  {
-    return explode(',', $this->getValue('versions'));
-  }
-  
-  public function prePopulateEnvironments(array $environments)
-  {
-    $result = array();
-    $htmlSpecialCharsFilter = new Custom_Filter_HtmlSpecialCharsDefault();
-    
-    if (count($environments) > 0)
-    {
-      foreach($environments as $environment)
-      {
-        $result[] = array(
-          'name' => $htmlSpecialCharsFilter->filter($environment['name']),
-          'id'   => $environment['id']
-        );
-      }
-    }
-    
-    return json_encode($result);
-  }
-  
-  public function prePopulateVersions(array $versions)
-  {
-    $result = array();
-    $htmlSpecialCharsFilter = new Custom_Filter_HtmlSpecialCharsDefault();
-    
-    if (count($versions) > 0)
-    {
-      foreach($versions as $version)
-      {
-        $result[] = array(
-          'name' => $htmlSpecialCharsFilter->filter($version['name']),
-          'id'   => $version['id']
-        );
-      }
-    }
-    
-    return json_encode($result);
+    $this->getElement('name')->setBelongsTo('step1[stepOne]');
+    $this->getElement('startDate')->setBelongsTo('step1[stepOne]');
+    $this->getElement('endDate')->setBelongsTo('step1[stepOne]');
+    $this->getElement('description')->setBelongsTo('step1[stepOne]');
+    $this->getElement('active')->setBelongsTo('step1[stepOne]');
+    $this->removeElement('csrf');
   }
 }

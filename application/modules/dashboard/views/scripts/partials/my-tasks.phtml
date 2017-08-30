@@ -1,0 +1,48 @@
+<?php if (count($this->lastNotClosedTasksAssignedToMe)): ?>
+<article class="article_left_box dsb">
+  <h4><?php echo $this->t('Moje zadania') ?> <span class="redMessage"><?php echo $this->numberOfNotClosedTasksAssignedToMe ?></span></h4>
+  <div class="contentList">
+    <ul>
+      <?php foreach ($this->lastNotClosedTasksAssignedToMe as $task): ?>
+        <li>
+          <div class="clearfixDashboard">
+            <div class="avatarBig">
+              <img class="avatarBig" alt="<?php echo $task->getAssigner()->getFullname() ?>" src="<?php echo $task->getAssigner()->getAvatarUrl(true) ?>">
+            </div>
+            <div class="author">
+              <?php echo $task->getAssigner()->getFullname() ?>
+            </div>
+            <div class="snippet_action_contentList">
+              <span class="snippet_action_contentList snippet_action_text">
+                <?php echo $this->statusT($task->getStatus(), 'TASK') ?><br>
+                <a href="<?php echo $this->projectUrl(array('projectPrefix' => $task->getProject()->getPrefix(), 'id' => $task->getId()), 'task_view') ?>">
+                  <span class="object_nr"><?php echo $task->getObjectNumber() ?></span> <?php echo $task->getTitle() ?>
+                </a>
+              </span>
+              <div class="activity-item-info">
+                <span class="timestamp"><span class="time_icon"></span><?php echo $this->timeAgo($task->getModifyDate()) ?></span>
+                <div class="activity-item-actions">
+                  <span class="activity-item-action">
+                    <a class="activity-item-comment-link" href="<?php echo $this->projectUrl(array('projectPrefix' => $task->getProject()->getPrefix(), 'id' => $task->getId()), 'task_view').'#comments' ?>">
+                      <span class="comm_icon"></span><?php echo $this->t('Komentarze') ?>
+                    </a>
+                  </span>
+                </div>
+                <div class="activity-item-action-status-container hidden"></div>
+              </div>                     
+            </div>                   
+          </div>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <?php if ($this->activeProject !== null && $this->numberOfNotClosedTasksAssignedToMe > 5): ?>
+      <a class="show_more" href="<?php echo $this->projectUrl(array('projectPrefix' => $this->activeProject->getPrefix()), 'task_list').$this->mainLinkPart.'&skipSavedFilter' ?>"><span><?php echo $this->t('Pokaż wszystkie...') ?></span></a>
+    <?php endif; ?>
+  </div>
+</article>
+<?php else: ?>
+<article class="article_left_box dsb">
+  <h4><?php echo $this->t('Moje zadania') ?></h4>
+  <div class="empty-text"><?php echo $this->t('Brak zadań') ?></div>
+</article>
+<?php endif;

@@ -10,8 +10,8 @@
     <nav class="button_link_nav">
       <ul class="button_link_ul">
         <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_add_jira')?>" ><?php echo $this->t('Dodaj narzędzie JIRA') ?></a></li>
-        <!--<li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_add_mantis')?>" ><?php echo $this->t('Dodaj narzędzie Mantis') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_view')?>" ><?php echo $this->t('Właściwości projektu') ?></a></li>-->
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_add_mantis')?>" ><?php echo $this->t('Dodaj narzędzie Mantis') ?></a></li>
+        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_view')?>" ><?php echo $this->t('Właściwości projektu') ?></a></li>
       </ul>
     </nav>
     
@@ -64,7 +64,7 @@
             
         </ul>
         <?php else: ?>
-          <p><?php echo $this->t('Brak elementów.') ?></p>
+          <p><?php echo $this->t('Brak elementów') ?></p>
         <?php endif; ?>
       </div>
       <h4 class="mantis"><img src="../../img/mantis_logo.png"/><a href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_add_mantis')?>" title="<?php echo $this->t('Dodaj narzędzie Mantis') ?>"><span class="icon_plus_alt2 icon-26"></span></a></h4>
@@ -92,7 +92,7 @@
 
         </ul>
         <?php else: ?>
-          <p><?php echo $this->t('Brak elementów.') ?></p>
+          <p><?php echo $this->t('Brak elementów') ?></p>
         <?php endif; ?>
       </div>
     </section>

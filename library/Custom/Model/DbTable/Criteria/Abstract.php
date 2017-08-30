@@ -32,7 +32,16 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
     if ($this->_paramExists('column') && preg_match('/^'.$tableName.'_.+/', $request->getParam('column')))
     {
       $columnName = preg_replace('/^'.$tableName.'_/', '', $request->getParam('column'));
-      $select->order($columnName.' '.(($this->_paramExists('sort')) ? $request->getParam('sort') : 'ASC').' COLLATE utf8_unicode_ci');
+      $direction = $this->_paramExists('sort') ? $request->getParam('sort') : 'ASC';
+      
+      if (in_array($columnName, array('firstname', 'lastname', 'email', 'organization', 'department', 'title')))
+      {
+        $select->order(new Zend_Db_Expr($columnName.' COLLATE utf8_polish_ci '.$direction.', id '.$direction));
+      }
+      else
+      {
+        $select->order(new Zend_Db_Expr($columnName.' '.$direction.', id '.$direction));
+      }
     }
   }
   
@@ -92,39 +101,10 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
         }
         break;
         
-      case 'phase':
-        if ($this->_paramExists('q'))
-        {
-          $select->where($this->_db->quoteInto("ph.name LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q'))))); 
-        }
-
-        if ($this->_paramExists('releaseId', 0))
-        {
-          $select->where($this->_db->quoteInto('ph.release_id = ?', $request->getParam('releaseId')));
-        }
-
-        if ($this->_paramExists('projectId', 0))
-        {
-          $select->where($this->_db->quoteInto('r.project_id = ?', $request->getParam('projectId')));
-        }
-        
-        if ($this->_paramExists('search') && mb_strlen($request->getParam('search'), 'UTF-8'))
-        {
-          $params = array($this->_prepareLikePhrase($request->getParam('search')));
-          $select
-            ->where($this->_db->quoteInto("ph.name LIKE ? ESCAPE '='", $params));
-        }
-        
-        if ($this->_paramExists('release') && $request->getParam('release') > 0)
-        {
-          $select->where($this->_db->quoteInto("ph.release_id = ?", array($request->getParam('release'))));
-        }
-        break;
-        
       case 'user':
         if ($this->_paramExists('q'))
         {
-          $select->where($this->_db->quoteInto("CONCAT(u.email, u.firstname, u.lastname) LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q')))))
+          $select->where($this->_db->quoteInto("CONCAT(u.email, u.firstname, ' ', u.lastname) LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q')))))
             ->group('u.id');          
         }
         
@@ -206,20 +186,6 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
           }
         }
         
-        if ($this->_paramExists('phase'))
-        {
-          $phaseId = $request->getParam('phase');
-          
-          if ($phaseId > 0)
-          {
-            $select->where('t.phase_id = ?', $phaseId);
-          }
-          elseif ($phaseId < 0)
-          {
-            $select->where('t.phase_id IS NULL');
-          }
-        }
-        
         if ($this->_paramExists('exceededDueDate') && $request->getParam('exceededDueDate') == 1)
         {
           $select
@@ -250,6 +216,19 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
         if ($this->_paramExists('environment') && $request->getParam('environment') > 0)
         {
           $select->where('te.environment_id = ?', $request->getParam('environment'));
+        }
+        
+        if ($this->_paramExists('version') && $request->getParam('version') > 0)
+        {
+          $select->where('tv.version_id = ?', $request->getParam('version'));
+        }
+        
+        if ($this->_paramExists('tags') && strlen($request->getParam('tags')) > 0)
+        {
+          $sql = '(SELECT COUNT(*) FROM task_tag AS f_tt WHERE f_tt.task_id = t.id AND f_tt.tag_id IN('.$request->getParam('tags').'))';
+          $select
+            ->columns(array('tagCount' => new Zend_Db_Expr($sql)))
+            ->having('tagCount = ?', count(explode(',', $request->getParam('tags'))));
         }
         break;
         
@@ -294,20 +273,6 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
           }
         }
         
-        if ($this->_paramExists('phase'))
-        {
-          $phaseId = $request->getParam('phase');
-          
-          if ($phaseId > 0)
-          {
-            $select->where('d.phase_id = ?', $phaseId);
-          }
-          elseif ($phaseId < 0)
-          {
-            $select->where('d.phase_id IS NULL');
-          }
-        }
-        
         if ($this->_paramExists('assigner') && $request->getParam('assigner') > 0)
         {
           $select->where($this->_db->quoteInto("d.assigner_id = ?", array($request->getParam('assigner'))));
@@ -332,12 +297,25 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
         {
           $select->where('de.environment_id = ?', $request->getParam('environment'));
         }
+        
+        if ($this->_paramExists('version') && $request->getParam('version') > 0)
+        {
+          $select->where('dv.version_id = ?', $request->getParam('version'));
+        }
+        
+        if ($this->_paramExists('tags') && strlen($request->getParam('tags')) > 0)
+        {
+          $sql = '(SELECT COUNT(*) FROM defect_tag AS f_dt WHERE f_dt.defect_id = d.id AND f_dt.tag_id IN('.$request->getParam('tags').'))';
+          $select
+            ->columns(array('tagCount' => new Zend_Db_Expr($sql)))
+            ->having('tagCount = ?', count(explode(',', $request->getParam('tags'))));
+        }
         break;
         
       case 'test':
         if ($this->_paramExists('q'))
         {
-          $select->where($this->_db->quoteInto("CONCAT(p.prefix, '-', t.ordinal_no) LIKE ? ESCAPE '='", array($this->_prepareLikePhraseEnding($request->getParam('q')))));
+          $select->where($this->_db->quoteInto("t.name LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q')))));
         }
         
         if ($this->_paramExists('search') && mb_strlen($request->getParam('search'), 'UTF-8'))
@@ -392,6 +370,25 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
           $params = array($this->_prepareLikePhrase($request->getParam('search')));
           $select
             ->where($this->_db->quoteInto("v.name LIKE ? ESCAPE '='", $params));
+        }
+        break;
+        
+      case 'tag':
+        if ($this->_paramExists('q'))
+        {
+          $select->where($this->_db->quoteInto("t.name LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q'))))); 
+        }
+
+        if ($this->_paramExists('projectId', 0))
+        {
+          $select->where($this->_db->quoteInto('t.project_id = ?', $request->getParam('projectId')));
+        }
+        
+        if ($this->_paramExists('search') && mb_strlen($request->getParam('search'), 'UTF-8'))
+        {
+          $params = array($this->_prepareLikePhrase($request->getParam('search')));
+          $select
+            ->where($this->_db->quoteInto("t.name LIKE ? ESCAPE '='", $params));
         }
         break;
     }

@@ -19,12 +19,12 @@
           
         <div class="formContainer">
           <span>
-          <div><?php echo $this->form->assigneeId->renderViewHelper() ?></div>
+            <div><?php echo $this->form->assigneeId->renderViewHelper() ?></div>
             <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?>
-          <?php echo $this->form->assigneeName->renderViewHelper() ?> <a id="j_assignToMe" href="#"><?php echo $this->t('Przypisz do mnie') ?></a>          
-          <?php foreach ($this->form->getErrors('assigneeId') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
+            <?php echo $this->form->assigneeName->renderViewHelper() ?> <a id="j_assignToMe" href="#"><?php echo $this->t('Przypisz do mnie') ?></a>          
+            <?php foreach ($this->form->getErrors('assigneeId') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
           </span>
         </div>
         
@@ -62,7 +62,7 @@
   language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
   
   var autocompleteData = {
-    url: '<?php echo $this->url(array(), 'project_user_list_ajax') ?>',
+    url: '<?php echo $this->projectUrl(array(), 'project_user_list_ajax') ?>',
     textInputName: '#assigneeName',
     dstName: '#assigneeId'
   };

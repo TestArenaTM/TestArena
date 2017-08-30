@@ -30,6 +30,11 @@ class Zend_View_Helper_FilterRequestConditions extends Zend_View_Helper_Abstract
     {
       foreach($parameters as $key => $value)
       {
+        if (is_array($value))
+        {
+          $value = implode(',', $value);
+        }
+        
         $this->_parametersString .= ((null === $this->_parametersString) ? '?': '&') . $key.'='.$value;
       }
     }    

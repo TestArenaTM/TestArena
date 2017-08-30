@@ -5,6 +5,8 @@
  * Copyright (c) 2009 James Smith (http://loopj.com)
  * Licensed jointly under the GPL and MIT licenses,
  * choose which one suits your project best!
+ * 
+ * Modified work Copyright 2017 TestArena
  *
  */
 
@@ -469,10 +471,20 @@ $.TokenList = function (input, url_or_data, settings) {
         .insertBefore(hidden_input);
 
     // The token holding the input box
-    var input_token = $("<li />")
-        .addClass($(input).data("settings").classes.inputToken)
-        .appendTo(token_list)
-        .append(input_box);
+    if (settings.isModifiedInputTokenPosition === true)
+    {
+        var input_token = $("<li />")
+            .addClass($(input).data("settings").classes.inputToken)
+            .prependTo(token_list)
+            .prepend(input_box);
+    }
+    else
+    {
+        var input_token = $("<li />")
+            .addClass($(input).data("settings").classes.inputToken)
+            .appendTo(token_list)
+            .append(input_box);
+    }
 
     // The list to store the dropdown items in
     var dropdown = $("<div>")
@@ -640,8 +652,15 @@ $.TokenList = function (input, url_or_data, settings) {
 
         if(readonly) $this_token.addClass($(input).data("settings").classes.tokenReadOnly);
 
-        $this_token.addClass($(input).data("settings").classes.token).insertBefore(input_token);
-
+        if (settings.isModifiedInputTokenPosition === true)
+        {
+          $this_token.addClass($(input).data("settings").classes.token).insertAfter(token_list.find('li').last());
+        }
+        else
+        {
+          $this_token.addClass($(input).data("settings").classes.token).insertBefore(input_token);  
+        }
+        
         // The 'delete token' button
         if(!readonly) {
           $("<span>" + $(input).data("settings").deleteText + "</span>")
@@ -696,7 +715,11 @@ $.TokenList = function (input, url_or_data, settings) {
 
             if(found_existing_token) {
                 select_token(found_existing_token);
-                input_token.insertAfter(found_existing_token);
+                if (settings.isModifiedInputTokenPosition === false)
+                {
+                  input_token.insertAfter(found_existing_token);
+                }
+                
                 focus_with_timeout(input_box);
                 return;
             }
@@ -745,14 +768,23 @@ $.TokenList = function (input, url_or_data, settings) {
         selected_token = null;
 
         if(position === POSITION.BEFORE) {
-            input_token.insertBefore(token);
-            selected_token_index--;
+            if (settings.isModifiedInputTokenPosition === false)
+            {
+              input_token.insertBefore(token);  
+              selected_token_index--;
+            }
         } else if(position === POSITION.AFTER) {
-            input_token.insertAfter(token);
-            selected_token_index++;
+            if (settings.isModifiedInputTokenPosition === false)
+            {
+              input_token.insertAfter(token);
+              selected_token_index++;
+            }
         } else {
-            input_token.appendTo(token_list);
-            selected_token_index = token_count;
+            if (settings.isModifiedInputTokenPosition === false)
+            {
+              input_token.insertBefore(token);  
+              selected_token_index = token_count;
+            }
         }
 
         // Show the input box and give it focus again
@@ -779,8 +811,16 @@ $.TokenList = function (input, url_or_data, settings) {
         // Remove the id from the saved list
         var token_data = $.data(token.get(0), "tokeninput");
         var callback = $(input).data("settings").onDelete;
-
-        var index = token.prevAll().length;
+        
+        if (settings.isModifiedInputTokenPosition === true)
+        {
+            var index = token.prevAll().length-1;
+        }
+        else
+        {
+            var index = token.prevAll().length;
+        }
+        
         if(index > selected_token_index) index--;
 
         // Delete the token
@@ -792,7 +832,7 @@ $.TokenList = function (input, url_or_data, settings) {
 
         // Remove this token from the saved list
         saved_tokens = saved_tokens.slice(0,index).concat(saved_tokens.slice(index+1));
-        console.log(settings);
+
         if(saved_tokens.length == 0 && settings.placeholder) {
             input_box.attr("placeholder", settings.placeholder)
             input_val = null;  // bust the resize_input cache

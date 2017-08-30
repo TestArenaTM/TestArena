@@ -22,9 +22,10 @@ The full text of the GPL is in the LICENSE file.
 */
 class Application_Model_Version extends Custom_Model_Standard_Abstract
 {
-  private $_id              = null;
-  private $_project         = null;
-  private $_name            = null;
+  private $_id          = null;
+  private $_project     = null;
+  private $_name        = null;
+  private $_description = null;
 
   // <editor-fold defaultstate="collapsed" desc="Getters">
   public function getId()
@@ -45,6 +46,11 @@ class Application_Model_Version extends Custom_Model_Standard_Abstract
   public function getName()
   {
     return $this->_name;
+  }
+  
+  public function getDescription()
+  {
+    return $this->_description;
   }
   // </editor-fold>
   
@@ -78,6 +84,12 @@ class Application_Model_Version extends Custom_Model_Standard_Abstract
   public function setName($name)
   {
     $this->_name = $name;
+    return $this;
+  }
+
+  public function setDescription($description)
+  {
+    $this->_description = $description;
     return $this;
   }
   // </editor-fold>

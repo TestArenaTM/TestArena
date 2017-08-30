@@ -86,12 +86,24 @@ class User_LoginController extends Custom_Controller_Action_Application_Abstract
     }
 
     $authorizationLogMapper = new User_Model_AuthorizationLogMapper();
-    $formWithCaptcha = $request->getPost('captcha', null) === null ? $authorizationLogMapper->checkFailedLoginByLimit(2, '0:0:30') : true;
+    $formWithCaptcha = $request->getPost('g-recaptcha-response', null) === null ? $authorizationLogMapper->checkFailedLoginByLimit(2, '0:0:30') : true;
     $form = $this->_getForm($formWithCaptcha);
     $authorizationLog = new Application_Model_AuthorizationLog();
     
-    if (!$form->isValid($request->getPost()))
+    $postData = $request->getPost();
+    
+    if ($formWithCaptcha)
     {
+      $postData = array_merge($postData, array('grecaptcharesponse' => $request->getPost('g-recaptcha-response')));
+    }
+    
+    if (!$form->isValid($postData))
+    {
+      if ($formWithCaptcha)
+      {
+        $form->getElement('grecaptcharesponse')->setValue(null);
+      }
+      
       $authorizationLog->setUsername($form->getValue('email'));
       $authorizationLogMapper->logFailedLogin($authorizationLog);
       $this->_setTranslateTitle();      
@@ -113,6 +125,11 @@ class User_LoginController extends Custom_Controller_Action_Application_Abstract
     
     if (!$result->isValid())
     {
+      if ($formWithCaptcha)
+      {
+        $form->getElement('grecaptcharesponse')->setValue(null);
+      }
+      
       $authorizationLogMapper->logFailedLogin($authorizationLog);
       $this->_setTranslateTitle();
       $this->view->formError = 'invalidCredentials';

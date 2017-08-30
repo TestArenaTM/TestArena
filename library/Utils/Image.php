@@ -38,6 +38,8 @@ class Utils_Image
   
   public function __construct($fileName = null)
   {
+    ini_set('memory_limit', '-1');
+    
     if ($fileName !== null)
     {
       $this->load($fileName);
@@ -86,7 +88,6 @@ class Utils_Image
         throw new Utils_Image_Exception(
           Utils_Image_Exception::MSG_UNSUPPORTED_IMAGE_TYPE,
           Utils_Image_Exception::UNSUPPORTED_IMAGE_TYPE);
-        break;
     }
     
     if ($this->_maxFileSize !== null && filesize($fileName) > $this->_maxFileSize)
@@ -105,6 +106,34 @@ class Utils_Image
     $this->_extension = image_type_to_extension($info[2], false);
     $this->_baseName = $this->_fileName.'.'.$this->_extension;
     return $this;
+  }
+  
+  public function show()
+  {
+    switch ($this->_mime)
+    {
+      case self::MIME_GIF:
+        header('Content-type: image/gif');
+        imagegif($this->_instance);
+        break;
+      
+      case self::MIME_JPEG:
+        header('Content-type: image/jpeg');
+        imagejpeg($this->_instance);
+        break;
+      
+      case self::MIME_PNG:
+        header('Content-type: image/png');
+        imagealphablending($this->_instance, false);
+        imagesavealpha($this->_instance, true);
+        imagepng($this->_instance);
+        break;
+      
+      default:
+        throw new Utils_Image_Exception(
+          Utils_Image_Exception::MSG_UNSUPPORTED_IMAGE_TYPE,
+          Utils_Image_Exception::UNSUPPORTED_IMAGE_TYPE);
+    }
   }
   
   /**
