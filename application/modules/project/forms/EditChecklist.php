@@ -46,10 +46,10 @@ class Project_Form_EditChecklist extends Project_Form_AddChecklist
     
     $this->getElement('name')
       ->removeValidator('UniqueTestName')
-      ->addValidator('UniqueTestName', true, array(
+      /*->addValidator('UniqueTestName', true, array(
         'criteria'  => array('project_id' => $this->_projectId),
         'exclude'   => $this->_familyId
-      ));
+      ))*/;
     
     $this->getElement('csrf')->setAttrib('salt', 'edit_checklist');
   }

@@ -22,13 +22,11 @@ The full text of the GPL is in the LICENSE file.
 */
 class Application_Model_AuthorizationLogUserType extends Custom_Model_Dictionary_Abstract
 {
-  const ADMINISTRATOR     = 1;
-  const KNOWLEDGE_KEEPER  = 2;
-  const USER              = 3;
+  const ADMINISTRATOR = 1;
+  const USER          = 2;
   
   protected $_names = array(
-    self::ADMINISTRATOR     => 'ADMINISTRATOR',
-    self::KNOWLEDGE_KEEPER  => 'KNOWLEDGE_KEEPER',
-    self::USER              => 'USER'
+    self::ADMINISTRATOR => 'ADMINISTRATOR',
+    self::USER          => 'USER'
   );
 }

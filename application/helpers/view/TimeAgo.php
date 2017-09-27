@@ -70,6 +70,7 @@ class Zend_View_Helper_TimeAgo extends Zend_View_Helper_Abstract
     else
     {
       $diffHour = floor($diff / self::HOUR);
+      
       if ($diffHour < 24)
       {
         $this->_text = self::HOUR_AGO;
@@ -97,12 +98,12 @@ class Zend_View_Helper_TimeAgo extends Zend_View_Helper_Abstract
             //$dayNow = $nowDate->get('dd');
             $nowDate = new Zend_Date(Zend_Date::now(), 'YYYY-MM-dd HH:mm:ss');
 
-            $month = $date->get('MM');
-            $monthNow = $nowDate->get('MM');
+            $month = (int)$date->get('MM');
+            $monthNow = (int)$nowDate->get('MM');
             $diffMonth = 0;
 
-            $year = $date->get('yyyy');
-            $yearNow = $nowDate->get('yyyy');
+            $year = (int)$date->get('yyyy');
+            $yearNow = (int)$nowDate->get('yyyy');
             $diffYear = $yearNow - $year;
 
             if($diffYear == 0)

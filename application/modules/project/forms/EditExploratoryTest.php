@@ -46,10 +46,10 @@ class Project_Form_EditExploratoryTest extends Project_Form_AddExploratoryTest
 
     $this->getElement('name')
       ->removeValidator('UniqueTestName')
-      ->addValidator('UniqueTestName', true, array(
+      /*->addValidator('UniqueTestName', true, array(
         'criteria'  => array('project_id' => $this->_projectId),
         'exclude'   => $this->_familyId
-      ));
+      ))*/;
     
     $this->getElement('csrf')->setAttrib('salt', 'edit_exploratory_test');
   }
