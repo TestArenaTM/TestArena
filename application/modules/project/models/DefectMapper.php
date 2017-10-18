@@ -372,7 +372,7 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
         $comment->setUserObject($defect->getAssigner());
         $comment->setSubjectId($defect->getId());
         $comment->setSubjectType(Application_Model_CommentSubjectType::DEFECT);
-        $commentMapper = new Application_Model_CommentMapper();
+        $commentMapper = new Project_Model_CommentMapper();
 
         if ($commentMapper->add($comment) === false)
         {
@@ -483,7 +483,7 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
         $comment->setUserObject($defect->getAssigner());
         $comment->setSubjectId($defect->getId());
         $comment->setSubjectType(Application_Model_CommentSubjectType::DEFECT);
-        $commentMapper = new Application_Model_CommentMapper();
+        $commentMapper = new Project_Model_CommentMapper();
 
         if ($commentMapper->add($comment) === false)
         {
