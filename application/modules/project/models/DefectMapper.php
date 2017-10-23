@@ -102,14 +102,19 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveDefect($defect);
 
-      return $adapter->commit();
+      if ($adapter->commit())
+      {
+        $defect->setCreateDate($date);
+        return true;
+      }
     }
     catch (Exception $e)
     {
       Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
       $adapter->rollBack();
-      return false;
     }
+    
+    return false;
   }
   
   public function save(Application_Model_Defect $defect)

@@ -24,11 +24,11 @@ class Project_Model_HistoryMapper extends Custom_Model_Mapper_Abstract
 {
   protected $_dbTableClass = 'Project_Model_HistoryDbTable';
 
-  public function add(Application_Model_History $history)
+  public function add(Application_Model_History $history, $date = null)
   {
     $data = array(
       'user_id'       => $history->getUser()->getId(),
-      'date'          => date('Y-m-d H:i:s'),
+      'date'          => $date === null ? date('Y-m-d H:i:s') : $date,
       'subject_id'    => $history->getSubjectId(),
       'subject_type'  => $history->getSubjectTypeId(),
       'type'          => $history->getTypeId(),

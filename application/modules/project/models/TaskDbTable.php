@@ -362,7 +362,7 @@ class Project_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->group('t.id')
       ->limit(1)
       ->setIntegrityCheck(false);
-    
+
     return $this->fetchRow($sql);
   }  
   

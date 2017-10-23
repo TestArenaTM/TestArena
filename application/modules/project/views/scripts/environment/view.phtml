@@ -49,7 +49,7 @@
       <div class="contentEditUser_right">        
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
-          <div id="text" class="content_label"><?php echo nl2br($this->environment->getDescription()) ?></div>
+          <div id="text" class="content_label"><?php echo $this->escapeQuotes(nl2br($this->environment->getDescription())) ?></div>
         </div>
       </div>
       

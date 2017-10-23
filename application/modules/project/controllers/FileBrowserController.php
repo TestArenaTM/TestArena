@@ -461,8 +461,14 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
 
       if (!file_exists($path)) 
       {
-        @mkdir($path);
-        echo 'OK';
+        if (!@mkdir($path) || preg_match('/[<>]+/', $path))
+        {
+          echo 'DIRECTORY_NAME_IS_ICORRECT';
+        }
+        else
+        {
+          echo 'OK';
+        }
       }
       else
       {

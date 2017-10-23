@@ -11,17 +11,11 @@
 
     <nav class="button_link_nav">
       <ul class="button_link_ul">
-        <?php if ($this->activeProject->isActive() 
-                  && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED
-                  && $this->taskUserPermission->isChangeStatusPermission()): ?>
-        
           <?php if ($this->taskTest->getResolutionId() !== null): ?>
             <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_change')?>"><?php echo $this->t('Zmień status') ?></a></li>
           <?php else: ?>
             <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_resolve') ?>"><?php echo $this->t('Rozwiąż') ?></a></li>
           <?php endif; ?>
-          
-        <?php endif; ?>
       </ul>
     </nav>
 

@@ -83,7 +83,7 @@ class Project_Model_AttachmentMapper extends Custom_Model_Mapper_Abstract
       $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (file_id, subject_id, type, create_date) VALUES '.$values);
       return $statement->execute($data);
     }
-    
+
     return true;
   }
   

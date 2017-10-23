@@ -399,7 +399,7 @@ class Project_DefectController extends Custom_Controller_Action_Application_Proj
       $history->setType(Application_Model_HistoryType::CREATE_DEFECT);
       $history->setField1($defect->getAssigneeId());
       $historyMapper = new Project_Model_HistoryMapper();
-      $historyMapper->add($history);
+      $historyMapper->add($history, $defect->getCreateDate());
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
     else

@@ -53,7 +53,7 @@
           <?php foreach ($this->roles as $role): ?>
           <tr>
             <td><?php echo $this->escapeQuotes($role->getName()) ?></td>
-            <td class="t_name"><?php echo $this->escapeQuotes($role->getProject()->getName()) ?></td>
+            <td class="t_name" style="width: 500px; max-width: 500px"><?php echo $this->escapeQuotes($role->getProject()->getName()) ?></td>
             <td>
               <?php if ($role->getProject()->getStatusId() != Application_Model_ProjectStatus::FINISHED): ?>
                 <nav>

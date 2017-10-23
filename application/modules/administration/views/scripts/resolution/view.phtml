@@ -25,7 +25,7 @@
         <?php if (strlen($this->resolution->getDescription())): ?>
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
-          <div id="text" class="content_label"><?php echo $this->resolution->getDescription() ?></div>
+          <div id="text" class="content_label"><?php echo $this->escapeQuotes(nl2br($this->resolution->getDescription())) ?></div>
         </div>
         <?php endif; ?>
       </div>

@@ -197,7 +197,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
   public function add(Application_Model_Task $task)
   {
     $db = $this->_getDbTable();
-    $adapter = $db->getAdapter();    
+    $adapter = $db->getAdapter();
     $date = date('Y-m-d H:i:s');
     
     $data = array(
@@ -236,14 +236,19 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveTask($task);
 
-      return $adapter->commit();
+      if ($adapter->commit())
+      {
+        $task->setCreateDate($date);
+        return true;
+      }
     }
     catch (Exception $e)
     {
       Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
-      $adapter->rollBack();die;
-      return false;
+      $adapter->rollBack();
     }
+    
+    return false;
   }
   
   public function save(Application_Model_Task $task)

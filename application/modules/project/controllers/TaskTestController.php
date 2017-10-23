@@ -223,10 +223,22 @@ class Project_TaskTestController extends Custom_Controller_Action_Application_Pr
     $taskTest = $this->_getValidTaskChecklistForView();
     $fileMapper = new Project_Model_FileMapper();
     $taskTest->getTest()->setExtraData('attachments', $fileMapper->getListByTest($taskTest->getTest()));
-
+    $taskUserPermission = new Application_Model_TaskUserPermission($taskTest->getTask(), $this->_user, $this->_getAccessPermissionsForTasks());
+        
     $this->_setTranslateTitle(array('name' => $taskTest->getTest()->getName()), 'headTitle');
     $this->view->taskTest = $taskTest;
-    $this->view->taskUserPermission = new Application_Model_TaskUserPermission($taskTest->getTask(), $this->_user, $this->_getAccessPermissionsForTasks());
+    $this->view->taskUserPermission = $taskUserPermission;
+    
+    if ($this->_project->isActive() 
+      && $taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED
+      && $taskUserPermission->isChangeStatusPermission())
+    {
+      $this->view->render('task-test/view-checklist.phtml');
+    }
+    else
+    {
+      $this->view->render('task-test/view-checklist-no-action.phtml');
+    }
   }
   
   private function _getResolveTaskTestForm(Application_Model_TaskTest $taskTest)

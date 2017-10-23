@@ -323,15 +323,15 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $history->setType(Application_Model_HistoryType::CREATE_TASK);
       $history->setField1($task->getAssigneeId());
       $historyMapper = new Project_Model_HistoryMapper();
-      $historyMapper->add($history);
+      $historyMapper->add($history, $task->getCreateDate());
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+      $this->projectRedirect(array('id' => $task->getId()), 'task_view');
     }
     else
     {
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+      return $this->projectRedirect($this->_getBackUrl('task_list', $this->_projectUrl(array(), 'task_list')));
     }
-    
-    $this->projectRedirect(array('id' => $task->getId()), 'task_view');
   }
   
   private function _getEditForm(Application_Model_Task $task)

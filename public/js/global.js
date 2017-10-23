@@ -635,7 +635,7 @@ $(document).ready(function() {
   
   // Dodawanie dokument do projektu  
   $('#j_projectAddDocumentation').click(function() {
-    openFileBrowser(FILE_BROWSER_MODE_PROJECT_PLAN);
+    openFileBrowser(FILE_BROWSER_MODE_PROJECT_DOCUMENT);
     return false;
   });
   // Przeglądarka plików - koniec
@@ -652,7 +652,9 @@ $(document).ready(function() {
   // Licznik znaków w textarea
   function showTextareaCounter(len, max) {
     if (typeof language.charactersLeft != 'undefined') {
-      return language.charactersLeft.replace('__left__', max - len).replace('__max__', max);
+      var x = max - len;
+      if (x < 0) x = 0;
+      return language.charactersLeft.replace('__left__', x).replace('__max__', max);
     }
     return false;
   }
@@ -2209,7 +2211,7 @@ var showErrorMessages = function(messages) {
     for (var i in fileNames) {
       ids[ids.length] = fileNames[i].id;
     }
-    
+
     $.post($('#j_projectAddDocumentation').attr('href'), {ids : ids.join('_')}, function(data) {
       data = jQuery.parseJSON(data);
       switch (data.status) {

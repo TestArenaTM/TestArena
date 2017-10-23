@@ -28,7 +28,10 @@
             <?php echo $this->form->comment->renderViewHelper() ?>
             <?php echo $this->formLabel('comment', $this->t('Komentarz')) ?>
             <?php foreach ($this->form->getErrors('comment') as $error): ?>
-                <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+                <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('title')->getValidator('StringLength')->getMin(),
+                'max' => $this->form->getElement('title')->getValidator('StringLength')->getMax()
+              )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>

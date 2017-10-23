@@ -26,25 +26,28 @@ class Project_Model_TaskTagMapper extends Custom_Model_Mapper_Abstract
 
   public function save(Application_Model_Task $task)
   {
-    $db = $this->_getDbTable();
-    $adapter = $db->getAdapter();
     $valueCount = count($task->getExtraData('tags'));
     
-    $data = array();
-    $values = implode(',', array_fill(0, $valueCount, '(?, ?)'));
-
-    foreach ($task->getExtraData('tags') as $tagId)
+    if (count($valueCount) > 0)
     {
-      $data[] = $task->getId();
-      $data[] = $tagId;
-    }
+        $db = $this->_getDbTable();
+        $adapter = $db->getAdapter();
+        $data = array();
+        $values = implode(',', array_fill(0, $valueCount, '(?, ?)'));
 
-    $db->delete(array('task_id = ?' => $task->getId()));
-      
-    if ($valueCount > 0)
-    {
-      $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (task_id, tag_id) VALUES '.$values);
-      $statement->execute($data);
+        foreach ($task->getExtraData('tags') as $tagId)
+        {
+          $data[] = $task->getId();
+          $data[] = $tagId;
+        }
+
+        $db->delete(array('task_id = ?' => $task->getId()));
+
+        if ($valueCount > 0)
+        {
+          $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (task_id, tag_id) VALUES '.$values);
+          $statement->execute($data);
+        }
     }
   }
   

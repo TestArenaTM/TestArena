@@ -36,7 +36,7 @@
                 <?php echo $this->showResolutionIcon($resolution) ?> <?php echo $this->escapeQuotes($resolution->getName()) ?>
               </a>
             </td>
-            <td><?php echo $resolution->getDescription() ?></td>
+            <td><?php echo $this->escapeQuotes(nl2br($resolution->getDescription())) ?></td>
             <td class="t_number"><?php echo $resolution->getExtraData('taskCount') ?></td>
             <td class="t_number"><?php echo $resolution->getExtraData('testCount') ?></td>
           </tr>

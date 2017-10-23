@@ -33,7 +33,7 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
         throw new Custom_404Exception();
       }
       
-      if (!in_array($this->getRequest()->getActionName(), array('index', 'view', 'report')))
+      if (!in_array($this->getRequest()->getActionName(), array('index', 'view', 'report', 'report-process')))
       {
         $this->_project->checkFinished();
         $this->_project->checkSuspended();
@@ -329,7 +329,7 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
     {
       return $this->projectRedirect(array(), 'release_list');
     }
-    
+
     $release = $this->_getValidReleaseForReport();
     $form = $this->_getReleaseReportForm($release);
     

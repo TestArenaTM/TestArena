@@ -2744,6 +2744,14 @@ a.j_editUsers:hover {
     top: 36%;
     width: 370px;
 }
+.textwidget1 {
+    height: 370px;
+    left: 41%;
+    position: absolute;
+    text-align: center;
+    top: 75px;
+    width: 370px;
+}
 #content_login {
     display: block;
     height: 100%;
