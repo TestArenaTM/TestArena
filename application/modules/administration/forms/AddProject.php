@@ -69,6 +69,28 @@ class Administration_Form_AddProject extends Custom_Form_Abstract
         array('StringLength', false, array(7, 7, 'UTF-8')),
       )
     ));
+
+    $this->addElement('hidden', 'reopenStatusColor', array(
+      'required'    => true,
+      'maxlength'   => 7,
+      'class'       => 'color',
+      'value'       => Zend_Registry::get('config')->defaultProject->reopenStatusColor,
+      'filters'     => array('StringTrim'),
+      'validators'  => array(
+        array('StringLength', false, array(7, 7, 'UTF-8')),
+      )
+    ));
+
+    $this->addElement('hidden', 'closedStatusColor', array(
+      'required'    => true,
+      'maxlength'   => 7,
+      'class'       => 'color',
+      'value'       => Zend_Registry::get('config')->defaultProject->closedStatusColor,
+      'filters'     => array('StringTrim'),
+      'validators'  => array(
+        array('StringLength', false, array(7, 7, 'UTF-8')),
+      )
+    ));
     
     $this->addElement('textarea', 'description', array(
       'maxlength'   => 1000,

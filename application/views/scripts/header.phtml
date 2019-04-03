@@ -21,7 +21,9 @@
       ->appendStylesheet($this->baseUrl('/css/icomoon-fonts.css'))
       ->appendStylesheet($this->baseUrl('/css/lightbox.min.css'))
       ->appendStylesheet($this->baseUrl('/css/global.css?'.APP_VERSION)) 
-      ->appendStylesheet($this->baseUrl('/css/popbox.css'))?>
+      ->appendStylesheet($this->baseUrl('/css/popbox.css'))
+      ->appendStylesheet($this->baseUrl('/css/button_dropdown.css'))
+    ?>
     
     <?php $this->headScript()
       ->appendFile('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
@@ -35,11 +37,14 @@
       ->appendFile($this->baseUrl('/js/chosen.jquery.js'))
       ->appendFile($this->baseUrl('/js/spectrum.js'))
       ->appendFile($this->baseUrl('/js/popbox.js'))
+      ->appendFile($this->baseUrl('/js/dialog_iframe.js'))
+      ->appendFile($this->baseUrl('/js/button_dropdown.js'))
       ->appendFile($this->baseUrl('/js/global.js?'.APP_VERSION))?>  
   
     <?php if ($this->cModule == 'dashboard' && $this->cController == 'index' && $this->cAction == 'index'): ?>
       <?php $this->headScript()
         ->appendFile('https://www.google.com/jsapi')
+        ->appendFile('https://www.gstatic.com/charts/loader.js')
         ->appendFile('/js/google_chart.js?2'); ?>
     <?php endif;?>
   
@@ -52,8 +57,8 @@
     } ?>
     
     <?php echo $this->headScript() ?>
-    <link href='http://fonts.googleapis.com/css?family=Dosis:200,700,800&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Dosis:200,700,800&amp;subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,300&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <?php if (getenv('APPLICATION_ENV') == 'pawel_piaskowy'): ?>
       <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');</script>
     <?php endif; ?>

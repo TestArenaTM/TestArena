@@ -7,8 +7,9 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>  -->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
           
@@ -40,12 +41,8 @@
           
         <div class="formContainer">
           <span>
-            <?php echo $this->form->releaseName->renderViewHelper() ?>
-            <div><?php echo $this->form->releaseId->renderViewHelper() ?></div>
-            <?php echo $this->formLabel('releaseName', $this->t('Wydanie')) ?>
-            <?php foreach ($this->form->getErrors('releaseId') as $error): ?>            
-              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-            <?php endforeach; ?>
+            <?php echo $this->form->releaseId->renderViewHelper() ?>
+            <?php echo $this->formLabel('releaseId', $this->t('Wydanie')) ?>
           </span>
         </div>
 
@@ -165,15 +162,14 @@
   <?php if (isset($this->prePopulatedTags)) :?>
     prePopulated['tags'] = <?php echo $this->prePopulatedTags?>;
   <?php endif?>
+
+  <?php if (isset($this->prePopulatedRelease)) :?>
+    prePopulated['release'] = <?php echo $this->prePopulatedRelease?>;
+  <?php endif?>
   
   url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
   url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';
   url.tagListAjax = '<?php echo $this->projectUrl(array(), 'tag_list_ajax') ?>';
-  
-  var autocompleteRelease = {
-    url: '<?php echo $this->projectUrl(array(), 'release_list_for_forward_ajax') ?>',
-    textInputName: '#releaseName',
-    dstName: '#releaseId'
-  };
+  url.releaseListAjax = '<?php echo $this->projectUrl(array(), 'release_list_for_forward_ajax') ?>';
 /* ]]> */
 </script>

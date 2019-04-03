@@ -3,41 +3,41 @@
 <section id="content">
   <!--<div class="breadcrumb">
     <a class="icon_house_alt" href="#"></a>
-    <i class="arrow_carrot-right icon-15"></i>   
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div>-->  
+  </div>-->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-    
-    <?php if ($this->testUserPermissions[Application_Model_RoleAction::TEST_ADD]): ?>
-      <nav class="button_link_nav">
-        <ul class="button_link_ul action_list">
-          <div class="popbox button_link_ul">
-            <a href="#" class="open button_link"><?php echo $this->t('Dodaj') ?>▼</a>
-            <div class='collapse'>
-              <ul class="box">
-                <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_exploratory_test')?>" ><?php echo $this->t('Test eksploracyjny') ?></a></li>
-                <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_test_case')?>" ><?php echo $this->t('Przypadek testowy') ?></a></li>
-                <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_automatic_test')?>" ><?php echo $this->t('Test automatyczny') ?></a></li>
-                <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_checklist')?>" ><?php echo $this->t('Listę kontrolną') ?></a></li>
-                <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_other_test')?>" ><?php echo $this->t('Inny test') ?></a></li>
-              </ul> 
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+      <?php if ($this->testUserPermissions[Application_Model_RoleAction::TEST_ADD]): ?>
+        <nav class="button_link_nav">
+          <ul class="button_link_ul action_list">
+            <div class="popbox button_link_ul">
+              <a href="#" class="open button_link"><?php echo $this->t('Dodaj') ?>▼</a>
+              <div class='collapse'>
+                <ul class="box">
+                  <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_exploratory_test')?>" ><?php echo $this->t('Test eksploracyjny') ?></a></li>
+                  <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_test_case')?>" ><?php echo $this->t('Przypadek testowy') ?></a></li>
+                  <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_automatic_test')?>" ><?php echo $this->t('Test automatyczny') ?></a></li>
+                  <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_checklist')?>" ><?php echo $this->t('Listę kontrolną') ?></a></li>
+                  <li class="button_link_li"><a href="<?php echo $this->projectUrl(array(), 'test_add_other_test')?>" ><?php echo $this->t('Inny test') ?></a></li>
+                </ul>
+              </div>
             </div>
-          </div>                   
-        </ul>
-      </nav>
-    <?php endif;?>
-
+          </ul>
+        </nav>
+      <?php endif;?>
+    </div>
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
       <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
-      
+
       <div class="search_text">
         <div class="filter">
           <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
           <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
         </div>
       </div>
-      
+
       <div class="search_filter">
         <div class="filter">
           <div><?php echo $this->formLabel('type', $this->t('Typ')) ?></div>
@@ -60,9 +60,9 @@
     </form>
 
     <?php if (count($this->tests) > 0): ?>
-    <form name="<?php echo $this->checkboxListForm->getName() ?>" method="<?php echo $this->checkboxListForm->getMethod() ?>" action="<?php echo $this->checkboxListForm->getAction() ?>">
-      <table>
-        <thead>
+      <form name="<?php echo $this->checkboxListForm->getName() ?>" method="<?php echo $this->checkboxListForm->getMethod() ?>" action="<?php echo $this->checkboxListForm->getAction() ?>">
+        <table>
+          <thead>
           <tr>
             <th>
               <input type="checkbox" name="selectAll" value="test<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_selectAll" title="<?php echo $this->generalT('Wybierz wszystkie na tej stronie')?>" />
@@ -75,88 +75,98 @@
             <th><?php echo $this->sortingControl('Data utworzenia', 'test_create_date', 'sorting.phtml', $this->request) ?></th>
             <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <?php foreach ($this->tests as $test): ?>
-          <tr>
-            <!--<td><?php //echo $this->checkboxListForm->getElement('checkBoxId_'.$test->getId())->renderViewHelper() ?></td>-->
-            <td class="t_object_number">
-              <input type="checkbox" name="item_<?php echo $test->getId() ?>" value="test<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_item" />
-              <?php echo $this->escapeQuotes($test->getObjectNumber()) ?>
-            </td>
-            <td>
-              <a href="<?php echo $this->projectUrl(array('id' => $test->getId()), $this->testViewRouteName($test))?>">
-                <?php echo $this->escapeQuotes($test->getName()) ?>
-              </a>
-            </td>
-            <td>
-              <?php if ($test->getExtraData('attachmentCount') > 0): ?>
-                <span class="icon_link_alt icon-20" title="<?php echo $test->getExtraData('attachmentCount') ?>"></span>
-              <?php endif; ?>
-            </td>
-            <td class="t_status"><?php echo $this->typeT($test->getType(), 'TEST') ?></td>
-            <td class="t_user"><?php echo $this->escapeQuotes($test->getAuthor()->getFullname()) ?></td>
-          <td class="t_date" title="<?php echo $test->getCreateDate() ?>"><?php echo $test->getCreateDate(true) ?></td>
-            <td>
-              <?php
+            <tr>
+              <!--<td><?php //echo $this->checkboxListForm->getElement('checkBoxId_'.$test->getId())->renderViewHelper() ?></td>-->
+              <td class="t_object_number">
+                <input type="checkbox"
+                  <?php if (!$this->testUserPermissions[Application_Model_RoleAction::TEST_DELETE_ALL] && !$this->testUserPermissions[Application_Model_RoleAction::TEST_DELETE_CREATED_BY_YOU]): ?>
+                    disabled
+                  <?php elseif (!$this->testUserPermissions[Application_Model_RoleAction::TEST_DELETE_ALL] && ($this->testUserPermissions[Application_Model_RoleAction::TEST_DELETE_CREATED_BY_YOU] && $test->getAuthorId() !== $this->authUser->getId())): ?>
+                    disabled
+                  <?php endif; ?>
+                       name="item_<?php echo $test->getId() ?>" value="test<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_item" />
+                <?php echo $this->escapeQuotes($test->getObjectNumber()) ?>
+              </td>
+              <td>
+                <a href="<?php echo $this->projectUrl(array('id' => $test->getId()), $this->testViewRouteName($test))?>">
+                  <?php echo $this->spaceToEntity($this->escapeQuotes($test->getName())) ?>
+                </a>
+              </td>
+              <td>
+                <?php if ($test->getExtraData('attachmentCount') > 0): ?>
+                  <span class="icon_link_alt icon-20" title="<?php echo $test->getExtraData('attachmentCount') ?>"></span>
+                <?php endif; ?>
+              </td>
+              <td class="t_status"><?php echo $this->typeT($test->getType(), 'TEST') ?></td>
+              <td class="t_user"><?php echo $this->escapeQuotes($test->getAuthor()->getFullname()) ?></td>
+              <td class="t_date" title="<?php echo $test->getCreateDate() ?>"><?php echo $test->getCreateDate(true) ?></td>
+              <td>
+                <?php
                 $actions = $this->prepareTestActions($test, $this->testUserPermissions);
                 if ($this->activeProject->isActive() && count($actions) > 0):
-              ?>  
-                <nav>
-                  <ul class="action_list">
-                    <div class="popbox">
-                      <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
-                      <div class='collapse'>
-                        <ul class="box">
-                          <?php foreach ($actions as $action): ?>
-                            <?php if ($action === null): ?>
-                              <li class="menuSeparator"></li>
-                            <?php else: ?>
-                              <li><a <?php if (array_key_exists('class', $action)):?>class="<?php echo $action['class'] ?>" <?php endif;?>href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
-                            <?php endif; ?>
-                          <?php endforeach; ?>
-                        </ul> 
+                  ?>
+                  <nav>
+                    <ul class="action_list">
+                      <div class="popbox">
+                        <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                        <div class='collapse'>
+                          <ul class="box">
+                            <?php foreach ($actions as $action): ?>
+                              <?php if ($action === null): ?>
+                                <li class="menuSeparator"></li>
+                              <?php else: ?>
+                                <li><a <?php if (array_key_exists('type', $action) && $action['type'] == 'delete'): ?>data-name="test<?php echo $this->activeProject->getId(); ?>" data-item-id="<?php echo $test->getId() ?>"<?php endif; ?> <?php if (array_key_exists('class', $action)):?>class="<?php echo $action['class'] ?>" <?php endif;?>href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                              <?php endif; ?>
+                            <?php endforeach; ?>
+                          </ul>
+                        </div>
                       </div>
-                    </div>                   
-                  </ul>
-                </nav>
-              <?php endif; ?>
-            </td>
-          </tr>
+                    </ul>
+                  </nav>
+                <?php endif; ?>
+              </td>
+            </tr>
           <?php endforeach; ?>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
 
-      <div>
-        <p id="j_multiSelect_couterContainer"><?php echo $this->generalT('Liczba wybranych elementów') ?>: <span id="j_multiSelect_couterValue">0</span></p>
-        <a class="button j_multiSelect_sendButton_test<?php echo $this->activeProject->getId(); ?> j_delete_tests" href="<?php echo $this->projectUrl(array(), 'test_multi_delete') ?>">
-          <?php echo $this->t('Usuń wybrane') ?>
-        </a>
-        <!--<a class=" class="button j_multiSelect_sendButton_test j_groupForwardToExecute" href="<?php //echo $this->projectUrl(array(), 'test_group_forward_to_execute') ?>">
+        <div>
+          <?php if ($this->testUserPermissions[Application_Model_RoleAction::TEST_DELETE_ALL] || $this->testUserPermissions[Application_Model_RoleAction::TEST_DELETE_CREATED_BY_YOU]): ?>
+            <p id="j_multiSelect_couterContainer"><?php echo $this->generalT('Liczba wybranych elementów') ?>: <span id="j_multiSelect_couterValue">0</span></p>
+            <a class="button j_multiSelect_sendButton_test<?php echo $this->activeProject->getId(); ?> j_delete_tests" href="<?php echo $this->projectUrl(array(), 'test_multi_delete') ?>">
+              <?php echo $this->t('Usuń wybrane') ?>
+            </a>
+            <!--<a class=" class="button j_multiSelect_sendButton_test j_groupForwardToExecute" href="<?php //echo $this->projectUrl(array(), 'test_group_forward_to_execute') ?>">
           <?php //echo $this->t('Przekaż wiele do wykonania') ?>
           <span class="j_multiSelect_couterContainer"> (<span class="j_multiSelect_couterValue">0</span>)</span>
         </a>-->
-        <a id="j_multiSelect_selectAllButton_test<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wybierz wszystkie') ?></a>
-        <a id="j_multiSelect_unselectAllButton_test<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wyczyść wybrane') ?></a>
-      </div>
+            <a id="j_multiSelect_selectAllButton_test<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wybierz wszystkie') ?></a>
+            <a id="j_multiSelect_unselectAllButton_test<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wyczyść wybrane') ?></a>
+          <?php endif ?>
+        </div>
+        <div style="margin-top: 20px;">
+          <?php echo $this->partial('count-records-default.phtml', ['count' => $this->numberRecords]) ?>
+        </div>
+        <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
 
-      <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
-
-    </form>
+      </form>
     <?php else: ?>
       <div class="empty-text"><?php echo $this->t('Brak elementów bazy testów') ?></div>
     <?php endif;?>
-  </article>    
+  </article>
 </section>
 
-<?php 
+<?php
 echo $this->partial('popups/select-least-one.phtml');
 echo $this->partial('popups/delete-tests.phtml');
 echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allIds));
 ?>
 <script type="text/javascript">
-/* <![CDATA[ */
-  var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
-  var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
-/* ]]> */
+    /* <![CDATA[ */
+    var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
+    var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
+    /* ]]> */
 </script>

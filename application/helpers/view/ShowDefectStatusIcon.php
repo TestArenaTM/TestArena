@@ -24,6 +24,47 @@ class Zend_View_Helper_ShowDefectStatusIcon extends Zend_View_Helper_Abstract
 {
   public function showDefectStatusIcon(Application_Model_Defect $defect)
   {
-    return '<span class="statusIcon defectStatus_'.$defect->getStatus().'" title="'.$this->view->statusT($defect->getStatus(), 'DEFECT').'"></span>';
+    $color = '';
+    switch ($defect->getStatusId())
+    {
+      case Application_Model_DefectStatus::OPEN:
+        $color = $defect->getProject()->getOpenStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::REOPEN:
+        $color = $defect->getProject()->getReopenStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::IN_PROGRESS:
+        $color = $defect->getProject()->getInProgressStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::FINISHED:
+        $color = $defect->getProject()->getClosedStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::INVALID:
+        $color = $defect->getProject()->getInvalidStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::RESOLVED:
+        $color = $defect->getProject()->getResolvedStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::SUCCESS:
+        $color = $defect->getProject()->getResolvedStatusColor();
+        break;
+      case Application_Model_DefectStatus::FAIL:
+        $color = $defect->getProject()->getInvalidStatusColor();
+        break;
+
+    }
+
+    $style = '';
+    if ($color !== '') {
+      $style = 'style="background: '. $color .'"';
+    }
+
+    return '<span '. $style .' class="statusIcon defectStatus_'.$defect->getStatus().'" title="'.$this->view->statusT($defect->getStatus(), 'DEFECT').'"></span>';
   }
 }

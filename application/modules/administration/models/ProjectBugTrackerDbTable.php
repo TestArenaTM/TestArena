@@ -41,6 +41,24 @@ class Administration_Model_ProjectBugTrackerDbTable extends Custom_Model_DbTable
 
     return $this->fetchAll($sql);
   }
+
+  /**
+   * @param Application_Model_Project $project
+   * @return bool
+   */
+  public function isBugTruckerInternalByProject(Application_Model_Project $project)
+  {
+    $sql = $this->select()
+      ->from(array('bt' => $this->_name), array(
+        'num' => 'COUNT(*)',
+      ))
+      ->where('bt.bug_tracker_status = ?', Application_Model_BugTrackerStatus::ACTIVE)
+      ->where('bt.project_id = ?', $project->getId())
+      ->where('bt.bug_tracker_type = ?', Application_Model_BugTrackerType::INTERNAL);
+    $rows = $this->fetchRow($sql);
+
+    return $rows['num'] > 0;
+  }
   
   public function getForView($id)
   {

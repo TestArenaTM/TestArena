@@ -3,30 +3,40 @@
 <section id="content">
   <!--<div class="breadcrumb">
     <a class="icon_house_alt" href="#"></a>
-    <i class="arrow_carrot-right icon-15"></i>  
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div>-->    
+  </div>-->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <?php if ($this->activeProject->isActive() 
-        && $this->defectUserPermissions[Application_Model_RoleAction::DEFECT_ADD]): ?>
-      <nav class="button_link_nav">
-        <ul class="button_link_ul">
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'defect_add')?>" ><?php echo $this->t('Dodaj defekt') ?></a></li>
-        </ul>
-      </nav>
-    <?php endif; ?>
-    
+      <?php if ($this->activeProject->isActive()
+          && $this->defectUserPermissions[Application_Model_RoleAction::DEFECT_ADD]): ?>
+          <nav class="button_link_nav">
+              <ul class="button_link_ul action_list">
+                  <div class="popbox button_link_ul">
+                      <a href="#" class="open button_link"><?php echo $this->t('Dodaj') ?>▼</a>
+                      <div class='collapse'>
+                          <ul class="box">
+                              <li class="button_link_li"><a href="<?php echo $this->projectUrl(array('issueType' => 'NEW_FEATURE'), 'defect_add')?>" ><?php echo $this->t('Nowa funkcjonalność') ?></a></li>
+                              <li class="button_link_li"><a href="<?php echo $this->projectUrl(array('issueType' => 'IMPROVEMENT'), 'defect_add')?>" ><?php echo $this->t('Ulepszenie') ?></a></li>
+                              <li class="button_link_li"><a href="<?php echo $this->projectUrl(array('issueType' => 'DEFECT'), 'defect_add')?>" ><?php echo $this->t('Defekt') ?></a></li>
+                          </ul>
+                      </div>
+                  </div>
+              </ul>
+          </nav>
+      <?php endif; ?>
+    </div>
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
       <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
-      
+
       <div class="search_text">
         <div class="filter">
           <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
           <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
         </div>
-      </div>      
+      </div>
 
       <div class="search_filter">
         <div class="filter">
@@ -65,15 +75,20 @@
         </div>
 
         <div class="filter">
+          <div><?php echo $this->formLabel('issueType', $this->t('Type')) ?></div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->issueType->renderViewHelper() ?></div>
+        </div>
+
+        <div class="filter">
           <div><?php echo $this->formLabel('resultCountPerPage', $this->generalT('Wyniki')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
         </div>
-        
+
         <div class="filter custom-auto">
           <div><?php echo $this->formLabel('tags', $this->t('Tagi')) ?></div>
           <div class="ustom-select-xsmall"><?php echo $this->filterForm->tags->renderViewHelper() ?></div>
         </div>
-        
+
         <?php echo $this->partial('partials/filter-buttons.phtml'); ?>
       </div>
 
@@ -90,7 +105,8 @@
           </th>
           <th><?php echo $this->sortingControl('Tytuł', 'defect_title', 'sorting.phtml', $this->request) ?></th>
           <th class="attachment_column"></th>
-          <th><?php echo $this->sortingControl('Priorytet', 'defect_priority', 'sorting.phtml', $this->request) ?></th>
+          <th title="<?php echo $this->t('Type') ?>">T</th>
+          <th title="<?php echo $this->t('Priorytet') ?>"><?php echo $this->sortingControl('Priorytet forma skrócona', 'defect_priority', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Wydanie', $this->createSortedFieldName('defect', 'name', array('release')), 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Data utworzenia', 'defect_create_date', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Data modyfikacji', 'defect_modify_date', 'sorting.phtml', $this->request) ?></th>
@@ -102,22 +118,51 @@
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($this->defects as $defect): ?>
+      <?php foreach ($this->defects as $defect): ?>
         <tr>
           <td class="t_object_number">
-            <input type="checkbox" name="item_<?php echo $defect->getId() ?>" value="defect<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_item" />
+            <input
+              <?php if ((!$this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_ALL]
+                  && !$this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU]
+                  && !$this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU])
+                || $defect->getExtraData('taskDefectOrTestDefectIs')
+                || $defect->getStatus()->getId() == Application_Model_DefectStatus::FAIL
+                || $defect->getStatus()->getId() == Application_Model_DefectStatus::SUCCESS): ?>
+                disabled
+              <?php else: ?>
+                <?php if (!$this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_ALL]): ?>
+                  <?php if ($this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU]
+                    && !$this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU]
+                    && $defect->getAuthor()->getId() !== $this->authUser->getId()): ?>
+                    disabled
+                  <?php elseif ($this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU]
+                    && !$this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU]
+                    && $defect->getAssigneeId() !== $this->authUser->getId()): ?>
+                    disabled
+                  <?php elseif (($this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU]
+                      && $defect->getAuthor()->getId() !== $this->authUser->getId())
+                    && ($this->defectUserPermissions[Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU]
+                      && $defect->getAssigneeId() !== $this->authUser->getId())
+                    ): ?>
+                    disabled
+                  <?php endif ?>
+                <?php endif ?>
+              <?php endif ?> type="checkbox" name="item_<?php echo $defect->getId() ?>" value="defect<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_item" />
             <?php echo $this->escapeQuotes($defect->getObjectNumber()) ?>
           </td>
           <td>
             <?php echo $this->showDefectStatusIcon($defect) ?>
             <a href="<?php echo $this->projectUrl(array('id' => $defect->getId()), 'defect_view') ?>">
-              <?php echo $this->escapeQuotes($defect->getTitle()) ?>
+              <?php echo $this->spaceToEntity($this->escapeQuotes($defect->getTitle())) ?>
             </a>
           </td>
           <td>
             <?php if ($defect->getExtraData('attachmentCount') > 0): ?>
               <span class="icon_link_alt icon-20" title="<?php echo $defect->getExtraData('attachmentCount') ?>"></span>
             <?php endif; ?>
+          </td>
+          <td class="t_type">
+            <span class="issue_type_<?php echo $defect->getIssueType() ?>" title="<?php echo $this->typeT($defect->getIssueType(), 'ISSUE') ?>"></span>
           </td>
           <td class="t_priority"><span class="prio_<?php echo $defect->getPriority() ?>" title="<?php echo $this->typeT($defect->getPriority(), 'DEFECT_PRIORITY') ?>" alt="<?php echo $this->typeT($defect->getPriority(), 'DEFECT_PRIORITY') ?>"></span></td>
           <td><?php echo $this->escapeQuotes($defect->getRelease()->getName()) ?></td>
@@ -130,23 +175,23 @@
             <?php
               $actions = $this->prepareDefectActions($defect, $this->defectUserPermissions);
               if ($this->activeProject->isActive() && count($actions) > 0):
-            ?>  
+            ?>
               <nav>
                 <ul class="action_list">
                   <div class="popbox">
                     <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
                     <div class='collapse'>
                       <ul class="box">
-                        <?php foreach ($actions as $action): ?>       
+                        <?php foreach ($actions as $action): ?>
                           <?php if ($action === null): ?>
                             <li class="menuSeparator"></li>
                           <?php else: ?>
-                            <li><a<?php if (array_key_exists('class', $action)):?> class="<?php echo $action['class']; ?>"<?php endif; ?> href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                            <li><a <?php if (array_key_exists('type', $action) && $action['type'] == 'delete'): ?>data-name="defect<?php echo $this->activeProject->getId(); ?>" data-item-id="<?php echo $defect->getId() ?>"<?php endif; ?> <?php if (array_key_exists('class', $action)):?> class="<?php echo $action['class']; ?>"<?php endif; ?> href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
                           <?php endif; ?>
                         <?php endforeach; ?>
-                      </ul> 
+                      </ul>
                     </div>
-                  </div>                
+                  </div>
                 </ul>
               </nav>
             <?php endif; ?>
@@ -165,19 +210,21 @@
       <a id="j_multiSelect_selectAllButton_defect<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wybierz wszystkie') ?></a>
       <a id="j_multiSelect_unselectAllButton_defect<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wyczyść wybrane') ?></a>
     </div>
-
+    <div style="margin-top: 20px;">
+      <?php echo $this->partial('count-records-default.phtml', ['count' => $this->numberRecords]) ?>
+    </div>
     <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
 
     <?php else: ?>
-    <div class="empty-text"><?php echo $this->t('Brak defektów') ?></div>
+    <div class="empty-text"><?php echo $this->t('Brak zgłoszeń') ?></div>
     <?php endif; ?>
-    
-  </article>    
+
+  </article>
 </section>
 
-<?php 
+<?php
 echo $this->partial('popups/delete-defects.phtml');
-echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allIds)); 
+echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allIds));
 ?>
 
 <script type="text/javascript">
@@ -188,7 +235,7 @@ echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allI
     prePopulated['tags'] = <?php echo $this->prePopulatedTags?>;
   <?php endif?>
   isSearchTags = true;
-    
+
   url.tagListAjax = '<?php echo $this->projectUrl(array(), 'tag_list_ajax') ?>';
   var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
   var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;

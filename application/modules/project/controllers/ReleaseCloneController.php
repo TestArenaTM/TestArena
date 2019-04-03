@@ -42,6 +42,8 @@ class Project_ReleaseCloneController extends Custom_Controller_Action_Applicatio
     parent::preDispatch();
     $this->checkUserSession(true);
     
+    $this->_checkAccess(Application_Model_RoleAction::RELEASE_MANAGEMENT, true);
+    
     if (!$this->getRequest()->isXmlHttpRequest())
     {
       if ($this->_project === null)

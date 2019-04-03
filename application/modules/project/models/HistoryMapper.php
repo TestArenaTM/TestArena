@@ -38,6 +38,89 @@ class Project_Model_HistoryMapper extends Custom_Model_Mapper_Abstract
 
     try
     {
+      if ($history->getSubjectTypeId() == Application_Model_HistorySubjectType::TASK)
+      {
+        if ($history->getTypeId() == Application_Model_HistoryType::DELETE_TEST_FROM_TASK)
+        {
+          $dataUpdate = [
+            'field1' => $history->getExtraData('testId'),
+            'type' => Application_Model_HistoryType::ADD_TEST_TO_TASK
+          ];
+
+          $this->_getDbTable()->update($dataUpdate, array(
+              'subject_type = ?' => Application_Model_HistorySubjectType::TASK,
+              'subject_id = ?' => $history->getSubjectId(),
+              'type = ?' => Application_Model_HistoryType::ADD_TASK_TEST_TO_TASK,
+              'field1 = ?' => $history->getExtraData('taskTestId'))
+          );
+
+          $dataUpdate = [
+            'field2' => $history->getExtraData('testId'),
+            'type' => Application_Model_HistoryType::ADD_DEFECT_TO_TEST
+          ];
+          $this->_getDbTable()->update($dataUpdate, array(
+              'subject_type = ?' => Application_Model_HistorySubjectType::TASK,
+              'subject_id = ?' => $history->getSubjectId(),
+              'type = ?' => Application_Model_HistoryType::ADD_DEFECT_TO_TASK_TEST,
+              'field2 = ?' => $history->getExtraData('taskTestId'))
+          );
+
+          $dataUpdate = [
+            'field2' => $history->getExtraData('testId'),
+            'type' => Application_Model_HistoryType::DELETE_DEFECT_FROM_TEST
+          ];
+          $this->_getDbTable()->update($dataUpdate, array(
+              'subject_type = ?' => Application_Model_HistorySubjectType::TASK,
+              'subject_id = ?' => $history->getSubjectId(),
+              'type = ?' => Application_Model_HistoryType::DELETE_DEFECT_FROM_TASK_TEST,
+              'field2 = ?' => $history->getExtraData('taskTestId'))
+          );
+
+          $dataUpdate = [
+            'field2' => $history->getExtraData('testId'),
+            'type' => Application_Model_HistoryType::DELETE_TEST_FROM_DEFECT
+          ];
+          $this->_getDbTable()->update($dataUpdate, array(
+              'subject_type = ?' => Application_Model_HistorySubjectType::DEFECT,
+              'subject_id = ?' => $history->getSubjectId(),
+              'type = ?' => Application_Model_HistoryType::DELETE_TASK_TEST_FROM_DEFECT,
+              'field2 = ?' => $history->getExtraData('taskTestId'))
+          );
+
+          $dataUpdate = [
+            'field2' => $history->getExtraData('testId'),
+            'type' => Application_Model_HistoryType::ADD_TEST_TO_DEFECT
+          ];
+          $this->_getDbTable()->update($dataUpdate, array(
+              'subject_type = ?' => Application_Model_HistorySubjectType::DEFECT,
+              'subject_id = ?' => $history->getSubjectId(),
+              'type = ?' => Application_Model_HistoryType::ADD_TASK_TEST_TO_DEFECT,
+              'field2 = ?' => $history->getExtraData('taskTestId'))
+          );
+
+          $dataUpdate = [
+            'field1' => $history->getExtraData('testId'),
+            'type' => Application_Model_HistoryType::RESOLVE_TEST
+          ];
+          $this->_getDbTable()->update($dataUpdate, array(
+              'subject_type = ?' => Application_Model_HistorySubjectType::TASK,
+              'subject_id = ?' => $history->getSubjectId(),
+              'type = ?' => Application_Model_HistoryType::RESOLVE_TASK_TEST,
+              'field1 = ?' => $history->getExtraData('taskTestId'))
+          );
+
+          $dataUpdate = [
+            'field1' => $history->getExtraData('testId'),
+            'type' => Application_Model_HistoryType::RESOLVE_TEST
+          ];
+          $this->_getDbTable()->update($dataUpdate, array(
+              'subject_type = ?' => Application_Model_HistorySubjectType::TASK,
+              'subject_id = ?' => $history->getSubjectId(),
+              'type = ?' => Application_Model_HistoryType::RESOLVE_TASK_TEST,
+              'field1 = ?' => $history->getExtraData('taskTestId'))
+          );
+        }
+      }
       $this->_getDbTable()->insert($data);
     }
     catch (Exception $e)
@@ -56,7 +139,7 @@ class Project_Model_HistoryMapper extends Custom_Model_Mapper_Abstract
       return false;
     }
 
-    $rows = $this->_getDbTable()->getByTask($task->getId());
+    $rows = $this->_getDbTable()->getByTask($task->getId(), $task->getProject()->getBugTracker());
 
     if ($rows === null)
     {

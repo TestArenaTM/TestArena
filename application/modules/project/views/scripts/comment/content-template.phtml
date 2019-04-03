@@ -1,4 +1,4 @@
-<script id="j_commentItem" type="text/x-jquery-tmpl" >
+<script id="j_commentItem" type="text/x-jquery-tmpl">
 <div id="comment_${id}" class="comment{{if otherSubject}} otherSubject{{/if}}" comment_id="${id}">
   <div class="comment_content">
     <div class="avatar_comment"><img class="avatar" src="${avatarUrl}" /></div>
@@ -14,3 +14,11 @@
   </div>
 </div>
 </script>
+<script type="text/javascript">
+  var commentText = {};
+  commentText.textButtonDelete = "<?php echo $this->generalT('Usuń') ?>";
+  commentText.textButtonCancel = "<?php echo $this->generalT('Anuluj') ?>";
+</script>
+<div id="j_deleteComment_dialog" style="display: none" title="<?php echo $this->partialT('Potwierdzenie', 'comment/content-template', 'project') ?>">
+  <div style="padding: 10px 20px"><?php echo $this->partialT('Czy na pewno chcesz usunąć wybrany komentarz?', 'comment/content-template', 'project') ?></div>
+</div>

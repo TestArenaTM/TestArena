@@ -44,7 +44,6 @@ class Application_Model_Task extends Custom_Model_Standard_Abstract implements C
   private $_description = null;
   private $_resolution  = null;
   private $_author      = null;
-  
   private $_taskTests   = array();
 
   // <editor-fold defaultstate="collapsed" desc="Getters">

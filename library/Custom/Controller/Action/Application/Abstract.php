@@ -50,10 +50,11 @@ abstract class Custom_Controller_Action_Application_Abstract extends Custom_Cont
     
     foreach ($projectsRows as $row)
     {
+      $t = new Custom_Translate();
       $project = new Application_Model_Project($row);
       $this->_projects[$project->getId()] = $project;
       $this->_projectsByPrefix[$project->getPrefix()] = $project;
-      $projectNames[$project->getId()] = $project->getName();
+      $projectNames[$project->getId()] = $project->getName() . ' ['. $t->translate('PROJECT_'. $project->getStatus(), array(), 'status') .']';
     }
 
     //set active project by form

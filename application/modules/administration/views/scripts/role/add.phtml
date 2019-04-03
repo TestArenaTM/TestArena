@@ -7,8 +7,9 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div> -->   
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-    
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
     <?php if (isset($this->formError)): ?>
       <div><?php echo $this->t($this->formError) ?></div>
     <?php endif; ?>
@@ -29,16 +30,6 @@
             <?php endforeach; ?>
           </span>
         </div>
-
-        <div class="formContainer">
-          <span>
-            <?php echo $this->form->type->renderViewHelper() ?>
-            <?php echo $this->formRequiredLabel('type', $this->t('Szablon')); ?>
-            <?php foreach ($this->form->getErrors('type') as $error): ?>
-              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-            <?php endforeach; ?>
-          </span>
-        </div>        
           
         <div class="formContainer full">
           <span>
@@ -60,6 +51,17 @@
           </span>
         </div>
 
+      <div class="formContainer bottom">
+        <div><?php echo $this->t('Przykładowy zestaw uprawnień dla roli') ?></div>
+        <span>
+          <?php echo $this->form->type->renderViewHelper() ?>
+          <?php echo $this->formRequiredLabel('type', $this->t('Szablon')); ?>
+          <?php foreach ($this->form->getErrors('type') as $error): ?>
+            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+          <?php endforeach; ?>
+        </span>
+      </div>
+
       <div>
         <h5 class="break_page"><span class="icon_cogs icon-20" aria-hidden="true"></span><?php echo $this->formRequiredLabel('type', $this->t('Ustawienia roli')); ?></h5>
         <div class="select-all">
@@ -75,6 +77,8 @@
                     <td>
                       <div class="check-left"><?php echo $this->form->$fieldName->renderViewHelper() ?></div>
                       <label for="roleSettings-roleAction_<?php echo $actionId ?>"><?php echo $this->roleT($actionName, 'ACTION') ?></label>
+                      <?php if ($actionId === 8): ?><span class="help item">?<div class="cloud"><?php echo $this->roleT($actionName, 'ACTION_HELPER'); ?></div></span><?php endif ?>
+                      <?php if ($actionId === 19): ?><span class="help item">?<div class="cloud"><?php echo $this->roleT($actionName, 'ACTION_HELPER'); ?></div></span><?php endif ?>
                     </td>
                   </tr>
                 <?php endforeach;?>

@@ -7,8 +7,9 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div> --> 
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
 
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
@@ -71,7 +72,7 @@
           <span>
             <div class="checkForm">
               <?php echo $this->form->active->renderViewHelper() ?>
-              <?php echo $this->formLabel('active', $this->t('Aktywne')) ?>  
+              <?php echo $this->formLabel('active', $this->t('Aktywne'), array('class' => 'label_inline')) ?>
               <span class="help item">?<div class="cloud"><?php echo $this->t('Aktywne wydanie - info') ?></div></span>
               <?php foreach ($this->form->getErrors('active') as $error): ?>
                 <div class="error_msg"><?php echo $this->errorT($error) ?></div>

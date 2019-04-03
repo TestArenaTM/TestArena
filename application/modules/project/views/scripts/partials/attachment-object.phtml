@@ -1,8 +1,16 @@
 <script id="j_fullAttachmentObjectTmpl" type="text/x-jquery-tmpl">
-<input id="attachmentIds-attachmentId_${id}" type="hidden" value="${id}" name="attachmentIds[attachmentId_${id}]" class="j_attachmentId">
-<input id="attachmentNames-attachmentName_${id}" type="hidden" value="${name}" name="attachmentNames[attachmentName_${id}]" class="j_attachmentName">
-<span class="fileElement"><span><span class="icon_link_alt icon-13" aria-hidden="true"></span> ${name}</span><a href="#" id="j_removeAttachmentButton_${id}" class="deleteFileElement j_removeAttachmentButton"><span class="icon_close icon-17" aria-hidden="true"></span></span></span>
+  <input id="attachmentIds-attachmentId_${id}" type="hidden" value="${id}" name="attachmentIds[attachmentId_${id}]" class="j_attachmentId">
+  <input id="attachmentNames-attachmentName_${id}" type="hidden" value="${name}" name="attachmentNames[attachmentName_${id}]" class="j_attachmentName">
+  <span class="fileElement"><span><span class="icon_link_alt icon-13" aria-hidden="true"></span> ${name}</span><a href="#" id="j_removeAttachmentButton_${id}" class="deleteFileElement j_removeAttachmentButton"><span class="icon_close icon-17" aria-hidden="true"></span></span></span>
+  </script>
+  <script id="j_attachmentBoxTmpl" type="text/x-jquery-tmpl" >
+  <span class="fileElement"><span><span class="icon_link_alt icon-13" aria-hidden="true"></span> ${name}</span><a href="#" id="j_removeAttachmentButton_${id}" class="deleteFileElement j_removeAttachmentButton"><span class="icon_close icon-17" aria-hidden="true"></span></span></span>
 </script>
-<script id="j_attachmentBoxTmpl" type="text/x-jquery-tmpl" >
-<span class="fileElement"><span><span class="icon_link_alt icon-13" aria-hidden="true"></span> ${name}</span><a href="#" id="j_removeAttachmentButton_${id}" class="deleteFileElement j_removeAttachmentButton"><span class="icon_close icon-17" aria-hidden="true"></span></span></span>
+<div id="j_popup_attachment_add_error" style="display: none" title="<?php echo $this->partialT('Błąd', 'attachment-object', 'project') ?>">
+  <p class="content"></p>
+</div>
+<script type="text/javascript">
+    var configAttachment = {};
+    configAttachment.errorMessages = new Array();
+    configAttachment.errorMessages['UPLOAD_FILE_EXISTS'] = '<?php echo $this->partialT('UPLOAD_FILE_EXISTS', 'attachment-object', 'project') ?>';
 </script>

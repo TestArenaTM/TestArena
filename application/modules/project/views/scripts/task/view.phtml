@@ -3,43 +3,36 @@
     <a class="icon_house_alt" href="#"></a>
     <i class="arrow_carrot-right icon-15"></i>
     <a href="#"><?php echo $this->generalT('Zadania') ?></a>
-    <i class="arrow_carrot-right icon-15"></i>    
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div> --> 
+  </div> -->
+  <?php echo $this->partial('partials/dialog-iframe.phtml'); ?>
   <article class="article_in_content">
-    <h4 class="content_title"><?php echo $this->t('pageTitle') ?></h4>
+    <div class="content_header">
+      <h4 class="content_title"><?php echo $this->t('pageTitle') ?></h4>
 
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
-        <?php if ($this->activeProject->isActive()): ?>
-            
-            <?php foreach ($this->prepareTaskActions($this->task, array(), $this->taskUserPermission) as $action): ?>
-              <?php if ($action === null): ?>
-                <li class="button_link_li separator"></li>
-              <?php else: ?>
-                <li class="button_link_li"><a class="button_link <?php echo $action['class'] ?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
-              <?php endif; ?>
-          <?php endforeach; ?>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
+          <?php if ($this->activeProject->isActive()): ?>
 
-          <?php if ($this->prevTask !== null): ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->prevTask->getId()), 'task_view') ?>" title="<?php echo $this->generalT('Poprzednie') ?>"><span aria-hidden="true" class="arrow_triangle-left icon-22" style="vertical-align:middle;"></span></a></li>
+              <?php foreach ($this->prepareTaskActions($this->task, array(), $this->taskUserPermission) as $action): ?>
+                <?php if ($action === null): ?>
+                  <li class="button_link_li separator"></li>
+                <?php else: ?>
+                  <li class="button_link_li"><a <?php if (array_key_exists('type', $action) && $action['type'] == 'delete'): ?>data-name="task<?php echo $this->activeProject->getId(); ?>" data-item-id="<?php echo $this->task->getId() ?>"<?php endif; ?> class="button_link <?php echo $action['class'] ?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                <?php endif; ?>
+            <?php endforeach; ?>
           <?php endif; ?>
-                
-          <?php if ($this->nextTask !== null): ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->nextTask->getId()), 'task_view') ?>" title="<?php echo $this->generalT('Następne') ?>"><span aria-hidden="true" class="arrow_triangle-right icon-22" style="vertical-align:middle;"></span></a></li>
-          <?php endif; ?>
-            
-        <?php endif; ?>
-      </ul>
-    </nav>
-
-    <div class="textLabelEditor">
-      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escape($this->task->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->task->getTitle()) ?></div>
+        </ul>
+      </nav>
     </div>
-    
+    <div class="textLabelEditor">
+      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escape($this->task->getObjectNumber()) ?></span> <?php echo $this->spaceToEntity($this->escapeQuotes($this->task->getTitle())) ?></div>
+    </div>
+
     <div class="contentLRtable">
-      <div class="contentProperties_left"> 
+      <div class="contentProperties_left">
         <div class="col1">
           <div class="leftside">
             <div class="textLabelPropertiesDiv">
@@ -114,58 +107,111 @@
             </div>
           </div>
         </div>
-        
+
         <div>
           <h5 class="break_page"><span aria-hidden="true" class="icon_pencil icon-20"></span><?php echo $this->t('Opis') ?></h5>
           <div><?php echo nl2br($this->escapeQuotes($this->task->getDescription())) ?></div>
         </div>
-        
+
         <div class="textLabelPropertiesDiv history" id="j_testBox">
           <h5 class="break_page" <?php if (!$this->activeProject->isActive() || !$this->taskUserPermission->isTestModifyPermission()):?>style="border-bottom:0px !important"<?php endif; ?>><span aria-hidden="true" class="icon_search_alt icon-20"></span> <?php echo $this->t('Testy') ?></h5>
-          <?php if ($this->activeProject->isActive() 
+          <?php if ($this->activeProject->isActive()
                     && $this->taskUserPermission->isTestModifyPermission()
                     && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
             <div class="filter addTest">
               <div class="search_in_filter addTest">
                 <input type="hidden" name="testId" value="" id="j_testId">
                 <input type="text" name="testName" value="" id="j_testName">
-                <a id="j_addTestToTask" class="addTestToTask" href="<?php echo $this->projectUrl(array('id' => $this->task->getId()), 'task_add_test_ajax') ?>" title="<?php echo $this->t('Dodaj test') ?>"><i class="icon_plus icon-15"></i></a>
+                <a id="j_addTestToTask" class="addTestToTask" href="<?php echo $this->projectUrl(array('id' => $this->task->getId()), 'task_add_test_ajax') ?>" title="<?php echo $this->t('Dodaj nowy test') ?>"><i class="icon_plus icon-15"></i></a>
               </div>
+              <?php if ($this->testUserPermission->isAddPermission()): ?>
+              <div class="button_dropdown">
+                <button onclick="button_dropdown.button('testType')" id="button_dropdown_button_testType" class="button_dropdown_button">
+                  <?php echo $this->t('Dodaj nowy') ?>
+                </button>
+                <ul class="button_dropdown_list" id="button_dropdown_list_testType">
+                  <li>
+                    <span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('layout' => 'iframe', 'taskId' => $this->task->getId()), 'test_add_exploratory_test')?>', '<?php echo $this->t('Dodaj nowy test') ?>', { height: 700 });">
+                      <?php echo $this->typeT('EXPLORATORY_TEST', 'TEST') ?>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('layout' => 'iframe', 'taskId' => $this->task->getId()), 'test_add_test_case')?>', '<?php echo $this->t('Dodaj nowy test') ?>', { height: 830 });">
+                      <?php echo $this->typeT('TEST_CASE', 'TEST') ?>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('layout' => 'iframe', 'taskId' => $this->task->getId()), 'test_add_automatic_test')?>', '<?php echo $this->t('Dodaj nowy test') ?>', { height: 650 });">
+                      <?php echo $this->typeT('AUTOMATIC_TEST', 'TEST') ?>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('layout' => 'iframe', 'taskId' => $this->task->getId()), 'test_add_checklist')?>', '<?php echo $this->t('Dodaj nowy test') ?>', { height: 800 });">
+                      <?php echo $this->typeT('CHECKLIST', 'TEST') ?>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('layout' => 'iframe', 'taskId' => $this->task->getId()), 'test_add_other_test')?>', '<?php echo $this->t('Dodaj nowy test') ?>', { height: 650 });">
+                      <?php echo $this->typeT('OTHER_TEST', 'TEST') ?>
+                    </span>
+                  </li>
+                </ul>
+                <script type="text/javascript">
+                  button_dropdown.autoClose('testType');
+                </script>
+              </div>
+              <?php endif ?>
             </div>
-          <?php endif; ?> 
+          <?php endif; ?>
           <?php if (count($this->taskTests)): ?>
             <div id="j_testContent">
-              <ul id="j_testList">
+              <ul id="j_testList" class="optionsList">
                 <?php foreach ($this->taskTests as $taskTest): ?>
                   <li id="j_testItem_<?php echo $taskTest->getId() ?>">
                     <div class="clearfixDashboard history">
                       <div title="<?php echo $taskTest->getTest()->getName() ?>"  class="testlist-l">
-                        <a href="<?php echo $this->projectUrl(array('id' => $taskTest->getId()), $this->taskTestViewRouteName($taskTest->getTest()))?>"><span class="object_nr"><?php echo $taskTest->getTest()->getObjectNumber() ?></span> <?php echo $taskTest->getTest()->getName() ?></a>
+                        <a href="<?php echo $this->projectUrl(array('id' => $taskTest->getId()), $this->taskTestViewRouteName($taskTest->getTest()))?>">
+                          <span class="object_nr"><?php echo $taskTest->getTest()->getObjectNumber() ?></span> <?php echo $taskTest->getTest()->getName() ?>
+                        </a>
                       </div>
                       <div class="testlist-r">
-                        <span>
-                          <!--<?php echo $this->t('Status')?>:-->
-                          <?php if ($taskTest->getResolutionId() !== null): ?>
+                        <?php if ($this->activeProject->isActive() && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED ): ?>
+                          <?php if ($this->taskUserPermission->isTestModifyPermission()): ?>
+                            <?php if ($taskTest->getResolutionId() === null): ?>
+                              <a class="button-resolve" href="<?php echo $this->projectUrl( array('id' => $taskTest->getId()), 'task_test_resolve') ?>">
+                                <?php echo $this->t('Rozwiąż') ?>
+                              </a>
+                            <?php else: ?>
+                              <?php echo $this->showResolutionIcon($taskTest->getResolution()) ?><!--<?php echo $taskTest->getResolution()->getName() ?>-->
+                            <?php endif ?>
+                            <a class="j_deleteTestFromTask" <?php if ($taskTest->getExtraData('testDefectIs') === '1'): ?>data-delete="disable"<?php endif ?> data-test-name="[<?php echo $taskTest->getTest()->getObjectNumber() ?>] <?php echo $taskTest->getTest()->getName() ?>" href="<?php echo $this->projectUrl(array('id' => $taskTest->getId()), 'task_delete_test_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+                          <?php else: ?>
+                            <?php if ($taskTest->getResolutionId() === null): ?>
+                              <b><?php echo $this->generalT('Nierozwiązany') ?></b>
+                            <?php else: ?>
+                              <?php echo $this->showResolutionIcon($taskTest->getResolution()) ?><!--<?php echo $taskTest->getResolution()->getName() ?>-->
+                            <?php endif ?>
+                            <span class="icon_close empty icon-15"></span>
+                          <?php endif ?>
+                        <?php else: ?>
+                          <?php if ($taskTest->getResolutionId() === null): ?>
+                            <b><?php echo $this->generalT('Nierozwiązany') ?></b>
+                          <?php else: ?>
                             <?php echo $this->showResolutionIcon($taskTest->getResolution()) ?><!--<?php echo $taskTest->getResolution()->getName() ?>-->
-                          <?php endif; ?>
-                        </span>
-                        <?php if ($this->activeProject->isActive() 
-                                  && $this->taskUserPermission->isTestModifyPermission()
-                                  && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
-                          <a class="j_deleteTestFromTask" href="<?php echo $this->projectUrl(array('id' => $taskTest->getId()), 'task_delete_test_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
-                        <?php endif; ?> 
-                      </div>                   
+                          <?php endif ?>
+                        <?php endif ?>
+                      </div>
                     </div>
                   </li>
                 <?php endforeach; ?>
               </ul>
             </div>
           <?php endif; ?>
-        </div> 
-        
+        </div>
+
         <div class="textLabelPropertiesDiv history" id="j_defectBox">
           <h5 class="break_page" <?php if (!$this->activeProject->isActive() || !$this->taskUserPermission->isDefectModifyPermission()):?>style="border-bottom:0px !important"<?php endif; ?>><span class="icon_error-triangle_alt icon-20"></span> <?php echo $this->t('Defekty') ?></h5>
-          <?php if ($this->activeProject->isActive() 
+          <?php if ($this->activeProject->isActive()
                     && $this->taskUserPermission->isDefectModifyPermission()
                     && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
             <div class="filter addTest">
@@ -174,6 +220,21 @@
                 <input type="text" name="defectName" value="" id="j_defectName">
                 <a id="j_addDefectToTask" class="addTestToTask" href="<?php echo $this->projectUrl(array('id' => $this->task->getId()), 'task_add_defect_ajax') ?>" title="<?php echo $this->t('Dodaj defekt') ?>"><i class="icon_plus icon-15"></i></a>
               </div>
+              <?php if ($this->activeProject->getBugTRacker()->getBugTrackerType()->getId() == Application_Model_BugTrackerType::INTERNAL && $this->defectUserPermission->isAddPermission()): ?>
+              <div class="button_dropdown">
+                <button onclick="button_dropdown.button('issueType')" id="button_dropdown_button_issueType" class="button_dropdown_button">
+                  <?php echo $this->t('Dodaj nowe') ?>
+                </button>
+                <ul class="button_dropdown_list" id="button_dropdown_list_issueType">
+                  <li><span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('issueType' => 'NEW_FEATURE', 'layout' => 'iframe', 'taskId' => $this->task->getId()), 'defect_add')?>', '<?php echo $this->t('Dodaj nowe zgłoszenie') ?>');"><?php echo $this->typeT('NEW_FEATURE', 'ISSUE') ?></span></li>
+                  <li><span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('issueType' => 'IMPROVEMENT', 'layout' => 'iframe', 'taskId' => $this->task->getId()), 'defect_add')?>', '<?php echo $this->t('Dodaj nowe zgłoszenie') ?>');"><?php echo $this->typeT('IMPROVEMENT', 'ISSUE') ?></span></li>
+                  <li><span class="button_dropdown_list_option" onclick="DialogIframe.open('<?php echo $this->projectUrl(array('issueType' => 'DEFECT', 'layout' => 'iframe', 'taskId' => $this->task->getId()), 'defect_add')?>', '<?php echo $this->t('Dodaj nowe zgłoszenie') ?>');"><?php echo $this->typeT('DEFECT', 'ISSUE') ?></span></li>
+                </ul>
+                <script type="text/javascript">
+                  button_dropdown.autoClose('issueType');
+                </script>
+              </div>
+              <?php endif ?>
             </div>
           <?php endif; ?>
           <?php echo $this->partial($this->bugTracker === null ? 'partials/task-internal-defects.phtml' : 'partials/task-defects.phtml', array(
@@ -185,9 +246,7 @@
           )); ?>
         </div>
       </div>
- 
-      <div class="contentEditUser_right">   
-
+      <div class="contentEditUser_right">
         <div class="textLabelPropertiesDiv">
           <h5 class="break_page"><span aria-hidden="true" class="icon_clock_alt icon-20"></span> <?php echo $this->t('Historia') ?></h5>
           <?php if (count($this->history)): ?>
@@ -201,20 +260,20 @@
                         <strong><?php echo $this->escapeQuotes($element->getUser()->getFullname()) ?></strong>
                       </div>
                       <div class="snippet_action_contentList history">
-                        <span class="snippet_action_contentList snippet_action_text history"><?php echo $this->taskHistory($element) ?></span>
+                        <span class="snippet_action_contentList snippet_action_text history"><?php echo $this->taskHistory($element, $this->bugTracker) ?></span>
                         <div class="activity-item-info history">
                           <div class="timestamp"><?php echo $element->getDate() ?></div>
                         </div>
-                      </div>                   
+                      </div>
                     </div>
-                  </li>              
+                  </li>
                 <?php endforeach; ?>
               </ul>
             </div>
           <?php endif; ?>
-        </div> 
-        
-        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->task->getExtraData('attachments'))); ?> 
+        </div>
+
+        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->task->getExtraData('attachments'))); ?>
 
         <?php echo $this->partial('comment/partial-custom.phtml', array(
           'listUrl'               => $this->projectUrl(array('taskId' => $this->task->getId()), 'comment_list_by_task_ajax'),
@@ -224,58 +283,83 @@
         )); ?>
 
       </div>
-      
+
     </div>
-    
-  </article>    
+
+  </article>
 </section>
+
+<?php echo $this->partial('partials/dialog-confirm.phtml', array(
+  'title' => $this->t('Potwierdzenie'),
+  'message' => '<div>'. $this->t('Czy na pewno chcesz usunąć test') .':</div><div><span id="js_dialogConfirmItemName"></span></div>'
+)); ?>
+
+<script type="text/javascript">
+  dialogDeleteTestFromTask = {};
+  dialogDeleteTestFromTask.textButtonCancel = "<?php echo $this->t("Anuluj") ?>";
+  dialogDeleteTestFromTask.textButtonDelete = "<?php echo $this->t("Usuń") ?>";
+</script>
+
+<?php echo $this->partial('partials/dialog-confirm.phtml', array(
+  'id' => 'dialog-confirm-2',
+  'title' => $this->t('Potwierdzenie'),
+  'message' => '<div>'. $this->t('Czy na pewno chcesz usunąć tę relację') .'?</div>'
+)); ?>
+
+<script type="text/javascript">
+  dialogDeleteDefectFromTask = {};
+  dialogDeleteDefectFromTask.textButtonCancel = "<?php echo $this->t("Anuluj") ?>";
+  dialogDeleteDefectFromTask.textButtonDelete = "<?php echo $this->t("Usuń") ?>";
+</script>
 
 <?php echo $this->partial('popups/delete-tasks.phtml'); ?>
 <?php echo $this->partial('partials/task-test-tmpl.phtml', array(
             'taskUserPermission' => $this->taskUserPermission,
             'activeProject' => $this->activeProject,
             'task' => $this->task
-          )); ?>     
+          )); ?>
+
 <?php echo $this->partial('partials/task-defect-tmpl.phtml', array(
             'taskUserPermission' => $this->taskUserPermission,
             'activeProject' => $this->activeProject,
             'task' => $this->task
-          )); ?> 
+          )); ?>
 
 <?php echo $this->partial('partials/task-defect-internal-tmpl.phtml', array(
             'taskUserPermission' => $this->taskUserPermission,
             'activeProject' => $this->activeProject,
             'task' => $this->task
-          )); ?> 
+          )); ?>
 
 <script type="text/javascript">
 /* <![CDATA[ */
-  language.addTestToTaskMustFillField = '<?php echo $this->t('addTestToTaskMustFillField') ?>';  
+  language.addTestToTaskMustFillField = '<?php echo $this->t('addTestToTaskMustFillField') ?>';
   url.taskOtherTestView = '<?php echo $this->projectUrl(array('id' => 0), 'task_other_test_view')?>';
   url.taskTestCaseView = '<?php echo $this->projectUrl(array('id' => 0), 'task_test_case_view')?>';
   url.taskExploratoryTestView = '<?php echo $this->projectUrl(array('id' => 0), 'task_exploratory_test_view')?>';
   url.taskAutomaticTestView = '<?php echo $this->projectUrl(array('id' => 0), 'task_automatic_test_view')?>';
   url.taskChecklistView = '<?php echo $this->projectUrl(array('id' => 0), 'task_checklist_view')?>';
   url.deleteTestFromTask = '<?php echo $this->projectUrl(array('id' => 0), 'task_delete_test_ajax')?>';
-  
+  url.resolveTestFromTask = '<?php echo $this->projectUrl(array('id' => 0), 'task_test_resolve')?>';
+
   var autocompleteData = {
     url: '<?php echo $this->projectUrl(array(), 'test_list_ajax') ?>',
     textInputName: '#j_testName',
     dstName: '#j_testId'
   };
-  
+
   url.taskDefectView = '<?php echo $this->defectUrl('0', $this->bugTracker) ?>';
   url.deleteDefectFromTask = '<?php echo $this->projectUrl(array('id' => $this->task->getId(), 'defectId' => 0), 'task_delete_defect_ajax')?>';
-  
+
 <?php if ($this->bugTracker === null): ?>
-  language.addDefectToTaskMustFillField = '<?php echo $this->t('addDefectToTaskMustFillField') ?>';  
+  language.addDefectToTaskMustFillField = '<?php echo $this->t('addDefectToTaskMustFillField') ?>';
   var autocompleteData2 = {
     url: '<?php echo $this->projectUrl(array(), 'defect_list_ajax') ?>',
     textInputName: '#j_defectName',
     dstName: '#j_defectId'
   };
 <?php else: ?>
-  language.addDefectToTaskMustFillField = '<?php echo $this->t('addDefectToTaskMustFillFieldEx') ?>';  
+  language.addDefectToTaskMustFillField = '<?php echo $this->t('addDefectToTaskMustFillFieldEx') ?>';
   var autocompleteDataForDefect = {
     url: '<?php echo $this->projectUrl(array(), 'defect_info_ajax') ?>',
     textInputName: '#j_defectName',
@@ -283,8 +367,9 @@
     minLength: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? 1 : strlen($this->defectProjectPrefix($this->bugTracker)) + 2; ?>',
     projectPrefix: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? '' : $this->defectProjectPrefix($this->bugTracker).'-';?>'
   };
- <?php endif; ?>
-  
+<?php endif; ?>
   var defectTypeInternal = '<?php echo Application_Model_BugTrackerType::INTERNAL?>';
+  language.deleteDisableTestFromTask = '<?php echo $this->t('deleteDisableTestFromTask'); ?>';
 /* ]]> */
 </script>
+<?php echo $this->partial('partials/multi-select-js.phtml'); ?>

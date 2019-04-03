@@ -31,7 +31,12 @@ class Project_Model_ChecklistItemMapper extends Custom_Model_Mapper_Abstract
     
     $taskChecklistItemMapper = new Project_Model_TaskChecklistItemMapper();
     $taskTestMapper = new Project_Model_TaskTestMapper();
-    
+
+    if ($checklist->isNewVersion())
+    {
+      $checklist->setExtraData('itemIds', array_fill(0, count($checklist->getExtraData('itemIds')), 0));
+    }
+
     $itemIds = array_values($checklist->getExtraData('itemIds'));
     $itemNames = array_values($checklist->getExtraData('itemNames'));
     $newItemIds = array();

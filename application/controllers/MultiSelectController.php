@@ -43,6 +43,18 @@ class MultiSelectController extends Custom_Controller_Action_Application_Abstrac
     ));
     exit;
   }
+
+  public function uncheckAjaxAction()
+  {
+    $request = $this->getRequest();
+    $name = $request->getPost('name');
+    $itemId = $request->getPost('itemId');
+    if (isset($_SESSION['MultiSelect'][$name][$itemId]))
+    {
+      unset($_SESSION['MultiSelect'][$name][$itemId]);
+    }
+    exit;
+  }
   
   public function saveAjaxAction()
   {

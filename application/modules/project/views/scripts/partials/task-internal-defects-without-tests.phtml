@@ -1,0 +1,57 @@
+<?php if (count($this->defects)): ?>
+  <div id="j_defectContent">
+    <ul id="j_defectList" class="optionsList">
+        <?php foreach ($this->defects as $defect): ?>
+          <li id="j_defectItem_<?php echo $defect->getId() ?>_">
+            <div class="clearfixDashboard history">
+              <div class="testlist-l" title="<?php echo $this->escapeQuotes($defect->getExtraData('name')) ?>">
+                <p class="j_defectLink" key="<?php echo $defect->getExtraData('key') ?>">
+                    <?php if ($defect instanceof Application_Model_Defect): ?>
+                      <span class="issue issue_type_<?php echo $defect->getIssueType() ?>" title="<?php echo $this->typeT($defect->getIssueType(), 'ISSUE') ?>"></span>
+                      <a class="list_item_link"
+                         href="<?php echo $this->defectUrl($defect->getId(), $this->bugTracker, $this->task->getId()) ?>">
+                        <span
+                          class="object_nr"><?php echo $defect->getObjectNumber() ?></span> <?php echo $defect->getTitle() ?>
+                      </a>
+                    <?php else: ?>
+                      <a <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() !== Application_Model_BugTrackerType::INTERNAL) {
+                          echo 'target="_blank"';
+                      } ?> class="list_item_link"
+                           href="<?php echo $this->defectUrl($defect->getNo(), $this->bugTracker) ?>"><?php echo $this->escapeQuotes($defect->getExtraData('name')) ?></a>
+                    <?php endif; ?>
+                </p>
+                <p class="j_defectText"
+                   key="<?php echo $defect->getExtraData('key') ?>"><?php echo $this->escapeQuotes($defect->getExtraData('name')) ?></p>
+              </div>
+              <div class="testlist-r">
+                <!--
+              <span>
+                <?php echo $this->defectStatusTag($defect, $this->bugTracker) ?>
+              </span>
+              -->
+                <span>
+              <?php if ($defect instanceof Application_Model_Defect): ?>
+                  <?php echo $this->showDefectStatusIcon($defect) ?>
+              <?php endif ?>
+            </span>
+                  <?php if ($this->activeProject->isActive()
+                      && $this->taskUserPermission->isDefectModifyPermission()
+                      && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                    <a class="j_deleteDefectFromTask"
+                       href="<?php echo $this->projectUrl(array('id' => $this->task->getId(), 'defectId' => $defect->getId()), 'task_delete_defect_ajax') ?>"
+                       title="<?php echo $this->partialT('Usuń', 'task-internal-defects', 'project') ?>"><span
+                        aria-hidden="true" class="icon_close icon-15"></span></a>
+                  <?php endif; ?>
+              </div>
+            </div>
+          </li>
+        <?php endforeach; ?>
+    </ul>
+  </div>
+<?php endif; ?>
+<script type="text/javascript">
+  /* <![CDATA[ */
+  url.defectStatusAjax = '<?php echo $this->projectUrl(array(), 'defect_status_ajax') ?>';
+  language.defectNotExists = '<?php echo $this->generalT('Zgłoszenie nie istnieje.') ?>';
+  /* ]]> */
+</script>

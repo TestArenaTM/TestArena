@@ -34,6 +34,7 @@ class Project_Form_AddExploratoryTest extends Project_Form_AddOtherTest
       'filters'     => array('StringTrim'),
       'validators'  => array(
         'Int',
+        array('Between', false, array('min' => 1, 'max' => 999999999, 'inclusive' => true)),
         array('StringLength', false, array(0, 9, 'UTF-8'))
       )
     ));

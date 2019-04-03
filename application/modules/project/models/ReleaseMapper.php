@@ -44,7 +44,7 @@ class Project_Model_ReleaseMapper extends Custom_Model_Mapper_Abstract
       $list[] = $release;
     }
     
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
   public function getAllAjax(Zend_Controller_Request_Abstract $request)
@@ -536,6 +536,7 @@ class Project_Model_ReleaseMapper extends Custom_Model_Mapper_Abstract
     /**** Obiekt File ****/
     $file = new Application_Model_File();
     $file->setDates(1);
+    $file->setNameVisible($release->getName().' - '.$release->getExtraData('fileName').'_'.date('Ymd_His', strtotime($file->getCreateDate())));
     $file->setName($release->getName().' - '.$release->getExtraData('fileName').'_'.date('Ymd_His', strtotime($file->getCreateDate())), true);
     $file->setSubpath();
     $file->setDescription($release->getExtraData('fileDescription'));
@@ -660,5 +661,11 @@ class Project_Model_ReleaseMapper extends Custom_Model_Mapper_Abstract
     }
 
     return $release->setDbProperties($row->toArray());
+  }
+
+  public function getForPopulateById($id)
+  {
+    $result = $this->_getDbTable()->getForPopulateById($id);
+    return $result->toArray();
   }
 }

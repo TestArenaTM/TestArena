@@ -25,7 +25,11 @@ class Application_Model_Project extends Custom_Model_Standard_Abstract
   protected $_map = array(
     'create_date'               => 'createDate',
     'open_status_color'         => 'openStatusColor',
-    'in_progress_status_color'  => 'inProgressStatusColor'
+    'reopen_status_color'       => 'reopenStatusColor',
+    'closed_status_color'       => 'closedStatusColor',
+    'in_progress_status_color'  => 'inProgressStatusColor',
+    'invalid_status_color'      => 'invalidStatusColor',
+    'resolved_status_color'     => 'resolvedStatusColor'
   );
   
   private $_id                    = null;
@@ -36,6 +40,10 @@ class Application_Model_Project extends Custom_Model_Standard_Abstract
   private $_description           = null;
   private $_openStatusColor       = null;
   private $_inProgressStatusColor = null;
+  private $_closedStatusColor     = null;
+  private $_reopenStatusColor     = null;
+  private $_invalidStatusColor    = null;
+  private $_resolvedStatusColor   = null;
   
   private $_projectElements = array();  
   private $_releases = array();
@@ -76,6 +84,26 @@ class Application_Model_Project extends Custom_Model_Standard_Abstract
   public function getDescription()
   {
     return $this->_description;
+  }
+
+  public function getClosedStatusColor()
+  {
+    return $this->_closedStatusColor;
+  }
+
+  public function getInvalidStatusColor()
+  {
+    return $this->_invalidStatusColor;
+  }
+
+  public function getResolvedStatusColor()
+  {
+    return $this->_resolvedStatusColor;
+  }
+
+  public function getReopenStatusColor()
+  {
+    return $this->_reopenStatusColor;
   }
   
   public function getOpenStatusColor()
@@ -156,6 +184,18 @@ class Application_Model_Project extends Custom_Model_Standard_Abstract
     return $this;
   }
 
+  public function setClosedStatusColor($closedStatusColor)
+  {
+    $this->_closedStatusColor = $closedStatusColor;
+    return $this;
+  }
+
+  public function setReopenStatusColor($reopenStatusColor)
+  {
+    $this->_reopenStatusColor = $reopenStatusColor;
+    return $this;
+  }
+
   public function setOpenStatusColor($openStatusColor)
   {
     $this->_openStatusColor = $openStatusColor;
@@ -165,6 +205,18 @@ class Application_Model_Project extends Custom_Model_Standard_Abstract
   public function setInProgressStatusColor($inProgressStatusColor)
   {
     $this->_inProgressStatusColor = $inProgressStatusColor;
+    return $this;
+  }
+
+  public function setInvalidStatusColor($invalidStatusColor)
+  {
+    $this->_invalidStatusColor = $invalidStatusColor;
+    return $this;
+  }
+
+  public function setResolvedStatusColor($resolvedStatusColor)
+  {
+    $this->_resolvedStatusColor = $resolvedStatusColor;
     return $this;
   }
   

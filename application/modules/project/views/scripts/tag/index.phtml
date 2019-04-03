@@ -7,18 +7,19 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>  -->  
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <?php if ($this->activeProject->isActive()): ?>
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <?php if ($this->accessTagManagement): ?>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'tag_add').$this->filterRequestConditions();?>" ><?php echo $this->t('Dodaj tag') ?></a></li>
-        <?php endif; ?>
-      </ul>
-    </nav>
-    <?php endif; ?>
-
+      <?php if ($this->activeProject->isActive()): ?>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <?php if ($this->accessTagManagement): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'tag_add').$this->filterRequestConditions();?>" ><?php echo $this->t('Dodaj tag') ?></a></li>
+          <?php endif; ?>
+        </ul>
+      </nav>
+      <?php endif; ?>
+    </div>
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
       <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
       
@@ -46,7 +47,9 @@
           <tr>
             <th><?php echo $this->sortingControl('Nazwa', 'tag_name', 'sorting.phtml', $this->request) ?></th>
             <th><?php echo $this->sortingControl('Liczba zadań', 'tag_taskCount', 'sorting.phtml', $this->request) ?></th>
-            <th><?php echo $this->sortingControl('Liczba defektów', 'tag_defectCount', 'sorting.phtml', $this->request) ?></th>
+            <?php if ($this->showColumnDefectCount): ?>
+            <th><?php echo $this->sortingControl('Liczba zgłoszeń', 'tag_defectCount', 'sorting.phtml', $this->request) ?></th>
+            <?php endif ?>
             <?php if ($this->activeProject->isActive()): ?>
             <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
             <?php endif; ?>
@@ -55,12 +58,13 @@
         <tbody>
           <?php foreach ($this->tags as $tag): ?>
           <tr>
-            <td><a href="<?php echo $this->projectUrl(array('id' => $tag->getId()), 'tag_view') ?>"><?php echo $this->escapeQuotes($tag->getName()) ?></a></td>
+            <td><a href="<?php echo $this->projectUrl(array('id' => $tag->getId()), 'tag_view') ?>"><?php echo $this->spaceToEntity($this->escapeQuotes($tag->getName())) ?></a></td>
             <td class="t_number">
               <a href="<?php echo $this->projectUrl(array(), 'task_list').'?skipSavedFilter&tags='.$tag->getId() ?>">
                 <?php echo $tag->getExtraData('taskCount') ?>
               </a>
             </td>
+            <?php if ($this->showColumnDefectCount): ?>
             <td class="t_number">
               <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
                 <a href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&tags='.$tag->getId() ?>">
@@ -70,6 +74,7 @@
                 <?php echo $tag->getExtraData('defectCount') ?>
               <?php endif; ?>
             </td>
+            <?php endif ?>
             <?php if ($this->activeProject->isActive()): ?>
             <td>
               <?php if ($this->accessTagManagement): ?>
@@ -95,9 +100,8 @@
           <?php endforeach; ?>
         </tbody>
       </table>
-
+      <?php echo $this->partial('count-records-default.phtml', ['count' => $this->numberRecords]) ?>
       <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
-
     <?php else: ?>
       <div class="empty-text"><?php echo $this->t('Brak tagów') ?></div>
     <?php endif; ?>

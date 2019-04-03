@@ -1,7 +1,8 @@
 <section id="content" style="padding-top: 50px;">
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitleStep2') ?></h1>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitleStep2') ?></h1>
+    </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
         
         <div class="wizard-step" style="margin-bottom: 20px">
@@ -83,8 +84,10 @@
         <div class="formContainer" <?php if ($this->form->stepTwo->environments->getAttrib('disabled') == 'disabled'): ?>style="display: none"<?php endif;?>>
           <span>
             <?php echo $this->form->stepTwo->environments->renderViewHelper() ?>
+            <div class="help_content">
+              <span class="help item">?<div class="cloud"><?php echo $this->t('Środowiska - info') ?></div></span>
+            </div>
             <?php echo $this->formLabel('environments', $this->t('Środowiska')) ?>
-            <span class="help item">?<div class="cloud"><?php echo $this->t('Środowiska - info') ?></div></span>
             <?php foreach ($this->form->stepTwo->getErrors('environments') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
@@ -94,8 +97,10 @@
         <div class="formContainer" <?php if ($this->form->stepTwo->versions->getAttrib('disabled') == 'disabled'): ?>style="display: none"<?php endif;?>>
           <span>
             <?php echo $this->form->stepTwo->versions->renderViewHelper() ?>
+            <div class="help_content">
+              <span class="help item">?<div class="cloud"><?php echo $this->t('Wersje - info') ?></div></span>
+            </div>
             <?php echo $this->formLabel('versions', $this->t('Wersje')) ?>
-            <span class="help item">?<div class="cloud"><?php echo $this->t('Wersje - info') ?></div></span>
             <?php foreach ($this->form->stepTwo->getErrors('versions') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
@@ -104,7 +109,10 @@
 
         <div>
           <div><?php echo $this->form->stepTwo->step->renderViewHelper() ?></div>
-          <span id="save"><?php echo $this->form->submit ?></span>
+          <span id="save" class="button_send"><?php echo $this->form->submit ?></span>
+          <span class="j_cancel_button">
+             <a href="<?php echo $this->projectUrl(array(), 'release_list') ?>"><?php echo $this->generalT('Anuluj') ?></a>
+           </span>
         </div>
         <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
 

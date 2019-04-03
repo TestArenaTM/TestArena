@@ -127,12 +127,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     $frontController->setBaseUrl($config->baseUrl);
     
     $cache = Zend_Registry::get('cache');
-    
+
     if (!$routeConfig = $cache->load('routeConfig'))
     {
       $locale = new Zend_Locale($config->locale);
-      
-      $routeConfig = new Zend_Config_Xml(_APPLICATION_CONFIG_PATH.'/routing/'.$locale->getLanguage().'.xml', 'items');
+
+      $routeConfig = new Zend_Config_Xml(_APPLICATION_CONFIG_PATH.'/routing/en.xml', 'items');
       $cache->save($routeConfig, 'routeConfig', array(), 24 * 3600);
     }
 

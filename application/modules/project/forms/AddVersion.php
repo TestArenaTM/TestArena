@@ -41,14 +41,14 @@ class Project_Form_AddVersion extends Custom_Form_Abstract
     
     $this->addElement('text', 'name', array(
       'required'    => true,
-      'maxlength'   => 50,
+      'maxlength'   => 20,
       'filters'     => array('StringTrim'),
       'validators'  => array(
         'Name',
         array('UniqueVersionName', true, array(
           'criteria' => array('project_id' => $this->_projectId)
         )),
-        array('StringLength', false, array(2, 50, 'UTF-8'))
+        array('StringLength', false, array(2, 20, 'UTF-8'))
       )
     ));
     

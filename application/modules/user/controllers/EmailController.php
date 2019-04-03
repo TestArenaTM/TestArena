@@ -25,6 +25,12 @@ class User_EmailController extends Custom_Controller_Action_Application_Abstract
   public function preDispatch()
   {
     parent::preDispatch();
+    if (Zend_Registry :: get('config')->environment === 'demo' & $this->_user != null) {
+      if ($this->_user->getId() == '1')
+      {
+        throw new Custom_404Exception();
+      }
+    }
 	}
   
   private function _getChangeEmailForm()

@@ -23,6 +23,7 @@ The full text of the GPL is in the LICENSE file.
 class Administration_Form_AddResolution extends Custom_Form_Abstract
 {
   protected $_projectId;
+  protected $_backUrl;
   
   public function __construct($options = null)
   {
@@ -31,6 +32,7 @@ class Administration_Form_AddResolution extends Custom_Form_Abstract
       throw new Exception('Project id not defined in edit form');
     }
 
+    $this->_backUrl = $options['backUrl'];
     $this->_projectId = $options['projectId'];    
     parent::__construct($options);
   }
@@ -80,5 +82,7 @@ class Administration_Form_AddResolution extends Custom_Form_Abstract
       'salt'    => 'add_resolution',
       'timeout' => 600
     ));
+
+    $this->getElement('backUrl')->setValue($this->_backUrl);
   }
 }

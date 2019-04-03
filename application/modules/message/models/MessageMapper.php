@@ -166,6 +166,12 @@ class Message_Model_MessageMapper extends Custom_Model_Mapper_Abstract
   {
     return $this->_getDbTable()->checkValidThreadByUser($threadId, $user->getId());
   }
+
+  public function getUnreadMessageCountByUser(Application_Model_User $user)
+  {
+    return $this->_getDbTable()->getUnreadMessageCountByUser($user);
+  }
+
     
   public function prepareMessageRow($row)
   {

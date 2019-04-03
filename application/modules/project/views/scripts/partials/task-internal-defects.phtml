@@ -1,25 +1,65 @@
+<?php $defectIdLast = ''; ?>
 <?php if (count($this->defects)): ?>
-<div id="j_defectContent">
-  <ul id="j_defectList">
-    <?php foreach ($this->defects as $defect): ?>
-      <li id="j_defectItem_<?php echo $defect->getId() ?>">
-        <div class="clearfixDashboard history">
-          <div class="testlist-l" title="<?php echo $defect->getExtraData('name') ?>">
-            <a class="j_new_window" href="<?php echo $this->defectUrl($defect->getId(), $this->bugTracker) ?>"><span class="object_nr"><?php echo $defect->getObjectNumber() ?></span> <?php echo $defect->getTitle() ?></a>
-          </div>
-          <div class="testlist-r">
+  <div id="j_defectContent">
+    <ul id="j_defectList" class="optionsList">
+      <?php foreach ($this->defects as $defect): ?>
+        <?php if ($defectIdLast != $defect->getId()): ?>
+        <li id="j_defectItem_<?php echo $defect->getId() ?>_">
+          <div class="clearfixDashboard history">
+            <div class="testlist-l">
+              <span class="issue_type_<?php echo $defect->getIssueType() ?>" title="<?php echo $this->typeT($defect->getIssueType(), 'ISSUE') ?>"></span>
+              <a class="list_item_link" href="<?php echo $this->defectUrl($defect->getId(), $this->bugTracker, $this->task->getId()) ?>">
+                <span class="object_nr"><?php echo $defect->getObjectNumber() ?></span> <?php echo $defect->getTitle() ?>
+              </a>
+            </div>
+            <div class="testlist-r">
             <span>
               <?php echo $this->showDefectStatusIcon($defect) ?>
             </span>
-            <?php if ($this->activeProject->isActive() 
-                      && $this->taskUserPermission->isDefectModifyPermission()
-                      && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
-              <a class="j_deleteDefectFromTask" href="<?php echo $this->projectUrl(array('id' => $this->task->getId(), 'defectId' => $defect->getId()), 'task_delete_defect_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
-            <?php endif; ?>
-          </div>                   
-        </div>
-      </li>              
-    <?php endforeach; ?>
-  </ul>
-</div>
-<?php endif;
+              <?php if ($this->activeProject->isActive() && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                <?php if ((count($defect->getTests()) == 0)
+                  && $this->taskUserPermission->isDefectModifyPermission()):?>
+                  <a class="j_deleteDefectFromTask" data-defect-name="[<?php echo $defect->getObjectNumber() ?>] <?php echo $this->escapeQuotes($defect->getTitle()) ?>" href="<?php echo $this->projectUrl(array('id' => $this->task->getId(), 'defectId' => $defect->getId()), 'task_delete_defect_ajax') ?>" title="<?php echo $this->partialT('Usuń', 'task-internal-defects', 'project') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+                <?php else: ?>
+                  <span class="icon_close empty icon-15"></span>
+                <?php endif; ?>
+              <?php endif ?>
+            </div>
+          </div>
+        </li>
+        <?php endif ?>
+        <?php $defectIdLast = $defect->getId() ?>
+        <?php if (count($defect->getTests()) > 0): ?>
+          <?php foreach ($defect->getTests() as $test): ?>
+          <li class="option-clean" id="j_defectItem_<?php echo $defect->getId() ?>_<?php echo $test->getExtraData('task_test_id') ?>">
+            <div class="clearfixDashboard history">
+              <div class="testlist-l">
+                <span class="list_item_arrow"></span>
+                <a href="<?php echo $this->projectUrl(array('id' => $test->getExtraData('task_test_id')), $this->taskTestViewRouteName($test)) ?>">
+                  <span class="object_nr"><?php echo $this->activeProject->getPrefix() .'-'. $test->getOrdinalNo() ?></span> <?php echo $test->getName() ?>
+                </a>
+              </div>
+              <div
+              <div class="testlist-r">
+              <?php if (!empty($test->getExtraData('resolution_id'))): ?>
+                <?php echo $this->showResolutionIcon((new Application_Model_Resolution())->setId($test->getExtraData('resolution_id'))->setName($test->getExtraData('resolution_name'))->setColor($test->getExtraData('resolution_color'))) ?>
+              <?php else: ?>
+                <b><?php echo $this->generalT('Nierozwiązany') ?></b>
+              <?php endif ?>
+              <?php if ($this->activeProject->isActive()
+                && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                <?php if ($this->taskUserPermission->isDefectModifyPermission()): ?>
+                  <a class="j_deleteDefectFromTask" data-defect-name="[<?php echo $defect->getObjectNumber() ?>] <?php echo $this->escapeQuotes($defect->getTitle()) ?>" href="<?php echo $this->projectUrl(array('taskTestId' => $test->getExtraData('task_test_id'), 'defectId' => $defect->getId()), 'task_test_delete_defect_ajax') ?>" title="<?php echo $this->partialT('Usuń', 'task-internal-defects', 'project') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+                <?php else: ?>
+                  <span class="icon_close empty icon-15"></span>
+                <?php endif ?>
+              <?php endif ?>
+              </div>
+            </div>
+          </li>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+<?php endif; ?>

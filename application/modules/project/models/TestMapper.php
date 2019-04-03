@@ -45,12 +45,12 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
       $list[$test->getId()] = $test;
     }
     
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
-  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  public function getAllIds(Zend_Controller_Request_Abstract $request, $userId = null)
   {
-    $rows = $this->_getDbTable()->getAllIds($request);    
+    $rows = $this->_getDbTable()->getAllIds($request, $userId);
     $list = array();
     
     foreach ($rows->toArray() as $row)
@@ -109,6 +109,18 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     }
     
     return $test;
+  }
+
+  public function getForValid(Application_Model_Test $test)
+  {
+    $row = $this->_getDbTable()->getForValid($test->getId(), $test->getProjectId());
+
+    if (null === $row)
+    {
+      return false;
+    }
+
+    return $test->setDbProperties($row->toArray());
   }
   
   public function getForView(Application_Model_Test $test)
@@ -396,7 +408,7 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
       return $adapter->commit();
     }
     catch (Exception $e)
-    {echo $e->getTraceAsString();die;
+    {
       Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
       $adapter->rollback();
       return false;
@@ -822,17 +834,33 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     }
     
     $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
     
-    $data = array(
-      'status' => Application_Model_TestStatus::DELETED
-    );
+    try
+    {
+      $adapter->beginTransaction();
+      $data = array(
+        'status' => Application_Model_TestStatus::DELETED
+      );
     
-    $where = array(
-      'id = ?'      => $test->getId(),
-      'project_id'  => $test->getProjectId()
-    );
+      $where = array(
+        'id = ?'      => $test->getId(),
+        'project_id'  => $test->getProjectId()
+      );
     
-    return $db->update($data, $where) == 1;
+      $db->update($data, $where);
+      
+      $attachemntMapper = new Project_Model_AttachmentMapper();
+      $attachemntMapper->deleteByTest($test);
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
   }
   
   public function deleteByIds(array $testIds)
@@ -843,17 +871,33 @@ class Project_Model_TestMapper extends Custom_Model_Mapper_Abstract
     }
     
     $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
     
-    $data = array(
-      'status' => Application_Model_TestStatus::DELETED
-    );
+    try
+    {
+      $adapter->beginTransaction();
+
+      $data = array(
+        'status' => Application_Model_TestStatus::DELETED
+      );
     
-    $where = array(
-      'id IN(?)'  => $testIds
-    );
+      $where = array(
+        'id IN(?)'  => $testIds
+      );
     
-    $db->update($data, $where);
-    return true;
+      $db->update($data, $where);
+      
+      $attachemntMapper = new Project_Model_AttachmentMapper();
+      $attachemntMapper->deleteByTestIds($testIds);
+      
+      return $adapter->commit();
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollback();
+      return false;
+    }
   }
   
   public function getByIds4CheckAccess(array $ids)

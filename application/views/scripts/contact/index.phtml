@@ -1,7 +1,8 @@
 <section id="content">
   <article class="article_in_content<?php if (!isset($this->authUser)): ?> full<?php endif; ?>">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
 
         <div class="formContainer full">
@@ -9,7 +10,10 @@
             <?php echo $this->form->name->renderViewHelper() ?>
             <?php echo $this->formRequiredLabel('name', $this->t('Nazwa')) ?>
                         <?php foreach ($this->form->getErrors('name') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->name->getValidator('StringLength')->getMin(),
+                'max' => $this->form->name->getValidator('StringLength')->getMax()
+              )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>
@@ -19,7 +23,10 @@
             <?php echo $this->form->email->renderViewHelper() ?>
             <?php echo $this->formRequiredLabel('email', $this->t('Adres e-mail')) ?>
                         <?php foreach ($this->form->getErrors('email') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+                          <div class="error_msg"><?php echo $this->errorT($error, array(
+                              'min' => $this->form->email->getValidator('StringLength')->getMin(),
+                              'max' => $this->form->email->getValidator('StringLength')->getMax()
+                            )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>
@@ -28,8 +35,11 @@
           <span>
             <?php echo $this->form->subject->renderViewHelper() ?>
             <?php echo $this->formRequiredLabel('subject', $this->t('Temat')) ?>
-                        <?php foreach ($this->form->getErrors('subject') as $error): ?>
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php foreach ($this->form->getErrors('subject') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                  'min' => $this->form->subject->getValidator('StringLength')->getMin(),
+                  'max' => $this->form->subject->getValidator('StringLength')->getMax()
+                )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>

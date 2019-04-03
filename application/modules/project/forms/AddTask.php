@@ -69,22 +69,13 @@ class Project_Form_AddTask extends Custom_Form_Abstract
       ),
     ));
     
-    $this->addElement('text', 'releaseName', array(
+    $this->addElement('text', 'releaseId', array(
       'required'  => false,
       'class'     => 'autocomplete',
       'maxlength' => 255,
       'value'     => ''
     ));
-    
-    $this->addElement('hidden', 'releaseId', array(
-      'required'    => false,
-      'value'       => '',
-      'validators'  => array(
-        'Id',
-        array('ReleaseExists', true)
-      )
-    ));
-    
+
     $this->addElement('text', 'environments', array(
       'required'   => true,
       'class'      => 'autocomplete', 
@@ -129,6 +120,7 @@ class Project_Form_AddTask extends Custom_Form_Abstract
     $this->addElement('text', 'dueDate', array(
       'required'    => true,
       'maxlength'   => 16,
+      'autocomplete' => 'off',
       'class'       => 'j_datetime',
       'filters'     => array('StringTrim'),
       'validators'  => array(
@@ -222,7 +214,26 @@ class Project_Form_AddTask extends Custom_Form_Abstract
     
     return json_encode($result);
   }
-  
+
+  public function prePopulateRelease(array $release)
+  {
+
+    $result = array();
+    $htmlSpecialCharsFilter = new Custom_Filter_HtmlSpecialCharsDefault();
+
+    if (count($release) > 0)
+    {
+      foreach($release as $value)
+      {
+        $result[] = array(
+          'name' => $htmlSpecialCharsFilter->filter($value['name']),
+          'id'   => $value['id']
+        );
+      }
+    }
+    return json_encode($result);
+  }
+
   public function prePopulateTags(array $tags)
   {
     $result = array();
@@ -347,7 +358,7 @@ class Project_Form_AddTask extends Custom_Form_Abstract
         $this->addElement('hidden', $key, array(
           'required'  => false,
           'belongsTo' => 'attachmentNames',
-          'value'     => $file->getFullName(),
+          'value'     => $file->getFullNameVisible(),
           'class'     => 'j_attachmentName'
         ));
         $result[$key] = $this->getValue($key);
@@ -371,5 +382,10 @@ class Project_Form_AddTask extends Custom_Form_Abstract
   public function getTags()
   {
     return explode(',', $this->getValue('tags'));
+  }
+
+  public function getRelease()
+  {
+    return !empty($this->getValue('releaseId')) ? $this->getValue('releaseId') : '';
   }
 }

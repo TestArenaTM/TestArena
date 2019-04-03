@@ -12,14 +12,14 @@
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
 
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
-
+        <?php /* wygląda, że jest to zbędna pozostałość - ten fragment powoduje błędy w php 7
           <div>
             <?php echo $this->form->project->renderViewHelper() ?>
             <?php foreach ($this->form->getErrors('project') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
           </div>
-          
+        */ ?>
         <div class="formContainer full">
           <span>
             <?php echo $this->form->name->renderViewHelper() ?>

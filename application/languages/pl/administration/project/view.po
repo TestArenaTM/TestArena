@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-01-26 14:54+0100\n"
+"PO-Revision-Date: 2018-06-27 09:17+0200\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.0.8\n"
 
 msgid "pageTitle"
 msgstr "Właściwości projektu"
@@ -32,11 +32,8 @@ msgstr "Status"
 msgid "Data utworzenia"
 msgstr "Data utworzenia"
 
-msgid "Kolor dla statusów OPEN i REOPEN"
-msgstr "Kolor dla statusów \"__open__\" i \"__reopen__\""
-
-msgid "Kolor dla statusu IN_PROGRESS"
-msgstr "Kolor dla statusu \"__inProgress__\""
+msgid "Kolory dla statusów"
+msgstr "Kolory dla statusów"
 
 msgid "Edytuj"
 msgstr "Edytuj"
@@ -85,3 +82,21 @@ msgstr "Akcje"
 
 msgid "Dodaj/usuń użytkowników"
 msgstr "Dodaj/usuń użytkowników"
+
+msgid "Kolor dla statusu OPEN"
+msgstr "Kolor dla statusu \"__open__\""
+
+msgid "Kolor dla statusu REOPEN"
+msgstr "Kolor dla statusu \"__reopen__\""
+
+msgid "Kolor dla statusu CLOSED"
+msgstr "Kolor dla statusu \"__closed__\""
+
+msgid "Kolor dla statusu IN_PROGRESS"
+msgstr "Kolor dla statusu \"__inProgress__\""
+
+msgid "Statusy rozwiązań zgłoszeń"
+msgstr "Statusy rozwiązań zgłoszeń"
+
+msgid "Statusy rozwiązań zadań"
+msgstr "Statusy rozwiązań zadań"

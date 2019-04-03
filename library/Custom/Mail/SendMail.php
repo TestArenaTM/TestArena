@@ -28,9 +28,10 @@ class Custom_Mail_SendMail
     {
       $dir = Zend_Registry :: get('config')->mail->phpmailerPath;
 
-      Zend_Loader::loadFile('class.phpmailer.php', $dir, true);
+      Zend_Loader::loadFile('PHPMailer.php', $dir, true);
+      Zend_Loader::loadFile('SMTP.php', $dir, true);
 
-      $mail             = new PHPMailer(true);
+      $mail             = new PHPMailer\PHPMailer\PHPMailer(true);
       $mail->CharSet    = Zend_Registry :: get('config')->mail->charset;
 
       if ( Zend_Registry :: get('config')->mail->smtp->is_smtp )

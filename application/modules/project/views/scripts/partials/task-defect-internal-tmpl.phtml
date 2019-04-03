@@ -1,19 +1,25 @@
 <script id="j_taskDefectInternalItemTmpl" type="text/x-jquery-tmpl">
-<li id="j_defectItem_${id}">
+<li id="j_defectItem_${itemId}">
   <div class="clearfixDashboard history">
     <div class="testlist-l" title="${name}">
-      <a href="${viewUrl}"><span class="object_nr">${objectNumber}</span> ${name}</a>
+      <span class="issue_type_${issueType}" title="${issueTypeTitle}"></span>
+      <a class="list_item_link" href="${viewUrl}"><span class="object_nr">${objectNumber}</span> ${name}</a>
     </div>
     <div class="testlist-r">
+      <!--
       <span>
-        <span class="statusIcon defectStatus_${rowStatus}" title="${status}"></span>
+        <strong>${status}</strong>
       </span>
-      <?php if ($this->activeProject->isActive() 
-                      && $this->taskUserPermission->isDefectModifyPermission()
-                      && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
-        <a class="j_deleteDefectFromTask" href="${deleteUrl}" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+      -->
+      <span>
+        <span class="statusIcon defectStatus_${rowStatus}" style="background: ${statusColor}" title="${status}"></span>
+      </span>
+      <?php if ($this->activeProject->isActive()
+    && $this->taskUserPermission->isDefectModifyPermission()
+    && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
+        <a class="j_deleteDefectFromTask" data-defect-name="[${objectNumber}] ${name}" href="${deleteUrl}" title="<?php echo $this->partialT('Usuń', 'task-defect-internal-tmpl', 'project') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
       <?php endif; ?>
-    </div>                   
+    </div>
   </div>
 </li>
 </script>

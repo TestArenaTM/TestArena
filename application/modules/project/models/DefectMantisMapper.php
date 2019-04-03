@@ -23,6 +23,25 @@ The full text of the GPL is in the LICENSE file.
 class Project_Model_DefectMantisMapper extends Custom_Model_Mapper_Abstract
 {
   protected $_dbTableClass = 'Project_Model_DefectMantisDbTable';
+
+  public function getByTaskTest(Application_Model_TaskTest $taskTest, Application_Model_ProjectBugTracker $projectBugTracker)
+  {
+    $rows = $this->_getDbTable()->getByTaskTest($taskTest->getId(), $projectBugTracker->getBugTrackerId());
+
+    if (empty($rows))
+    {
+      return array();
+    }
+
+    $list = array();
+
+    foreach ($rows->toArray() as $row)
+    {
+      $list[] = new Application_Model_DefectMantis($row);
+    }
+
+    return $list;
+  }
   
   public function getByTask(Application_Model_Task $task, Application_Model_ProjectBugTracker $projectBugTracker)
   {
@@ -34,12 +53,28 @@ class Project_Model_DefectMantisMapper extends Custom_Model_Mapper_Abstract
     }
     
     $list = array();
-    
+
     foreach ($rows->toArray() as $row)
     {
-      $list[] = new Application_Model_DefectMantis($row);
+      $key = $row['id'] . !empty($row['test_id']) .'_';
+
+      if (!array_key_exists($key, $list))
+      {
+        $list[$key] = new Application_Model_DefectJira($row);
+      }
+
+      if (!empty($row['test_id']))
+      {
+        $test = new Application_Model_Test();
+        $test->setId($row['test_id']);
+        $test->setType($row['test_type']);
+        $test->setName($row['test_name']);
+        $test->setOrdinalNo($row['test_ordinal_no']);
+        $test->setExtraData('task_test_id', $row['task_test_id']);
+        $list[$key]->addTestObject($test);
+      }
     }
-    
+
     return $list;
   }
   

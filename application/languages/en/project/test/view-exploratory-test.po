@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-07-11 13:54+0200\n"
+"PO-Revision-Date: 2018-10-03 12:56+0200\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.1.1\n"
 
 msgid "pageTitle"
 msgstr "Exploratory test"
@@ -46,3 +46,37 @@ msgstr "Clone"
 
 msgid "Usuń"
 msgstr "Delete"
+
+# tasks list
+msgid "Nr obiektu"
+msgstr "Object number"
+
+msgid "Tytuł"
+msgstr "Title"
+
+msgid "Wydanie"
+msgstr "Release"
+
+msgid "Brak zadań"
+msgstr "Brak zadań"
+
+msgid "Zadania"
+msgstr "Tasks"
+
+msgid "Filtr priorytet"
+msgstr "Priority"
+
+msgid "Priorytet"
+msgstr "P"
+
+msgid "Termin realizacji"
+msgstr "Deadline"
+
+msgid "Przypisał"
+msgstr "Assigned by"
+
+msgid "Przypisane do"
+msgstr "Assigned to"
+
+msgid "Przekroczony termin realizacji"
+msgstr "Deadline missed"

@@ -61,6 +61,7 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
     $this->_helper->layout->setLayout('empty');
     $this->view->directorySeparator = self::DIRECTORY_SEPARATOR;
     $this->view->mode = $this->getRequest()->getParam('mode', 0);
+    $this->view->maxFileSize = Zend_Registry::get('config')->get('max_file_size');
   }
   
   public function directoryListAjaxAction()
@@ -73,18 +74,23 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
   private function _getDirectoriesTree($directory)
   {
     $list = array();
-    
+
     foreach (glob($directory.'*', GLOB_ONLYDIR) as $directory)
     {
       $directory .= DIRECTORY_SEPARATOR;
       $info = pathinfo($directory);
       $info['dirname'] = str_replace(array('/', '\\'), self::DIRECTORY_SEPARATOR, $info['dirname']);
-      $info['dirname'] = trim(substr($info['dirname'], $this->_projectPathLength,  mb_strlen($info['dirname'], 'UTF-8') - $this->_projectPathLength), self::DIRECTORY_SEPARATOR)."\n";
+      $info['dirname'] = trim(mb_substr($info['dirname'], $this->_projectPathLength,  mb_strlen($info['dirname'], "UTF-8") - $this->_projectPathLength, "UTF-8"), self::DIRECTORY_SEPARATOR)."\n";
       $info['dirname'] = self::DIRECTORY_SEPARATOR.trim($info['dirname']);
 
       foreach ($info as $k => $v)
       {
-        $info[$k] = iconv($this->_fileSystemEncoding, 'UTF-8', $v);
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+          $info[$k] = $v;
+        } else {
+          $info[$k] = iconv($this->_fileSystemEncoding, 'UTF-8', $v);
+        }
+
       }
 
       $info['items'] = $this->_getDirectoriesTree($directory); 
@@ -97,32 +103,45 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
   public function fileListAjaxAction()
   {
     $subpath = $this->_getClearPath();
-    $fsPath = iconv('UTF-8', $this->_fileSystemEncoding, $subpath);
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+      $fsPath = $subpath;
+    } else {
+      $fsPath = iconv('UTF-8', $this->_fileSystemEncoding, $subpath);
+    }
     $list = array('directories' => array(), 'files' => array());
     $fileMapper = new Project_Model_FileMapper();
-    $files = $fileMapper->getBasicListBySubpath($subpath);
+    $files = $fileMapper->getBasicListBySubpath($this->_project, $subpath);
+    $filesForSort = $files;
 
     foreach (glob($this->_getFullPath($fsPath).'*') as $fullPath)
     {
       if (is_dir($fullPath))
       {
         $info = pathinfo($fullPath);
-        $list['directories'][] = iconv($this->_fileSystemEncoding, 'UTF-8', $info['basename']);
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+        {
+          $list['directories'][] = $info['basename'];
+        }
+        else
+        {
+          $list['directories'][] = iconv($this->_fileSystemEncoding, 'UTF-8', $info['basename']);
+        }
       }
       else
       {
         $info = pathinfo($fullPath);
-        $info['basename'] = iconv($this->_fileSystemEncoding, 'UTF-8', $info['basename']);
-        
+        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+          $info['basename'] = iconv($this->_fileSystemEncoding, 'UTF-8', $info['basename']);
+        }
         if (array_key_exists($info['basename'], $files))
         {
           $file = $files[$info['basename']];
           unset($files[$info['basename']]);
-          
-          $list['files'][] = array(
+
+          $list['files'][$file->getFullName()] = array(
             'id'        => $file->getId(),
-            'fullname'  => $file->getFullName(),
-            'name'      => $file->getName(),
+            'fullname'  => $file->getFullNameVisible(),
+            'name'      => $file->getNameVisible(),
             'extension' => $file->getExtension()
           );
         }
@@ -132,6 +151,14 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
         }
       }
     }
+
+    // sort files
+    $fileList = array();
+    foreach ($filesForSort as $file)
+    {
+      $fileList[] = $list['files'][$file->getFullName()];
+    }
+    $list['files'] = $fileList;
 
     if (count($files) > 0)
     {
@@ -153,14 +180,26 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
   {
     $info = pathinfo($fileName);
     $file = new Application_Model_File();
+    $file->setProjectObject($this->_project);
     $file->setDates();
     $file->setProjectObject($this->_project);
-    $file->setName($info['filename']);
+    $file->setName(md5(mt_rand() . microtime()));
+    $file->setNameVisible($info['filename']);
     $file->setExtension($info['extension']);
     $file->setSubpath($subpath);
-    $filePath = $file->getFullPath(true);
-    
-    if (!in_array($file->getExtension(), array('jpg', 'jpeg', 'png', 'gif', 'doc', 'xls', 'csv', 'txt', 'xml', 'html', 'pdf')))
+    if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
+      $filePath = $file->getFullPath(false);
+    } else {
+      $filePath = $file->getFullPath(true);
+    }
+
+
+    if (preg_match('/[<>&]+/', $fileName))
+    {
+      return  'NAME_OF_FILE_ADDED_IS_INCORRECT';
+    }
+
+    if (!in_array(strtolower($file->getExtension()), array('jpg', 'jpeg', 'png', 'gif', 'doc', 'docx', 'xls', 'xlsx', 'odt', 'ods', 'csv', 'txt', 'xml', 'html', 'pdf')))
     {
       return 'FORBIDDEN_EXTENSION';
     }
@@ -168,13 +207,19 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
     {
       return 'FILE_EXISTS';
     }
-    
+
     move_uploaded_file($srcFullPath, $filePath);
+
     $fileMapper = new Project_Model_FileMapper();
     
     if (!$fileMapper->exists($file))
     {
+
       return $fileMapper->add($file);
+    }
+    else
+    {
+      return 'FILE_EXISTS';
     }
 
     return true;
@@ -201,9 +246,14 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
           $status = $this->_addFile($_FILES['file']['tmp_name'], $subpath, $_FILES['file']['name']);
 
           if ($status === false)
-          {echo 'ERROR';
+          {
             $result['status'] = 'ERROR';
             $result['fileNames']['error'][] = $_FILES['file']['name'];
+          }
+          elseif ($status === 'NAME_OF_FILE_ADDED_IS_INCORRECT')
+          {
+            $result['status'] = 'ERROR';
+            $result['fileNames']['nameIsIncorrect'][] = $_FILES['file']['name'];
           }
           elseif ($status === 'FILE_EXISTS')
           {
@@ -228,6 +278,11 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
             {
               $result['status'] = 'ERROR';
               $result['fileNames']['error'][] = $_FILES['file']['name'][$i];
+            }
+            elseif ($status == 'NAME_OF_FILE_ADDED_IS_INCORRECT')
+            {
+              $result['status'] = 'ERROR';
+              $result['fileNames']['nameIsIncorrect'][] = $_FILES['file']['name'][$i];
             }
             elseif ($status == 'FILE_EXISTS')
             {
@@ -269,12 +324,18 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
 
     if (!empty($subpath))
     {
+      /*
+      if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+        $fullPath = $this->_getFullPath($subpath);
+      } else {
+        $fullPath = iconv('UTF-8', $this->_fileSystemEncoding, $this->_getFullPath($subpath));
+      }
+    */
       $fullPath = iconv('UTF-8', $this->_fileSystemEncoding, $this->_getFullPath($subpath));
-      
-      if (file_exists($fullPath)) 
+      if (file_exists($fullPath))
       {
         $fileMapper = new Project_Model_FileMapper();
-        $files = $fileMapper->getListConstainingSubpath($subpath);
+        $files = $fileMapper->getListContainingSubpath($this->_project, $subpath);
 
         if ($files !== false && count($files) > 0)
         {
@@ -398,27 +459,44 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
 
     $newFile = new Application_Model_File();
     $newFile->setProjectObject($this->_project);
-    $newFile->setName(urldecode($this->getRequest()->getPost('newName')));
+    $newFile->setNameVisible(urldecode($this->getRequest()->getPost('newName')));
     $newFile->setSubpath($oldFile->getSubpath());
     $newFile->setExtension($oldFile->getExtension());
 
-    if ($newFile->getName() === null)
+    $stringLength = new Zend_Validate_StringLength();
+    $stringLength->setMax(64);
+    $fileName = rawurldecode($this->getRequest()->getPost('newName'));
+    if (!$stringLength->isValid($fileName))
+    {
+      $t = new Custom_Translate();
+      $error =  array('message' => $t->translate('stringLengthTooLong', array('max' => $stringLength->getMax()), 'error'));
+      echo json_encode($error);
+      exit;
+    }
+
+    if (preg_match('/[<>&]+/', $fileName))
+    {
+      echo 'FILE_NAME_IS_INCORRECT';
+      exit;
+    }
+
+    if ($newFile->getNameVisible() === null)
     {
       echo 'FILE_NOT_EXISTS';
+      exit;
     }
-    elseif (file_exists($newFile->getFullPath(true)))
+
+    $fileMapper = new Project_Model_FileMapper();
+    if ($fileMapper->exists($newFile))
     {
       echo 'DESTINATION_FILE_ALREADY_EXISTS';
+      exit;
     }
-    else
-    {
-      $fileMapper = new Project_Model_FileMapper();
-      $fileMapper->rename($oldFile, $newFile);
-      rename($oldFile->getFullPath(true), $newFile->getFullPath(true));
-      echo 'OK';
-    }
-    
+
+    $fileMapper->rename($oldFile, $newFile);
+    echo 'OK';
     exit();
+
   }
   
   public function renameDirectoryAction()
@@ -431,20 +509,28 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
       $fullPath = iconv('UTF-8', $this->_fileSystemEncoding, $this->_getFullPath($subpath));
       $newFullPath = iconv('UTF-8', $this->_fileSystemEncoding, $this->_getFullPath($newSubpath));
 
-      if (!file_exists($fullPath) || !is_dir($fullPath))
+      if (preg_match('/[<>&]+/', $newFullPath))
       {
-        echo 'DIRECTORY_NOT_EXISTS';
-      }
-      elseif (file_exists($newFullPath))
-      {
-        echo 'DESTINATION_DIRECTORY_ALREADY_EXISTS';
+        echo 'DIRECTORY_NAME_IS_ICORRECT';
       }
       else
-      {
-        $fileMapper = new Project_Model_FileMapper();
-        $fileMapper->renameDirectory($subpath, $newSubpath);
-        rename($fullPath, $newFullPath);
-        echo 'OK';
+        {
+
+        if (!file_exists($fullPath) || !is_dir($fullPath))
+        {
+          echo 'DIRECTORY_NOT_EXISTS';
+        }
+        elseif (file_exists($newFullPath))
+        {
+          echo 'DESTINATION_DIRECTORY_ALREADY_EXISTS';
+        }
+        else
+        {
+          $fileMapper = new Project_Model_FileMapper();
+          $fileMapper->renameDirectory($this->_project, $subpath, $newSubpath);
+          rename($fullPath, $newFullPath);
+          echo 'OK';
+        }
       }
     }
     
@@ -457,11 +543,18 @@ class Project_FileBrowserController extends Custom_Controller_Action_Application
 
     if (!empty($path))
     {
-      $path = iconv('UTF-8', $this->_fileSystemEncoding, $this->_getFullPath($path));
+      if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+      {
+        $path = $this->_getFullPath($path);
+      }
+      else
+      {
+        $path = iconv('UTF-8', $this->_fileSystemEncoding, $this->_getFullPath($path));
+      }
 
       if (!file_exists($path)) 
       {
-        if (!@mkdir($path) || preg_match('/[<>]+/', $path))
+        if (preg_match('/[<>&]+/', $path) || !@mkdir($path))
         {
           echo 'DIRECTORY_NAME_IS_ICORRECT';
         }

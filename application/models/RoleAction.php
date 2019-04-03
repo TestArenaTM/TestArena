@@ -30,6 +30,7 @@ class Application_Model_RoleAction extends Custom_Model_Dictionary_Abstract
   const VERSION_MANAGEMENT                   = 5;//
   const ENVIRONMENT_MANAGEMENT               = 6;//
   const TAG_MANAGEMENT                       = 40;//
+  const EXTENDING_PROJECT_STATISTIC          = 41;
   
   const TASK_ADD                             = 7;//
   const TASK_ASSIGN_ALL                      = 8;//
@@ -68,6 +69,7 @@ class Application_Model_RoleAction extends Custom_Model_Dictionary_Abstract
   const TASK_DEFECT_MODIFY_CREATED_BY_YOU    = 39;//
   
   protected $_names = array(
+    self::EXTENDING_PROJECT_STATISTIC          => 'EXTENDING_PROJECT_STATISTIC',
     self::PROJECT_ATTACHMENT                   => 'PROJECT_ATTACHMENT',
     self::PROJECT_STATUS                       => 'PROJECT_STATUS',
     self::REPORT_GENERATE                      => 'REPORT_GENERATE',

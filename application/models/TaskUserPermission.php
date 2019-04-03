@@ -69,10 +69,7 @@ class Application_Model_TaskUserPermission extends Custom_Model_UserPermission_A
   {
     if ($this->_checkAuthorPermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_CREATED_BY_YOU)
           || $this->_checkAssigneePermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_ASSIGNED_TO_YOU)
-          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL)
-          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_EDIT_ALL)
-          || $this->_checkAuthorPermission(Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU)
-          || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU))
+          || $this->_checkAllPermission(Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL))
     {
       return true;
     }
@@ -82,10 +79,7 @@ class Application_Model_TaskUserPermission extends Custom_Model_UserPermission_A
   
   public function isAssignPermission()
   {
-    if ($this->_checkAllPermission(Application_Model_RoleAction::TASK_ASSIGN_ALL)
-      || $this->_checkAllPermission(Application_Model_RoleAction::TASK_EDIT_ALL)
-      || $this->_checkAuthorPermission(Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU)
-      || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU))
+    if ($this->_checkAllPermission(Application_Model_RoleAction::TASK_ASSIGN_ALL))
     {
       return true;
     }

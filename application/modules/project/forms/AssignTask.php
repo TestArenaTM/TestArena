@@ -54,12 +54,12 @@ class Project_Form_AssignTask extends Custom_Form_Abstract
     ));
     
     $this->addElement('textarea', 'comment', array(
-      'maxlength'   => 160,
+      'maxlength'   => Application_Model_Comment::MAX_CONTENT_LENGTH,
       'required'    => false,
       'filters'     => array('StringTrim'),
       'validators'  => array(
         'SimpleText',
-        array('StringLengthOneCharacterLineBreaks', false, array(1, 160, 'UTF-8')),
+        array('StringLengthOneCharacterLineBreaks', false, array(1, Application_Model_Comment::MAX_CONTENT_LENGTH, 'UTF-8')),
       ),
     ));
     

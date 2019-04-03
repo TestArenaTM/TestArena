@@ -1,0 +1,83 @@
+<div>
+  <h5 class="break_page"><span aria-hidden="true" class="icon_ul icon-20"></span><?php echo $this->t('Zadania') ?></h5>
+    <div class="search_filter">
+      <form method="<?php echo $this->filterForm->getMethod() ?>" name="<?php echo $this->filterForm->getName() ?>" class="form-auto-sumbit filter">
+        <div class="filter">
+          <div class="textLabelEditor_text"><?php echo $this->partialT('Wydania', 'test/tasks', 'project') ?>: </div>
+          <div class="custom-select-xsmall"><?php echo $this->filterForm->release->renderViewHelper() ?></div>
+        </div>
+      </form>
+      <script type="text/javascript">
+        /* <![CDATA[ */
+        var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
+        var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;
+        /* ]]> */
+      </script>
+    </div>
+  <?php if (count($this->tasksList) > 0): ?>
+    <table style="margin: 0px;">
+      <thead>
+      <tr>
+        <th style="width: 80px;">
+          <?php echo $this->sortingControl('Nr obiektu', 'task_ordinal_no', 'sorting.phtml', $this->request) ?>
+        </th>
+        <th><?php echo $this->sortingControl('Tytuł', 'task_title', 'sorting.phtml', $this->request) ?></th>
+        <th class="attachment_column"></th>
+        <th
+          title="<?php echo $this->t('Filtr priorytet') ?>"><?php echo $this->sortingControl('Priorytet', 'task_priority', 'sorting.phtml', $this->request) ?></th>
+        <th><?php echo $this->sortingControl('Wydanie', $this->createSortedFieldName('task', 'name', array('release')), 'sorting.phtml', $this->request) ?></th>
+        <th><?php echo $this->sortingControl('Data utworzenia', 'task_create_date', 'sorting.phtml', $this->request) ?></th>
+        <th><?php echo $this->sortingControl('Termin realizacji', 'task_due_date', 'sorting.phtml', $this->request) ?></th>
+        <th class="hideForLaptop"><?php echo $this->sortingControl('Przypisał', $this->createSortedFieldName('task', 'name', array('assigner')), 'sorting.phtml', $this->request) ?></th>
+        <th><?php echo $this->sortingControl('Przypisane do', $this->createSortedFieldName('task', 'name', array('assignee')), 'sorting.phtml', $this->request) ?></th>
+      </tr>
+      </thead>
+      <tbody>
+      <?php foreach ($this->tasksList as $task): ?>
+      <?php if ($task->getStatusId() != Application_Model_TaskStatus::CLOSED && strtotime($task->getDueDate()) < strtotime('now')): ?>
+      <tr class="exceededDueDate">
+        <?php else: ?>
+      <tr>
+        <?php endif; ?>
+        <td class="t_object_number">
+          <?php echo $this->escapeQuotes($task->getObjectNumber()) ?>
+        </td>
+        <td class="title_task_max">
+          <?php echo $this->showTaskStatusIcon($task) ?>
+          <a href="<?php echo $this->projectUrl(array('id' => $task->getId()), 'task_view') ?>">
+            <?php echo $this->escapeQuotes($task->getTitle()) ?>
+          </a>
+        </td>
+        <td>
+          <?php if ($task->getExtraData('attachmentCount') > 0): ?>
+            <span class="icon_link_alt icon-20"
+                  title="<?php echo $task->getExtraData('attachmentCount') ?>"></span>
+          <?php endif; ?>
+        </td>
+        <td class="t_priority"><span class="prio_<?php echo $task->getPriority() ?>"
+                                     title="<?php echo $this->typeT($task->getPriority(), 'TASK_PRIORITY') ?>"></span>
+        </td>
+        <td><?php echo $this->escapeQuotes($task->getRelease()->getName()) ?></td>
+        <td class="t_date"
+            title="<?php echo $task->getCreateDate() ?>"><?php echo $task->getCreateDate(true) ?></td>
+        <!--<td class="t_date" title="<?php echo $task->getModifyDate() ?>"><?php echo $task->getModifyDate(true) ?></td> -->
+        <td class="t_date"
+            title="<?php echo $task->getDueDate() ?>">
+          <?php echo $task->getDueDate(true) ?><?php if ($task->getStatusId() != Application_Model_TaskStatus::CLOSED && strtotime($task->getDueDate()) < strtotime('now')): ?>
+            <span class="exceededDueDate icon_error-circle_alt"
+                  title="<?php echo $this->t('Przekroczony termin realizacji') ?>"
+                  alt="<?php echo $this->t('Przekroczony termin realizacji') ?>"></span>
+          <?php endif; ?></td>
+        <td class="t_user hideForLaptop"><?php echo $this->escapeQuotes($task->getAssigner()->getFullname()) ?></td>
+        <td class="t_user"><?php echo $this->escapeQuotes($task->getAssignee()->getFullname()) ?></td>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+    <div style="padding-top: 20px">
+      <?php echo $this->partial('count-records-default.phtml', ['count' => $this->tasksNumberRecords]) ?>
+    </div>
+    <?php echo $this->paginationControl($this->tasksPaginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
+  <?php else: ?>
+    <div class="empty-text"><?php echo $this->t('Brak zadań') ?></div>
+  <?php endif; ?>
+</div>

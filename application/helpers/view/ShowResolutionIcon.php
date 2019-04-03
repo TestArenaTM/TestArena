@@ -28,7 +28,6 @@ class Zend_View_Helper_ShowResolutionIcon extends Zend_View_Helper_Abstract
     {
       $title = $resolution->getName();
     }
-    
     return $this->view->showStatusIcon($resolution->getColor(), $title);
   }
 }

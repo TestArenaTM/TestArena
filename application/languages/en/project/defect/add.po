@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-08-22 11:37+0200\n"
+"PO-Revision-Date: 2019-01-10 14:55+0100\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,12 +12,21 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.2\n"
 
 msgid "pageTitle"
-msgstr "Add defect"
+msgstr "Add issue"
 
-msgid "statusSuccess"
+msgid "Type"
+msgstr "Issue type"
+
+msgid "statusSuccess_NEW_FEATURE"
+msgstr "New feature successfully added!"
+
+msgid "statusSuccess_IMPROVEMENT"
+msgstr "Improvement successfully added!"
+
+msgid "statusSuccess_DEFECT"
 msgstr "Defect successfully added!"
 
 msgid "statusError"

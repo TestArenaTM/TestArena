@@ -24,7 +24,7 @@ class Zend_View_Helper_FilterRequestConditions extends Zend_View_Helper_Abstract
 {
   private $_parametersString = null;
   
-  public function filterRequestConditions(array $parameters = null)
+  public function filterRequestConditions(array $parameters = [])
   {
     if (count($parameters) > 0)
     {

@@ -35,7 +35,7 @@ class Administration_Form_AddBugTrackerMantis extends Custom_Form_Abstract
         array('StringLength', false, array(2, 255, 'UTF-8')),
       )
     ));
-    
+    /* wygląda, że jest to zbędna pozostałość - ten fragment powoduje błędy w php 7
     $this->addElement('hidden', 'project', array(
       'required'    => true,
       'value'       => 1,
@@ -48,6 +48,7 @@ class Administration_Form_AddBugTrackerMantis extends Custom_Form_Abstract
         ))
       )
     ));
+    */
 
     $this->addElement('text', 'url', array(
       'required'    => true,

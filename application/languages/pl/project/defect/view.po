@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-07-10 15:19+0200\n"
+"PO-Revision-Date: 2018-12-21 00:44+0100\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,13 +12,16 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.2\n"
+
+msgid "Type"
+msgstr "Typ zgłoszenia"
 
 msgid "pageTitle"
-msgstr "Defekt"
+msgstr "Zgłoszenie"
 
 msgid "headTitle"
-msgstr "Defekt \"__name__\""
+msgstr "Zgłoszenie \"__name__\""
 
 msgid "Status"
 msgstr "Status"
@@ -97,3 +100,39 @@ msgstr "Edytuj"
 
 msgid "Usuń"
 msgstr "Usuń"
+
+msgid "Rozwiązano w"
+msgstr "Rozwiązano w"
+
+msgid "Zraportowano w"
+msgstr "Zaraportowano w"
+
+msgid "Testy"
+msgstr "Testy"
+
+msgid "Dodaj nowy test"
+msgstr "Dodaj nowy test"
+
+msgid "Dodaj nowy"
+msgstr "Dodaj nowy"
+
+msgid "addTestToDefectMustFillField"
+msgstr "Aby dodać istniejący test do zgłoszenia, musisz wpisać do pola obok część nazwy testu z bazy testów."
+
+msgid "Zadania"
+msgstr "Zadania"
+
+msgid "addTaskToDefectMustFillField"
+msgstr "Aby dodać istniejące zadanie do zgłoszenia, musisz wpisać do pola obok część nazwy zadania z bazy testów."
+
+msgid "Anuluj"
+msgstr "Anuluj"
+
+msgid "Czy na pewno chcesz usunąć powiązanie z zadaniem"
+msgstr "Czy na pewno chcesz usunąć powiązanie z zadaniem"
+
+msgid "Potwierdzenie"
+msgstr "Potwierdzenie"
+
+msgid "Czy na pewno chcesz usunąć powiązanie z testem"
+msgstr "Czy na pewno chcesz usunąć powiązanie z testem"

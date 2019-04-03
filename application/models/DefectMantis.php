@@ -26,11 +26,23 @@ class Application_Model_DefectMantis extends Custom_Model_Standard_Abstract
   private $_bugTracker  = null;
   private $_no         = null;
   private $_summary     = null;
+  private $_test        = null;
+  private $_taskTest    = null;
   
   // <editor-fold defaultstate="collapsed" desc="Getters">
   public function getId()
   {
     return $this->_id;
+  }
+
+  public function getTaskTest()
+  {
+    return $this->_taskTest;
+  }
+
+  public function getTest()
+  {
+    return $this->_test;
   }
   
   public function getBugTracker()
@@ -54,6 +66,46 @@ class Application_Model_DefectMantis extends Custom_Model_Standard_Abstract
   {
     $this->_id = (int)$id;
     return $this;
+  }
+
+
+  public function setTest($propertyName, $propertyValue)
+  {
+    if (null === $this->_test)
+    {
+      $this->_test = new Application_Model_Test(array($propertyName => $propertyValue));
+    }
+    else
+    {
+      $this->getTest()->setProperty($propertyName, $propertyValue);
+    }
+
+    return $this;
+  }
+
+  public function setTestObject(Application_Model_Test $test)
+  {
+    $this->_test = $test;
+    return $this;
+  }
+
+  public function setTaskTest($propertyName, $propertyValue)
+  {
+    if (null === $this->_taskTest)
+    {
+      $this->_taskTest = new Application_Model_TaskTest(array($propertyName => $propertyValue));
+    }
+    else
+    {
+      $this->getTaskTest()->setProperty($propertyName, $propertyValue);
+    }
+
+    return $this;
+  }
+
+  public function setTaskTestObject(Application_Model_TaskTest $taskTest)
+  {
+    $this->_taskTest = $taskTest;
   }
   
   public function setBugTracker($propertyName, $propertyValue)

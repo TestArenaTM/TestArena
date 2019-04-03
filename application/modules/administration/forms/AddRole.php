@@ -23,16 +23,16 @@ The full text of the GPL is in the LICENSE file.
 class Administration_Form_AddRole extends Custom_Form_Abstract
 {
   private $_roleActions = array();
-  
+
   public function __construct($options = null)
   {
     if (!array_key_exists('roleActions', $options) && count($options['roleActions']) < 1)
     {
       throw new Exception('Role action setting checkbox field not set.');
     }
-    
+
     $this->_roleActions = $options['roleActions'];
-    
+
     parent::__construct($options);
   }
   
@@ -78,7 +78,7 @@ class Administration_Form_AddRole extends Custom_Form_Abstract
       'validators'  => array(
         'Users'
       )
-    )); 
+    ));
     
     $this->addElement('hidden', 'roleSettings', array('isArray' => true));
     

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-08-22 11:32+0200\n"
+"PO-Revision-Date: 2019-01-10 14:46+0100\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,16 +12,25 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.2\n"
+
+msgid "Type"
+msgstr "Rodzaj zgłoszenia"
 
 msgid "pageTitle"
-msgstr "Edytuj defekt"
+msgstr "Edytuj zgłoszenie"
 
-msgid "statusSuccess"
+msgid "statusSuccess_NEW_FEATURE"
+msgstr "Nowa funkcjonalność została zapisana."
+
+msgid "statusSuccess_IMPROVEMENT"
+msgstr "Ulepszenie zostało zapisane."
+
+msgid "statusSuccess_DEFECT"
 msgstr "Defekt został zapisany."
 
 msgid "statusError"
-msgstr "Podczas zapisywania defektu wystąpił nieoczekiwany błąd."
+msgstr "Podczas zapisywania zgłoszenia wystąpił nieoczekiwany błąd."
 
 msgid "Tytuł"
 msgstr "Tytuł"

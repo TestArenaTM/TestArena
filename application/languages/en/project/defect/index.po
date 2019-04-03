@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-08-10 14:44+0200\n"
+"PO-Revision-Date: 2018-05-10 14:39+0200\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,13 +12,28 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.0.7\n"
 
 msgid "pageTitle"
-msgstr "Defects"
+msgstr "Issues"
+
+msgid "Type"
+msgstr "Issue type"
+
+msgid "Dodaj"
+msgstr "Add"
+
+msgid "Nowa funkcjonalność"
+msgstr "New feature"
+
+msgid "Ulepszenie"
+msgstr "Improvement"
+
+msgid "Defekt"
+msgstr "Defect"
 
 msgid "Dodaj defekt"
-msgstr "Add defect"
+msgstr "Add issue"
 
 msgid "Nr obiektu"
 msgstr "Object number"
@@ -33,6 +48,9 @@ msgid "Status"
 msgstr "Status"
 
 msgid "Priorytet"
+msgstr "Priority"
+
+msgid "Priorytet forma skrócona"
 msgstr "P"
 
 msgid "Data utworzenia"
@@ -104,5 +122,5 @@ msgstr "Delete"
 msgid "Usuń wybrane"
 msgstr "Delete selected"
 
-msgid "Brak defektów"
-msgstr "No defects available"
+msgid "Brak zgłoszeń"
+msgstr "No issues available"

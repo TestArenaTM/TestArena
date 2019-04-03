@@ -1,0 +1,133 @@
+<div class="textLabelPropertiesDiv history" id="j_defectBox">
+  <h5 class="break_page"
+      <?php if (!$this->activeProject->isActive() || !$this->taskUserPermission->isDefectModifyPermission()): ?>style="border-bottom:0px !important"<?php endif; ?>>
+    <span
+      class="icon_error-triangle_alt icon-20"></span> <?php echo $this->partialT('Defekty', 'field-issue', 'project') ?>
+  </h5>
+  <?php if ($this->activeProject->isActive()
+    && $this->taskUserPermission->isDefectModifyPermission()
+    && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+    <div class="filter addTest">
+      <div class="search_in_filter addTest">
+        <input type="hidden" name="defectId" value="" id="j_defectId">
+        <input type="text" name="defectName" value="" id="j_defectName">
+        <a id="j_addDefectToTask" class="addTestToTask"
+           href="<?php echo $this->projectUrl(array(
+             'id' => $this->taskTest->getTask()->getId(),
+             'testId' => $this->taskTest->getTest()->getId()),
+             'task_add_defect_ajax') ?>"
+           title="<?php echo $this->partialT('Dodaj defekt', 'field-issue', 'project') ?>"><i
+            class="icon_plus icon-15"></i></a>
+      </div>
+      <?php if ($this->activeProject->getBugTRacker()->getBugTrackerType()->getId() == Application_Model_BugTrackerType::INTERNAL && $this->isDefectAddPermission): ?>
+        <div class="button_dropdown">
+          <button onclick="button_dropdown.button('issueType')" id="button_dropdown_button_issueType"
+                  class="button_dropdown_button">
+            <?php echo $this->partialT('Dodaj nowe', 'field-issue', 'project') ?>
+          </button>
+          <ul class="button_dropdown_list" id="button_dropdown_list_issueType">
+            <li>
+              <span class="button_dropdown_list_option"
+                    onclick="DialogIframe.open('<?php echo $this->projectUrl(array(
+                      'issueType' => 'NEW_FEATURE',
+                      'layout' => 'iframe',
+                      'taskId' => $this->taskTest->getTask()->getId(),
+                      'testId' => $this->taskTest->getTest()->getId()),
+                      'defect_add')
+                    ?>', '<?php echo $this->partialT('Dodaj nowe zgłoszenie', 'field-issue', 'project') ?>');">
+                <?php echo $this->typeT('NEW_FEATURE', 'ISSUE') ?>
+              </span>
+            </li>
+            <li>
+              <span class="button_dropdown_list_option"
+                    onclick="DialogIframe.open('<?php echo $this->projectUrl(array(
+                      'issueType' => 'IMPROVEMENT',
+                      'layout' => 'iframe',
+                      'taskId' => $this->taskTest->getTask()->getId(),
+                      'testId' => $this->taskTest->getTest()->getId()),
+                      'defect_add')
+                    ?>', '<?php echo $this->partialT('Dodaj nowe zgłoszenie', 'field-issue', 'project') ?>');">
+                <?php echo $this->typeT('IMPROVEMENT', 'ISSUE') ?>
+              </span>
+            </li>
+            <li>
+              <span class="button_dropdown_list_option"
+                    onclick="DialogIframe.open('<?php echo $this->projectUrl(array(
+                      'issueType' => 'DEFECT',
+                      'layout' => 'iframe',
+                      'taskId' => $this->taskTest->getTask()->getId(),
+                      'testId' => $this->taskTest->getTest()->getId()),
+                      'defect_add')
+                    ?>', '<?php echo $this->partialT('Dodaj nowe zgłoszenie', 'field-issue', 'project') ?>');">
+                <?php echo $this->typeT('DEFECT', 'ISSUE') ?>
+              </span>
+            </li>
+          </ul>
+          <script type="text/javascript">
+            button_dropdown.autoClose('issueType');
+          </script>
+        </div>
+      <?php endif ?>
+    </div>
+  <?php endif; ?>
+
+  <?php echo $this->partial('partials/task-internal-defects-without-tests.phtml', array(
+    'task' => $this->taskTest->getTask(),
+    'defects' => $this->defects,
+    'bugTracker' => $this->bugTracker,
+    'activeProject' => $this->activeProject,
+    'taskUserPermission' => $this->taskUserPermission
+  )); ?>
+</div>
+
+<?php echo $this->partial('partials/dialog-confirm.phtml', array(
+  'id' => 'dialog-confirm-2',
+  'title' => $this->partialT('Potwierdzenie', 'field-issue', 'project'),
+  'message' => '<div>'. $this->partialT('Czy na pewno chcesz usunąć tę relację', 'field-issue', 'project') .'?</div>'
+)); ?>
+<script type="text/javascript">
+  dialogDeleteDefectFromTask = {};
+  dialogDeleteDefectFromTask.textButtonCancel = "<?php echo $this->partialT("Anuluj", 'field-issue', 'project') ?>";
+  dialogDeleteDefectFromTask.textButtonDelete = "<?php echo $this->partialT("Usuń", 'field-issue', 'project') ?>";
+</script>
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+  url.taskDefectView = '<?php echo $this->defectUrl('0', $this->bugTracker) ?>';
+  url.deleteDefectFromTask = '<?php echo $this->projectUrl(array('id' => $this->taskTest->getTask()->getId(), 'defectId' => 0), 'task_delete_defect_ajax')?>';
+
+  <?php if ($this->bugTracker === null): ?>
+  language.addDefectToTaskMustFillField = '<?php echo $this->partialT('addDefectToTaskMustFillField', 'field-issue', 'project') ?>';
+  var autocompleteData2 = {
+    url: '<?php echo $this->projectUrl(array(), 'defect_list_ajax') ?>',
+    textInputName: '#j_defectName',
+    dstName: '#j_defectId'
+  };
+  <?php else: ?>
+  language.addDefectToTaskMustFillField = '<?php echo $this->partialT('addDefectToTaskMustFillFieldEx', 'field-issue', 'project') ?>';
+  var autocompleteDataForDefect = {
+    url: '<?php echo $this->projectUrl(array(), 'defect_info_ajax') ?>',
+    textInputName: '#j_defectName',
+    dstName: '#j_defectId',
+    minLength: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? 1 : strlen($this->defectProjectPrefix($this->bugTracker)) + 2; ?>',
+    projectPrefix: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? '' : $this->defectProjectPrefix($this->bugTracker) . '-';?>'
+  };
+  <?php endif; ?>
+
+  var defectTypeInternal = '<?php echo Application_Model_BugTrackerType::INTERNAL?>';
+  /* ]]> */
+</script>
+
+<?php echo $this->partial('partials/task-defect-internal-tmpl.phtml', array(
+  'taskUserPermission' => $this->taskUserPermission,
+  'activeProject' => $this->activeProject,
+  'task' => $this->taskTest->getTask()
+)); ?>
+
+<?php echo $this->partial('partials/task-defect-tmpl.phtml', array(
+  'taskUserPermission' => $this->taskUserPermission,
+  'activeProject' => $this->activeProject,
+  'task' => $this->taskTest->getTask()
+)); ?>
+
+<?php echo $this->partial('partials/dialog-iframe.phtml'); ?>

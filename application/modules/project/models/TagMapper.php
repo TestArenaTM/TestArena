@@ -44,7 +44,7 @@ class Project_Model_TagMapper extends Custom_Model_Mapper_Abstract
       $list[] = $tag->setDbProperties($row);
     }
     
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
   public function getAllAjax(Zend_Controller_Request_Abstract $request)

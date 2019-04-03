@@ -5,20 +5,23 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>   -->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-    
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_edit') ?>" ><?php echo $this->t('Edytuj') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_email') ?>" ><?php echo $this->t('Zmień adres e-mail') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_password') ?>" ><?php echo $this->t('Zmień hasło') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_avatar') ?>"><?php echo $this->t('Zmień avatar') ?></a></li>
-        <?php if ($this->authUser->avatarExists()): ?>
-          <li class="button_link_li"><a class="button_link j_delete_avatar" href="<?php echo $this->url(array(), 'user_delete_avatar') ?>"><?php echo $this->t('Usuń avatar') ?></a></li>
-        <?php endif; ?>
-      </ul>
-    </nav>
-    
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+
+      <nav class="button_link_nav">
+        <?php  if ((Zend_Registry :: get('config')->environment == 'demo' & $this->authUser->getId() != '1') || (Zend_Registry :: get('config')->environment != 'demo')) : ?>
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_edit') ?>" ><?php echo $this->t('Edytuj') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_email') ?>" ><?php echo $this->t('Zmień adres e-mail') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_password') ?>" ><?php echo $this->t('Zmień hasło') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'user_change_avatar') ?>"><?php echo $this->t('Zmień avatar') ?></a></li>
+          <?php if ($this->authUser->avatarExists()): ?>
+            <li class="button_link_li"><a class="button_link j_delete_avatar" href="<?php echo $this->url(array(), 'user_delete_avatar') ?>"><?php echo $this->t('Usuń avatar') ?></a></li>
+          <?php endif; ?>
+        </ul>
+        <?php endif ?>
+      </nav>
+    </div>
     <div class="textLabelEditor">
       <div id="text" class="content_label_title"><?php echo $this->authUser->getFullname() ?></div>
     </div> 

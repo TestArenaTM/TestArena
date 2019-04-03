@@ -26,8 +26,9 @@ class Project_Model_TaskDefectMapper extends Custom_Model_Mapper_Abstract
   
   public function add(Application_Model_TaskDefect $taskDefect)
   {
-    $db = $this->_getDbTable(); 
-    
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
+
     $data = array(
       'task_id'         => $taskDefect->getTask()->getId(),
       'defect_id'       => $taskDefect->getDefectId(),
@@ -36,16 +37,20 @@ class Project_Model_TaskDefectMapper extends Custom_Model_Mapper_Abstract
     
     try
     {
+      $adapter->beginTransaction();
+
       $db->insert($data);
-      return true;
+
+      return $adapter->commit();
     }
     catch (Exception $e)
     {
       Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollBack();
       return false;
     }
   }
-  
+
   public function delete(Application_Model_TaskDefect $taskDefect)
   {
     $where = array(
@@ -61,10 +66,33 @@ class Project_Model_TaskDefectMapper extends Custom_Model_Mapper_Abstract
     {
       $where['bug_tracker_id = ?'] = $taskDefect->getBugTrackerId();
     }
-    
+
+    $db = $this->_getDbTable();
+    $adapter = $db->getAdapter();
     try
     {
+      $adapter->beginTransaction();
+
       $this->_getDbTable()->delete($where);
+
+      $adapter->commit();
+      return true;
+    }
+    catch (Exception $e)
+    {
+      Zend_Registry::get('Zend_Log')->log($e->getMessage(), Zend_Log::ERR);
+      $adapter->rollBack();
+      return false;
+    }
+  }
+
+  public function deleteByTask(Application_Model_Task $task)
+  {
+    try
+    {
+      $this->_getDbTable()->delete(array(
+        'task_id = ?' => $task->getId()
+      ));
       return true;
     }
     catch (Exception $e)
@@ -74,12 +102,6 @@ class Project_Model_TaskDefectMapper extends Custom_Model_Mapper_Abstract
     }
   }
 
-  public function deleteByTask(Application_Model_Task $task)
-  {
-    $this->_getDbTable()->delete(array(
-      'task_id = ?' => $task->getId()
-    ));
-  }
 
   public function deleteByTaskIds(array $taskIds)
   {

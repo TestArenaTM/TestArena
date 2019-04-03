@@ -1,0 +1,26 @@
+<?php echo $this->partial('header.phtml', array(
+  'keywords'    => $this->keywords,
+  'description' => $this->description,
+  'messageBox'  => $this->messageBox,
+  'language'    => $this->language,
+  'locale'      => $this->locale,
+  'cModule'     => $this->cModule,
+  'cController'=> $this->cController,
+  'cAction'     => $this->cAction
+)); ?>
+
+<script type='text/javascript'>
+  url.fileBrowser = '<?php echo $this->projectUrl(array(), 'file_browser') ?>';
+</script>
+
+<?php echo $this->layout()->content ?>
+<style>
+  .article_in_content {
+    margin: 0px;
+    box-shadow: none;
+  }
+  
+  body {
+    background: #fff;
+  }
+</style>

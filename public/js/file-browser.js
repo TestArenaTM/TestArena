@@ -36,7 +36,7 @@ $(document).ready(function() {
     var numberFilesUploaded = 0;
     var fileTypes = {
       'Image': ['png', 'jpg', 'gif'],
-      'Text': ['txt', 'doc', 'xls', 'csv', 'xml', 'html', 'pdf']
+      'Text': ['txt', 'doc', 'docx', 'xls', 'xlsx', 'odt', 'ods', 'csv', 'xml', 'html', 'pdf']
     };
 
     /* Inicjacja */
@@ -57,8 +57,16 @@ $(document).ready(function() {
       if (typeof config.errorMessages[errorMsg] !== 'undefined') {
         alert(config.errorMessages[errorMsg]);
       } else {
-        alert(errorMsg);
+        var errorMsgObj = JSON.parse(errorMsg);
+        if (errorMsgObj.status == 'STATUS_USER_NOT_LOGGED')
+        {
+          location.reload();
+          
+        } else {
+          alert(errorMsg);
+        }
       }
+
     };
     
     /* Zwraca odpowiedni typ w zależności od rozszerzenia pliku */
@@ -122,8 +130,8 @@ $(document).ready(function() {
       $.post(config.fileListUrl, {path: encodeURIComponent(currentPath)}, function(data) {
         var list = jQuery.parseJSON(data);
         fileList.html('');
-        var table = fileList.append('<table>').find('table');
-        table.append('<tr><td>' + config.texts.name + '</td><td>' + config.texts.actions + '</td></tr>');
+        var table = fileList.append('<table class="files-list">').find('table');
+        table.append('<tr><td>' + config.texts.name + '</td><td class="header-actions">' + config.texts.actions + '</td></tr>');
         var i = currentPath.substring(0, currentPath.length-1).lastIndexOf(config.directorySeperator);
         var path = currentPath.substr(0, i);
         
@@ -173,6 +181,9 @@ $(document).ready(function() {
     /* 
      * Zdarzenia
      */
+    $('.j-buttonCancel').click(function() { 
+      hidePopup();
+    });
     
     /* Zamykanie okna */
     $('#closeButton').click(function() { 
@@ -192,11 +203,14 @@ $(document).ready(function() {
     /* Usunięcie katalogu */
     $(document).on('click', '.removeDirectoryButton', function() {
       $.post(config.removeDirectoryUrl, {path: encodeURIComponent(currentPath + config.directorySeperator + $(this).attr('directoryName'))}, function(data) {
-        if (data === 'OK') {
-          refreshDirectoryList();
-          refreshFileList();
-        } else {
-          showError(data);
+        var isOk = confirm(config.message.confirmRemoveDir);
+        if (isOk) {
+          if (data === 'OK') {
+            refreshDirectoryList();
+            refreshFileList();
+          } else {
+            showError(data);
+          }
         }
       });
       
@@ -212,25 +226,29 @@ $(document).ready(function() {
     
     /* Usunięcie pliku */
     $(document).on('click', '.removeFileButton', function() {
-      $.post(config.removeFileUrl, {id: getId($(this))}, function(data) {
-        if (data == 'OK') {
-          refreshFileList();
-        } else {
-          showError(data);
-        }
-      });
+      var isOk = confirm(config.message.confirmRemoveFile);
+      if (isOk) {
+        $.post(config.removeFileUrl, {id: getId($(this))}, function(data) {
+          if (data == 'OK') {
+            refreshFileList();
+          } else {
+            showError(data);
+          }
+        });
+      }
       
       return false;
     });
     
     /* Podgląd obrazków */
+
     $(document).on({
       mouseenter: function (data) {
         var previewImage = $('#previewImage_' + getId($(this)));
         if (!previewImage.is(':visible')) {
           previewImage
-                  .css('left', data.clientX + 1)
-                  .css('top', data.clientY + 1)
+                  .css('left', data.clientX + 5)
+                  .css('top', data.clientY + 5)
                   .show();
         }
       },
@@ -238,8 +256,8 @@ $(document).ready(function() {
         var previewImage = $('#previewImage_' + getId($(this)));
         if (previewImage.is(':visible')) {
           previewImage
-                  .css('left', data.clientX + 1)
-                  .css('top', data.clientY + 1);
+                  .css('left', data.clientX + 5)
+                  .css('top', data.clientY + 5);
         }
       },
       mouseleave: function () {
@@ -249,6 +267,7 @@ $(document).ready(function() {
         }
       }
     }, '.fileImage .file');
+ 
     
     /* Otwarcie popupu tworzenia katalogu */
     $('#createDirectoryButton').click(function() {
@@ -378,11 +397,19 @@ $(document).ready(function() {
             newName: encodeURIComponent(newName)
           }, function(data) {
             hidePopup();
-
             if (data === 'OK') {
               refreshFileList();
+            } else if (data == 'FILE_NAME_IS_INCORRECT') {
+              alert(config.errorMessages[data]);
             } else {
-              showError(data);
+              var dataJson = $.parseJSON(data);
+              if (dataJson.message != 'undefined')
+              {
+                alert(dataJson.message);
+              } else {
+                      
+                  showError(data);
+              }
             }
           });
         } else {
@@ -446,6 +473,17 @@ $(document).ready(function() {
     
     /* Usuń zaznaczone */
     $('#deleteSelectedButton').click(function() {
+
+      if ($('.selectedDirectory:checked').length == 0 && $('.selectedFile:checked').length == 0) {
+          alert(config.message.noItemsSelected);
+          return false;
+      }
+
+      var isOk = confirm(config.message.confirmRemoveFiles);
+      if (isOk === false) {
+        return true;
+      }
+      
       $(this).prop('disabled', true);
       var fileIds = [];
       var directories = [];
@@ -489,6 +527,7 @@ $(document).ready(function() {
     
     /* Wyświetlenie błedów po wysyłce plików */
     var endFilesUploaded = function() {
+      
       fileUploadStatus.hide();
       var errorMsg = '';
 
@@ -496,6 +535,14 @@ $(document).ready(function() {
         errorMsg += config.errorMessages['UPLOAD_FILE_ERROR'] + uploadErrors.join("\n");
       }
 
+      if (nameIsIncorrect.length > 0) {
+        if (errorMsg.length > 0) {
+          errorMsg += "\n\n";
+        }
+
+        errorMsg += config.errorMessages['NAME_OF_FILE_ADDED_IS_INCORRECT'] + nameIsIncorrect.join("\n");
+      }
+      
       if (uploadExistsErrors.length > 0) {
         if (errorMsg.length > 0) {
           errorMsg += "\n\n";
@@ -525,22 +572,39 @@ $(document).ready(function() {
       }
 
       refreshFileList();
+      
+      uploadErrors = new Array();
+      uploadExistsErrors = new Array();
+      nameIsIncorrect = new Array();
+      uploadForbiddentExtensionsErrors = new Array();
+      uploadTooLargeFiles = new Array();
     };
     
     /* Zakończenie przesyłania pliku */
     var uploadErrors = new Array();
     var uploadExistsErrors = new Array();
+    var nameIsIncorrect = new Array();
     var uploadForbiddentExtensionsErrors = new Array();
     var uploadTooLargeFiles = new Array();
     
     function onEndFilesUploaded(event) {
+      if (event.target.responseURL != config.fileUploadUrl) {
+        window.location.href = event.target.responseURL;
+      }
+      
       numberFilesUploaded++;//console.log(event.target.response);
+      
       $('#numberFilesUploaded').html(numberFilesUploaded);
       var result = jQuery.parseJSON(event.target.response);
+      
 
       if (result.status === 'ERROR') {
         if (result.fileNames.error.length > 0) {
           uploadErrors[uploadErrors.length] = result.fileNames.error.join(', ');
+        }
+        
+        if (typeof result.fileNames.nameIsIncorrect != 'undefined' && result.fileNames.nameIsIncorrect.length > 0) {
+          nameIsIncorrect[nameIsIncorrect.length] = result.fileNames.nameIsIncorrect.join(', ');
         }
         
         if (result.fileNames.exists.length > 0) {
@@ -594,7 +658,7 @@ $(document).ready(function() {
       for (var i = 0; i < totalFilesToUpload; i++) {
         var file = document.getElementById('files').files[i];
 
-        if (file.size <= 8388608) {
+        if (file.size <= config.maxFileSize) {
           startUploadFile(file);
         } else {
           numberFilesUploaded++;

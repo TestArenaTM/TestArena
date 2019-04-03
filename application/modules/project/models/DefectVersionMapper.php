@@ -24,22 +24,23 @@ class Project_Model_DefectVersionMapper extends Custom_Model_Mapper_Abstract
 {
   protected $_dbTableClass = 'Project_Model_DefectVersionDbTable';
 
-  public function save(Application_Model_Defect $defect)
+  public function save(Application_Model_Defect $defect, $type = 'reported')
   {
     $db = $this->_getDbTable();
     $adapter = $db->getAdapter();
     
     $data = array();
-    $values = implode(',', array_fill(0, count($defect->getExtraData('versions')), '(?, ?)'));
+    $values = implode(',', array_fill(0, count($defect->getExtraData('versions')), '(?, ?, ?)'));
     
     foreach ($defect->getExtraData('versions') as $versionId)
     {
       $data[] = $defect->getId();
       $data[] = $versionId;
+      $data[] = $type;
     }
     
-    $db->delete(array('defect_id = ?' => $defect->getId()));
-    $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (defect_id, version_id) VALUES '.$values);
+    $db->delete(array('defect_id = ?' => $defect->getId(), 'type = ?' => $type));
+    $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (defect_id, version_id, type) VALUES '.$values);
     return $statement->execute($data);
   }
 

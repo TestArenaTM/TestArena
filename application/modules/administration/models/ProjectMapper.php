@@ -44,7 +44,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
       $list[] = $project->setDbProperties($row);
     }
 
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
   public function getAllAjax(Zend_Controller_Request_Abstract $request)
@@ -98,6 +98,8 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
         'name'                      => $project->getName(),
         'description'               => $project->getDescription(),
         'open_status_color'         => $project->getOpenStatusColor(),
+        'closed_status_color'       => $project->getClosedStatusColor(),
+        'reopen_status_color'       => $project->getReopenStatusColor(),
         'in_progress_status_color'  => $project->getInProgressStatusColor()
       );
 
@@ -149,8 +151,12 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
         'prefix'                    => $project->getPrefix(),
         'name'                      => $project->getName(),
         'description'               => $project->getDescription(),
+        'closed_status_color'       => $project->getClosedStatusColor(),
+        'reopen_status_color'       => $project->getReopenStatusColor(),
         'open_status_color'         => $project->getOpenStatusColor(),
-        'in_progress_status_color'  => $project->getInProgressStatusColor()
+        'in_progress_status_color'  => $project->getInProgressStatusColor(),
+        'resolved_status_color'     => $project->getResolvedStatusColor(),
+        'invalid_status_color'      => $project->getInvalidStatusColor(),
       );
 
       $db->update($data, array('id = ?' => $project->getId()));
@@ -259,6 +265,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
     $file->setDates(1);
     $file->setName($project->getName().'_'.date('Ymd_His', strtotime($file->getCreateDate())));
     $file->setExtension('zip');
+    $file->setNameVisible($project->getName().'_'.date('Ymd_His', strtotime($file->getCreateDate())));
     $file->setSubpath();
     $file->setDescription($project->getExtraData('fileDescription'));
 
@@ -267,6 +274,8 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
     $csvFiles = array();
     $data = array(
       'description'               => $project->getDescription(),
+      'closed_status_color'       => $project->getClosedStatusColor(),
+      'reopen_status_color'       => $project->getReopenStatusColor(),
       'open_status_color'         => $project->getOpenStatusColor(),
       'in_progress_status_color'  => $project->getInProgressStatusColor(),
       'csvFile'                   => array() 
@@ -493,7 +502,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
     
     /**** Kompresja plików do ZIP ****/
     $zip = new ZipArchive();
-    
+
     if ($zip->open($file->getFullPath(true), ZipArchive::CREATE) === true)
     {
       $zip->addFile($tempIniFilePath, 'data.ini');
@@ -616,6 +625,8 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
           'create_date'               => date('Y-m-d H:i:s'),
           'name'                      => $project->getName(),
           'description'               => $data['description'],
+          'closed_status_color'       => $data['closed_status_color'],
+          'reopen_status_color'       => $data['reopen_status_color'],
           'open_status_color'         => $data['open_status_color'],
           'in_progress_status_color'  => $data['in_progress_status_color']
         ));
@@ -863,7 +874,7 @@ class Administration_Model_ProjectMapper extends Custom_Model_Mapper_Abstract
         }
         
         $csv->close();
-        var_dump($rows);
+
         @unlink($csvFilePath);
       }
       

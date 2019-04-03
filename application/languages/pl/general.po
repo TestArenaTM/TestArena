@@ -4,13 +4,13 @@ msgstr ""
 "Project-Id-Version: TestX\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Paweł Piaskowy\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pl_PL\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.2\n"
 
 msgid "headTitle"
 msgstr "TestArena"
@@ -26,6 +26,9 @@ msgstr "Musisz mieć włączoną obsługę JavaScript aby poprawnie korzystać z
 
 msgid "Nieokreślona"
 msgstr "Nieokreślona"
+
+msgid "wersja"
+msgstr "wersja"
 
 msgid "Tak"
 msgstr "Tak"
@@ -202,8 +205,8 @@ msgstr "Zadania"
 msgid "Baza testów"
 msgstr " Baza testów"
 
-msgid "Defekty"
-msgstr "Defekty"
+msgid "Zgłoszenia"
+msgstr "Zgłoszenia"
 
 msgid "Role"
 msgstr "Role"
@@ -271,8 +274,8 @@ msgstr "ABC"
 msgid "Pozostało __left__/__max__ znaków."
 msgstr "Pozostało __left__/__max__ znaków."
 
-msgid "Defekt nie istnieje."
-msgstr "Defekt nie istnieje."
+msgid "Zgłoszenie nie istnieje."
+msgstr "Zgłoszenie nie istnieje."
 
 msgid "Brak wyników dla"
 msgstr "Brak wyników dla"
@@ -483,36 +486,63 @@ msgstr "zmienił(a) status testu __test__ na status __status__"
 msgid "usunął/ęła test TEST Z zadania"
 msgstr "usunął(ęła) test __test__ z zadania"
 
-# Defect history
-msgid "utworzył(a) defekt"
-msgstr "utworzył(a) defekt"
+msgid "usunął(a) powiązanie zgłoszenia DEFECT z testem TEST"
+msgstr "usunął(a) powiązanie zgłoszenia __defect__ z testem __test__"
 
-msgid "utworzył(a) defekt i przypisał(a) go użytkownika ASSIGNEE"
-msgstr "utworzył(a) defekt i przypisał(a) go użytkownika __assignee__"
+# Defect history
+msgid "usunął/ęła test TEST ze zgłoszenia"
+msgstr "usunął(ęła) test __test__ ze zgłoszenia"
+
+msgid "usunął(a) powiązanie zgłoszenia z zadaniem TASK"
+msgstr "usunął(a) powiązanie zgłoszenia z zadaniem __task__"
+
+msgid "utworzył(a) defekt"
+msgstr "utworzył(a) zgłoszenie"
 
 msgid "zmienił(a) defekt"
-msgstr "zmienił(a) defekt"
+msgstr "zmienił(a) zgłoszenie"
 
-msgid "zmienił(a) defekt i przypisał(a) go do siebie"
-msgstr "zmienił(a) defekt i przypisał(a) go do siebie"
+msgid "dodał(a) powiązanie zgłoszenia z zadaniem TASK"
+msgstr "dodał(a) powiązanie zgłoszenia z zadaniem __task__"
+
+msgid "dodał(a) powiązanie zgłoszenia z testem TEST w zadaniu TASK"
+msgstr "dodał(a) powiązanie zgłoszenia z testem __test__ w zadaniu __task__"
+
+msgid "utworzył(a) defekt i przypisał(a) go użytkownika ASSIGNEE"
+msgstr "utworzył(a) zgłoszenie i przypisał(a) go do użytkownika __assignee__"
 
 msgid "zmienił(a) defekt i przypisał(a) go do użytkownika ASSIGNEE"
-msgstr "zmienił(a) defekt i przypisał(a) go do użytkownika __assignee__"
+msgstr "zmienił(a) zgłoszenie i przypisał(a) go do użytkownika __assignee__"
+
+msgid "zmienił(a) defekt i przypisał(a) go do siebie"
+msgstr "zmienił(a) zgłoszenie i przypisał(a) go do siebie"
 
 msgid "przypisał(a) defekt do siebie"
-msgstr "przypisał(a) defekt do siebie"
+msgstr "przypisał(a) zgłoszenie do siebie"
 
 msgid "przypisał(a) defekt do użytkownika ASSIGNEE"
-msgstr "przypisał(a) defekt do użytkownika __assignee__"
+msgstr "przypisał(a) zgłoszenie do użytkownika __assignee__"
 
 msgid "zmienił(a) status defektu na DEFECT_STATUS"
-msgstr "zmienił(a) status defektu na __defectStatus__"
+msgstr "zmienił(a) status zgłoszenia na __defectStatus__"
 
 msgid "dodał(a) defekt DEFEKT do zadania"
-msgstr "dodał(a) defekt __defekt__ do zadania"
+msgstr "dodał(a) powiązanie zgłoszenie __defekt__ do zadania"
 
 msgid "usunoł/eła defekt DEFEKT z zadania"
-msgstr "usunął(ęła) defekt __defekt__ z zadania"
+msgstr "usunął(ęła) powiązanie zgłoszenia __defekt__ z zadaniem"
+
+msgid "dodał(a) powiązanie zgłoszenia DEFEKT z testem TEST"
+msgstr "dodał(a) powiązanie zgłoszenia __defekt__ z testem __test__"
+
+msgid "usunął(a) powiązanie zgłoszenia z testem TEST w zadaniu TASK"
+msgstr "usunął(a) powiązanie zgłoszenia z testem __test__ w zadaniu __task__"
+
+msgid "zmienił(a) status defektu na DEFECT_STATUS i przypisał(a) go do użytkownika ASSIGNEE"
+msgstr "zmienił(a) status zgłoszenia na __defectStatus__ i przypisał(a) go do użytkownika __assignee__"
+
+msgid "zmienił(a) status defektu na DEFECT_STATUS i przypisał(a) go do siebie"
+msgstr "zmienił(a) status zgłoszenia na __defectStatus__ i przypisał(a) go do siebie"
 
 # Default name
 msgid "[Bez wydania]"
@@ -541,3 +571,6 @@ msgstr "Powodzenie"
 
 msgid "DEFAULT_FAIL_RESOLUTION"
 msgstr "Niepowodzenie"
+
+msgid "Liczba znalezionych rekordów"
+msgstr "Liczba znalezionych rekordów"

@@ -15,13 +15,13 @@
 
         <div class="formContainer">
           <span>
-            <?php echo $this->form->file->renderFile() ?><span class="help item">?<div class="cloud"><?php echo $this->t('Dopuszczalne pliki') ?></div></span>
+            <?php echo $this->form->file->renderFile() ?><div class="help_content"><span class="help item">?<div class="cloud"><?php echo $this->t('Dopuszczalne pliki') ?></div></span></div>
             <?php echo $this->formRequiredLabel('file', $this->t('Plik')) ?> 
               <?php foreach ($this->form->getErrors('file') as $error): ?>
                 <span class="arrow_msg"></span>
                 <div class="error_msg"><?php echo $this->errorT($error, array(
                   'maxFileSize' => $this->form->getElement('file')->getValidator('Size')->getMax(),
-                  'extensions'  => implode(', ', $this->form->getElement('file')->getValidator('Extension')->getExtension())
+                  'extensions'  => '.'. implode(', ', $this->form->getElement('file')->getValidator('Extension')->getExtension())
                 )) ?></div>
               <?php endforeach; ?>
               <?php if ($this->errorFile): ?>
@@ -45,7 +45,7 @@
 
         <div class="formContainer">
           <span>
-              <?php echo $this->form->prefix->renderViewHelper() ?><span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span>
+              <?php echo $this->form->prefix->renderViewHelper() ?><div class="help_content"><span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span></div>
               <?php echo $this->formRequiredLabel('prefix', $this->t('Prefiks')) ?>
               <?php foreach ($this->form->getErrors('prefix') as $error): ?>
                 <div class="error_msg"><?php echo $this->errorT($error, array(
@@ -58,7 +58,7 @@
 
         <div class="formContainer">
           <span>
-              <?php echo $this->form->password->renderViewHelper() ?><span class="help item">?<div class="cloud"><?php echo $this->t('Hasło dotyczy') ?></div></span>
+            <?php echo $this->form->password->renderViewHelper() ?><div class="help_content"><span class="help item">?<div class="cloud"><?php echo $this->t('Hasło dotyczy') ?></div></span></div>
               <?php echo $this->formRequiredLabel('password', $this->t('Hasło dla użytkowników')) ?>
               <?php foreach ($this->form->getErrors('password') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error, array(

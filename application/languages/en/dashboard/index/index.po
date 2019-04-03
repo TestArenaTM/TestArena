@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-07-12 10:31+0200\n"
+"PO-Revision-Date: 2019-01-04 08:54+0100\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,10 +12,10 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.2\n"
 
 msgid "pageTitle"
-msgstr "Cockpit"
+msgstr "Dashboard"
 
 msgid "Moje zadania"
 msgstr "My tasks"
@@ -33,7 +33,7 @@ msgid "Pokaż wszystkie..."
 msgstr "Show all..."
 
 msgid "Moje zadania z przekroczonym terminem"
-msgstr "My tasks with exceeded time limit"
+msgstr "My tasks with deadline missed"
 
 msgid "Ostatnie otrzymane wiadomości"
 msgstr "Last messages"
@@ -82,3 +82,15 @@ msgstr "tasks in active projects"
 
 msgid "Pokaż tylko dla aktywnego wydania NAME"
 msgstr "Show only for active release '__name__'"
+
+msgid "Zadania przypisane do projektu z przekroczonym terminem"
+msgstr "Tasks assigned to project with exceeded time limit"
+
+msgid "Zadania przypisane do projektu"
+msgstr "Tasks assigned to project"
+
+msgid "Dla mnie"
+msgstr "For me"
+
+msgid "Dla projektu"
+msgstr "For project"

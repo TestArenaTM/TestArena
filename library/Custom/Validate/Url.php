@@ -41,6 +41,7 @@ class Custom_Validate_Url extends Zend_Validate_Abstract
   private function _isExists($url)
   {
     $result = @get_headers($url);
+    //print_r($result);die;
     return is_array($result) && $result[0] != 'HTTP/1.1 404 Not Found';
   }
 }

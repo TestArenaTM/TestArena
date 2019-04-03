@@ -7,18 +7,19 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>  --> 
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <?php if ($this->activeProject->isActive()): ?>
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <?php if ($this->accessReleaseManagement): ?> 
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'release_add')?>" ><?php echo $this->t('Dodaj wydanie') ?></a></li>
-        <?php endif; ?>
-      </ul>
-    </nav>
-    <?php endif; ?>
-
+      <?php if ($this->activeProject->isActive()): ?>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <?php if ($this->accessReleaseManagement): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'release_add')?>" ><?php echo $this->t('Dodaj wydanie') ?></a></li>
+          <?php endif; ?>
+        </ul>
+      </nav>
+      <?php endif; ?>
+    </div>
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
       <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
     
@@ -47,7 +48,9 @@
           <th><?php echo $this->sortingControl('Data rozpoczęcia', 'release_start_date', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Data zakończenia', 'release_end_date', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Liczba zadań', 'release_taskCount', 'sorting.phtml', $this->request) ?></th>
-          <th><?php echo $this->sortingControl('Liczba defektów', 'release_defectCount', 'sorting.phtml', $this->request) ?></th>
+          <?php if ($this->showColumnDefectCount): ?>
+          <th><?php echo $this->sortingControl('Liczba zgłoszeń', 'release_defectCount', 'sorting.phtml', $this->request) ?></th>
+          <?php endif ?>
           <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
         </tr>
       </thead>
@@ -56,7 +59,7 @@
         <tr class="date_status_<?php echo $this->tagByDateRange($release) ?>">
           <td>
             <?php if ($release->isActive()): ?><span class="icon_star icon-20" style="color: #E0A025;"></span><?php endif;?>
-            <a href="<?php echo $this->projectUrl(array('id' => $release->getId()), 'release_view') ?>"><?php echo $this->escapeQuotes($release->getName()) ?></a>
+            <a href="<?php echo $this->projectUrl(array('id' => $release->getId()), 'release_view') ?>"><?php echo $this->spaceToEntity($this->escapeQuotes($release->getName())) ?></a>
           </td>
           <td class="t_date"><?php echo $release->getStartDate() ?></td>
           <td class="t_date"><?php echo $release->getEndDate() ?></td>
@@ -65,6 +68,7 @@
               <?php echo $release->getExtraData('taskCount') ?>
             </a>
           </td>
+          <?php if ($this->showColumnDefectCount): ?>
           <td class="t_number">
             <?php if ($this->activeProject->getBugTracker()->getBugTrackerTypeId() == Application_Model_BugTrackerType::INTERNAL): ?>
               <a href="<?php echo $this->projectUrl(array(), 'defect_list').'?skipSavedFilter&release='.$release->getId() ?>">
@@ -74,6 +78,7 @@
               <?php echo $release->getExtraData('defectCount') ?>
             <?php endif; ?>
           </td>
+          <?php endif; ?>
           <td>
             <?php if (($this->activeProject->isActive() && $this->accessReleaseManagement)
                       || $this->accessReportGenerate): ?>  
@@ -91,7 +96,7 @@
                           <?php else: ?>
                             <li><a href="<?php echo $this->projectUrl(array('id' => $release->getId()), 'release_activate') ?>"><?php echo $this->t('Aktywuj') ?></a></li>
                           <?php endif; ?>
-                          <?php if ($release->getExtraData('taskCount') == 0): ?>
+                          <?php if ($release->getExtraData('taskCount') == 0 && $release->getExtraData('defectCount') == 0): ?>
                             <li><a class="j_delete_release" href="<?php echo $this->projectUrl(array('id' => $release->getId()), 'release_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
                           <?php endif; ?>
                         <?php endif; ?>
@@ -109,9 +114,8 @@
         <?php endforeach; ?>
       </tbody>
     </table>
-
+    <?php echo $this->partial('count-records-default.phtml', ['count' => $this->numberRecords]) ?>
     <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
-
     <?php else: ?>
     <div class="empty-text"><?php echo $this->t('Brak wydań') ?></div>
     <?php endif; ?>

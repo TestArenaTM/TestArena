@@ -135,7 +135,7 @@ abstract class Custom_Model_Standard_Abstract extends Custom_Model_Abstract
   {
     return $this->hasExtraData($name) ? $this->_extraData[$name] : $default;
   }
-  
+
   public function getAllExtraData()
   {
     return $this->_extraData;

@@ -3,28 +3,30 @@
     <a class="icon_house_alt" href="#"></a>
     <i class="arrow_carrot-right icon-15"></i>
     <a href="#"><?php echo $this->generalT('Projekty') ?></a>
-    <i class="arrow_carrot-right icon-15"></i>    
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div>-->  
+  </div>-->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
-        <?php if ($this->project->getStatusId() == Application_Model_ProjectStatus::ACTIVE): ?>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_suspend') ?>"><?php echo $this->t('Zawieś') ?></a></li>
-        <?php elseif ($this->project->getStatusId() == Application_Model_ProjectStatus::SUSPENDED): ?>
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_activate') ?>"><?php echo $this->t('Aktywuj') ?></a></li>
-        <?php endif; ?>
-        <li class="button_link_li"><a class="button_link j_finish_project" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_finish') ?>"><?php echo $this->t('Zakończ') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_export') ?>"><?php echo $this->t('Eksportuj') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_list') ?>"><?php echo $this->t('Narzędzia śledzenia defektów') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_resolution_list') ?>"><?php echo $this->t('Statusy rozwiązań') ?></a></li>
-      </ul>
-    </nav>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+          <?php if ($this->project->getStatusId() == Application_Model_ProjectStatus::ACTIVE): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_suspend') ?>"><?php echo $this->t('Zawieś') ?></a></li>
+          <?php elseif ($this->project->getStatusId() == Application_Model_ProjectStatus::SUSPENDED): ?>
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_activate') ?>"><?php echo $this->t('Aktywuj') ?></a></li>
+          <?php endif; ?>
+          <li class="button_link_li"><a class="button_link j_finish_project" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_finish') ?>"><?php echo $this->t('Zakończ') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_export') ?>"><?php echo $this->t('Eksportuj') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_bug_tracker_list') ?>"><?php echo $this->t('Narzędzia śledzenia defektów') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_resolution_list') ?>"><?php echo $this->t('Statusy rozwiązań') ?></a></li>
+        </ul>
+      </nav>
+    </div>
     <div class="textLabelEditor">
-      <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->project->getName()) ?></div>
+      <div id="text" class="content_label_title"><?php echo $this->spaceToEntity($this->escapeQuotes($this->project->getName())) ?></div>
     </div>
     <div class="contentLRtable">
       <div class="contentProperties_left">
@@ -34,43 +36,50 @@
         </div>
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
-          <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->project->getDescription()) ?></div>
+          <div id="text" class="content_label"><?php echo nl2br($this->escapeQuotes($this->project->getDescription())) ?></div>
         </div>
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Status') ?></div>
           <div id="text" class="content_label"><?php echo $this->statusT($this->project->getStatus(), 'PROJECT') ?></div>
         </div>
         <div class="textLabelEditor">
-          <div class="textLabelEditor_text"><?php echo $this->t('Kolor dla statusów OPEN i REOPEN', array(
-            'open'    => $this->statusT('OPEN', 'TASK'),
-            'reopen'  => $this->statusT('REOPEN', 'TASK')
-          )) ?></div>
+          <div class="textLabelEditor_text"><?php echo $this->t('Kolory dla statusów') ?></div>
           <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getOpenStatusColor(), $this->statusT('OPEN', 'TASK')) ?><?php echo $this->statusT('OPEN', 'TASK') ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getReopenStatusColor(), $this->statusT('REOPEN', 'TASK')) ?><?php echo $this->statusT('REOPEN', 'TASK') ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getInProgressStatusColor(), $this->statusT('IN_PROGRESS', 'TASK')) ?><?php echo $this->statusT('IN_PROGRESS', 'TASK') ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getClosedStatusColor(), $this->statusT('CLOSED', 'TASK')) ?><?php echo $this->statusT('CLOSED', 'TASK') ?></div>
+        </div>
+
+        <div class="textLabelEditor">
+          <div class="textLabelEditor_text"><?php echo $this->t('Statusy rozwiązań zgłoszeń') ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getInvalidStatusColor(), $this->statusT('INVALID', 'DEFECT')) ?><?php echo $this->statusT('INVALID', 'DEFECT') ?></div>
+          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getResolvedStatusColor(), $this->statusT('RESOLVED', 'DEFECT')) ?><?php echo $this->statusT('RESOLVED', 'DEFECT') ?></div>
         </div>
         <div class="textLabelEditor">
-          <div class="textLabelEditor_text"><?php echo $this->t('Kolor dla statusu IN_PROGRESS', array(
-            'inProgress' => $this->statusT('IN_PROGRESS', 'TASK')
-          )) ?></div>
-          <div id="text" class="content_label"><?php echo $this->showStatusIcon($this->project->getInProgressStatusColor(), $this->statusT('IN_PROGRESS', 'TASK')) ?><?php echo $this->statusT('IN_PROGRESS', 'TASK') ?></div>
-        </div>        
+          <div class="textLabelEditor_text"><?php echo $this->t('Statusy rozwiązań zadań') ?></div>
+          <?php foreach ($this->resolutions as $resolution): ?>
+          <div id="text" class="content_label"><?php echo $this->showResolutionIcon($resolution) ?> <?php echo $this->escapeQuotes($resolution->getName()) ?></div>
+          <?php endforeach; ?>
+        </div>
       </div>
-      <div class="contentEditUser_right">        
+      <div class="contentEditUser_right">
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?></div>
           <div id="text" class="content_label"><?php echo $this->project->getCreateDate() ?></div>
-        </div>      
+        </div>
       </div>
      </div>
 
     <div style="margin-top: 55px;">
-      <h1 class="content_title"><?php echo $this->t('Role w projekcie') ?></h1>
+      <div class="content_header">
+        <h1 class="content_title"><?php echo $this->t('Role w projekcie') ?></h1>
 
-      <nav class="button_link_nav" style="position: relative;">
-        <ul class="button_link_ul">
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_role_add') ?>"><?php echo $this->t('Dodaj rolę') ?></a></li>
-        </ul>
-      </nav>
-
+        <nav style="position: relative; padding-bottom: 20px;">
+          <div>
+            <a class="button_add" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_role_add') ?>"><?php echo $this->t('Dodaj rolę') ?></a>
+          </div>
+        </nav>
+      </div>
       <?php if (count($this->roles) > 0): ?>
       <form name="j_editUsersForm" method="<?php echo $this->form->getMethod() ?>">
 
@@ -110,9 +119,9 @@
                         <ul class="box">
                           <li><a href="<?php echo $this->url(array('id' => $role->getId()), 'admin_role_edit')?>"><?php echo $this->t('Edytuj') ?></a></li>
                           <li><a class="j_delete_role" href="<?php echo $this->url(array('id' => $role->getId()), 'admin_role_delete')?>"><?php echo $this->t('Usuń') ?></a></li>
-                        </ul> 
+                        </ul>
                       </div>
-                    </div>                    
+                    </div>
                   </ul>
                 </nav>
               </td>
@@ -127,11 +136,11 @@
       <div><?php echo $this->t('Brak ról.') ?></div>
       <?php endif; ?>
     </div>
-  </article>    
+  </article>
 </section>
 
 <?php foreach ($this->multiPrePopulatedUsers as $id => $prePopulatedUsers): ?>
-  <?php if (count($prePopulatedUsers) > 0): ?>
+  <?php if (!empty($prePopulatedUsers)): ?>
     <script type="text/javascript">
     /* <![CDATA[ */
       prePopulated['<?php echo 'users_'.$id ?>'] = <?php echo $prePopulatedUsers ?>;
@@ -146,6 +155,6 @@
 /* ]]> */
 </script>
 
-<?php 
+<?php
 echo $this->partial('popups/delete-role.phtml');
 echo $this->partial('popups/finish-project.phtml');

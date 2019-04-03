@@ -38,8 +38,8 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
   public function init()
   {
     parent::init();
-    $t = new Custom_Translate();   
-    
+    $t = new Custom_Translate();
+
     $this->addElement('text', 'title', array(
       'required'    => true,
       'maxlength'   => 255,
@@ -60,20 +60,11 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
       ),
     ));
     
-    $this->addElement('text', 'releaseName', array(
+    $this->addElement('text', 'releaseId', array(
       'required'  => false,
       'class'     => 'autocomplete',
       'maxlength' => 255,
       'value'     => ''
-    ));
-    
-    $this->addElement('hidden', 'releaseId', array(
-      'required'    => false,
-      'value'       => '',
-      'validators'  => array(
-        'Id',
-        array('ReleaseExists', true)
-      )
     ));
     
     $this->addElement('text', 'environments', array(
@@ -106,6 +97,15 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
       ))
     ));
 
+    $this->addElement('select', 'issueType', array(
+      'required'      => true,
+      'multiOptions'  => array(
+        'DEFECT'      => $t->translate('ISSUE_DEFECT', null, 'type'),
+        'NEW_FEATURE' => $t->translate('ISSUE_NEW_FEATURE', null, 'type'),
+        'IMPROVEMENT' => $t->translate('ISSUE_IMPROVEMENT', null, 'type'),
+      )
+    ));
+
     $this->addElement('select', 'priority', array( 
       'required'      => true,
       'value'         => Application_Model_DefectPriority::MAJOR,
@@ -131,7 +131,7 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
         array('UserIdExists', true)
       )
     ));
-    
+
     $this->addElement('hidden', 'attachmentIds', array(
       'required'  => false,
       'isArray'   => true,
@@ -167,6 +167,25 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
       }
     }
     
+    return json_encode($result);
+  }
+
+  public function prePopulateRelease(array $release)
+  {
+
+    $result = array();
+    $htmlSpecialCharsFilter = new Custom_Filter_HtmlSpecialCharsDefault();
+
+    if (count($release) > 0)
+    {
+      foreach($release as $value)
+      {
+        $result[] = array(
+          'name' => $htmlSpecialCharsFilter->filter($value['name']),
+          'id'   => $value['id']
+        );
+      }
+    }
     return json_encode($result);
   }
   
@@ -214,7 +233,7 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
     $values['environments'] = strlen($values['environments']) ? explode(',', $values['environments']) : array();
     $values['versions'] = strlen($values['versions']) ? explode(',', $values['versions']) : array();
     $values['tags'] = strlen($values['tags']) ? explode(',', $values['tags']) : array();
-    
+
     if (!isset($values['attachmentIds']))
     {
       $values['attachmentIds'] = array();
@@ -313,7 +332,7 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
         $this->addElement('hidden', $key, array(
           'required'  => false,
           'belongsTo' => 'attachmentNames',
-          'value'     => $file->getFullName(),
+          'value'     => $file->getFullNameVisible(),
           'class'     => 'j_attachmentName'
         ));
         $result[$key] = $this->getValue($key);
@@ -337,5 +356,10 @@ class Project_Form_AddDefect extends Custom_Form_Abstract
   public function getTags()
   {
     return explode(',', $this->getValue('tags'));
+  }
+
+  public function getRelease()
+  {
+    return !empty($this->getValue('releaseId')) ? $this->getValue('releaseId') : '';
   }
 }

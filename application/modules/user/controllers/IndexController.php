@@ -27,6 +27,13 @@ class User_IndexController extends Custom_Controller_Action_Application_Abstract
     parent::preDispatch();
     
     $this->checkUserSession(true);
+
+    if (Zend_Registry :: get('config')->environment === 'demo' & $this->_user != null) {
+      if ($this->_user->getId() == '1' && $this->getRequest()->getActionName() != 'index')
+      {
+        throw new Custom_404Exception();
+      }
+    }
 	}
   
   public function indexAction()

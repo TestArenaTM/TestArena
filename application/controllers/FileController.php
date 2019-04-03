@@ -36,17 +36,18 @@ class FileController extends Custom_Controller_Action_Application_Abstract
     {
       $layout = 'project';
     }
-    
+
     $this->_helper->layout->setLayout($layout);
     $this->_setTranslateTitle();
     $this->view->file = $file;
+    $this->view->isButtonBack = $this->getRequest()->getParam('back') !== 'disable';
     $this->view->backUrl = $this->_getBackUrl('file_dwonload', null, true);
   }
   
   public function downloadProcessAction()
   {
     $file = $this->_getValidFile();
-    $download = new Utils_Download($file->getFullPath(true), $file->getFullName());
+    $download = new Utils_Download($file->getFullPath(true), $file->getNameVisible() .'.'. $file->getExtension());
     
     if ($download->save() === false)
     {

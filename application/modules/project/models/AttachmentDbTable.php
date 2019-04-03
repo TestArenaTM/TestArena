@@ -41,6 +41,7 @@ class Project_Model_AttachmentDbTable extends Custom_Model_DbTable_Criteria_Abst
         'id',
         'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath'
       )))

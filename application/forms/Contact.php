@@ -54,7 +54,7 @@ class Application_Form_Contact extends Custom_Form_Abstract
       'filters'     => array('StringTrim'),
       'value'       => $this->_email,
       'validators'  => array(
-        'EmailAddressSimpleMessage',
+        'EmailAddress',
         array('StringLength', false, array(1, 256, 'UTF-8')),
       ),
     ));

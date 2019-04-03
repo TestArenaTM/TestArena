@@ -1,13 +1,17 @@
 <script id="fileTmpl" type="text/x-jquery-tmpl" >
-<tr>
+<tr class="table-row">
   <td id="file_${id}" class="file${fileType}">
-    <input type="checkbox" name="selectedFile_${id}" value="${name}" id="selectedFile_${id}" class="selectedFile">
-    <span class="icon${fileType}"></span>
-    <a class="file" id="fileName_${id}" href="#">${fullname}</a>
-    {{if fileType == 'Image'}}
-    <!-- Podgląd obrazków -->
-    <div class="previewImage" id="previewImage_${id}"><img src="${previewImageUrl}" alt="${name}"></div>
-    {{/if}}
+    <div class="fileSelectedPartLeft">
+        <input type="checkbox" name="selectedFile_${id}" value="${name}" id="selectedFile_${id}" class="selectedFile">
+        <span class="icon${fileType}"></span>
+    </div>
+    <div class="fileSelectedPartRight">
+      <a class="file" id="fileName_${id}" href="#">${fullname}</a>
+      {{if fileType == 'Image'}}
+      <!-- Podgląd obrazków -->
+      <div class="previewImage" id="previewImage_${id}"><img src="${previewImageUrl}" alt="${name}"></div>
+      {{/if}}
+    </div>
   </td>
   <td class="actions">
     <a class="button removeFileButton" id="removeFile_${id}" href="#"><?php echo $this->generalT('Usuń') ?></a>

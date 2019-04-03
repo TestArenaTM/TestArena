@@ -49,6 +49,16 @@ class Project_CommentController extends Custom_Controller_Action_Application_Pro
     exit;
   }
   
+  private function _filterContent($content)
+  {
+    if (mb_strlen($content, 'UTF-8') > Application_Model_Comment::MAX_CONTENT_LENGTH)
+    {
+      $content = substr($content, 0, Application_Model_Comment::MAX_CONTENT_LENGTH);
+    }
+    
+    return $content;
+  }
+  
   public function addAjaxAction()
   {
     $request = $this->getRequest();
@@ -57,7 +67,7 @@ class Project_CommentController extends Custom_Controller_Action_Application_Pro
     $comment = new Application_Model_Comment();
     $comment->setSubjectId($request->getParam('subjectId'));
     $comment->setSubjectType($request->getParam('subjectType'));
-    $comment->setContent($request->getParam('content'));
+    $comment->setContent($this->_filterContent($request->getParam('content')));
     $comment->setUserObject($this->_user);
     echo json_encode($commentMapper->add($comment));
     exit;
@@ -70,7 +80,7 @@ class Project_CommentController extends Custom_Controller_Action_Application_Pro
     $commentMapper = new Project_Model_CommentMapper();
     $comment = new Application_Model_Comment();
     $comment->setId($request->getParam('id'));
-    $comment->setContent($request->getParam('content'));
+    $comment->setContent($this->_filterContent($request->getParam('content')));
     $comment->setUserObject($this->_user);
     echo json_encode($commentMapper->save($comment));
     exit;

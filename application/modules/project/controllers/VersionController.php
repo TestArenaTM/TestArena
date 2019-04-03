@@ -43,7 +43,7 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
   
   private function _getFilterForm()
   {
-    return new Project_Form_VersionFilter(array('action' => $this->_projectUrl(array(), 'version_list')));
+    return new Project_Form_VersionFilter(array('action' => $this->_projectUrl(array('page' => 1), 'version_list')));
   }
     
   public function indexAction()
@@ -55,11 +55,13 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
     if ($filterForm->isValid($request->getParams()))
     {
       $this->_filterAction($filterForm->getValues(), 'version');
+      $request->setParam('search', $filterForm->getValue('search'));
       $versionMapper = new Project_Model_VersionMapper();
-      list($list, $paginator) = $versionMapper->getAll($request);
+      list($list, $paginator, $numberRecords) = $versionMapper->getAll($request);
     }
     else
     {
+      $numberRecords = 0;
       $list = array();
       $paginator = null;
     }
@@ -72,8 +74,14 @@ class Project_VersionController extends Custom_Controller_Action_Application_Pro
     }
     
     $this->_setTranslateTitle();
+
+    $projectBugTrackerDbTable = new Administration_Model_ProjectBugTrackerDbTable();
+    $showColumnDefectCount = $projectBugTrackerDbTable->isBugTruckerInternalByProject($this->_project);
+
+    $this->view->numberRecords = $numberRecords;
     $this->view->versions = $list;
     $this->view->paginator = $paginator;
+    $this->view->showColumnDefectCount = $showColumnDefectCount;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
     $this->view->accessVersionManagement = $this->_checkAccess(Application_Model_RoleAction::VERSION_MANAGEMENT);

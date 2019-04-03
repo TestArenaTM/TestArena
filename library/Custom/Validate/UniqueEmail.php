@@ -18,7 +18,7 @@ class Custom_Validate_UniqueEmail extends Custom_Validate_DbUniqueAbstract
     $this->_setValue($value);
     $result = $this->_uniqueSelect($value);
 
-    if (strtolower($result[$this->_field]) == strtolower($value))
+    if (mb_strtolower($result[$this->_field], 'utf-8') == mb_strtolower($value, 'utf-8'))
     {
       $this->_error(self::ERROR_EXISTS);
       return false;

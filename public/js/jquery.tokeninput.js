@@ -5,7 +5,7 @@
  * Copyright (c) 2009 James Smith (http://loopj.com)
  * Licensed jointly under the GPL and MIT licenses,
  * choose which one suits your project best!
- * 
+ *
  * Modified work Copyright 2017 TestArena
  *
  */
@@ -265,7 +265,7 @@ $.TokenList = function (input, url_or_data, settings) {
                 //if ($(input).data("settings").minChars === 0) {
                     // set a timeout just long enough to let this function finish.
                     //setTimeout(function(){do_search();}, 5);
-                    
+
                 //} else {
                     show_dropdown_hint();
                 //}
@@ -293,7 +293,7 @@ $.TokenList = function (input, url_or_data, settings) {
                 case KEY.UP:
                 case KEY.DOWN:
                     if(!$(this).val()) {
-                        
+
                         previous_token = input_token.prev();
                         next_token = input_token.next();
 
@@ -313,7 +313,7 @@ $.TokenList = function (input, url_or_data, settings) {
                         }
                         else
                         {
-                            if ($(input).data("settings").minChars === 0 && token_count < 1) {
+                            if ($(input).data("settings").minChars === 0) { // && token_count < 1 - 21cn - zmodyfikowano, tak żeby w momencie naciśniecia przycisku strzałka w dół i jeśli jest już wybrana opcja to nie rozwinie się ponownie lista.
                                 // set a timeout just long enough to let this function finish.
                                 if (selected_dropdown_item === null)
                                 {
@@ -658,9 +658,9 @@ $.TokenList = function (input, url_or_data, settings) {
         }
         else
         {
-          $this_token.addClass($(input).data("settings").classes.token).insertBefore(input_token);  
+          $this_token.addClass($(input).data("settings").classes.token).insertBefore(input_token);
         }
-        
+
         // The 'delete token' button
         if(!readonly) {
           $("<span>" + $(input).data("settings").deleteText + "</span>")
@@ -719,7 +719,7 @@ $.TokenList = function (input, url_or_data, settings) {
                 {
                   input_token.insertAfter(found_existing_token);
                 }
-                
+
                 focus_with_timeout(input_box);
                 return;
             }
@@ -770,7 +770,7 @@ $.TokenList = function (input, url_or_data, settings) {
         if(position === POSITION.BEFORE) {
             if (settings.isModifiedInputTokenPosition === false)
             {
-              input_token.insertBefore(token);  
+              input_token.insertBefore(token);
               selected_token_index--;
             }
         } else if(position === POSITION.AFTER) {
@@ -782,7 +782,7 @@ $.TokenList = function (input, url_or_data, settings) {
         } else {
             if (settings.isModifiedInputTokenPosition === false)
             {
-              input_token.insertBefore(token);  
+              input_token.insertBefore(token);
               selected_token_index = token_count;
             }
         }
@@ -811,7 +811,7 @@ $.TokenList = function (input, url_or_data, settings) {
         // Remove the id from the saved list
         var token_data = $.data(token.get(0), "tokeninput");
         var callback = $(input).data("settings").onDelete;
-        
+
         if (settings.isModifiedInputTokenPosition === true)
         {
             var index = token.prevAll().length-1;
@@ -820,7 +820,7 @@ $.TokenList = function (input, url_or_data, settings) {
         {
             var index = token.prevAll().length;
         }
-        
+
         if(index > selected_token_index) index--;
 
         // Delete the token
@@ -1109,14 +1109,17 @@ $.TokenList = function (input, url_or_data, settings) {
         }
         return data;
     }
-    
+
     // Bring browser focus to the specified object.
     // Use of setTimeout is to get around an IE bug.
     // (See, e.g., http://stackoverflow.com/questions/2600186/focus-doesnt-work-in-ie)
     //
     // obj: a jQuery object to focus()
     function focus_with_timeout(obj) {
-        setTimeout(function() { obj.focus(); }, 50);
+        if($(input).data("settings").use_focus)
+        {
+            setTimeout(function() { obj.focus(); }, 50);        
+        }
     }
 
 };

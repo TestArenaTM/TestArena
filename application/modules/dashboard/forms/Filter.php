@@ -36,7 +36,7 @@ class Dashboard_Form_Filter extends Custom_Form_Abstract
       'required'       => false,
       'uncheckedValue' => '0',
       'checkedValue'   => '1',
-      'class'          => 'j_autoLoad'
+      'class'          => 'j_autoLoad',
     ));
     
   }

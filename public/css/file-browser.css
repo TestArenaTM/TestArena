@@ -37,6 +37,15 @@ a {
     background-color: #111;
     color: white;
 }
+#fileList table {
+  border-collapse: collapse;
+}
+#fileList td {
+  padding: 3px;
+}
+#fileList .table-row:hover {
+  background: #eee;
+}
 #fileList, #statusBar {
   margin-left: 300px;
 }
@@ -45,6 +54,7 @@ a {
   height: calc(100% - 119px);
   overflow: scroll;
   padding: 10px;
+  width: calc(100% - 320px);
 }
 #fileList:after {
   clear: both;
@@ -145,7 +155,6 @@ a {
 .popup {
   display: none;
   position: fixed;
-  width: 320px;
   height: 120px;
   left: 50%;
   top: 50%;
@@ -154,6 +163,7 @@ a {
   border: 1px solid silver;
   background-color: white;
   z-index: 2000;
+  padding: 0px 20px;
 }
 .button {
     background-color: #1275d6;
@@ -225,11 +235,13 @@ a {
 }*/
 .actions {
     display: inline-block;
-    width: 231px;
+    white-space: nowrap;
+}
+.fileText {
+  width: 100%;
 }
 .file {
     display: inline-block;
-    max-width: 375px;
     white-space: pre-line;
     word-wrap: break-word;
 }
@@ -246,4 +258,21 @@ a {
     font-size: 11px;
     position: relative;
     margin-left: 8px;
+}
+
+.fileSelectedPartRight {
+  float: left;
+  width: calc(100% - 100px);
+}
+
+.fileSelectedPartLeft {
+  float: left;
+}
+
+.files-list {
+  width: 100%;
+}
+
+.files-list .header-actions {
+  width: 250px;
 }

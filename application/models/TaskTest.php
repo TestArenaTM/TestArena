@@ -26,6 +26,7 @@ class Application_Model_TaskTest extends Custom_Model_Standard_Abstract
   private $_task       = null;
   private $_test       = null;
   private $_resolution = null;
+  private $_defect     = null;
   
   private $_checklistItems = array();
   
@@ -58,12 +59,32 @@ class Application_Model_TaskTest extends Custom_Model_Standard_Abstract
   {
     return $this->_checklistItems;
   }
+
+  public function getDefect()
+  {
+    return $this->_defect;
+  }
+
   // </editor-fold>
   
   // <editor-fold defaultstate="collapsed" desc="Setters">
   public function setId($id)
   {
     $this->_id = $id;
+    return $this;
+  }
+
+  public function setDefect($propertyName, $propertyValue)
+  {
+    if (null === $this->_defect)
+    {
+      $this->_defect = new Application_Model_Defect(array($propertyName => $propertyValue));
+    }
+    else
+    {
+      $this->getDefect()->setProperty($propertyName, $propertyValue);
+    }
+
     return $this;
   }
   
@@ -98,6 +119,11 @@ class Application_Model_TaskTest extends Custom_Model_Standard_Abstract
     }
     
     return $this;
+  }
+
+  public function setDefectObject(Application_Model_Defect $defect = null)
+  {
+    $this->_defect = $defect;
   }
   
   public function setTestObject(Custom_Interface_Test $test = null)
@@ -173,6 +199,11 @@ class Application_Model_TaskTest extends Custom_Model_Standard_Abstract
     }
     
     return $this;
+  }
+
+  public function setResolutionObject(Application_Model_Resolution $resolution)
+  {
+    $this->_resolution = $resolution;
   }
   
   public function setResolution($propertyName, $propertyValue)

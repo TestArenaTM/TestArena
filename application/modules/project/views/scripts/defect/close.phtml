@@ -2,13 +2,15 @@
   <!--<div class="breadcrumb">
     <a class="icon_house_alt" href="#"></a>
     <i class="arrow_carrot-right icon-15"></i>
-    <a href="#"><?php echo $this->generalT('Defekty') ?></a>
+    <a href="#"><?php echo $this->generalT('Zgłoszenia') ?></a>
     <i class="arrow_carrot-right icon-15"></i>    
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div> --> 
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-    <h3><?php echo $this->defect->getObjectNumber() ?> <?php echo $this->defect->getTitle() ?></h3>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
+    <h3><span class="object_nr"><?php echo $this->defect->getObjectNumber() ?></span> <?php echo $this->spaceToEntity($this->escapeQuotes($this->defect->getTitle())) ?></h3>
 
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <?php echo $this->form->backUrl->renderViewHelper() ?>
@@ -47,7 +49,10 @@
           <?php echo $this->form->comment->renderViewHelper() ?>
             <?php echo $this->formLabel('comment', $this->t('Komentarz')) ?>            
           <?php foreach ($this->form->getErrors('comment') as $error): ?>
-              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('comment')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                'max' => $this->form->getElement('comment')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+              )) ?></div>
           <?php endforeach; ?>
           </span>
         </div>

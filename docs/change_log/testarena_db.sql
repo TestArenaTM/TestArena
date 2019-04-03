@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
+-- version 4.7.7
+-- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Czas generowania: 28 Sie 2017, 10:21
--- Wersja serwera: 10.1.13-MariaDB
--- Wersja PHP: 5.6.21
+-- Host: cna.nazwa.pl:3306
+-- Czas generowania: 21 Gru 2018, 09:54
+-- Wersja serwera: 10.1.26-MariaDB
+-- Wersja PHP: 7.2.10-0ubuntu0.18.04.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 --
@@ -26,7 +28,7 @@ CREATE TABLE `attachment` (
   `subject_id` int(10) UNSIGNED NOT NULL,
   `type` tinyint(2) UNSIGNED NOT NULL,
   `create_date` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -36,8 +38,8 @@ CREATE TABLE `attachment` (
 
 CREATE TABLE `attachment_type` (
   `id` tinyint(2) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `attachment_type`
@@ -59,14 +61,14 @@ INSERT INTO `attachment_type` (`id`, `name`) VALUES
 CREATE TABLE `authorization_log` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED DEFAULT NULL,
-  `username` varchar(32) NOT NULL,
+  `username` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `type` tinyint(1) UNSIGNED NOT NULL,
   `user_type` tinyint(1) UNSIGNED DEFAULT NULL,
   `time` datetime NOT NULL,
-  `user_ip` varchar(15) NOT NULL,
-  `proxy_ip` varchar(15) DEFAULT NULL,
-  `browser` varchar(64) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `user_ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `proxy_ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `browser` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -76,8 +78,8 @@ CREATE TABLE `authorization_log` (
 
 CREATE TABLE `authorization_log_type` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `authorization_log_type`
@@ -96,8 +98,8 @@ INSERT INTO `authorization_log_type` (`id`, `name`) VALUES
 
 CREATE TABLE `authorization_log_user_type` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `authorization_log_user_type`
@@ -115,11 +117,11 @@ INSERT INTO `authorization_log_user_type` (`id`, `name`) VALUES
 
 CREATE TABLE `bug_tracker_jira` (
   `id` int(10) UNSIGNED NOT NULL,
-  `user_name` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `project_key` varchar(255) NOT NULL,
-  `url` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `user_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `project_key` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `url` text CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -129,12 +131,12 @@ CREATE TABLE `bug_tracker_jira` (
 
 CREATE TABLE `bug_tracker_mantis` (
   `id` int(10) UNSIGNED NOT NULL,
-  `user_name` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `user_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
-  `project_name` varchar(255) NOT NULL,
-  `url` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `project_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `url` text CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -144,8 +146,8 @@ CREATE TABLE `bug_tracker_mantis` (
 
 CREATE TABLE `bug_tracker_status` (
   `id` tinyint(3) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `bug_tracker_status`
@@ -164,8 +166,8 @@ INSERT INTO `bug_tracker_status` (`id`, `name`) VALUES
 
 CREATE TABLE `bug_tracker_type` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `bug_tracker_type`
@@ -185,8 +187,8 @@ INSERT INTO `bug_tracker_type` (`id`, `name`) VALUES
 CREATE TABLE `checklist_item` (
   `id` int(10) UNSIGNED NOT NULL,
   `test_id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -200,10 +202,10 @@ CREATE TABLE `comment` (
   `subject_type` tinyint(2) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `status` tinyint(1) UNSIGNED NOT NULL,
-  `content` text NOT NULL,
+  `content` text CHARACTER SET utf8 NOT NULL,
   `create_date` datetime NOT NULL,
   `modify_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -213,8 +215,8 @@ CREATE TABLE `comment` (
 
 CREATE TABLE `comment_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `comment_status`
@@ -233,8 +235,8 @@ INSERT INTO `comment_status` (`id`, `name`) VALUES
 
 CREATE TABLE `comment_subject_type` (
   `id` tinyint(2) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `comment_subject_type`
@@ -260,12 +262,13 @@ CREATE TABLE `defect` (
   `assignee_id` int(10) UNSIGNED NOT NULL,
   `create_date` datetime NOT NULL,
   `modify_date` datetime NOT NULL,
+  `type` enum('NEW_FEATURE','IMPROVEMENT','DEFECT') CHARACTER SET utf8 DEFAULT 'DEFECT',
   `status` tinyint(1) UNSIGNED NOT NULL,
   `priority` tinyint(1) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8 NOT NULL,
   `author_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Wyzwalacze `defect`
@@ -292,8 +295,9 @@ DELIMITER ;
 
 CREATE TABLE `defect_environment` (
   `defect_id` int(10) UNSIGNED NOT NULL,
-  `environment_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `environment_id` int(10) UNSIGNED NOT NULL,
+  `type` enum('reported','resolved') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'reported'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -305,8 +309,8 @@ CREATE TABLE `defect_jira` (
   `id` int(10) UNSIGNED NOT NULL,
   `bug_tracker_id` int(10) UNSIGNED NOT NULL,
   `no` int(10) UNSIGNED NOT NULL,
-  `summary` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `summary` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -318,8 +322,8 @@ CREATE TABLE `defect_mantis` (
   `id` int(10) UNSIGNED NOT NULL,
   `bug_tracker_id` int(10) UNSIGNED NOT NULL,
   `no` int(11) NOT NULL,
-  `summary` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `summary` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -329,8 +333,8 @@ CREATE TABLE `defect_mantis` (
 
 CREATE TABLE `defect_priority` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `defect_priority`
@@ -351,8 +355,8 @@ INSERT INTO `defect_priority` (`id`, `name`) VALUES
 
 CREATE TABLE `defect_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `defect_status`
@@ -362,8 +366,8 @@ INSERT INTO `defect_status` (`id`, `name`) VALUES
 (9, 'DELETED'),
 (7, 'FAIL'),
 (3, 'FINISHED'),
-(5, 'INVALID'),
 (2, 'IN_PROGRESS'),
+(5, 'INVALID'),
 (1, 'OPEN'),
 (8, 'REOPEN'),
 (4, 'RESOLVED'),
@@ -379,7 +383,7 @@ CREATE TABLE `defect_tag` (
   `id` int(10) UNSIGNED NOT NULL,
   `defect_id` int(10) UNSIGNED NOT NULL,
   `tag_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -389,8 +393,9 @@ CREATE TABLE `defect_tag` (
 
 CREATE TABLE `defect_version` (
   `defect_id` int(10) UNSIGNED NOT NULL,
-  `version_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `version_id` int(10) UNSIGNED NOT NULL,
+  `type` enum('resolved','reported') CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'reported'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -401,9 +406,9 @@ CREATE TABLE `defect_version` (
 CREATE TABLE `environment` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `description` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -415,8 +420,8 @@ CREATE TABLE `exploratory_test` (
   `id` int(10) UNSIGNED NOT NULL,
   `test_id` int(10) UNSIGNED NOT NULL,
   `duration` int(10) UNSIGNED DEFAULT NULL,
-  `test_card` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `test_card` text CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -427,13 +432,14 @@ CREATE TABLE `exploratory_test` (
 CREATE TABLE `file` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED DEFAULT NULL,
-  `name` varchar(255) NOT NULL,
-  `extension` varchar(5) NOT NULL,
-  `subpath` text NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `name_visible` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `extension` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `subpath` text COLLATE utf8_unicode_ci NOT NULL,
   `create_date` datetime NOT NULL,
   `remove_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `description` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -446,8 +452,8 @@ CREATE TABLE `filter` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED DEFAULT NULL,
   `group` tinyint(1) UNSIGNED NOT NULL,
-  `data` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `data` text CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -457,8 +463,8 @@ CREATE TABLE `filter` (
 
 CREATE TABLE `filter_group` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `filter_group`
@@ -490,9 +496,9 @@ CREATE TABLE `history` (
   `subject_id` int(10) UNSIGNED NOT NULL,
   `subject_type` tinyint(2) UNSIGNED NOT NULL,
   `type` tinyint(2) UNSIGNED NOT NULL,
-  `field1` varchar(255) DEFAULT NULL,
-  `field2` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `field1` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `field2` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -502,8 +508,8 @@ CREATE TABLE `history` (
 
 CREATE TABLE `history_subject_type` (
   `id` tinyint(2) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `history_subject_type`
@@ -527,8 +533,8 @@ INSERT INTO `history_subject_type` (`id`, `name`) VALUES
 
 CREATE TABLE `history_type` (
   `id` tinyint(2) UNSIGNED NOT NULL,
-  `name` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `history_type`
@@ -536,6 +542,12 @@ CREATE TABLE `history_type` (
 
 INSERT INTO `history_type` (`id`, `name`) VALUES
 (12, 'ADD_DEFECT_TO_TASK'),
+(29, 'ADD_DEFECT_TO_TASK_TEST'),
+(23, 'ADD_DEFECT_TO_TEST'),
+(31, 'ADD_TASK_TEST_TO_DEFECT'),
+(26, 'ADD_TASK_TEST_TO_TASK'),
+(21, 'ADD_TASK_TO_DEFECT'),
+(32, 'ADD_TEST_TO_DEFECT'),
 (7, 'ADD_TEST_TO_TASK'),
 (17, 'ASSIGN_TASK'),
 (16, 'CHANGE_AND_ASSIGN_TASK'),
@@ -547,12 +559,19 @@ INSERT INTO `history_type` (`id`, `name`) VALUES
 (1, 'CHANGE_OTHER_TEST'),
 (5, 'CHANGE_TASK'),
 (6, 'CHANGE_TASK_STATUS'),
+(28, 'CHANGE_TASK_TEST_STATUS'),
 (2, 'CHANGE_TEST_CASE'),
 (15, 'CHANGE_TEST_STATUS'),
 (9, 'CREATE_DEFECT'),
 (4, 'CREATE_TASK'),
 (13, 'DELETE_DEFECT_FROM_TASK'),
+(24, 'DELETE_DEFECT_FROM_TASK_TEST'),
+(30, 'DELETE_DEFECT_FROM_TEST'),
+(20, 'DELETE_TASK_FROM_DEFECT'),
+(25, 'DELETE_TASK_TEST_FROM_DEFECT'),
+(22, 'DELETE_TEST_FROM_DEFECT'),
 (8, 'DELETE_TEST_FROM_TASK'),
+(27, 'RESOLVE_TASK_TEST'),
 (14, 'RESOLVE_TEST');
 
 -- --------------------------------------------------------
@@ -573,9 +592,9 @@ CREATE TABLE `message` (
   `from_status` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `create_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `received_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `subject` varchar(255) NOT NULL,
-  `content` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `subject` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `content` text CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -585,8 +604,8 @@ CREATE TABLE `message` (
 
 CREATE TABLE `message_from_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `message_from_status`
@@ -605,8 +624,8 @@ INSERT INTO `message_from_status` (`id`, `name`) VALUES
 
 CREATE TABLE `message_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `message_status`
@@ -625,8 +644,8 @@ INSERT INTO `message_status` (`id`, `name`) VALUES
 
 CREATE TABLE `message_to_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `message_to_status`
@@ -646,8 +665,8 @@ INSERT INTO `message_to_status` (`id`, `name`) VALUES
 
 CREATE TABLE `message_user_type` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `message_user_type`
@@ -665,14 +684,18 @@ INSERT INTO `message_user_type` (`id`, `name`) VALUES
 
 CREATE TABLE `project` (
   `id` int(10) UNSIGNED NOT NULL,
-  `prefix` varchar(6) NOT NULL,
+  `prefix` varchar(6) COLLATE utf8_unicode_ci DEFAULT NULL,
   `status` tinyint(2) UNSIGNED NOT NULL,
   `create_date` datetime NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `description` text NOT NULL,
-  `open_status_color` varchar(7) NOT NULL,
-  `in_progress_status_color` varchar(7) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8 NOT NULL,
+  `open_status_color` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `in_progress_status_color` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `reopen_status_color` varchar(7) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `closed_status_color` varchar(7) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `invalid_status_color` varchar(7) COLLATE utf8_unicode_ci NOT NULL DEFAULT '#0082FE',
+  `resolved_status_color` varchar(7) COLLATE utf8_unicode_ci NOT NULL DEFAULT '#8DD00E'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -684,7 +707,7 @@ CREATE TABLE `project_active_settings` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
   `project_setting_id` tinyint(2) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -696,10 +719,10 @@ CREATE TABLE `project_bug_tracker` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
   `bug_tracker_id` int(10) UNSIGNED DEFAULT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `bug_tracker_type` tinyint(1) UNSIGNED NOT NULL,
   `bug_tracker_status` tinyint(1) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -709,8 +732,20 @@ CREATE TABLE `project_bug_tracker` (
 
 CREATE TABLE `project_setting` (
   `id` tinyint(2) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Zrzut danych tabeli `project_setting`
+--
+
+INSERT INTO `project_setting` (`id`, `name`) VALUES
+(1, 'VERSIONS_ENABLED'),
+(2, 'ENVIRONMENTS_ENABLED'),
+(3, 'RELEASES_ENABLED'),
+(4, 'PHASES_ENABLED'),
+(5, 'DEFECTS_ENABLED'),
+(6, 'TESTS_ENABLED');
 
 -- --------------------------------------------------------
 
@@ -720,8 +755,8 @@ CREATE TABLE `project_setting` (
 
 CREATE TABLE `project_status` (
   `id` tinyint(2) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `project_status`
@@ -743,10 +778,10 @@ CREATE TABLE `release` (
   `project_id` int(10) UNSIGNED NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `description` varchar(160) NOT NULL DEFAULT '',
+  `name` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(160) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -757,10 +792,10 @@ CREATE TABLE `release` (
 CREATE TABLE `resolution` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(40) NOT NULL,
-  `color` varchar(7) NOT NULL,
-  `description` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(80) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `color` varchar(7) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -771,8 +806,8 @@ CREATE TABLE `resolution` (
 CREATE TABLE `role` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -782,14 +817,11 @@ CREATE TABLE `role` (
 
 CREATE TABLE `role_action` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `order` int(10) UNSIGNED NOT NULL,
   `group_id` tinyint(4) UNSIGNED NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Zrzut danych tabeli `role_action`
---
 
 INSERT INTO `role_action` (`id`, `name`, `order`, `group_id`) VALUES
 (1, 'PROJECT_ATTACHMENT', 1, 1),
@@ -831,7 +863,9 @@ INSERT INTO `role_action` (`id`, `name`, `order`, `group_id`) VALUES
 (37, 'TASK_DEFECT_MODIFY_ALL', 37, 4),
 (38, 'TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU', 38, 4),
 (39, 'TASK_DEFECT_MODIFY_CREATED_BY_YOU', 39, 4),
-(40, 'TAG_MANAGEMENT', 7, 1);
+(40, 'TAG_MANAGEMENT', 7, 1),
+(41, 'EXTENDING_PROJECT_STATISTIC', 50, 1);
+
 
 -- --------------------------------------------------------
 
@@ -843,7 +877,7 @@ CREATE TABLE `role_settings` (
   `id` int(10) UNSIGNED NOT NULL,
   `role_id` int(10) UNSIGNED NOT NULL,
   `role_action_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -855,7 +889,7 @@ CREATE TABLE `role_user` (
   `id` int(10) UNSIGNED NOT NULL,
   `role_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -866,8 +900,8 @@ CREATE TABLE `role_user` (
 CREATE TABLE `tag` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -887,11 +921,11 @@ CREATE TABLE `task` (
   `due_date` datetime NOT NULL,
   `status` tinyint(1) UNSIGNED NOT NULL,
   `priority` tinyint(1) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` mediumtext COLLATE utf8_unicode_ci,
   `resolution_id` int(10) UNSIGNED DEFAULT NULL,
   `author_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Wyzwalacze `task`
@@ -921,7 +955,7 @@ CREATE TABLE `task_checklist_item` (
   `task_test_id` int(10) UNSIGNED NOT NULL,
   `checklist_item_id` int(10) UNSIGNED NOT NULL,
   `status` tinyint(1) UNSIGNED NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -931,8 +965,8 @@ CREATE TABLE `task_checklist_item` (
 
 CREATE TABLE `task_checklist_item_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `task_checklist_item_status`
@@ -954,7 +988,7 @@ CREATE TABLE `task_defect` (
   `task_id` int(10) UNSIGNED NOT NULL,
   `defect_id` int(10) UNSIGNED NOT NULL,
   `bug_tracker_id` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -965,7 +999,7 @@ CREATE TABLE `task_defect` (
 CREATE TABLE `task_environment` (
   `task_id` int(10) UNSIGNED NOT NULL,
   `environment_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -975,8 +1009,8 @@ CREATE TABLE `task_environment` (
 
 CREATE TABLE `task_priority` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `task_priority`
@@ -996,8 +1030,8 @@ INSERT INTO `task_priority` (`id`, `name`) VALUES
 
 CREATE TABLE `task_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `task_status`
@@ -1020,7 +1054,7 @@ CREATE TABLE `task_tag` (
   `id` int(10) UNSIGNED NOT NULL,
   `task_id` int(10) UNSIGNED NOT NULL,
   `tag_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1033,7 +1067,7 @@ CREATE TABLE `task_test` (
   `task_id` int(10) UNSIGNED NOT NULL,
   `test_id` int(10) UNSIGNED NOT NULL,
   `resolution_id` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1044,7 +1078,7 @@ CREATE TABLE `task_test` (
 CREATE TABLE `task_version` (
   `task_id` int(10) UNSIGNED NOT NULL,
   `version_id` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1060,11 +1094,11 @@ CREATE TABLE `test` (
   `type` tinyint(1) UNSIGNED NOT NULL,
   `author_id` int(10) UNSIGNED NOT NULL,
   `create_date` datetime NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` mediumtext COLLATE utf8_unicode_ci,
   `family_id` int(10) UNSIGNED DEFAULT NULL,
   `current_version` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Wyzwalacze `test`
@@ -1098,9 +1132,22 @@ DELIMITER ;
 CREATE TABLE `test_case` (
   `id` int(10) UNSIGNED NOT NULL,
   `test_id` int(10) UNSIGNED NOT NULL,
-  `presuppositions` text NOT NULL,
-  `result` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `presuppositions` mediumtext COLLATE utf8_unicode_ci,
+  `result` mediumtext COLLATE utf8_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `test_defect`
+--
+
+CREATE TABLE `test_defect` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `task_test_id` int(11) UNSIGNED DEFAULT NULL,
+  `defect_id` int(11) UNSIGNED DEFAULT NULL,
+  `bug_tracker_id` int(10) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1110,8 +1157,8 @@ CREATE TABLE `test_case` (
 
 CREATE TABLE `test_status` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `test_status`
@@ -1129,8 +1176,8 @@ INSERT INTO `test_status` (`id`, `name`) VALUES
 
 CREATE TABLE `test_type` (
   `id` tinyint(1) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `test_type`
@@ -1151,31 +1198,31 @@ INSERT INTO `test_type` (`id`, `name`) VALUES
 
 CREATE TABLE `user` (
   `id` int(10) UNSIGNED NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `new_email` varchar(255) DEFAULT NULL,
-  `password` varchar(40) DEFAULT NULL,
-  `salt` varchar(16) DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `new_email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `password` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `salt` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
   `reset_password` tinyint(1) NOT NULL DEFAULT '0',
   `status` tinyint(2) UNSIGNED NOT NULL DEFAULT '1',
   `create_date` datetime NOT NULL,
   `last_login_date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `token` varchar(32) DEFAULT NULL,
-  `firstname` varchar(32) NOT NULL,
-  `lastname` varchar(64) NOT NULL,
+  `token` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `firstname` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `lastname` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
   `administrator` tinyint(1) NOT NULL,
-  `organization` varchar(255) DEFAULT NULL,
-  `department` varchar(255) DEFAULT NULL,
-  `phone_number` varchar(20) DEFAULT NULL,
+  `organization` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `department` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `phone_number` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
   `default_project_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `default_locale` varchar(5) NOT NULL DEFAULT 'pl_PL'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `default_locale` varchar(5) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `user`
 --
 
 INSERT INTO `user` (`id`, `email`, `new_email`, `password`, `salt`, `reset_password`, `status`, `create_date`, `last_login_date`, `token`, `firstname`, `lastname`, `administrator`, `organization`, `department`, `phone_number`, `default_project_id`, `default_locale`) VALUES
-(1, 'administrator@testarena.pl', NULL, 'b0768ff646fc6d6f0187783db4809a88296c9795', 'ff1e162027920600', 0, 2, '2012-10-02 14:30:00', '2017-08-29 10:27:27', NULL, 'Test', 'Arena', 1, '21CN', 'IT', '997997997', 74, 'pl_PL');
+(1, 'administrator@testarena.pl', '', 'ce89ce028683084df2c39f9510fb045259c4a552', '1c3604332c047145', 0, 2, '2012-10-02 14:30:00', '2018-12-21 07:54:58', NULL, 'TestArena', 'Admin', 1, 'TestArena', 'IT', '', 1, 'pl_PL');
 
 -- --------------------------------------------------------
 
@@ -1185,8 +1232,8 @@ INSERT INTO `user` (`id`, `email`, `new_email`, `password`, `salt`, `reset_passw
 
 CREATE TABLE `user_status` (
   `id` tinyint(2) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Zrzut danych tabeli `user_status`
@@ -1205,16 +1252,16 @@ INSERT INTO `user_status` (`id`, `name`) VALUES
 CREATE TABLE `version` (
   `id` int(10) UNSIGNED NOT NULL,
   `project_id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(20) NOT NULL,
-  `description` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Indeksy dla zrzutów tabel
 --
 
 --
--- Indexes for table `attachment`
+-- Indeksy dla tabeli `attachment`
 --
 ALTER TABLE `attachment`
   ADD PRIMARY KEY (`id`),
@@ -1223,14 +1270,14 @@ ALTER TABLE `attachment`
   ADD KEY `iType` (`type`);
 
 --
--- Indexes for table `attachment_type`
+-- Indeksy dla tabeli `attachment_type`
 --
 ALTER TABLE `attachment_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `authorization_log`
+-- Indeksy dla tabeli `authorization_log`
 --
 ALTER TABLE `authorization_log`
   ADD PRIMARY KEY (`id`),
@@ -1238,54 +1285,54 @@ ALTER TABLE `authorization_log`
   ADD KEY `iUserType` (`user_type`);
 
 --
--- Indexes for table `authorization_log_type`
+-- Indeksy dla tabeli `authorization_log_type`
 --
 ALTER TABLE `authorization_log_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `authorization_log_user_type`
+-- Indeksy dla tabeli `authorization_log_user_type`
 --
 ALTER TABLE `authorization_log_user_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `bug_tracker_jira`
+-- Indeksy dla tabeli `bug_tracker_jira`
 --
 ALTER TABLE `bug_tracker_jira`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `bug_tracker_mantis`
+-- Indeksy dla tabeli `bug_tracker_mantis`
 --
 ALTER TABLE `bug_tracker_mantis`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `bug_tracker_status`
+-- Indeksy dla tabeli `bug_tracker_status`
 --
 ALTER TABLE `bug_tracker_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `bug_tracker_type`
+-- Indeksy dla tabeli `bug_tracker_type`
 --
 ALTER TABLE `bug_tracker_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `checklist_item`
+-- Indeksy dla tabeli `checklist_item`
 --
 ALTER TABLE `checklist_item`
   ADD PRIMARY KEY (`id`),
   ADD KEY `iTestId` (`test_id`) USING BTREE;
 
 --
--- Indexes for table `comment`
+-- Indeksy dla tabeli `comment`
 --
 ALTER TABLE `comment`
   ADD PRIMARY KEY (`id`),
@@ -1295,21 +1342,21 @@ ALTER TABLE `comment`
   ADD KEY `iSubjectType` (`subject_type`);
 
 --
--- Indexes for table `comment_status`
+-- Indeksy dla tabeli `comment_status`
 --
 ALTER TABLE `comment_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `comment_subject_type`
+-- Indeksy dla tabeli `comment_subject_type`
 --
 ALTER TABLE `comment_subject_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `defect`
+-- Indeksy dla tabeli `defect`
 --
 ALTER TABLE `defect`
   ADD PRIMARY KEY (`id`),
@@ -1322,14 +1369,14 @@ ALTER TABLE `defect`
   ADD KEY `fkDefectAuthorId` (`author_id`);
 
 --
--- Indexes for table `defect_environment`
+-- Indeksy dla tabeli `defect_environment`
 --
 ALTER TABLE `defect_environment`
-  ADD PRIMARY KEY (`defect_id`,`environment_id`),
+  ADD PRIMARY KEY (`defect_id`,`environment_id`,`type`) USING BTREE,
   ADD KEY `fkdefectEnvironmentEnvironmentId` (`environment_id`);
 
 --
--- Indexes for table `defect_jira`
+-- Indeksy dla tabeli `defect_jira`
 --
 ALTER TABLE `defect_jira`
   ADD PRIMARY KEY (`id`),
@@ -1337,7 +1384,7 @@ ALTER TABLE `defect_jira`
   ADD KEY `iBugTrackerId` (`bug_tracker_id`);
 
 --
--- Indexes for table `defect_mantis`
+-- Indeksy dla tabeli `defect_mantis`
 --
 ALTER TABLE `defect_mantis`
   ADD PRIMARY KEY (`id`),
@@ -1345,21 +1392,21 @@ ALTER TABLE `defect_mantis`
   ADD KEY `iBugTrackerId` (`bug_tracker_id`);
 
 --
--- Indexes for table `defect_priority`
+-- Indeksy dla tabeli `defect_priority`
 --
 ALTER TABLE `defect_priority`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `defect_status`
+-- Indeksy dla tabeli `defect_status`
 --
 ALTER TABLE `defect_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `defect_tag`
+-- Indeksy dla tabeli `defect_tag`
 --
 ALTER TABLE `defect_tag`
   ADD PRIMARY KEY (`id`),
@@ -1368,14 +1415,14 @@ ALTER TABLE `defect_tag`
   ADD KEY `iTagId` (`tag_id`);
 
 --
--- Indexes for table `defect_version`
+-- Indeksy dla tabeli `defect_version`
 --
 ALTER TABLE `defect_version`
-  ADD PRIMARY KEY (`defect_id`,`version_id`),
+  ADD PRIMARY KEY (`defect_id`,`version_id`,`type`) USING BTREE,
   ADD KEY `fkdefectVersionVersionId` (`version_id`);
 
 --
--- Indexes for table `environment`
+-- Indeksy dla tabeli `environment`
 --
 ALTER TABLE `environment`
   ADD PRIMARY KEY (`id`),
@@ -1383,37 +1430,38 @@ ALTER TABLE `environment`
   ADD KEY `iProjectId` (`project_id`);
 
 --
--- Indexes for table `exploratory_test`
+-- Indeksy dla tabeli `exploratory_test`
 --
 ALTER TABLE `exploratory_test`
   ADD PRIMARY KEY (`id`),
   ADD KEY `iTestId` (`test_id`);
 
 --
--- Indexes for table `file`
+-- Indeksy dla tabeli `file`
 --
 ALTER TABLE `file`
   ADD PRIMARY KEY (`id`),
   ADD KEY `iProjectId` (`project_id`);
 
 --
--- Indexes for table `filter`
+-- Indeksy dla tabeli `filter`
 --
 ALTER TABLE `filter`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uUserIdGroupIdProjectId` (`user_id`,`group`,`project_id`) USING BTREE,
   ADD KEY `iUserId` (`user_id`),
   ADD KEY `iGroupId` (`group`),
   ADD KEY `uProjectId` (`project_id`);
 
 --
--- Indexes for table `filter_group`
+-- Indeksy dla tabeli `filter_group`
 --
 ALTER TABLE `filter_group`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `history`
+-- Indeksy dla tabeli `history`
 --
 ALTER TABLE `history`
   ADD PRIMARY KEY (`id`),
@@ -1422,21 +1470,21 @@ ALTER TABLE `history`
   ADD KEY `iType` (`type`);
 
 --
--- Indexes for table `history_subject_type`
+-- Indeksy dla tabeli `history_subject_type`
 --
 ALTER TABLE `history_subject_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `history_type`
+-- Indeksy dla tabeli `history_type`
 --
 ALTER TABLE `history_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `message`
+-- Indeksy dla tabeli `message`
 --
 ALTER TABLE `message`
   ADD PRIMARY KEY (`id`),
@@ -1450,44 +1498,44 @@ ALTER TABLE `message`
   ADD KEY `iFromStatus` (`from_status`);
 
 --
--- Indexes for table `message_from_status`
+-- Indeksy dla tabeli `message_from_status`
 --
 ALTER TABLE `message_from_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `message_status`
+-- Indeksy dla tabeli `message_status`
 --
 ALTER TABLE `message_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `message_to_status`
+-- Indeksy dla tabeli `message_to_status`
 --
 ALTER TABLE `message_to_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `message_user_type`
+-- Indeksy dla tabeli `message_user_type`
 --
 ALTER TABLE `message_user_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `project`
+-- Indeksy dla tabeli `project`
 --
 ALTER TABLE `project`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uPrefix` (`prefix`),
   ADD UNIQUE KEY `uName` (`name`),
+  ADD UNIQUE KEY `uPrefix` (`prefix`),
   ADD KEY `iStatus` (`status`);
 
 --
--- Indexes for table `project_active_settings`
+-- Indeksy dla tabeli `project_active_settings`
 --
 ALTER TABLE `project_active_settings`
   ADD PRIMARY KEY (`id`),
@@ -1496,7 +1544,7 @@ ALTER TABLE `project_active_settings`
   ADD KEY `iProjectSettingId` (`project_setting_id`);
 
 --
--- Indexes for table `project_bug_tracker`
+-- Indeksy dla tabeli `project_bug_tracker`
 --
 ALTER TABLE `project_bug_tracker`
   ADD PRIMARY KEY (`id`),
@@ -1507,43 +1555,43 @@ ALTER TABLE `project_bug_tracker`
   ADD KEY `iBugTrackerStatus` (`bug_tracker_status`);
 
 --
--- Indexes for table `project_setting`
+-- Indeksy dla tabeli `project_setting`
 --
 ALTER TABLE `project_setting`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `project_status`
+-- Indeksy dla tabeli `project_status`
 --
 ALTER TABLE `project_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `release`
+-- Indeksy dla tabeli `release`
 --
 ALTER TABLE `release`
   ADD PRIMARY KEY (`id`),
   ADD KEY `iProjectId` (`project_id`);
 
 --
--- Indexes for table `resolution`
+-- Indeksy dla tabeli `resolution`
 --
 ALTER TABLE `resolution`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uProjectIdName` (`project_id`,`name`),
   ADD UNIQUE KEY `uProjectIdColor` (`project_id`,`color`),
+  ADD UNIQUE KEY `uProjectIdName` (`project_id`,`name`),
   ADD KEY `iProjectId` (`project_id`);
 
 --
--- Indexes for table `role`
+-- Indeksy dla tabeli `role`
 --
 ALTER TABLE `role`
   ADD PRIMARY KEY (`id`),
   ADD KEY `iProjectId` (`project_id`);
 
 --
--- Indexes for table `role_action`
+-- Indeksy dla tabeli `role_action`
 --
 ALTER TABLE `role_action`
   ADD PRIMARY KEY (`id`),
@@ -1551,7 +1599,7 @@ ALTER TABLE `role_action`
   ADD KEY `uGroupId` (`group_id`);
 
 --
--- Indexes for table `role_settings`
+-- Indeksy dla tabeli `role_settings`
 --
 ALTER TABLE `role_settings`
   ADD PRIMARY KEY (`id`),
@@ -1560,7 +1608,7 @@ ALTER TABLE `role_settings`
   ADD KEY `iRoleActionId` (`role_action_id`);
 
 --
--- Indexes for table `role_user`
+-- Indeksy dla tabeli `role_user`
 --
 ALTER TABLE `role_user`
   ADD PRIMARY KEY (`id`),
@@ -1569,7 +1617,7 @@ ALTER TABLE `role_user`
   ADD KEY `iUserId` (`user_id`);
 
 --
--- Indexes for table `tag`
+-- Indeksy dla tabeli `tag`
 --
 ALTER TABLE `tag`
   ADD PRIMARY KEY (`id`),
@@ -1577,7 +1625,7 @@ ALTER TABLE `tag`
   ADD KEY `iProjectId` (`project_id`);
 
 --
--- Indexes for table `task`
+-- Indeksy dla tabeli `task`
 --
 ALTER TABLE `task`
   ADD PRIMARY KEY (`id`),
@@ -1591,7 +1639,7 @@ ALTER TABLE `task`
   ADD KEY `fkTaskAuthorId` (`author_id`);
 
 --
--- Indexes for table `task_checklist_item`
+-- Indeksy dla tabeli `task_checklist_item`
 --
 ALTER TABLE `task_checklist_item`
   ADD PRIMARY KEY (`id`),
@@ -1601,14 +1649,14 @@ ALTER TABLE `task_checklist_item`
   ADD KEY `iStatus` (`status`) USING BTREE;
 
 --
--- Indexes for table `task_checklist_item_status`
+-- Indeksy dla tabeli `task_checklist_item_status`
 --
 ALTER TABLE `task_checklist_item_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `task_defect`
+-- Indeksy dla tabeli `task_defect`
 --
 ALTER TABLE `task_defect`
   ADD PRIMARY KEY (`id`),
@@ -1618,28 +1666,28 @@ ALTER TABLE `task_defect`
   ADD KEY `iBugTrackerId` (`bug_tracker_id`);
 
 --
--- Indexes for table `task_environment`
+-- Indeksy dla tabeli `task_environment`
 --
 ALTER TABLE `task_environment`
   ADD PRIMARY KEY (`task_id`,`environment_id`),
   ADD KEY `fkTaskEnvironmentEnvironmentId` (`environment_id`);
 
 --
--- Indexes for table `task_priority`
+-- Indeksy dla tabeli `task_priority`
 --
 ALTER TABLE `task_priority`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `task_status`
+-- Indeksy dla tabeli `task_status`
 --
 ALTER TABLE `task_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `task_tag`
+-- Indeksy dla tabeli `task_tag`
 --
 ALTER TABLE `task_tag`
   ADD PRIMARY KEY (`id`),
@@ -1648,24 +1696,24 @@ ALTER TABLE `task_tag`
   ADD KEY `iTagId` (`tag_id`);
 
 --
--- Indexes for table `task_test`
+-- Indeksy dla tabeli `task_test`
 --
 ALTER TABLE `task_test`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uTaskIdTestId` (`task_id`,`test_id`),
+  ADD KEY `iTaskId` (`task_id`),
   ADD KEY `iTestId` (`test_id`),
-  ADD KEY `iResolutionId` (`resolution_id`),
-  ADD KEY `iTaskId` (`task_id`) USING BTREE;
+  ADD KEY `iResolutionId` (`resolution_id`);
 
 --
--- Indexes for table `task_version`
+-- Indeksy dla tabeli `task_version`
 --
 ALTER TABLE `task_version`
   ADD PRIMARY KEY (`task_id`,`version_id`),
   ADD KEY `fkTaskVersionVersionId` (`version_id`);
 
 --
--- Indexes for table `test`
+-- Indeksy dla tabeli `test`
 --
 ALTER TABLE `test`
   ADD PRIMARY KEY (`id`),
@@ -1676,28 +1724,37 @@ ALTER TABLE `test`
   ADD KEY `iFamilyId` (`family_id`);
 
 --
--- Indexes for table `test_case`
+-- Indeksy dla tabeli `test_case`
 --
 ALTER TABLE `test_case`
   ADD PRIMARY KEY (`id`),
   ADD KEY `iTestId` (`test_id`);
 
 --
--- Indexes for table `test_status`
+-- Indeksy dla tabeli `test_defect`
+--
+ALTER TABLE `test_defect`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uTaskTestIdDefectId` (`task_test_id`,`defect_id`),
+  ADD KEY `fkDefectId` (`defect_id`),
+  ADD KEY `fkTaskTestId` (`task_test_id`);
+
+--
+-- Indeksy dla tabeli `test_status`
 --
 ALTER TABLE `test_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `test_type`
+-- Indeksy dla tabeli `test_type`
 --
 ALTER TABLE `test_type`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `user`
+-- Indeksy dla tabeli `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
@@ -1705,14 +1762,14 @@ ALTER TABLE `user`
   ADD KEY `iStatus` (`status`);
 
 --
--- Indexes for table `user_status`
+-- Indeksy dla tabeli `user_status`
 --
 ALTER TABLE `user_status`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uName` (`name`);
 
 --
--- Indexes for table `version`
+-- Indeksy dla tabeli `version`
 --
 ALTER TABLE `version`
   ADD PRIMARY KEY (`id`),
@@ -1727,172 +1784,212 @@ ALTER TABLE `version`
 -- AUTO_INCREMENT dla tabeli `attachment`
 --
 ALTER TABLE `attachment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=883;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `authorization_log`
 --
 ALTER TABLE `authorization_log`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2897;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `bug_tracker_jira`
 --
 ALTER TABLE `bug_tracker_jira`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `bug_tracker_mantis`
 --
 ALTER TABLE `bug_tracker_mantis`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `checklist_item`
 --
 ALTER TABLE `checklist_item`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `defect`
 --
 ALTER TABLE `defect`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `defect_jira`
 --
 ALTER TABLE `defect_jira`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `defect_mantis`
 --
 ALTER TABLE `defect_mantis`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `defect_tag`
 --
 ALTER TABLE `defect_tag`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `environment`
 --
 ALTER TABLE `environment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `exploratory_test`
 --
 ALTER TABLE `exploratory_test`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `file`
 --
 ALTER TABLE `file`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=355;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `filter`
 --
 ALTER TABLE `filter`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `history`
 --
 ALTER TABLE `history`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1087;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `message`
 --
 ALTER TABLE `message`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `project`
 --
 ALTER TABLE `project`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=167;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `project_active_settings`
 --
 ALTER TABLE `project_active_settings`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `project_bug_tracker`
 --
 ALTER TABLE `project_bug_tracker`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=170;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `release`
 --
 ALTER TABLE `release`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `resolution`
 --
 ALTER TABLE `resolution`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=285;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `role`
 --
 ALTER TABLE `role`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `role_settings`
 --
 ALTER TABLE `role_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=439;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `role_user`
 --
 ALTER TABLE `role_user`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=431;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `tag`
 --
 ALTER TABLE `tag`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `task`
 --
 ALTER TABLE `task`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=328;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `task_checklist_item`
 --
 ALTER TABLE `task_checklist_item`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `task_defect`
 --
 ALTER TABLE `task_defect`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `task_tag`
 --
 ALTER TABLE `task_tag`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `task_test`
 --
 ALTER TABLE `task_test`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `test`
 --
 ALTER TABLE `test`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=154;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `test_case`
 --
 ALTER TABLE `test_case`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT dla tabeli `test_defect`
+--
+ALTER TABLE `test_defect`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT dla tabeli `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+
 --
 -- AUTO_INCREMENT dla tabeli `version`
 --
 ALTER TABLE `version`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
 --
 -- Ograniczenia dla zrzutów tabel
 --
@@ -2133,6 +2230,7 @@ ALTER TABLE `task_version`
 --
 ALTER TABLE `test`
   ADD CONSTRAINT `fkTestAuhorId` FOREIGN KEY (`author_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fkTestFamilyId` FOREIGN KEY (`family_id`) REFERENCES `test` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fkTestProjectId` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fkTestStatus` FOREIGN KEY (`status`) REFERENCES `test_status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fkTestType` FOREIGN KEY (`type`) REFERENCES `test_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -2142,6 +2240,12 @@ ALTER TABLE `test`
 --
 ALTER TABLE `test_case`
   ADD CONSTRAINT `fkTestCaseTestId` FOREIGN KEY (`test_id`) REFERENCES `test` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Ograniczenia dla tabeli `test_defect`
+--
+ALTER TABLE `test_defect`
+  ADD CONSTRAINT `fkTaskTestId` FOREIGN KEY (`task_test_id`) REFERENCES `task_test` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Ograniczenia dla tabeli `user`
@@ -2154,3 +2258,4 @@ ALTER TABLE `user`
 --
 ALTER TABLE `version`
   ADD CONSTRAINT `fkVersionProjectId` FOREIGN KEY (`project_id`) REFERENCES `project` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+COMMIT;

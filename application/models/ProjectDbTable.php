@@ -34,6 +34,8 @@ class Application_Model_ProjectDbTable extends Custom_Model_DbTable_Abstract
         'create_date', 
         'name', 
         'open_status_color',
+        'reopen_status_color',
+        'closed_status_color',
         'in_progress_status_color',
         'description'
       ))

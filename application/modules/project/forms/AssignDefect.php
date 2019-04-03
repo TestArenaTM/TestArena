@@ -23,6 +23,7 @@ The full text of the GPL is in the LICENSE file.
 class Project_Form_AssignDefect extends Custom_Form_Abstract
 {
   protected $_projectId = null;
+  private $_isAccessAssing = null;
   
   public function __construct($options = null)
   {
@@ -31,20 +32,28 @@ class Project_Form_AssignDefect extends Custom_Form_Abstract
       throw new Exception('Project id not defined in form.');
     }
     
-    $this->_projectId = $options['projectId'];    
+    $this->_projectId = $options['projectId'];
+    $this->_isAccessAssing = $options['isAccessAssing'];
+
     parent::__construct($options);
   }
   
   public function init()
   {
     parent::init();
-    
+
     $this->addElement('text', 'assigneeName', array(
       'required'    => false,
       'class'       => 'autocomplete', 
-      'maxlength'   => 255
+      'maxlength'   => 255,
     ));
-    
+
+    if (!$this->_isAccessAssing) {
+      $this->addElement('text', 'assigneeName', array(
+        'attribs' => array('disabled' => 'disabled')
+      ));
+    }
+
     $this->addElement('hidden', 'assigneeId', array(
       'required'    => true,
       'validators'  => array(
@@ -54,12 +63,12 @@ class Project_Form_AssignDefect extends Custom_Form_Abstract
     ));
     
     $this->addElement('textarea', 'comment', array(
-      'maxlength'   => 160,
+      'maxlength'   => Application_Model_Comment::MAX_CONTENT_LENGTH,
       'required'    => false,
       'filters'     => array('StringTrim'),
       'validators'  => array(
         'SimpleText',
-        array('StringLengthOneCharacterLineBreaks', false, array(1, 160, 'UTF-8')),
+        array('StringLengthOneCharacterLineBreaks', false, array(1, Application_Model_Comment::MAX_CONTENT_LENGTH, 'UTF-8')),
       ),
     ));
     

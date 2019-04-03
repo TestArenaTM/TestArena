@@ -1,67 +1,78 @@
 <article class="column_dashboard">
-  
-  <div class="<?php echo $this->numberOfTasksAssignedToMe > 0 ? 'col50' : 'col100'; ?>">
+  <div class="<?php echo $this->numberOfTasksAssigned > 0 ? 'col50' : 'col100'; ?>">
     <article class="article_box dsb">
-      <h4><?php echo $this->t('Zadania przypisane do mnie') ?></h4>
+      <h4>
+      <?php if ($this->forMe): ?>
+        <?php echo $this->t('Zadania przypisane do mnie') ?>
+      <?php else: ?>
+        <?php echo $this->t('Zadania przypisane do projektu') ?>
+      <?php endif ?>
+      </h4>
        <div>
         <div class="dsb-content-main">
           <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter' ?>">
-            <h6><?php echo $this->numberOfTasksAssignedToMe ?></h6>
+            <h6><?php echo $this->numberOfTasksAssigned ?></h6>
             <small><?php echo $this->t('Wszystkich zadań') ?></small>
             <span class="chart25 percent-dsb">
-              <div class="cloud"><?php echo $this->percentOfTasksAssignedToMe?>% <?php echo $this->t('zadań w projekcie') ?></div>
-              <span style="width:<?php echo $this->percentOfTasksAssignedToMe?>%"></span>
-            </span>
-          </a>
-        </div>             
-        <div class="dsb-content-second">         
-          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::OPEN ?>">
-            <h6><?php echo $this->numberOfOpenTasksAssignedToMe ?></h6>
-            <small><?php echo $this->t('Nowych') ?></small>
-            <span class="chart25 percent-dsb">
-              <div class="cloud"><?php echo $this->percentOfOpenTasksAssignedToMe?>%</div>
-              <span style="width:<?php echo $this->percentOfOpenTasksAssignedToMe?>%"></span>
-            </span>
-          </a>
-        </div>            
-        <div class="dsb-content-second">         
-          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::REOPEN ?>">
-            <h6><?php echo $this->numberOfReopenTasksAssignedToMe ?></h6>
-            <small><?php echo $this->t('Ponownie otwartych') ?></small>
-            <span class="chart25 percent-dsb">
-              <div class="cloud"><?php echo $this->percentOfReopenTasksAssignedToMe?>%</div>
-              <span style="width:<?php echo $this->percentOfReopenTasksAssignedToMe?>%"></span>
+              <div class="cloud"><?php echo $this->percentOfTasksAssigned?>% <?php echo $this->t('zadań w projekcie') ?></div>
+              <span style="width:<?php echo $this->percentOfTasksAssigned?>%"></span>
             </span>
           </a>
         </div>
-        <div class="dsb-content-second">         
+        <div class="dsb-content-second">
+          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::OPEN ?>">
+            <h6><?php echo $this->numberOfOpenTasksAssigned ?></h6>
+            <small><?php echo $this->t('Nowych') ?></small>
+            <span class="chart25 percent-dsb" style="background: <?php echo $this->colorHex2RGBA($this->openStatusColor, 0.3) ?>">
+              <div class="cloud"><?php echo $this->percentOfOpenTasksAssigned?>%</div>
+              <span style="width:<?php echo $this->percentOfOpenTasksAssigned?>%; background: <?php echo $this->openStatusColor ?>"></span>
+            </span>
+          </a>
+        </div>
+        <div class="dsb-content-second">
+          <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::REOPEN ?>">
+            <h6><?php echo $this->numberOfReopenTasksAssigned ?></h6>
+            <small><?php echo $this->t('Ponownie otwartych') ?></small>
+            <span class="chart25 percent-dsb" style="background: <?php echo $this->colorHex2RGBA($this->reopenStatusColor, 0.3) ?>">
+              <div class="cloud"><?php echo $this->percentOfReopenTasksAssigned?>%</div>
+              <span style="width:<?php echo $this->percentOfReopenTasksAssigned?>%; background: <?php echo $this->reopenStatusColor ?>"></span>
+            </span>
+          </a>
+        </div>
+        <div class="dsb-content-second">
           <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::IN_PROGRESS ?>">
-            <h6><?php echo $this->numberOfInProgressTasksAssignedToMe ?></h6>
+            <h6><?php echo $this->numberOfInProgressTasksAssigned ?></h6>
             <small><?php echo $this->t('W toku') ?></small>
-            <span class="chart25 percent-dsb">
-              <div class="cloud"><?php echo $this->percentOfInProgressTasksAssignedToMe?>%</div>
-              <span style="width:<?php echo $this->percentOfInProgressTasksAssignedToMe?>%"></span>
+            <span class="chart25 percent-dsb" style="background: <?php echo $this->colorHex2RGBA($this->inProgressStatusColor, 0.3) ?>">
+              <div class="cloud"><?php echo $this->percentOfInProgressTasksAssigned?>%</div>
+              <span style="width:<?php echo $this->percentOfInProgressTasksAssigned?>%; background: <?php echo $this->inProgressStatusColor ?>"></span>
             </span>
           </a>
-        </div>  
-        <div class="dsb-content-second">          
+        </div>
+        <div class="dsb-content-second">
           <a href="<?php echo $this->projectUrl(array('column' => 'task_due_date', 'sort' => 'asc'), 'task_list').$this->mainLinkPart.'&skipSavedFilter&status='.Application_Model_TaskStatus::CLOSED ?>">
-            <h6><?php echo $this->numberOfClosedTasksAssignedToMe ?></h6>
+            <h6><?php echo $this->numberOfClosedTasksAssigned ?></h6>
             <small><?php echo $this->t('Zamkniętych') ?></small>
-            <span class="chart25 percent-dsb">
-              <div class="cloud"><?php echo $this->percentOfClosedTasksAssignedToMe?>%</div>
-              <span style="width:<?php echo $this->percentOfClosedTasksAssignedToMe?>%"></span>
+            <span class="chart25 percent-dsb" style="background: <?php echo $this->colorHex2RGBA($this->closedStatusColor, 0.3) ?>">
+              <div class="cloud"><?php echo $this->percentOfClosedTasksAssigned?>%</div>
+              <span style="width:<?php echo $this->percentOfClosedTasksAssigned?>%; background: <?php echo $this->closedStatusColor ?>"></span>
             </span>
           </a>
-        </div>             
-       </div>              
+        </div>
+       </div>
     </article>
   </div>
-  
-  <?php if ($this->numberOfTasksAssignedToMe > 0): ?>
+
+  <?php if ($this->numberOfTasksAssigned > 0): ?>
   <div class="col50" >
     <article class="article_box dsb">
-      <h4><?php echo $this->t('Zadania przypisane do mnie') ?></h4>
+      <h4>
+      <?php if ($this->forMe): ?>
+        <?php echo $this->t('Zadania przypisane do mnie') ?>
+      <?php else: ?>
+        <?php echo $this->t('Zadania przypisane do projektu') ?>
+      <?php endif ?>
+      </h4>
       <div>
         <div id="chart_div" class="chartMain"></div>
       </div>
@@ -69,9 +80,11 @@
   </div>
   <script type="text/javascript">
   /* <![CDATA[ */
-    var projectTaskChartDataJson = '<?php echo $this->json_numberOfTasksAssignedToMeGroupedByStatus?>';
+    var projectTaskChartDataJson = '<?php echo $this->json_numberOfTasksAssignedGroupedByStatus?>';
+    var drawChartOptions = {
+      colors: ['<?php echo $this->openStatusColor ?>', '<?php echo $this->reopenStatusColor ?>', '<?php echo $this->inProgressStatusColor ?>', '<?php echo $this->closedStatusColor ?>']
+    };
   /* ]]> */
   </script>
   <?php endif; ?>
-  
 </article>

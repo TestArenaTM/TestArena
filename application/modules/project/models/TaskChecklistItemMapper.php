@@ -142,6 +142,30 @@ class Project_Model_TaskChecklistItemMapper extends Custom_Model_Mapper_Abstract
     
     return $this->_getDbTable()->update($data, $where) == 1;
   }
+
+  /**
+   * @param array|[]int $taskChecklistItemIds
+   * @param $status
+   * @return bool
+   * @throws Exception
+   */
+  public function changeStatusByIds(array $taskChecklistItemIds, $status)
+  {
+    if (count($taskChecklistItemIds) == 0)
+    {
+      return true;
+    }
+
+    $data = array(
+      'status' => $status
+    );
+
+    $where = array(
+      'status != ?' => $status,
+      'id IN (?)'      => $taskChecklistItemIds
+    );
+    return $this->_getDbTable()->update($data, $where) > 0;
+  }
   
   public function saveGroup(array $taskTestChecklistItems)
   {

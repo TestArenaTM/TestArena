@@ -1,5 +1,5 @@
 /*
-Copyright © 2014 TestArena 
+Copyright © 2014 TestArena
 
 This file is part of TestArena.
 
@@ -19,52 +19,57 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 The full text of the GPL is in the LICENSE file.
 */
-// Load the Visualization API and the piechart package.
-google.load('visualization', '1', {'packages':['corechart']});
-// Set a callback to run when the Google Visualization API is loaded.
-google.setOnLoadCallback(drawChart);
 
 function drawChart() {
-  if (typeof projectTaskChartDataJson != 'undefined') {
-    // Create our data table out of JSON data loaded from server.
-    var data = new google.visualization.DataTable(projectTaskChartDataJson);
+  google.charts.load('current', {
+    callback: function () {
+      var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+      var options = {
+        height: 319,
+        showRowNumber: true,
+        //title: 'Zadania przypisane do mnie',
+        colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
+        is3D: true,
+        pieSliceText: 'value',
+        sliceVisibilityThreshold: 0,
+        tooltip: {
+          showColorCode: false,
+          text: 'value',
+          trigger: 'selection'
+        }
+      };
 
-    // Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-    
-    var options = {
-      height: 319,      
-      showRowNumber: true,
-      //title: 'Zadania przypisane do mnie',
-      colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
-      is3D: true,
-      sliceVisibilityThreshold: 0
-    };
-    
-    chart.draw(data, options);
-    
-    function resizeHandler () {
-      chart.draw(data, options);
-    }
-    if (window.addEventListener) {
-      window.addEventListener('resize', resizeHandler, false);
-    }
-    else if (window.attachEvent) {
-      window.attachEvent('onresize', resizeHandler);
-    }
+      if (drawChartOptions.colors != undefined) {
+        options.colors = drawChartOptions.colors;
+      }
 
-    //chart.draw(data, options);
+      chart.draw(
+        new google.visualization.DataTable(projectTaskChartDataJson),
+        options
+      );
 
-    /*chart2.draw(data, {
-      width: 500,
-      height: 240,
-      showRowNumber: true,
-      title: 'Wszystkie zadania przypisane do mnie1',
-      colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
-      is3D: true
-    });*/
-    //chart.draw(data, {width: 800, height: 400});
-  } else {
-    return false;
-  }
+      function mouseOverHandler(selection) {
+        chart.setSelection([selection]);
+      }
+
+      function mouseOutHandler() {
+        chart.setSelection();
+      }
+
+      google.visualization.events.addListener(chart, 'onmouseover', mouseOverHandler);
+      google.visualization.events.addListener(chart, 'onmouseout', mouseOutHandler);
+    },
+    packages: ['corechart', 'table']
+  });
+}
+
+$(document).ready(function () {
+  drawChart();
+});
+
+if (window.addEventListener) {
+  window.addEventListener('resize', drawChart, false);
+}
+else if (window.attachEvent) {
+  window.attachEvent('onresize', drawChart);
 }

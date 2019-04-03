@@ -56,6 +56,7 @@ class Project_Form_AddRelease extends Custom_Form_Abstract
     $this->addElement('text', 'startDate', array(
       'required'    => true,
       'maxlength'   => 11,
+      'autocomplete' => 'off',
       'filters'     => array('StringTrim'),
       'validators'  => array(
         array('Date', true, array('format' => 'YYYY-mm-dd')),
@@ -66,6 +67,7 @@ class Project_Form_AddRelease extends Custom_Form_Abstract
     $this->addElement('text', 'endDate', array(
       'required'    => true,
       'maxlength'   => 11,
+      'autocomplete' => 'off',
       'filters'     => array('StringTrim'),
       'validators'  => array(
         array('Date', true, array('format' => 'YYYY-mm-dd')),

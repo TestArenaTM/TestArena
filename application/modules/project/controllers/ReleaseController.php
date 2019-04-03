@@ -43,7 +43,7 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
   
   private function _getFilterForm()
   {
-    return new Project_Form_ReleaseFilter(array('action' => $this->_projectUrl(array(), 'release_list')));
+    return new Project_Form_ReleaseFilter(array('action' => $this->_projectUrl(array('page' => 1), 'release_list')));
   }
     
   public function indexAction()
@@ -55,16 +55,18 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
     
     if ($filterForm->isValid($request->getParams()))
     {
+      $request->setParam('search', $filterForm->getValue('search'));
       $this->_filterAction($filterForm->getValues(), 'release');
       $releaseMapper = new Project_Model_ReleaseMapper();
-      list($list, $paginator) = $releaseMapper->getAll($request);
+      list($list, $paginator, $numberRecords) = $releaseMapper->getAll($request);
     }
     else
     {
+      $numberRecords = 0;
       $list = array();
       $paginator = null;
     } 
-    
+
     $filter = $this->_user->getFilter(Application_Model_FilterGroup::RELEASES);
     
     if ($filter !== null)
@@ -72,9 +74,14 @@ class Project_ReleaseController extends Custom_Controller_Action_Application_Pro
       $filterForm->prepareSavedValues($filter->getData());
     }
 
+    $projectBugTrackerDbTable = new Administration_Model_ProjectBugTrackerDbTable();
+    $showColumnDefectCount = $projectBugTrackerDbTable->isBugTruckerInternalByProject($this->_project);
+
     $this->_filterAction($filterForm->getValues());
     $this->_setTranslateTitle();
     $this->view->releases = $list;
+    $this->view->numberRecords = $numberRecords;
+    $this->view->showColumnDefectCount = $showColumnDefectCount;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;

@@ -7,12 +7,13 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div> -->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
 
-        <div class="formContainer">
+        <div class="formContainer full">
           <span>
             <?php echo $this->form->name->renderViewHelper() ?>
             <?php echo $this->formRequiredLabel('name', $this->t('Nazwa')) ?>  
@@ -25,7 +26,7 @@
           </span>
         </div>
           
-        <div class="formContainer">
+        <div class="formContainer full">
           <span>
             <?php echo $this->form->duration->renderViewHelper() ?>
             <?php echo $this->formLabel('duration', $this->t('Długość trwania [min.]')) ?>  
@@ -35,12 +36,15 @@
           </span>
         </div>
           
-        <div class="formContainer">
+        <div class="formContainer full">
           <span>
             <?php echo $this->form->testCard->renderViewHelper() ?>
             <?php echo $this->formLabel('testCard', $this->t('Karta testu')) ?>  
             <?php foreach ($this->form->getErrors('testCard') as $error): ?>
-              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                  'min' => $this->form->getElement('testCard')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                  'max' => $this->form->getElement('testCard')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+                )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>

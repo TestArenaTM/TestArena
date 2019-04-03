@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-10-23 10:24+0200\n"
+"PO-Revision-Date: 2019-04-03 08:26+0200\n"
 "Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: pl_PL\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.2.1\n"
 
 msgid "pageTitle"
 msgstr "Przeglądarka plików"
@@ -54,13 +54,13 @@ msgid "Utwórz"
 msgstr "Utwórz"
 
 msgid "Zamiana nazwy katalogu"
-msgstr "Zamiana nazwy katalogu"
+msgstr "Zmiana nazwy katalogu"
 
 msgid "Zmień"
 msgstr "Zmień"
 
 msgid "Zamiana nazwy pliku"
-msgstr "Zamiana nazwy pliku"
+msgstr "Zmiana nazwy pliku"
 
 msgid "FILE_IS_ATTACHMENT"
 msgstr "Nie można usunąć pliku, gdyż jest w użyciu."
@@ -89,6 +89,12 @@ msgstr "Musisz podać nazwę katalogu."
 msgid "DIRECTORY_NAME_IS_ICORRECT"
 msgstr "Nie można utworzyć katalogu o podanej nazwie."
 
+msgid "FILE_NAME_IS_INCORRECT"
+msgstr "Nie można zmienić nazwy pliku o podanej nazwie, ponieważ posiada niedozwolone znaki: <>&."
+
+msgid "NAME_OF_FILE_ADDED_IS_INCORRECT"
+msgstr "Przynajmniej jeden z przesyłanych plików posiada niedozwolone znaki w nazwie: <>&.\\n\\nLista plików:\\n"
+
 msgid "NEW_DIRECTORY_NAME_IS_EMPTY"
 msgstr "Musisz podać nową nazwę katalogu."
 
@@ -99,7 +105,7 @@ msgid "NO_FILE_SELECTED"
 msgstr "Musisz wybrać przynajmniej jeden plik."
 
 msgid "UPLOADED_FILE_IS_TOO_LARGE"
-msgstr "Przynajmniej jeden z przesyłanych plików posiada za duży rozmiar. Maksymalny rozmiar pliku to 8MB.\\n\\nLista plików:\\n"
+msgstr "Przynajmniej jeden z przesyłanych plików posiada za duży rozmiar. Maksymalny rozmiar pliku to __size__MB.\\n\\nLista plików:\\n"
 
 msgid "UPLOAD_FILE_ERROR"
 msgstr "Podczas przesyłania plików wystąpił nieoczekiwany błąd.\\n\\nLista plików:\\n"
@@ -108,10 +114,25 @@ msgid "UPLOAD_FILE_EXISTS"
 msgstr "Przynajmniej jeden z przesyłanych plików ma nazwę, która już istnieje w podanej lokalizacji.\\n\\nLista plików:\\n"
 
 msgid "FILE_FORBIDDEN_EXTENSION"
-msgstr "Przynajmniej jeden z przesyłanych plików posiada niedozwolone rozszerzenie. Dozwolone rozszerzenia: jpg, jpeg, png, gif, doc, xls, csv, txt, xml, html, pdf.\\n\\nLista plików:\\n"
+msgstr "Przynajmniej jeden z przesyłanych plików posiada niedozwolone rozszerzenie. Dozwolone rozszerzenia: jpg, jpeg, png, gif, doc, docx, xls, xlsx, odt, ods, csv, txt, xml, html, pdf.\\n\\nLista plików:\\n"
 
 msgid "Akcje"
 msgstr "Akcje"
 
 msgid "[root]"
 msgstr "[główny katalog]"
+
+msgid "Czy na pewno chcesz usunąć wybrany plik?"
+msgstr "Czy na pewno chcesz usunąć wybrany plik?"
+
+msgid "Czy na pewno chcesz usunąć wybrany folder?"
+msgstr "Czy na pewno chcesz usunąć wybrany folder?"
+
+msgid "Czy na pewno chcesz usunąć zaznaczone pliki / foldery?"
+msgstr "Czy na pewno chcesz usunąć zaznaczone pliki i/lub foldery?"
+
+msgid "Nic nie wybrano."
+msgstr "Nic nie wybrano."
+
+msgid "Anuluj"
+msgstr "Anuluj"

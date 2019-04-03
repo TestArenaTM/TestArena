@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-08-18 12:50+0200\n"
+"PO-Revision-Date: 2019-01-10 14:31+0100\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.2\n"
 
 # Captcha
 msgid "missingValue"
@@ -52,6 +52,18 @@ msgstr "Your current password is different."
 # EmailAddressSimpleMessage
 msgid "emailAddressInvalid"
 msgstr "Invalid email. Please enter your email again."
+
+# EmailAddressDotAtom
+msgid "emailAddressDotAtom"
+msgstr "Invalid email. Please enter your email again."
+
+# EmailAddressQuotedString
+msgid "emailAddressQuotedString"
+msgstr "Invalid email. Please enter your email again."
+
+# EmailAddressLengthExceeded
+msgid "emailAddressLengthExceeded"
+msgstr "Invalid number of characters e-mail"
 
 # EmailExists
 msgid "emailNotExists"
@@ -221,7 +233,7 @@ msgid "fileUploadErrorNoFile"
 msgstr "File was not uploaded."
 
 msgid "fileExtensionFalse"
-msgstr "Unsupported file type. You can upload .jpg or .png files only."
+msgstr "Unsupported file type. You can upload __extensions__ files only."
 
 msgid "fileExtensionNotFound"
 msgstr "Cannot read the file."
@@ -267,7 +279,7 @@ msgstr "Wrong image size. Maximum image height is 3000 px."
 
 # Attachment
 msgid "attachmentCanNotAdd"
-msgstr "Can not add attachment."
+msgstr "Can not add attachment because it has already been added."
 
 msgid "attachmentNotSetIds"
 msgstr "Not set ids."
@@ -302,7 +314,7 @@ msgid "addressInvalidCharacters"
 msgstr ""
 "Address can only consist of letters, numbers, spaces and characters: '-/"
 
-# ZipCode
+#
 msgid "zipCodeInvalidCharacters"
 msgstr "ZIP code can only consist of numbers and character -"
 
@@ -332,6 +344,10 @@ msgstr "This element doesn't exist in database."
 # UniqueEnvironemtnName
 msgid "environmentNameExists"
 msgstr "The environment name already exists in database."
+
+# ProjectNoActive
+msgid "projectNoActive"
+msgstr "Project is not active!"
 
 # UniqueVersionName
 msgid "versionNameExists"
@@ -409,4 +425,16 @@ msgstr "Test already exists in task."
 
 # UniqueTaskDefect
 msgid "taskDefectExists"
-msgstr "Defect already exists in task."
+msgstr "Issue already exists in task."
+
+# UniqueDefectTask
+msgid "defectTaskExists"
+msgstr "Task already exists in issue."
+
+# UniqueTestDefect
+msgid "testDefectExists"
+msgstr "Issue already exists in test."
+
+# TagInvalidIds
+msgid "tagInvalidIds"
+msgstr "Invalid tag."

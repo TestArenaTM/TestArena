@@ -25,9 +25,10 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
   protected $_map = array(
     'ordinal_no'  => 'ordinalNo',
     'modify_date' => 'modifyDate',
-    'create_date' => 'createDate'
+    'create_date' => 'createDate',
+    'type'        => 'issueType',
   );
-  
+
   private $_id          = null;
   private $_ordinalNo   = null;
   private $_project     = null;
@@ -41,23 +42,26 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
   private $_title       = null;
   private $_description = null;
   private $_author      = null;
+  private $_issueType   = null;
+  private $_tests       = [];
 
   // <editor-fold defaultstate="collapsed" desc="Getters">
   public function getId()
   {
     return $this->_id;
   }
-  
+
   public function getOrdinalNo()
   {
     return $this->_ordinalNo;
   }
-  
+
+
   public function getProject()
   {
     return $this->_project;
   }
-  
+
   public function getProjectId()
   {
     return $this->_project->getId();
@@ -75,10 +79,10 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
       $buf = explode(' ', $this->_createDate);
       return $buf[0];
     }
-    
+
     return $this->_createDate;
   }
-  
+
   public function getModifyDate($showOnlyDate = false)
   {
     if ($showOnlyDate)
@@ -86,30 +90,30 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
       $buf = explode(' ', $this->_modifyDate);
       return $buf[0];
     }
-    
+
     return $this->_modifyDate;
   }
-  
+
   public function getAssigner()
   {
     return $this->_assigner;
   }
-  
+
   public function getAssignerId()
   {
     return $this->getAssigner()->getId();
   }
-  
+
   public function getAssignee()
   {
     return $this->_assignee;
   }
-  
+
   public function getAssigneeId()
   {
     return $this->getAssignee()->getId();
   }
-  
+
   public function getStatus()
   {
     return $this->_status;
@@ -119,12 +123,12 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
   {
     return $this->_status->getId();
   }
-  
+
   public function getPriority()
   {
     return $this->_priority;
   }
-  
+
   public function getPriorityId()
   {
     return $this->_priority->getId();
@@ -138,31 +142,42 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
   {
     return $this->_description;
   }
-  
+
   public function getAuthor()
   {
     return $this->_author;
   }
-  
+
+  public function getIssueType()
+  {
+    return $this->_issueType;
+  }
+
   public function getAuthorId()
   {
     return $this->getAuthor()->getId();
   }
+
+
+  public function getTests()
+  {
+    return $this->_tests;
+  }
   // </editor-fold>
-  
+
   // <editor-fold defaultstate="collapsed" desc="Setters">
   public function setId($id)
   {
     $this->_id = (int)$id;
     return $this;
   }
-  
+
   public function setOrdinalNo($ordinalNo)
   {
     $this->_ordinalNo = $ordinalNo;
     return $this;
   }
-  
+
   public function setProject($propertyName, $propertyValue)
   {
     if (null === $this->_project)
@@ -173,16 +188,16 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     {
       $this->getProject()->setProperty($propertyName, $propertyValue);
     }
-    
+
     return $this;
   }
-  
+
   public function setProjectObject(Application_Model_Project $project)
   {
     $this->_project = $project;
     return $this;
   }
-  
+
   public function setRelease($propertyName, $propertyValue)
   {
     if (null === $this->_release)
@@ -193,7 +208,7 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     {
       $this->getRelease()->setProperty($propertyName, $propertyValue);
     }
-    
+
     return $this;
   }
 
@@ -207,13 +222,13 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     {
       $this->getAssigner()->setProperty($propertyName, $propertyValue);
     }
-    
+
     return $this;
   }
 
   public function setAssignerObject(Application_Model_User $user)
   {
-    $this->_assigner = $user;    
+    $this->_assigner = $user;
     return $this;
   }
 
@@ -227,13 +242,13 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     {
       $this->getAssignee()->setProperty($propertyName, $propertyValue);
     }
-    
+
     return $this;
   }
 
   public function setAssigneeObject(Application_Model_User $user)
   {
-    $this->_assignee = $user;    
+    $this->_assignee = $user;
     return $this;
   }
 
@@ -242,13 +257,13 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     $this->_createDate = $createDate;
     return $this;
   }
-  
+
   public function setModifyDate($modifyDate)
   {
     $this->_modifyDate = $modifyDate;
     return $this;
   }
-  
+
   public function setStatus($id)
   {
     $this->_status = new Application_Model_DefectStatus($id);
@@ -267,12 +282,18 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     return $this;
   }
 
+  public function setIssueType($type)
+  {
+    $this->_issueType = $type;
+    return $this;
+  }
+
   public function setDescription($description)
   {
     $this->_description = $description;
     return $this;
   }
-  
+
   public function setAuthor($propertyName, $propertyValue)
   {
     if (null === $this->_author)
@@ -283,24 +304,36 @@ class Application_Model_Defect extends Custom_Model_Standard_Abstract implements
     {
       $this->getAuthor()->setProperty($propertyName, $propertyValue);
     }
-    
+
     return $this;
   }
 
   public function setAuthorObject(Application_Model_User $user)
   {
-    $this->_author = $user;    
+    $this->_author = $user;
+    return $this;
+  }
+
+  public function setAssigneeId($assigneeId)
+  {
+    $this->_assignee = new Application_Model_User(array('id' => $assigneeId));
+
     return $this;
   }
   // </editor-fold>
-  
+
   public function getIdForHistory()
   {
     return $this->getId();
   }
-  
+
   public function getObjectNumber()
   {
     return $this->getProject()->getPrefix().'-'.$this->getOrdinalNo();
+  }
+
+  public function addTest(Application_Model_Test $test)
+  {
+    $this->_tests[] = $test;
   }
 }

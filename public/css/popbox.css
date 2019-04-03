@@ -51,16 +51,15 @@
     padding: 1px 0 !important;
 }
 .box li a {
-    background-color: #222 !important;
     color: #fff !important;
     display: block;
     font-family: "Roboto";
     font-size: 12px;
     font-weight: 500 !important;
-    padding: 5px 3px 7px 17px !important;
+    padding: 6px 3px 6px 17px !important;
     width: 130px;
 }
-.box li a:hover {
+.box li:hover {
   background-color: #ff0054 !important;
   color:#fff !important;
 }

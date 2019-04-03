@@ -173,7 +173,7 @@ class Project_Form_AddOtherTest extends Custom_Form_Abstract
         $this->addElement('hidden', $key, array(
           'required'  => false,
           'belongsTo' => 'attachmentNames',
-          'value'     => $file->getFullName(),
+          'value'     => $file->getFullNameVisible(),
           'class'     => 'j_attachmentName'
         ));
         $result[$key] = $this->getValue($key);

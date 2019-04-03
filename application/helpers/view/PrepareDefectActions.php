@@ -114,10 +114,18 @@ class Zend_View_Helper_PrepareDefectActions extends Zend_View_Helper_Abstract
       if ($defectUserPermission->isDeletePermission())
       {
         $actions[] = null;
-        $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_delete'), 'text' => 'Usuń', 'class' => 'j_delete_defect');
+        if(!(bool)$defect->getExtraData('taskDefectOrTestDefectIs'))
+        {
+          $actions[] = array('url' => $this->view->projectUrl(array('id' => $defect->getId()), 'defect_delete'), 'text' => 'Usuń', 'class' => 'j_delete_defect', 'type' => 'delete');
+        }
       }  
     }
-    
+
+    if (count($actions) > 0 && $actions[0] == null)
+    {
+      unset($actions[0]);
+    }
+
     return $actions;
   }
 }

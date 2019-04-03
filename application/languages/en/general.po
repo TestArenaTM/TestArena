@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-08-29 10:28+0200\n"
-"Last-Translator: Paweł Piaskowy\n"
+"PO-Revision-Date: 2019-01-08 12:35+0100\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: pl_PL\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 msgid "headTitle"
@@ -29,6 +29,9 @@ msgstr "Please enable JavaScript to view this website properly."
 
 msgid "Nieokreślona"
 msgstr "Undefined"
+
+msgid "wersja"
+msgstr "version"
 
 msgid "Tak"
 msgstr "Yes"
@@ -202,8 +205,8 @@ msgstr "Tasks"
 msgid "Baza zadań"
 msgstr "Task base"
 
-msgid "Defekty"
-msgstr "Defects"
+msgid "Zgłoszenia"
+msgstr "Issues"
 
 msgid "Role"
 msgstr "Roles"
@@ -271,8 +274,8 @@ msgstr "ABC"
 msgid "Pozostało __left__/__max__ znaków."
 msgstr "__left__/__max__ characters left."
 
-msgid "Defekt nie istnieje."
-msgstr "Defect does not exist."
+msgid "Zgłoszenie nie istnieje."
+msgstr "Issue does not exist."
 
 msgid "Brak wyników dla"
 msgstr "No results for"
@@ -394,43 +397,43 @@ msgstr[2] "__value__ years ago"
 
 # Przekroczone o X dni
 msgid "exceededMomentAgo"
-msgstr "exceeded by a few seconds"
+msgstr "missed by a few seconds"
 
 msgid "exceededMinuteAgo"
 msgid_plural ""
-msgstr[0] "exceeded by one minute"
-msgstr[1] "exceeded by __value__ minutes"
-msgstr[2] "exceeded by __value__ minutes"
+msgstr[0] "missed by one minute"
+msgstr[1] "missed by __value__ minutes"
+msgstr[2] "missed by __value__ minutes"
 
 msgid "exceededHourAgo"
 msgid_plural ""
-msgstr[0] "exceeded by one hour"
-msgstr[1] "exceeded by __value__ hours"
-msgstr[2] "exceeded by __value__ hours"
+msgstr[0] "missed by one hour"
+msgstr[1] "missed by __value__ hours"
+msgstr[2] "missed by __value__ hours"
 
 msgid "exceededDayAgo"
 msgid_plural ""
-msgstr[0] "exceeded by one day"
-msgstr[1] "exceeded by __value__ days"
-msgstr[2] "exceeded by __value__ days"
+msgstr[0] "missed by one day"
+msgstr[1] "missed by __value__ days"
+msgstr[2] "missed by __value__ days"
 
 msgid "exceededWeekAgo"
 msgid_plural ""
-msgstr[0] "exceeded by one week"
-msgstr[1] "exceeded by __value__ weeks"
-msgstr[2] "exceeded by __value__ weeks"
+msgstr[0] "missed by one week"
+msgstr[1] "missed by __value__ weeks"
+msgstr[2] "missed by __value__ weeks"
 
 msgid "exceededMonthAgo"
 msgid_plural ""
-msgstr[0] "exceeded by one month"
-msgstr[1] "exceeded by __value__ months"
-msgstr[2] "exceeded by __value__ months"
+msgstr[0] "missed by one month"
+msgstr[1] "missed by __value__ months"
+msgstr[2] "missed by __value__ months"
 
 msgid "exceededYearAgo"
 msgid_plural ""
-msgstr[0] "exceeded by one year"
-msgstr[1] "exceeded by __value__ years"
-msgstr[2] "exceeded by __value__ years"
+msgstr[0] "missed by one year"
+msgstr[1] "missed by __value__ years"
+msgstr[2] "missed by __value__ years"
 
 # Languages
 msgid "pl"
@@ -483,26 +486,63 @@ msgstr "changed status of the test __test__ to status __status__"
 msgid "usunął/ęła test TEST Z zadania"
 msgstr "deleted test __test__ from task"
 
+# Defect history
+msgid "usunął/ęła test TEST ze zgłoszenia"
+msgstr "deleted test __test__ from issue"
+
+msgid "usunął(a) powiązanie zgłoszenia z zadaniem TASK"
+msgstr "deleted relation of task __task__ to issue"
+
 msgid "utworzył(a) defekt"
-msgstr "created the defect"
+msgstr "created the issue"
 
 msgid "zmienił(a) defekt"
-msgstr "change the defect"
+msgstr "change the issue"
 
 msgid "utworzył(a) defekt i przypisał(a) go użytkownika ASSIGNEE"
-msgstr "created the defect and assigned to the user __assignee__"
+msgstr "created the issue and assigned to the user __assignee__"
 
 msgid "zmienił(a) defekt i przypisał(a) go użytkownika ASSIGNEE"
-msgstr "changed the defect and assigned to the user __assignee__"
+msgstr "changed the issue and assigned to the user __assignee__"
+
+msgid "zmienił(a) defekt i przypisał(a) go do siebie"
+msgstr "changed the issue and assigned to yourself"
+
+msgid "przypisał(a) defekt do siebie"
+msgstr "assigned the issue to yourself"
+
+msgid "przypisał(a) defekt do użytkownika ASSIGNEE"
+msgstr "assigned  the issue to the user __assignee__"
 
 msgid "zmienił(a) status defektu na DEFECT_STATUS"
-msgstr "changed status of the defect to __defectStatus__"
+msgstr "changed status of the issue to __defectStatus__"
 
 msgid "dodał(a) defekt DEFEKT do zadania"
-msgstr "added defect __defekt__ to task"
+msgstr "added relation issue of __defekt__ to task"
 
 msgid "usunoł/eła defekt DEFEKT z zadania"
-msgstr "deleted defect __defekt__ from task"
+msgstr "deleted relation issue __defekt__ from task"
+
+msgid "usunął(a) powiązanie zgłoszenia DEFECT z testem TEST"
+msgstr "deleted relation issue __defect__ from test __test__"
+
+msgid "usunął(a) powiązanie zgłoszenia z testem TEST w zadaniu TASK"
+msgstr "deleted relation issue with test __test__ from task __task__"
+
+msgid "dodał(a) powiązanie zgłoszenia DEFEKT z testem TEST"
+msgstr "added relation of issue __defekt__ to test __test__"
+
+msgid "zmienił(a) status defektu na DEFECT_STATUS i przypisał(a) go do użytkownika ASSIGNEE"
+msgstr "changed status of the issue to __defectStatus__ and assigned to the user __assignee__"
+
+msgid "zmienił(a) status defektu na DEFECT_STATUS i przypisał(a) go do siebie"
+msgstr "changed status of the issue to __defectStatus__ and assigned to yourself"
+
+msgid "dodał(a) powiązanie zgłoszenia z zadaniem TASK"
+msgstr "added relation of issue to task __task__"
+
+msgid "dodał(a) powiązanie zgłoszenia z testem TEST w zadaniu TASK"
+msgstr "added relation to issue with test __test__ to task __task__"
 
 # Task filter
 msgid "[Bez wydania]"
@@ -531,3 +571,9 @@ msgstr "Success"
 
 msgid "DEFAULT_FAIL_RESOLUTION"
 msgstr "Fail"
+
+msgid "Liczba znalezionych rekordów"
+msgstr "Number of found records"
+
+msgid "usunął(ęła) zadanie ze zgłoszenia"
+msgstr "deleted task from issue"

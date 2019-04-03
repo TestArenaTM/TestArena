@@ -28,21 +28,34 @@ class Zend_View_Helper_PrepareTestActions extends Zend_View_Helper_Abstract
     {
       $testUserPermission = new Application_Model_TestUserPermission($test, $this->view->authUser, $userPermissions);
     }
-    
+
     $actions = array();
-    
+
     //$actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId()), 'test_forward_to_execute'), 'text' => 'Przekaż do wykonania');
-    
-    if ($test->getStatusId() == Application_Model_TestStatus::ACTIVE
-        && ($testUserPermission->isEditPermission() || $testUserPermission->isDeletePermission()))
+
+    if ($test->getStatusId() == Application_Model_TestStatus::ACTIVE)
     {
-      //$actions[] = null;
-      $actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId()), $this->view->testEditRouteName($test)), 'text' => 'Edytuj');
-      $actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId()), $this->view->testAddRouteName($test)), 'text' => 'Klonuj');
-      $actions[] = array('class' => 'j_delete_test', 'url' => $this->view->projectUrl(array('id' => $test->getId()), 'test_delete'), 'text' => 'Usuń');
+      if ($testUserPermission->isEditPermission())
+      {
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId()), $this->view->testEditRouteName($test)), 'text' => 'Edytuj');
+      }
+
+      if ($testUserPermission->isAddPermission())
+      {
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $test->getId(), 'layout' => 'project', 'taskId' => 0, 'defectId' => 0), $this->view->testAddRouteName($test)), 'text' => 'Klonuj');
+      }
+
+      if ($testUserPermission->isDeleteCreatedByYouPermission() && $test->getAuthorId() === $this->view->authUser->getId())
+      {
+        $actions[] = array('class' => 'j_delete_test', 'url' => $this->view->projectUrl(array('id' => $test->getId()), 'test_delete'), 'text' => 'Usuń', 'type' => 'delete');
+      }
+      elseif ($testUserPermission->isDeleteAllPermission())
+      {
+        $actions[] = array('class' => 'j_delete_test', 'url' => $this->view->projectUrl(array('id' => $test->getId()), 'test_delete'), 'text' => 'Usuń', 'type' => 'delete');
+      }
     }
-    
-    
+
+
     return $actions;
   }
 }

@@ -35,14 +35,31 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'status',
         'priority',
         'create_date',
+        'type',
         'modify_date',
         'title',
         'assigner'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assigner.firstname, " ", assigner.lastname)'),
         'assignee'.self::TABLE_CONNECTOR.'name' => new Zend_Db_Expr('CONCAT(assignee.firstname, " ", assignee.lastname)'),
-        'attachmentCount' => new Zend_Db_Expr($attachmentCount)
+        'attachmentCount' => new Zend_Db_Expr($attachmentCount),
+        'taskDefectOrTestDefectIs' => new Zend_Db_Expr("
+          CASE WHEN EXISTS (
+            SELECT defect_id FROM `test_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+            UNION
+            SELECT defect_id FROM `task_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+          )
+          THEN 1
+          ELSE 0
+        END
+        ")
       ))
       ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
-        'prefix'
+        'prefix',
+        'open_status_color',
+        'in_progress_status_color',
+        'reopen_status_color',
+        'closed_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
       )))
       ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', $this->_createAlias('release', array(
         'id',
@@ -82,7 +99,11 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
   {
     $sql = $this->select()
       ->from(array('d' => $this->_name), array(Zend_Paginator_Adapter_DbSelect::ROW_COUNT_COLUMN => 'COUNT(DISTINCT d.id)'))
-      ->join(array('r' => 'release'), 'r.id = d.release_id', array())
+      ->join(array('p' => 'project'), 'p.id = d.project_id', array())
+      ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', array())
+      ->join(array('assigner' => 'user'), 'assigner.id = d.assigner_id', array())
+      ->join(array('assignee' => 'user'), 'assignee.id = d.assignee_id', array())
+      ->join(array('author' => 'user'), 'author.id = d.author_id', array())
       ->join(array('de' => 'defect_environment'), 'de.defect_id = d.id', array())
       ->join(array('dv' => 'defect_version'), 'dv.defect_id = d.id', array())
       ->joinLeft(array('dt' => 'defect_tag'), 'dt.defect_id = d.id', array());
@@ -91,7 +112,7 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
     return $sql;
   }
   
-  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  public function getAllIds(Zend_Controller_Request_Abstract $request, $user, $accessPermissionsForDefects)
   {
     $sql = $this->select()
       ->from(array('d' => $this->_name), array(
@@ -132,12 +153,45 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->join(array('de' => 'defect_environment'), 'de.defect_id = d.id', array())
       ->join(array('dv' => 'defect_version'), 'dv.defect_id = d.id', array())
       ->joinLeft(array('dt' => 'defect_tag'), 'dt.defect_id = d.id', array())
+      ->where('NOT EXISTS (
+            SELECT defect_id FROM `test_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+            UNION
+            SELECT defect_id FROM `task_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+          )')
+      ->where('d.status NOT IN ('.
+        Application_Model_DefectStatus::FAIL .', '.
+        Application_Model_DefectStatus::SUCCESS .')')
       ->group('d.id')
       ->setIntegrityCheck(false);
 
+    if (!$accessPermissionsForDefects[Application_Model_RoleAction::DEFECT_DELETE_ALL])
+    {
+      if ($accessPermissionsForDefects[Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU]
+        && !$accessPermissionsForDefects[Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU])
+      {
+        $sql->where('d.author_id = ?', $user->getId());
+      }
+      elseif ($accessPermissionsForDefects[Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU]
+        && !$accessPermissionsForDefects[Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU]) {
+        $sql->where('d.assignee_id = ?', $user->getId());
+      }
+      elseif ($accessPermissionsForDefects[Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU]
+        && $accessPermissionsForDefects[Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU])
+      {
+        $sql->where(
+          $this->_db->quoteInto('d.assignee_id = ?', $user->getId())
+          .' OR '.
+          $this->_db->quoteInto('d.author_id = ?', $user->getId())
+        );
+      }
+      else
+      {
+        return false;
+      }
+    }
+
     $this->_setWhereCriteria($sql, $request);
     $this->_setOrderConditions($sql, $request);
-
     return $this->fetchAll($sql);
   }
   
@@ -148,15 +202,35 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'ordinal_no',
         'status',
+        'type',
         'priority',
         'create_date',
         'modify_date',
         'title',
-        'description'
+        'description',
+        'taskDefectOrTestDefectIs' => new Zend_Db_Expr("
+          CASE WHEN EXISTS (
+            SELECT defect_id FROM `test_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+            UNION
+            SELECT defect_id FROM `task_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+          )
+          THEN 1
+          ELSE 0
+        END
+        ")
       ))
       ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', $this->_createAlias('release', array(
         'id',
         'name'
+      )))
+      ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
+        'prefix',
+        'open_status_color',
+        'in_progress_status_color',
+        'reopen_status_color',
+        'closed_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
       )))
       ->join(array('assigner' => 'user'), 'assigner.id = d.assigner_id', $this->_createAlias('assigner', array(
         'id',
@@ -184,6 +258,65 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
 
     return $this->fetchRow($sql);
   }
+
+  public function getForDelete($id, $projectId)
+  {
+    $sql = $this->select()
+      ->from(array('d' => $this->_name), array(
+        'id',
+        'ordinal_no',
+        'status',
+        'type',
+        'priority',
+        'create_date',
+        'modify_date',
+        'title',
+        'description'
+      ))
+      ->joinLeft(array('r' => 'release'), 'r.id = d.release_id', $this->_createAlias('release', array(
+        'id',
+        'name'
+      )))
+      ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
+        'prefix',
+        'open_status_color',
+        'in_progress_status_color',
+        'reopen_status_color',
+        'closed_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
+      )))
+      ->join(array('assigner' => 'user'), 'assigner.id = d.assigner_id', $this->_createAlias('assigner', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->join(array('assignee' => 'user'), 'assignee.id = d.assignee_id', $this->_createAlias('assignee', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->join(array('author' => 'user'), 'author.id = d.author_id', $this->_createAlias('author', array(
+        'id',
+        'email',
+        'firstname',
+        'lastname'
+      )))
+      ->where('d.id = ?', $id)
+      ->where('d.project_id = ?', $projectId)
+      ->where('NOT EXISTS (
+        SELECT defect_id FROM `test_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+        UNION
+        SELECT defect_id FROM `task_defect` WHERE defect_id = d.id AND bug_tracker_id IS NULL
+      )')
+      ->group('d.id')
+      ->limit(1)
+      ->setIntegrityCheck(false);
+
+    return $this->fetchRow($sql);
+  }
   
   public function getForEdit($id, $projectId)
   {
@@ -191,6 +324,7 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->from(array('d' => $this->_name), array(
         'id',
         'project_id',
+        'type',
         'priority',
         'title',
         'description',
@@ -221,22 +355,101 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
 
     return $this->fetchRow($sql);
   }
-  
+
   public function getByTask($taskId)
+  {
+    /* test defect */
+    $sqls[] = $this->select()
+      ->from(array('d' => $this->_name), array(
+        'id',
+        'ordinal_no',
+        'title',
+        'issueType' => 'type',
+        'status',
+        'test_id' => new Zend_Db_Expr('t.id'),
+        'test_type' => new Zend_Db_Expr('t.type'),
+        'test_ordinal_no' => new Zend_Db_Expr('t.ordinal_no'),
+        'test_name' => new Zend_Db_Expr('t.name'),
+        'task_test_id' => new Zend_Db_Expr('tt.id'),
+        'task_defect_id' => new Zend_Db_Expr(0),
+        'resolution_id' => new Zend_Db_Expr('tt.resolution_id'),
+        'resolution_color' => new Zend_Db_Expr('r.color'),
+        'resolution_name' => new Zend_Db_Expr('r.name'),
+      ))
+      ->join(array('td' => 'test_defect'), 'td.defect_id = d.id', array())
+      ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
+        'prefix',
+        'open_status_color',
+        'in_progress_status_color',
+        'reopen_status_color',
+        'closed_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
+      )))
+      ->join(array('tt' => 'task_test'), 'tt.id = td.task_test_id', array())
+      ->join(array('t' => 'test'), 't.id = tt.test_id', array())
+      ->joinLeft(array('r' => 'resolution'), 'r.id = tt.resolution_id', array())
+      ->where('tt.task_id = ?', $taskId)
+      ->where('td.bug_tracker_id IS NULL')
+      ->setIntegrityCheck(false);
+
+    /* task defect */
+    $sqls[] = $this->select()
+      ->from(array('d' => $this->_name), array(
+        'id',
+        'ordinal_no',
+        'title',
+        'issueType' => 'type',
+        'status',
+        'test_id' => new Zend_Db_Expr(0),
+        'test_type' => new Zend_Db_Expr(0),
+        'test_ordinal_no' => new Zend_Db_Expr(0),
+        'test_name' => new Zend_Db_Expr(0),
+        'task_test_id' => new Zend_Db_Expr(0),
+        'task_defect_id' => new Zend_Db_Expr('td.id'),
+        'resolution_id' => new Zend_Db_Expr(0),
+        'resolution_color' => new Zend_Db_Expr(0),
+        'resolution_name' => new Zend_Db_Expr(0),
+      ))
+      ->join(array('td' => 'task_defect'), 'td.defect_id = d.id', array())
+      ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
+        'prefix',
+        'open_status_color',
+        'in_progress_status_color',
+        'reopen_status_color',
+        'closed_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
+      )))
+      ->where('td.bug_tracker_id IS NULL')
+      ->where('td.task_id = ?', $taskId)
+      ->setIntegrityCheck(false);
+
+    return $this->fetchAll($this->union($sqls)->order('ordinal_no ASC')->order('title ASC')->order('test_name ASC'));
+  }
+
+  public function getByTaskTest($taskTestId)
   {
     $sql = $this->select()
       ->from(array('d' => $this->_name), array(
         'id',
         'ordinal_no',
         'title',
-        'status'
+        'status',
+        'issueType' => 'type'
       ))
-      ->join(array('td' => 'task_defect'), 'td.defect_id = d.id', array())
       ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
-        'prefix'
+        'prefix',
+        'open_status_color',
+        'in_progress_status_color',
+        'reopen_status_color',
+        'closed_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
       )))
+      ->join(array('td' => 'test_defect'), 'td.defect_id = d.id', array())
+      ->where('td.task_test_id = ?', $taskTestId)
       ->where('td.bug_tracker_id IS NULL')
-      ->where('td.task_id = ?', $taskId)
       ->group('d.id')
       ->order('d.ordinal_no')
       ->setIntegrityCheck(false);
@@ -256,9 +469,10 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->join(array('p' => 'project'), 'd.project_id = p.id', array())
       ->where('d.project_id = ?', $projectId)
       ->group('d.id')
-      ->order('d.title')
+      ->order('d.ordinal_no ASC')
+      ->order('d.title ASC')
       ->setIntegrityCheck(false);
-      
+
     $this->_setWhereCriteria($sql, $request);      
     return $this->fetchAll($sql);
   }  
@@ -286,9 +500,17 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'status',
         'name'          => 'title',
-        'objectNumber'  => new Zend_Db_Expr('CONCAT(p.prefix, "-", d.ordinal_no)')
+        'objectNumber'  => new Zend_Db_Expr('CONCAT(p.prefix, "-", d.ordinal_no)'),
+        'issueType'     => 'type'
       ))
-      ->join(array('p' => 'project'), 'p.id = d.project_id', array())
+      ->join(array('p' => 'project'), 'p.id = d.project_id', $this->_createAlias('project', array(
+        'open_status_color',
+        'in_progress_status_color',
+        'reopen_status_color',
+        'closed_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
+      )))
       ->where('d.id = ?', $defectId)
       ->where('d.project_id = ?', $projectId)
       ->group('d.id')
@@ -313,6 +535,20 @@ class Project_Model_DefectDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->group('d.id')
       ->setIntegrityCheck(false);
     
+    return $this->fetchAll($sql);
+  }
+
+  public function getByIds(array $ids)
+  {
+    $sql = $this->select()
+      ->from(array('d' => $this->_name), array(
+        'id',
+        'title',
+      ))
+      ->where('d.id IN (?)', $ids)
+      ->group('d.id')
+      ->setIntegrityCheck(false);
+
     return $this->fetchAll($sql);
   }
 }

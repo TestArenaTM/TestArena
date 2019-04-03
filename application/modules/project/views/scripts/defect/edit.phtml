@@ -1,19 +1,24 @@
 <section id="content">
-  <!--<div class="breadcrumb">
-    <a class="icon_house_alt" href="#"></a>
-    <i class="arrow_carrot-right icon-15"></i>
-    <a href="#"><?php echo $this->generalT('Defekty') ?></a>
-    <i class="arrow_carrot-right icon-15"></i>
-    <a href="#">Defekt</a>
-    <i class="arrow_carrot-right icon-15"></i>    
-    <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div>  -->
-  <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
+    <!--<div class="breadcrumb">
+      <a class="icon_house_alt" href="#"></a>
+      <i class="arrow_carrot-right icon-15"></i>
+      <a href="#"><?php echo $this->generalT('Zgłoszenia') ?></a>
+      <i class="arrow_carrot-right icon-15"></i>
+      <a href="#">Defekt</a>
+      <i class="arrow_carrot-right icon-15"></i>
+      <div class="active_bc">
+        <?php echo $this->t('pageTitle') ?>
+      </div>
+    </div>  -->
+    <article class="article_in_content">
+      <div class="content_header">
+        <h1 class="content_title">
+          <?php echo $this->t('pageTitle') ?>
+        </h1>
+      </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <div><?php echo $this->form->backUrl->renderViewHelper() ?></div>
-          
+
         <div class="formContainer full">
           <span>  
           <?php echo $this->form->title->renderViewHelper() ?>
@@ -25,8 +30,8 @@
               )) ?></div>
           <?php endforeach; ?>
           </span>
-        </div> 
-          
+        </div>
+
         <div class="formContainer full">
           <span> 
           <?php echo $this->form->description->renderViewHelper() ?>
@@ -38,18 +43,14 @@
               )) ?></div>
           <?php endforeach; ?>
           </span>
-        </div> 
-          
+        </div>
+
         <div class="formContainer">
           <span>
-          <?php echo $this->form->releaseName->renderViewHelper() ?>
-            <?php echo $this->formLabel('releaseName', $this->t('Wydanie')) ?>
-          <div><?php echo $this->form->releaseId->renderViewHelper() ?></div>
-          <?php foreach ($this->form->getErrors('releaseId') as $error): ?>            
-            <div class="error_msg"><?php echo $this->errorT($error) ?></div>
-          <?php endforeach; ?>
+          <?php echo $this->form->releaseId->renderViewHelper() ?>
+            <?php echo $this->formLabel('releaseId', $this->t('Wydanie')) ?>
           </span>
-        </div> 
+        </div>
 
         <div class="formContainer">
           <span>
@@ -59,7 +60,7 @@
             <div class="error_msg"><?php echo $this->errorT($error) ?></div>
           <?php endforeach; ?>
           </span>
-        </div> 
+        </div>
 
         <div class="formContainer">
           <span>
@@ -69,19 +70,23 @@
             <div class="error_msg"><?php echo $this->errorT($error) ?></div>
           <?php endforeach; ?>
           </span>
-        </div> 
-           
+        </div>
+
         <div class="formContainer">
           <span>
-          <?php echo $this->form->assigneeName->renderViewHelper() ?>
-          <div><?php echo $this->form->assigneeId->renderViewHelper() ?></div>            
-          <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?> <a id="j_assignToMe" href="#"><span><?php echo $this->t('Przypisz do mnie') ?></span></a>
+          <?php if ($this->accessAssing): ?>
+            <?php echo $this->form->assigneeName->renderViewHelper() ?>
+          <?php else: ?>
+            <?php echo $this->form->assigneeName->setAttrib('disabled', 'disabled')->renderViewHelper() ?>
+          <?php endif ?>
+          <div><?php echo $this->form->assigneeId->renderViewHelper() ?></div>
+          <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?> <?php if ($this->accessAssing): ?><a id="j_assignToMe" href="#"><span><?php echo $this->t('Przypisz do mnie') ?></span></a><?php endif; ?>
           <?php foreach ($this->form->getErrors('assigneeId') as $error): ?>
             <div class="error_msg"><?php echo $this->errorT($error) ?></div>
           <?php endforeach; ?>
           </span>
-        </div> 
-      
+        </div>
+
         <div class="formContainer">
           <span>
           <?php echo $this->form->priority->renderViewHelper() ?>
@@ -90,7 +95,17 @@
             <div class="error_msg"><?php echo $this->errorT($error) ?></div>
           <?php endforeach; ?>
           </span>
-        </div> 
+        </div>
+
+        <div class="formContainer">
+            <span>
+            <?php echo $this->form->issueType->renderViewHelper() ?>
+              <?php echo $this->formRequiredLabel('issueType', $this->t('Type')); ?>
+              <?php foreach ($this->form->getErrors('issueType') as $error): ?>
+                <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+              <?php endforeach; ?>
+            </span>
+        </div>
 
         <div class="formContainer full">
           <span>
@@ -101,14 +116,14 @@
             <?php endforeach; ?>
           </span>
         </div>
-        
+
         <?php echo $this->partial('partials/attachments-form.phtml', array('form' => $this->form)); ?>
 
         <div>
           <span id="save"><?php echo $this->formSubmit('save', $this->t('Zapisz')) ?></span>
           <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
         </div>
-        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>  
+        <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
 
         <div>
           <?php echo $this->form->csrf->renderViewHelper() ?>
@@ -116,7 +131,7 @@
           <div><?php echo $this->errorT($error) ?></div>
           <?php endforeach; ?>
         </div>
-      
+
     </form>
   </article>
 </section>
@@ -125,13 +140,13 @@
 /* <![CDATA[ */
   language.charactersLeft = '<?php echo $this->generalT('Pozostało __left__/__max__ znaków.') ?>';
   var currentUser = {id: <?php echo $this->authUser->getId() ?>, name: '<?php echo $this->authUser->getFullname().' ('.$this->authUser->getEmail().')' ?>'};
-  
+
   var autocompleteData = {
     url: '<?php echo $this->projectUrl(array(), 'project_user_list_ajax') ?>',
     textInputName: '#assigneeName',
     dstName: '#assigneeId'
   };
-  
+
   <?php if (isset($this->prePopulatedEnvironments)) :?>
     prePopulated['environments'] = <?php echo $this->prePopulatedEnvironments?>;
   <?php endif?>
@@ -143,15 +158,15 @@
   <?php if (isset($this->prePopulatedTags)) :?>
     prePopulated['tags'] = <?php echo $this->prePopulatedTags?>;
   <?php endif?>
-    
+
+  <?php if (isset($this->prePopulatedRelease)) :?>
+    prePopulated['release'] = <?php echo $this->prePopulatedRelease?>;
+  <?php endif?>
+
   url.environmentListAjax = '<?php echo $this->projectUrl(array(), 'environment_list_ajax') ?>';
   url.versionListAjax = '<?php echo $this->projectUrl(array(), 'version_list_ajax') ?>';
   url.tagListAjax = '<?php echo $this->projectUrl(array(), 'tag_list_ajax') ?>';
-  
-  var autocompleteRelease = {
-    url: '<?php echo $this->projectUrl(array(), 'release_list_for_forward_ajax') ?>',
-    textInputName: '#releaseName',
-    dstName: '#releaseId'
-  };
+  url.releaseListAjax = '<?php echo $this->projectUrl(array(), 'release_list_for_forward_ajax') ?>';
+
 /* ]]> */
 </script>

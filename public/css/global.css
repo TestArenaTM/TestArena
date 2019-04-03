@@ -39,24 +39,28 @@ The full text of the GPL is in the LICENSE file.
 	font-style: normal;
 }
 @media (max-width: 1490px) {
-.checkTable table {
-    font-size: 10px !important;
-    width: 100%;
-}
-.t_name {
-    max-width: 50px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 50px;
-    word-wrap: break-word;
-}
-.t_name.first-name {
-    max-width: 70px;
-}
-span.exceededDueDate {
-    float: right !important;
-}
+  .checkTable table {
+      font-size: 10px !important;
+      width: 100%;
+  }
+  .t_name {
+      max-width: 50px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 50px;
+      word-wrap: break-word;
+  }
+  .t_name.first-name {
+      max-width: 70px;
+  }
+  span.exceededDueDate {
+      float: right !important;
+  }
+  
+  .hideForLaptop {
+    display: none;
+  }
 }
 @media (min-width: 1070px) {
 	.textLabelEditor_text {display: table-cell!important;}
@@ -68,7 +72,7 @@ span.exceededDueDate {
 header, footer, aside, nav, article {
 display: block;
 }
-input {
+input[type=text] {
   outline: none;
 }
 textarea {
@@ -121,6 +125,7 @@ p {
 img {
   border:0px;
 }
+
 #top_header {
     width: 100%;
     background-color:#242424;
@@ -342,6 +347,10 @@ img {
     padding: 8px 23px;
 }
 
+table th {
+  cursor: default;
+}
+
 table {
     border-spacing: 0;
     font-size: 13px;
@@ -411,6 +420,10 @@ a.disabled, a.disabled:hover {
 h1 {
   margin: 0px;
 }
+.content_header {
+  position: relative;
+}
+
 .content_title {
     background-color: #fcfcfc;
     border: 1px solid #eee;
@@ -422,6 +435,10 @@ h1 {
     line-height: 22px;
     margin: -19px -19px 19px !important;
     padding: 14px 20px !important;
+}
+.content_sub_title {
+    padding: 0px 0px 14px 0px;
+    font-size: 0.9rem;
 }
 .login_title {
     font-size: 21px;
@@ -455,7 +472,9 @@ h1 {
     margin: 80px 17px 0 200px;
     /*min-height: 500px;*/
     padding: 19px;
-    position: relative;
+}
+.article_in_content table td {
+  vertical-align: top;
 }
 .article_left {
   padding-right: 20px;
@@ -477,18 +496,28 @@ h1 {
   display: block;
   margin-bottom: 20px;
 }
+
+.article_right_box_message {
+    height: 100%;
+    display: flex;
+    flex-grow: 1;
+    flex: 1;
+    position: absolute !important;
+}
+
 .article_left_message {
   width:330px;
   display: table-cell;
 }
 .article_right_message {
-    background-color: #fff;
     display: table-cell;
     padding-bottom: 0;
 }
-.article_right_message, .article_right_box_message {
-  width: 100%;
+
+#j_msgSingleThreadList {
+    background: #fff;
 }
+
 .article_in_login {
     background-color: white;
     min-height: 500px;
@@ -657,7 +686,7 @@ ul, ul ul {
     text-align: center;
 }
 #footer span a {
-  padding-left:5px;
+  margin-left:5px;
   color: #aaa;
 }
 #toggleText {
@@ -796,6 +825,41 @@ padding: 5px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.PanelList-for-project .timestamp {
+  white-space: nowrap;
+}
+
+.PanelList-for-project .title {
+  color: #1275d6;
+  font-weight: 500;
+}
+
+.PanelList-for-project .author {
+  margin-bottom: 5px;
+}
+
+.PanelList-for-project > ul > li > a {
+  display: block;
+}
+
+.PanelList-for-project .clearfixDashboard {
+  margin: 0px;
+  padding: 12px;
+}
+
+.PanelList-for-project .author {
+  color: #000 !important;
+}
+
+.PanelList-for-project > ul > li> a:hover {
+  background: #F6F7F8;
+}
+
+.PanelList-for-project > ul {
+  margin: 0px;
+}
+
 .author {
   line-height: 15px;
 }
@@ -901,7 +965,7 @@ textarea, input.text {
     border-radius: 4px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
     font-family: 'Roboto' !important;
-    height: 80px !important;
+    height: 80px;
     padding: 4px !important;
     resize: none;
     width: 100%;
@@ -1168,7 +1232,7 @@ form.signin .remb .remember {
   display: table;
   width: 50%;
 }
-#save input, #change_email input, #add input, #edit input, .comment_button > a, .button_edit a, .j_group_action {
+#save input, #change_email input, #add input, #edit input, .comment_button > a, .button_edit a, .j_group_action, .button_add {
     background-color: #1275d6;
     border: medium none;
     border-radius: 3px;
@@ -1182,7 +1246,7 @@ form.signin .remb .remember {
     padding: 10px 25px;
     text-decoration: none;
 }
-#save input:hover,  #change_email input:hover, #add input:hover, #edit input:hover, .comment_button > a:hover, .button_edit a:hover, .j_group_action:hover {
+#save input:hover,  #change_email input:hover, #add input:hover, #edit input:hover, .comment_button > a:hover, .button_edit a:hover, .j_group_action:hover, .button_add:hover {
     background-color: #158bff;
     color: white;
 }
@@ -1217,23 +1281,25 @@ form.signin .remb .remember {
   color: #fff;
 }
 .contentEditUser_left, .contentProperties_left {
-    display: table-cell;
     padding-right: 37px;
     width: 10%;
+    box-sizing: border-box;
 }
 .contentEditUser_left {
     width: 52%;
 }
 .contentProperties_left {
-  width: 70%;
+    width: 70%;
+    text-overflow: ellipsis;
 }
 
 .contentEditUser_right {
     border-left: 1px solid #DDDDDD;
-    display: table-cell;
     padding-left: 10px;
-    width: 50%;
-    vertical-align: top;
+    width: 30%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
 }
 .textLabelEditor {
     margin-bottom: 15px;
@@ -1284,6 +1350,9 @@ form.signin .remb .remember {
     vertical-align: top;
     width: 195px !important;
 }
+.status_list_th {
+    width: 120px;
+}
 .action_list {
     float: right;
     list-style: none outside none;
@@ -1301,18 +1370,16 @@ form.signin .remb .remember {
 .button_link_nav {
     display: inline-block;
     position: absolute;
-    right: 5px;
+    right: -15px;
     top: 0;
 }
 .button_link_ul {
-  margin: 15px 0;
+    margin: 15px 0;
 }
 .button_link_li {
   display: inline-block;
 }
-.button_link_ul li {
-    margin: -21px -4px 0 0;
-}
+
 .dropColumnHeader {
     background-color: #F2F2F2;
     border-left: 1px solid #CCCCCC;
@@ -1354,6 +1421,14 @@ form.signin .remb .remember {
   color: white;
   border: 1px solid #283a50;
   cursor: move;
+}
+
+.textLabelPropertiesDivSub {
+    margin-left: 15px;
+}
+
+.textLabelPropertiesDivSub > div {
+  margin-top: 5px;
 }
 
 .textLabelPropertiesDiv {
@@ -1458,12 +1533,12 @@ form.signin .remb .remember {
 .activeArrow {
     color: #3B5998;
 }
-.finishedProject, .suspendedProject {
+.finishedProject, .suspendedProject { 
     background-color: transparent;
     border: 1px solid #934900 !important;
     border-radius: 4px;
     font-family: "Roboto",sans-serif !important;
-    margin: 17px 0;
+    margin: 17px;
     padding: 0 8px;
     vertical-align: top;
 }
@@ -1491,6 +1566,22 @@ form.signin .remb .remember {
   background-color: #1275d6;
   border: 1px solid #1275d6;
   color: #fff;
+}
+
+.ui-menu .ui-menu-item a:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* css for autocomplete */
+.ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content.ui-corner-all {
+  max-height: 300px;
+  overflow: auto;
+  max-width: 800px;
+}
+
+.ui-autocomplete-loading { 
+  background:url('../img/loading-small.gif') no-repeat right 10px center 
 }
 
 /* css for timepicker */
@@ -1588,11 +1679,14 @@ form.signin .remb .remember {
 .custom-select-xsmall {
     border: 1px solid #bdc7d8;
     border-radius: 3px 0 0 3px;
-    height: 26px;
+    height: 25px;
     margin: 0 auto 7px;
     overflow: hidden;
     padding: 0;
     width: auto;
+}
+.custom-select-xsmall > select:focus > .custom-select-xsmall {
+  border: 1px solid red !important;
 }
 .custom-select-small select {
     color: #000000;
@@ -1608,6 +1702,9 @@ form.signin .remb .remember {
     margin: 0;
     padding: 5px;
 }
+.custom-select-xsmall.focus {
+    border: 1px solid #1275d6;
+}
 .custom-select-xsmall select {
     width: 100%;
 }
@@ -1616,7 +1713,7 @@ form.signin .remb .remember {
     font-size: 11px;
     vertical-align: bottom;
 }
-.filter input#search, .filter input#j_testName, input#j_defectName {
+.filter input#search, .filter input#j_testName, input#j_defectName, input#j_taskName {
     border: 1px solid #bdc7d8;
     border-radius: 4px;
     font-family: "Roboto";
@@ -1625,7 +1722,7 @@ form.signin .remb .remember {
     height: 22px;
     padding: 6px 30px 6px 11px;
 }
-.search_in_filter a {
+.search_in_filter > a, .search_in_filter_button {
     background-color: #1275d6;
     color: #fff;
     cursor: pointer;
@@ -1633,11 +1730,11 @@ form.signin .remb .remember {
     font-size: 18px;
     padding: 9px 10px;
     position: absolute;
-    top: 93px;
-    right: 27px;
+    top: 0px;
+    right: -12px;
     vertical-align: sub;
 }
-.search_in_filter a:hover {
+.search_in_filter > a:hover {
   color:#fff;
   background-color: #007eff;
 }
@@ -1674,7 +1771,7 @@ div.highlightFilter select {
 }
 div.highlightFilter select option {
   color: black;
-  font-size: 12px;
+  font-size: 11px;
   font-family: "Roboto";
 }
 div.highlightFilter label {
@@ -1771,7 +1868,31 @@ input[type=checkbox].highlightFilter {
     vertical-align: top;
     color:#fff !important;
     text-decoration: none !important;
+    position: relative;
 }
+.top_messages .unreadMessageCount {
+  position: absolute; 
+  display: none;
+  background: red; 
+  top: 20px; 
+  width: 8px; 
+  height: 8px; 
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+  left: 9px;
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+  }
+  70% {
+      box-shadow: 0 0 0 12px rgba(255, 0, 0, 0);
+  }
+  100% {
+      box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
 .top_messages:hover {
   background-color: #1a6cbc;
 }
@@ -1782,7 +1903,7 @@ input[type=checkbox].highlightFilter {
     color: #FFFFFF;
 }
 .contentLRtable {
-    display: table;
+    display: flex;
     margin-bottom: 50px;
     width: 100%;
 }
@@ -1838,11 +1959,10 @@ input[type=checkbox].highlightFilter {
 
 .article_right_box_message {
     border: medium none;
-    bottom: 0;
-    height: 443px;
     margin: 0;
+    height: 657px;
     position: relative;
-    top: 0;
+    top: 85px;
 }
 .top_left select {
     font-family: 'Roboto',sans-serif;
@@ -1904,6 +2024,9 @@ input[type=checkbox].highlightFilter {
 .token-input-input-token-facebook > input {
   background: url("../img/abc_ico.png") no-repeat scroll right top rgba(0, 0, 0, 0);
   border: medium none !important;
+}
+.token-input-focused-facebook > .token-input-input-token-facebook {
+  border-bottom: 1px solid #1275d6 !important;
 }
 .calendar_icon {
     background: url("../img/calendar_ico.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
@@ -2011,7 +2134,10 @@ input[type=checkbox].highlightFilter {
     background: url("../img/logo_ta_white.png") no-repeat scroll center center rgba(0, 0, 0, 0);
     display: block;
     height: 94px;
-    margin: 0 auto;
+    transform: translateX(-50%);
+    position: relative;
+    left: 50%;
+    margin-top: 50px;
     width: 280px;
 }
 .login_tc_header_wrong {
@@ -2105,6 +2231,30 @@ input[type=checkbox].highlightFilter {
     margin-bottom: 0;
     padding: 6px 8px 6px 6px;
 }
+
+.optionsList .clearfixDashboard.history {
+    display: flex;
+    justify-content: space-between;
+}
+
+.optionsList .option-clean {
+  padding-left: 20px;
+  box-sizing: border-box;
+}
+
+.optionsList .clearfixDashboard.history .testlist-r {
+  white-space: nowrap;
+}
+
+.testlist-l {
+  float: left;
+}
+
+.testlist-r {
+    margin-left: 10px;
+    float: lfet;
+}
+
 .author.history {
     color: inherit;
     font-size: 13px;
@@ -2179,18 +2329,17 @@ strong > small {
   font-weight: 400;
 }
 .comment_text, .comment_edit, .comment_abuse {
-  display: table;
+  text-overflow: ellipsis;
+  overflow: hidden;
   font-size: 12px;
   font-weight: normal;
   line-height: 20px;
   margin-left: 7px;
-  word-wrap: break-word;
 }
 .comment_text {
   background-color: #eee;
   border: 1px solid #eee;
   border-radius: 5px;
-  display: table;
   font-size: 14px;
   font-weight: 400;
   margin: 18px 0 5px;
@@ -2322,6 +2471,28 @@ textarea + span {
 .commentForm textarea {
     height: 61px !important;
 }
+
+.issue_type_IMPROVEMENT, .issue_type_NEW_FEATURE, .issue_type_DEFECT {
+	background: url("../img/issue_type_icons.png") no-repeat scroll 0px 0 rgba(0, 0, 0, 0);
+	display: inline-block;
+	vertical-align: middle;
+	height:16px;
+	width:16px;
+	cursor: help;
+}
+
+.issue_type_NEW_FEATURE {
+	background-position: 0px 0px;
+}
+
+.issue_type_IMPROVEMENT {
+	background-position: -16px 0px;
+}
+
+.issue_type_DEFECT {
+	background-position: -32px 0px;
+}
+
 .prio_TRIVIAL, .prio_MINOR, .prio_MAJOR, .prio_CRITICAL, .prio_BLOCKER,
 .prio_TRIVIAL.view, .prio_MINOR.view, .prio_MAJOR.view, .prio_CRITICAL.view, .prio_BLOCKER.view  {
     background: url("../img/priority_icon.png") no-repeat scroll -16px 0 rgba(0, 0, 0, 0);
@@ -2422,9 +2593,6 @@ textarea + span {
     width: 60px;
 }
 
-.item:hover .cloud{
-        display: block;
-}
 .percent-dsb{
     width: 60px;
 }
@@ -2449,9 +2617,10 @@ textarea + span {
     font-weight: 500;
     margin-top: 2px;
     max-width: 205px;
-    padding: 3px 6px;
+    padding: 7px 10px;
     position: absolute;
     border-radius: 4px; 
+    line-height: 15px;
     z-index: 999;
 }
 .cloud.percent span {
@@ -2507,8 +2676,8 @@ textarea + span {
     color: #000;
     display: inline-block;
     font-size: 12px;
-    margin: 0 1px;
-    padding: 1px 5px;
+    margin: 3px 1px;
+    padding: 1px 5px 4px 5px;
 }
 .statusIcon {
     background-color: transparent;
@@ -2521,25 +2690,25 @@ textarea + span {
     cursor: help;
 }
 .defectStatus_OPEN, .defectStatus_REOPEN {
-    background-color: #13adf4 !important;
+    background-color: #13adf4;
 }
 .defectStatus_IN_PROGRESS {
-    background-color: #faca08 !important;
+    background-color: #faca08;
 }
 .defectStatus_FINISHED {
-    background-color: #aaaaaa !important;
+    background-color: #aaaaaa;
 }
 .defectStatus_RESOLVED {
-    background-color: #0ed08d !important;
+    background-color: #0ed08d;
 }
 .defectStatus_INVALID {
-    background-color: #fe8200 !important;
+    background-color: #fe8200;
 }
 .defectStatus_SUCCESS {
-    background-color: #25a28b !important;
+    background-color: #25a28b;
 }
 .defectStatus_FAIL {
-    background-color: #ee4c4c !important;
+    background-color: #ee4c4c;
 }
 
 .DEFECT_FAIL, .DEFECT_FINISHED, .DEFECT_INVALID, .DEFECT_IN_PROGRESS, .DEFECT_OPEN, .DEFECT_REOPEN, .DEFECT_RESOLVED, .DEFECT_SUCCESS {
@@ -2651,14 +2820,25 @@ a.j_editUsers:hover {
     font-size: 11px;
     font-weight: 900;
     margin-left: 3px;
-    padding: 1px 9px;
+    padding: 2px 7px;
     width: 7px;
     text-align: center;
+    background: #eee;
 }
 .help.item {
     font-family: "Roboto";
-    cursor: help;
+    cursor: default;
 }
+.help_content {
+    position: absolute; 
+    width: 100%; 
+    text-align: right;
+}
+.help_content_inline {
+    text-align: right;
+    position: relative;
+}
+
 .ui-spinner-input {
     border: medium none !important;
     width: 32px;
@@ -2672,10 +2852,10 @@ a.j_editUsers:hover {
 }
 .msg_button.comment_button {
     border: medium none;
-    bottom: -57px;
+    bottom: 40px;
     padding: 0;
     position: absolute;
-    right: 17px;
+    right: 40px;
 }
 .msgOpen {
     background-color: #DEE5EC !important;
@@ -2726,8 +2906,6 @@ a.j_editUsers:hover {
     left: 50%;
     max-width: 630px;
     min-width: 320px;
-    position: fixed;
-    top: 50%;
     -webkit-transform: translateX(-50%) translateY(-50%);
     -moz-transform: translateX(-50%) translateY(-50%);
     -ms-transform: translateX(-50%) translateY(-50%);
@@ -2736,12 +2914,8 @@ a.j_editUsers:hover {
     z-index: 2000;
 }
 .textwidget {
-    height: 570px;
-    left: 50%;
-    margin: -235px auto 0 -185px;
-    position: fixed;
+    margin: 0px auto;
     text-align: center;
-    top: 36%;
     width: 370px;
 }
 .textwidget1 {
@@ -2755,23 +2929,29 @@ a.j_editUsers:hover {
 #content_login {
     display: block;
     height: 100%;
-    position: absolute;
     width: 100%;
 }
 #footer_static {
-    bottom: 0;
     color: #C5C5C5;
     font-size: 11px;
     margin: 10px 0;
-    position: absolute;
     text-align: center;
     width: 100%;
 }
-#footer_static a {
-    color: #999;
+#footer_static span a {
+  margin-left:5px;
+  color: #aaa;
 }
 
 #ui-datepicker-div { z-index: 999999 !important; }
+
+.calendar_icon {
+    cursor: pointer;
+}
+
+.ui-slider-handle.ui-state-default.ui-corner-all {
+    background: rgb(245, 245, 245);
+}
 
 .notSpecified {
   color: gray !important;
@@ -3018,7 +3198,6 @@ a.j_editUsers:hover {
     width: 50%;
 }
 .j_deleteTestFromTask, .j_deleteDefectFromTask {
-    color: #aaa;
     font-size: 11px;
     vertical-align: text-top;
 }
@@ -3035,7 +3214,7 @@ a.j_editUsers:hover {
 .search_in_filter.addTest input {
     border-radius: 4px 0 0 4px !important;
     font-size: 13px !important;
-    max-width: 200px;
+    width: 350px;
     padding: 7px 25px 6px 11px !important;
 }
 .addTestToTask i {
@@ -3070,7 +3249,7 @@ a.j_editUsers:hover {
 }
 #list-message {
     background-color: #f8f8f8;
-    height: 480px;
+    height: 614px;
     width: 334px;
     overflow-x: hidden;
     overflow-y: auto; 
@@ -3119,9 +3298,11 @@ a.j_editUsers:hover {
     border-right: 1px solid #eee;
     border-top: medium none;
 }
-/*.contentListMessage {
-    max-height: 356px;
-}*/
+.contentListMessage {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
 .contentListMessage h5 {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
@@ -3130,15 +3311,15 @@ a.j_editUsers:hover {
     font-weight: 400;
     margin: 0;
     padding: 12px;
-    top: 0;
 }
 #j_msgThreadList > ul {
     display: block;
-    height: 396px;
     margin: 0;
     overflow-y: auto;
     padding: 10px;
+    flex-grow: 1;
 }
+
 .message_content {
     border-bottom: 1px solid #eee;
     margin-bottom: 10px;
@@ -3155,6 +3336,7 @@ a.j_editUsers:hover {
     background-color: #f5f5f5;
     padding: 6px 15px;
 }
+
 .message-create-button {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
@@ -3194,6 +3376,17 @@ a.j_editUsers:hover {
 .chosen-drop ul li {
     color: #000 !important;
 }
+.messageContainer {
+    position: relative;
+}
+.messageContainer:after {
+    display: block;
+    content: '';
+    clear: both;
+}
+.formWrapper {
+  margin-bottom: -35px;
+}
 .formContainer {
     display: inline-block;
     margin-bottom: 35px;
@@ -3217,6 +3410,7 @@ a.j_editUsers:hover {
     max-width: 100% !important;
     padding: 5px 3px 3px 0 !important;
     width: 100% !important;  
+    box-sizing: border-box;
 }
 .messageContainer textarea {
     background-color: #f5f5f5;
@@ -3225,9 +3419,10 @@ a.j_editUsers:hover {
     box-shadow: none;
     font-size: 15px !important;
     font-weight: 400;
-    height: 34px !important;
+    height: auto;
     overflow-y: scroll;
-    padding: 5px 94px 3px 0 !important;
+    padding: 5px 120px 3px 0 !important;
+    box-sizing: border-box;
 }
 .formContainer input:focus, .messageContainer textarea:focus {
     border-bottom: 2px solid #1275d6 !important;
@@ -3243,18 +3438,21 @@ a.j_editUsers:hover {
     border-top: 1px solid transparent !important;
     margin: 1px 0 -1px !important;
 }
-.formContainer label {
+.formContainer label, .formContainer .label {
     color: #aaa;
     display: block;
     font-size: 11px;
     text-transform: uppercase;
+}
+.formContainer .label_inline {
+    display: inline;
 }
 .formContainer textarea {
     border-color: #fff #fff #aaa;
     border-style: solid;
     border-width: 1px;
     box-shadow: none;
-    height: 100px !important;
+    height: 100px;
     overflow-y: auto;
     resize: vertical;
     font-size: 15px !important;
@@ -3285,7 +3483,7 @@ a.j_editUsers:hover {
     width: 100%;
 }
 .formContainer select:focus {
-    border-bottom: 2px solid #000 !important;
+    border-bottom: 2px solid #1275d6 !important;
     border-left: 1px solid #fff !important;
     border-right: 1px solid #fff !important;
     border-top: 1px solid #fff !important;
@@ -3308,6 +3506,9 @@ a.j_editUsers:hover {
 .formContainer.export input {
     margin: 0 auto;
     width: auto;
+}
+.formContainer.bottom {
+  margin-bottom: 0px;
 }
 .checkTable table {
     font-size: 12px;
@@ -3337,7 +3538,6 @@ a.j_editUsers:hover {
 #j_msgFormContainer {
     background-color: #f5f5f5;
     display: block;
-    height: 78px;
 }
 .front-log {
     background: #fff none repeat scroll 0 0;
@@ -3374,6 +3574,37 @@ a.j_editUsers:hover {
 /*.snippet_action_contentList.snippet_action_text > a {
     display: block;
 }*/
+
+.dashboard_header {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard_header.buttons {
+    justify-content: flex-end;
+}
+
+.dashboard_header .button-big {
+    background: #fff;
+    color: #333;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-right: 7px;
+    box-sizing: border-box;
+    border: 2px solid #fff;
+}
+
+.dashboard_header .button-big.active {
+    border: 2px solid #1A6CBC;
+    color: #1A6CBC;
+}
+
+.dashboard_header .button-big:hover {
+    background: #1275D6;
+    color: #fff;
+}
+
 .column_dashboard > div:first-child {
     padding-left: 0;
 }
@@ -3452,11 +3683,16 @@ h6 {
 .search_in_filter #search:focus {
     border:1px solid #1275d6;
 }
+.search_in_filter.addTest {
+  display: inline-block;
+  margin: 0px;
+}
 .search_in_filter {
     display: block;
     margin: 0 20px 0 0;
     max-width: 100%;
     padding: 0 10px 0 0;
+    position: relative;
 }
 .search_text {
     display: block;
@@ -3472,9 +3708,7 @@ h6 {
 .snippet_action_contentList.snippet_action_text > a:hover {
     color: #ff0054;
 }
-.topmax {
-    margin-top: -112px;
-}
+
 .front-log > p {
     color: #333;
 }
@@ -3502,7 +3736,7 @@ li.token-input-token-facebook {
     font-size: 11px;
     font-weight: 600;
     height: auto !important;
-    margin: 0 6px 0 0;
+    margin: 0 6px 6px 0;
     overflow: visible;
     padding: 1px 6px;
     white-space: nowrap;
@@ -3517,6 +3751,10 @@ li.token-input-input-token-facebook {
     width: 100%;
 }
 
+.token-input-dropdown-facebook {
+  max-height: 300px;
+  overflow: auto !important;
+}
 
 .filter.custom-auto {
     vertical-align: top;
@@ -3572,11 +3810,6 @@ li.token-input-input-token-facebook {
     min-width: 90px !important;
     width:  auto !important;
 }
-
-
-
-
-
 .object_nr {
     background-color: #999;
     border-radius: 3px;
@@ -3594,12 +3827,17 @@ li.token-input-input-token-facebook {
     font-weight: 600;
     padding: 3px 5px;
 }
-.testlist-l {
-  float: left;
-  max-width: 92%;
+.testlist-r > .button-resolve {
+  background: #DDDDDD;
+  padding: 5px 15px;
+  margin-right: 10px;
+  border-radius: 3px;
 }
-.testlist-r {
-  float: right;
+.testlist-r > .button-resolve:hover {
+  opacity: 0.8;
+}
+#j_defectList .testlist-l > span, #j_defectList .testlist-l .issue {
+  margin-right: 10px;
 }
 #j_testList > li, #j_defectList > li {
     display: inline-block;
@@ -3610,6 +3848,23 @@ li.token-input-input-token-facebook {
 }
 #j_testList > li:hover, #j_defectList > li:hover {
     background-color: #f1f2f5;
+}
+#j_taskList > li, #j_defectList > li {
+    display: inline-block;
+    min-height: 33px;
+    vertical-align: top;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+}
+#j_taskList > li:hover, #j_defectList > li:hover {
+    background-color: #f1f2f5;
+}
+#j_taskList > li > .clearfixDashboard, #j_taskList > li > .clearfixDashboard {
+  border: medium none;
+}
+.tasklist-l {
+    float: left;
+    max-width: 92%;
 }
 .activity-item-comment-link {
     color: #888;
@@ -3816,7 +4071,6 @@ li.token-input-input-token-facebook {
 }
 .msgForm {
     display: block;
-    max-width: 1243px;
 }
 .no-message {
     padding: 25px;
@@ -3942,3 +4196,42 @@ li.token-input-input-token-facebook {
     width: 30px;
 }
 
+.list_item_arrow {
+    font-size: 18px;
+}
+
+.list_item_arrow:after {
+    margin: 0px 5px;
+    content: '\00bb';
+    display: inline-block;
+    color: #999;
+}
+
+.j_defectLink {
+    padding: 0px;
+}
+
+.file_preview {
+    max-width: 600px; 
+    display: none;
+    position: absolute;
+    z-index: 999;
+}
+
+.j_checklistItem {
+  padding-bottom: 10px;
+}
+
+.j_checklistItem input {
+  width: calc(100% - 35px) !important;
+}
+
+.button_send * {
+  display: inline;
+}
+
+
+.icon_close.empty:before {
+  opacity: 0 !important;
+  color: red !important;
+}

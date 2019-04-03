@@ -34,11 +34,12 @@ class Application_Model_FileMapper extends Custom_Model_Mapper_Abstract
       $adapter->beginTransaction();
       
       $data = array(
-        'name'        => $file->getName(),
-        'extension'   => $file->getExtension(),
-        'subpath'     => $file->getSubpath(),
-        'create_date' => $file->getCreateDate(),
-        'description' => $file->getDescription()
+        'name'         => $file->getName(),
+        'name_visible' => $file->getNameVisible(),
+        'extension'    => $file->getExtension(),
+        'subpath'      => $file->getSubpath(),
+        'create_date'  => $file->getCreateDate(),
+        'description'  => $file->getDescription()
       );
 
       if ($file->getProject() !== null && $file->getProject()->getId() > 0)

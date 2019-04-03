@@ -37,26 +37,30 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
   
   private function _getFilterForm()
   {
-    return new Administration_Form_ProjectFilter(array('action' => $this->_url(array(), 'admin_project_list')));
+    return new Administration_Form_ProjectFilter(array('action' => $this->_url(array('page' => 1), 'admin_project_list')));
   }
     
   public function indexAction()
   {
     $this->_setCurrentBackUrl('projectExportDefects');
+    $this->_setCurrentBackUrl('project_list');
     $request = $this->getRequest();
     $filterForm = $this->_getFilterForm();
     
     if ($filterForm->isValid($request->getParams()))
     {
       $projectMapper = new Administration_Model_ProjectMapper();
-      list($list, $paginator) = $projectMapper->getAll($request);
+      $request->setParam('search', $filterForm->getValue('search'));
+      list($list, $paginator, $numberRecords) = $projectMapper->getAll($request);
     }
     else
     {
+      $numberRecords = 0;
       $list = array();
       $paginator = null;
     }
 
+    $this->view->numberRecords = $numberRecords;
     $this->_setTranslateTitle();
     $this->view->projects = $list;
     $this->view->paginator = $paginator;
@@ -107,12 +111,11 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
       $this->view->formError = 'selectLeastOneCheckbox';
       return $this->render('export');
     }
-    
+
     $t = new Custom_Translate();
     $projectMapper = new Administration_Model_ProjectMapper();
-    $project->setProperties($values, true);    
+    $project->setProperties($values, true);
     $project->setExtraData('fileDescription', $t->translate('Wyeksportowany projekt PROJECT.', array('project' => $project->getName())));
-
     if ($projectMapper->export($project))
     {
       $session = new Zend_Session_Namespace('FileDownload');
@@ -393,13 +396,16 @@ class Administration_ProjectController extends Custom_Controller_Action_Administ
         $multiPrePopulatedUsers[$role->getId()] = $form->prepareJsonUserDataByRole($role);
       }
     }
-    
+
+    $resolutionMapper = new Administration_Model_ResolutionMapper();
+
     $this->_setTranslateTitle();
+    $this->view->resolutions = $resolutionMapper->getAllByProject($project);
     $this->view->project = $project;
     $this->view->roles   = $roles;
     $this->view->form    = $form;
     $this->view->multiPrePopulatedUsers = $multiPrePopulatedUsers;
-    
+
     if ($project->getStatusId() == Application_Model_ProjectStatus::FINISHED)
     {
       $this->render('view-finished');

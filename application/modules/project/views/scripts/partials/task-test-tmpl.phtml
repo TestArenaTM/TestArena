@@ -1,6 +1,6 @@
 <script id="j_taskTestItemsTmpl" type="text/x-jquery-tmpl">
 <div id="j_testContent">
-  <ul id="j_testList">
+  <ul id="j_testList" class="optionsList">
   </ul>
 </div>
 </script>
@@ -12,12 +12,13 @@
       <a href="${viewUrl}"><span class="object_nr">${objectNumber}</span> ${name}</a>
     </div>
     <div class="testlist-r">
-      <span>
-      </span>
+      <a class="button-resolve" href="${resolveUrl}">
+        <?php echo $this->t('Rozwiąż') ?>
+      </a>
       <?php if ($this->activeProject->isActive() 
                 && $this->taskUserPermission->isTestModifyPermission()
                 && $this->task->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
-        <a class="j_deleteTestFromTask" href="${deleteUrl}" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+        <a data-test-name="[${objectNumber}] ${name}" class="j_deleteTestFromTask" href="${deleteUrl}" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
       <?php endif; ?>
     </div>
   </div>

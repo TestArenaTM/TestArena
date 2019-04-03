@@ -1,6 +1,8 @@
 <section id="content">
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
     <p><?php echo $this->t('Ze względów bezpieczeństwa wymagana jest zmiana hasła.') ?></p>
 
     <form class="front-log" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">

@@ -73,6 +73,7 @@ class Project_Form_TaskFilter extends Custom_Form_AbstractFilter
     $this->addElement('text', 'search', array(
       'required'    => false,
       'maxlength'   => 255,
+      'class'       => 'j_loadAfterEnter',
       'filters'     => array('StringTrim'),
       'validators'  => array(
         'SimpleText',

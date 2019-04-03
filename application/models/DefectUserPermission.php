@@ -33,7 +33,10 @@ class Application_Model_DefectUserPermission extends Custom_Model_UserPermission
     Application_Model_RoleAction::DEFECT_CHANGE_STATUS_CREATED_BY_YOU,
     Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU,
     Application_Model_RoleAction::DEFECT_CHANGE_STATUS_ASSIGNED_TO_YOU,
-    Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU
+    Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU,
+    Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU,
+    Application_Model_RoleAction::TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU,
+    Application_Model_RoleAction::TASK_DEFECT_MODIFY_ALL
   );
   
   public function __construct(Application_Model_Defect $defect, Application_Model_User $user, array $userPermissions)
@@ -51,7 +54,7 @@ class Application_Model_DefectUserPermission extends Custom_Model_UserPermission
   {
     if ($this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_EDIT_CREATED_BY_YOU)
           || $this->_checkAllPermission(Application_Model_RoleAction::DEFECT_EDIT_ALL)
-          || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU))
+          || $this->_checkAssigneePermission(Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU))
     {
       return true;
     }
@@ -61,10 +64,7 @@ class Application_Model_DefectUserPermission extends Custom_Model_UserPermission
   
   public function isAssignPermission()
   {
-    if ($this->_checkAllPermission(Application_Model_RoleAction::DEFECT_ASSIGN_ALL)
-        || $this->_checkAllPermission(Application_Model_RoleAction::DEFECT_EDIT_ALL)
-        || $this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_EDIT_CREATED_BY_YOU)
-        || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU))
+    if ($this->_checkAllPermission(Application_Model_RoleAction::DEFECT_ASSIGN_ALL))
     {
       return true;
     }
@@ -74,16 +74,25 @@ class Application_Model_DefectUserPermission extends Custom_Model_UserPermission
   
   public function isChangeStatusPermission()
   {
-    if ($this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_CHANGE_STATUS_ALL)
-          || $this->_checkAllPermission(Application_Model_RoleAction::DEFECT_CHANGE_STATUS_ASSIGNED_TO_YOU)
-          || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::DEFECT_CHANGE_STATUS_CREATED_BY_YOU)
-          || $this->_checkAllPermission(Application_Model_RoleAction::DEFECT_EDIT_ALL)
-          || $this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_EDIT_CREATED_BY_YOU)
-          || $this->_checkAssignedToYouPermission(Application_Model_RoleAction::DEFECT_EDIT_ASSIGNED_TO_YOU))
+    if ($this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_CHANGE_STATUS_CREATED_BY_YOU)
+          || $this->_checkAllPermission(Application_Model_RoleAction::DEFECT_CHANGE_STATUS_ALL)
+          || $this->_checkAssigneePermission(Application_Model_RoleAction::DEFECT_CHANGE_STATUS_ASSIGNED_TO_YOU))
     {
       return true;
     }
     
+    return false;
+  }
+
+  public function isTaskDefectModifyPermission()
+  {
+    if ($this->_checkAuthorPermission(Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU)
+      || $this->_checkAssigneePermission(Application_Model_RoleAction::TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU)
+      || $this->_checkAllPermission(Application_Model_RoleAction::TASK_DEFECT_MODIFY_ALL))
+    {
+      return true;
+    }
+
     return false;
   }
   
@@ -97,5 +106,20 @@ class Application_Model_DefectUserPermission extends Custom_Model_UserPermission
     }
     
     return false;
+  }
+
+  public function isDeleteAuthorPermission()
+  {
+    return $this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_DELETE_CREATED_BY_YOU);
+  }
+
+  public function isDeleteAssigneePermission()
+  {
+    return $this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_DELETE_ASSIGNED_TO_YOU);
+  }
+
+  public function isDeleteAllPermission()
+  {
+    return $this->_checkAuthorPermission(Application_Model_RoleAction::DEFECT_DELETE_ALL);
   }
 }

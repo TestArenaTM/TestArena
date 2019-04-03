@@ -31,6 +31,7 @@ class Application_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstra
         'id',
         'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath',
         'create_date',

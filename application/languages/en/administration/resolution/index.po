@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-07-12 10:06+0200\n"
+"PO-Revision-Date: 2018-12-12 14:41+0100\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,13 +12,13 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.2\n"
 
 msgid "pageTitle"
-msgstr "Statuses of resolutions"
+msgstr "Status resolutions"
 
-msgid "Dodaj status"
-msgstr "Add a status"
+msgid "Dodaj status zadania"
+msgstr "Add a task status"
 
 msgid "Właściwości projektu"
 msgstr "Project properties"
@@ -46,3 +46,24 @@ msgstr "Delete"
 
 msgid "Brak statusów"
 msgstr "No statuses available"
+
+msgid "Statusy rozwiązań zgłoszeń"
+msgstr "Status of issue resolutions"
+
+msgid "Statusy rozwiązań zadań"
+msgstr "Status of task resolutions"
+
+msgid "Kolor dla statusu INVALID"
+msgstr "Color for status \"__invalid__\""
+
+msgid "Kolor dla statusu RESOLVED"
+msgstr "Color for status \"__resolved__\""
+
+msgid "Zapisz"
+msgstr "Save"
+
+msgid "statusSuccess"
+msgstr "Status of task issues successfully saved."
+
+msgid "statusError"
+msgstr "An unexpected error occurred while saving statuses."

@@ -68,11 +68,13 @@ class Project_Form_DefectFilter extends Custom_Form_AbstractFilter
     parent::init();
     $this->setMethod('get');
     $this->setName('filterForm');
+
     $t = new Custom_Translate();
     
     $this->addElement('text', 'search', array(
       'required'    => false,
       'maxlength'   => 255,
+      'class'       => 'j_loadAfterEnter',
       'filters'     => array('StringTrim'),
       'validators'  => array(
         'SimpleText',
@@ -84,11 +86,12 @@ class Project_Form_DefectFilter extends Custom_Form_AbstractFilter
       0                                           => $t->translate('[Wszystkie]', array(), 'general'),
       Application_Model_DefectStatus::OPEN        => $t->translate('DEFECT_OPEN', array(), 'status'),
       Application_Model_DefectStatus::IN_PROGRESS => $t->translate('DEFECT_IN_PROGRESS', array(), 'status'),
+      Application_Model_DefectStatus::REOPEN      => $t->translate('DEFECT_REOPEN', array(), 'status'),
       Application_Model_DefectStatus::RESOLVED    => $t->translate('DEFECT_RESOLVED', array(), 'status'),
       Application_Model_DefectStatus::INVALID     => $t->translate('DEFECT_INVALID', array(), 'status'),
       Application_Model_DefectStatus::SUCCESS     => $t->translate('DEFECT_SUCCESS', array(), 'status'),
       Application_Model_DefectStatus::FAIL        => $t->translate('DEFECT_FAIL', array(), 'status'),
-      Application_Model_DefectStatus::REOPEN      => $t->translate('DEFECT_REOPEN', array(), 'status')
+      Application_Model_DefectStatus::FINISHED    => $t->translate('DEFECT_FINISHED', array(), 'status')
     );
     
     $this->addElement('select', 'status', array( 
@@ -105,6 +108,16 @@ class Project_Form_DefectFilter extends Custom_Form_AbstractFilter
         Application_Model_DefectPriority::MAJOR    => $t->translate('DEFECT_PRIORITY_MAJOR', array(), 'type'),
         Application_Model_DefectPriority::MINOR    => $t->translate('DEFECT_PRIORITY_MINOR', array(), 'type'),
         Application_Model_DefectPriority::TRIVIAL  => $t->translate('DEFECT_PRIORITY_TRIVIAL', array(), 'type'),
+      )
+    ));
+
+    $this->addElement('select', 'issueType', array(
+      'required'    => false,
+      'multiOptions' => array(
+        ''  => $t->translate('[Wszystkie]', array(), 'general'),
+        'DEFECT'      => $t->translate('ISSUE_DEFECT', null, 'type'),
+        'NEW_FEATURE' => $t->translate('ISSUE_NEW_FEATURE', null, 'type'),
+        'IMPROVEMENT' => $t->translate('ISSUE_IMPROVEMENT', null, 'type'),
       )
     ));
     
@@ -200,6 +213,7 @@ class Project_Form_DefectFilter extends Custom_Form_AbstractFilter
   {
     return json_encode(array(
       'resultCountPerPage' => 10,
+      'issueType' => '',
       'search' => '',
       'status' => 0,
       'priority' => 0,

@@ -43,5 +43,7 @@ return array(
   Application_Model_RoleAction::TASK_TEST_MODIFY_CREATED_BY_YOU,
   Application_Model_RoleAction::TASK_DEFECT_MODIFY_ALL,
   Application_Model_RoleAction::TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU,
-  Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU
+  Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU,
+  
+  Application_Model_RoleAction::EXTENDING_PROJECT_STATISTIC
 );

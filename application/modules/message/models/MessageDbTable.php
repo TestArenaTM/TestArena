@@ -276,4 +276,20 @@ class Message_Model_MessageDbTable extends Custom_Model_DbTable_Abstract
       ->limit(1)
       );
   }
+
+  public function getUnreadMessageCountByUser(Application_Model_User $user)
+  {
+    $sql = $this->select()
+      ->from(array('m' => $this->_name), array(
+        'count_unread' => new Zend_Db_Expr("count(*)")
+      ))
+      ->where('m.to_status = ?', Application_Model_MessageToStatus::UNREAD)
+      ->where('m.from_status = ?', Application_Model_MessageFromStatus::SENT)
+      ->where('m.recipient_type = ?', Application_Model_MessageUserType::USER)
+      ->where('m.recipient_id = ?', $user->getId())
+      ->setIntegrityCheck(false);
+
+    return (int) $this->getAdapter()->fetchOne($sql);
+  }
+
 }

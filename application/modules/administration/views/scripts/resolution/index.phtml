@@ -1,23 +1,26 @@
 <section id="content">
  <!-- <div class="breadcrumb">
     <a class="icon_house_alt" href="#"></a>
-    <i class="arrow_carrot-right icon-15"></i>  
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>  -->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_resolution_add')?>" ><?php echo $this->t('Dodaj status') ?></a></li>
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_view')?>" ><?php echo $this->t('Właściwości projektu') ?></a></li>
-      </ul>
-    </nav>
-    
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('projectId' => $this->project->getId()), 'admin_resolution_add')?>" ><?php echo $this->t('Dodaj status zadania') ?></a></li>
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->project->getId()), 'admin_project_view')?>" ><?php echo $this->t('Właściwości projektu') ?></a></li>
+        </ul>
+      </nav>
+    </div>
     <div class="textLabelEditor">
       <div id="text" class="content_label_title"><?php echo $this->escapeQuotes($this->project->getName()) ?></div>
     </div>
-
+    <div class="content_sub_title">
+      <?php echo $this->t('Statusy rozwiązań zadań') ?>
+    </div>
     <?php if (count($this->resolutions) > 0): ?>
 
       <table>
@@ -38,7 +41,7 @@
                 <?php echo $this->showResolutionIcon($resolution) ?> <?php echo $this->escapeQuotes($resolution->getName()) ?>
               </a>
             </td>
-            <td><?php echo $this->escapeQuotes(nl2br($resolution->getDescription())) ?></td>
+            <td><?php echo nl2br($this->escapeQuotes($resolution->getDescription())) ?></td>
             <td class="t_number"><?php echo $resolution->getExtraData('taskCount') ?></td>
             <td class="t_number"><?php echo $resolution->getExtraData('testCount') ?></td>
             <td>
@@ -47,14 +50,14 @@
                   <div class="popbox">
                     <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
                     <div class='collapse'>
-                      <ul class="box">           
-                        <li><a href="<?php echo $this->url(array('id' => $resolution->getId()), 'admin_resolution_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+                      <ul class="box">
+                        <li><a href="<?php echo $this->url(array('id' => $resolution->getId(), 'projectId' => $this->project->getId()), 'admin_resolution_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
                         <?php if ($resolution->getExtraData('taskCount') == 0 && $resolution->getExtraData('testCount') == 0): ?>
                           <li><a class="j_delete_resolution" href="<?php echo $this->url(array('id' => $resolution->getId()), 'admin_resolution_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
                         <?php endif; ?>
-                      </ul> 
+                      </ul>
                     </div>
-                  </div>                
+                  </div>
                 </ul>
               </nav>
             </td>
@@ -67,6 +70,48 @@
       <div class="empty-text"><?php echo $this->t('Brak statusów') ?></div>
     <?php endif; ?>
 
+    <div class="content_sub_title">
+      <?php echo $this->t('Statusy rozwiązań zgłoszeń') ?>
+    </div>
+    <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
+      <div class="formWrapper">
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->invalidStatusColor->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('invalidStatusColor', $this->t('Kolor dla statusu INVALID', array(
+              'invalid' => $this->statusT('INVALID', 'DEFECT')
+            ))) ?>
+            <?php foreach ($this->form->getErrors('invalidStatusColor') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                  'min' => $this->form->getElement('invalidStatusColor')->getValidator('StringLength')->getMin(),
+                  'max' => $this->form->getElement('invalidStatusColor')->getValidator('StringLength')->getMax()
+                )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+        <div class="formContainer">
+          <span>
+            <?php echo $this->form->resolvedStatusColor->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('resolvedStatusColor', $this->t('Kolor dla statusu RESOLVED', array(
+              'resolved' => $this->statusT('RESOLVED', 'DEFECT')
+            ))) ?>
+            <?php foreach ($this->form->getErrors('resolvedStatusColor') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error, array(
+                  'min' => $this->form->getElement('resolvedStatusColor')->getValidator('StringLength')->getMin(),
+                  'max' => $this->form->getElement('resolvedStatusColor')->getValidator('StringLength')->getMax()
+                )) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
+
+      </div>
+      <div>
+        <span id="save"><?php echo $this->formSubmit('save', $this->t('Zapisz')) ?></span>
+      </div>
+      <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
+    </form>
+
     <?php echo $this->partial('popups/delete-resolution.phtml') ?>
-  </article>    
+  </article>
 </section>

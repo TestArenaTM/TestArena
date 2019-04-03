@@ -44,7 +44,7 @@ class Administration_Model_RoleMapper extends Custom_Model_Mapper_Abstract
       $list[] = $role->setDbProperties($row);
     }
     
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
   public function getById(Application_Model_Role $role)

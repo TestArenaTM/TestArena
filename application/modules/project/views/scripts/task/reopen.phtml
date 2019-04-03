@@ -7,16 +7,21 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>-->  
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-    <h3><?php echo $this->task->getObjectNumber() ?> <?php echo $this->task->getTitle() ?></h3>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+      <h3><?php echo $this->task->getObjectNumber() ?> <?php echo $this->spaceToEntity($this->escapeQuotes($this->task->getTitle())) ?></h3>
+    </div>
     <form name="j_endTaskRunForm" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <?php echo $this->form->backUrl->renderViewHelper() ?>
         <div class="formContainer">
           <span>
-            <div><?php echo $this->form->assigneeName->renderViewHelper() ?></div>
+            <?php if ($this->accessAssing): ?>
+              <div><?php echo $this->form->assigneeName->renderViewHelper() ?></div>
+            <?php else: ?>
+              <div><?php echo $this->form->assigneeName->setAttrib('disabled', 'disabled')->renderViewHelper() ?></div>
+            <?php endif ?>
             <div><?php echo $this->form->assigneeId->renderViewHelper() ?></div>
-            <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?><span><a id="j_assignToMe" href="#"><?php echo $this->t('Przypisz do mnie') ?></a></span>
+            <?php echo $this->formRequiredLabel('assigneeName', $this->t('Przypisz do')) ?><?php if ($this->accessAssing): ?><span><a id="j_assignToMe" href="#"><?php echo $this->t('Przypisz do mnie') ?></a></span><?php endif ?>
             <?php foreach ($this->form->getErrors('assigneeId') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
@@ -29,8 +34,8 @@
             <?php echo $this->formLabel('comment', $this->t('Komentarz')) ?>
             <?php foreach ($this->form->getErrors('comment') as $error): ?>
                 <div class="error_msg"><?php echo $this->errorT($error, array(
-                'min' => $this->form->getElement('title')->getValidator('StringLength')->getMin(),
-                'max' => $this->form->getElement('title')->getValidator('StringLength')->getMax()
+                'min' => $this->form->getElement('comment')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                'max' => $this->form->getElement('comment')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
               )) ?></div>
             <?php endforeach; ?>
           </span>

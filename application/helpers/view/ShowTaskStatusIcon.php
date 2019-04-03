@@ -27,8 +27,10 @@ class Zend_View_Helper_ShowTaskStatusIcon extends Zend_View_Helper_Abstract
     switch ($task->getStatusId())
     {
       case Application_Model_TaskStatus::OPEN:
-      case Application_Model_TaskStatus::REOPEN:
         $color = $task->getProject()->getOpenStatusColor();
+        break;
+      case Application_Model_TaskStatus::REOPEN:
+        $color = $task->getProject()->getReopenStatusColor();
         break;
       
       case Application_Model_TaskStatus::IN_PROGRESS:

@@ -23,36 +23,36 @@ The full text of the GPL is in the LICENSE file.
 class Administration_Form_EditResolution extends Administration_Form_AddResolution
 {
   private $_id;
-  
+
+
   public function __construct($options = null)
   {
     if (!array_key_exists('id', $options))
     {
       throw new Exception('Resolution id not defined in edit form');
     }
-
-    $this->_id = $options['id'];    
+    $this->_id = $options['id'];
     parent::__construct($options);
   }
-  
+
   public function init()
   {
     parent::init();
-    
+
     $this->getElement('name')
       ->removeValidator('UniqueProjectResolutionName')
       ->addValidator('UniqueProjectResolutionName', true, array(
         'criteria' => array('project_id' => $this->_projectId),
         'exclude' => $this->_id
       ));
-    
+
     $this->getElement('color')
       ->removeValidator('UniqueProjectResolutionColor')
       ->addValidator('UniqueProjectResolutionColor', true, array(
         'criteria' => array('project_id' => $this->_projectId),
         'exclude' => $this->_id
       ));
-    
+
     $this->getElement('csrf')->setAttrib('salt', 'edit_resolution');
   }
 }

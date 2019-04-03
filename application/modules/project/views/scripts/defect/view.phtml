@@ -2,32 +2,33 @@
   <!--<div class="breadcrumb">
     <a class="icon_house_alt" href="#"></a>
     <i class="arrow_carrot-right icon-15"></i>
-    <a href="#"><?php echo $this->generalT('Defekty') ?></a>
-    <i class="arrow_carrot-right icon-15"></i>    
+    <a href="#"><?php echo $this->generalT('Zgłoszenia') ?></a>
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div>-->    
+  </div>-->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <?php if ($this->activeProject->isActive()): ?>
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->backUrl ?>"><?php echo $this->generalT('Powrót') ?></a></li>
-        <?php foreach ($this->prepareDefectActions($this->defect, array(), $this->defectUserPermission) as $action): ?>
-          <?php if ($action === null): ?>
-            <li class="button_link_li separator"></li>
-          <?php else: ?>
-            <li class="button_link_li"><a class="button_link<?php if (array_key_exists('class', $action)):?> <?php echo $action['class']; ?><?php endif; ?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
-          <?php endif; ?>
-        <?php endforeach; ?>
-      </ul>
-    </nav>
+      <?php if ($this->activeProject->isActive()): ?>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'defect_list') ?>"><?php echo $this->generalT('Powrót') ?></a></li>
+          <?php foreach ($this->prepareDefectActions($this->defect, array(), $this->defectUserPermission) as $action): ?>
+            <?php if ($action === null): ?>
+              <li class="button_link_li separator"></li>
+            <?php else: ?>
+              <li class="button_link_li"><a <?php if (array_key_exists('type', $action) && $action['type'] == 'delete'): ?>data-name="defect<?php echo $this->activeProject->getId(); ?>" data-item-id="<?php echo $this->defect->getId() ?>"<?php endif; ?> class="button_link<?php if (array_key_exists('class', $action)):?> <?php echo $action['class']; ?><?php endif; ?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        </ul>
+      </nav>
+    </div>
     <?php endif;?>
-
     <div class="textLabelEditor">
-      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escape($this->defect->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->defect->getTitle()) ?></div>
-    </div>     
-    
+      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escape($this->defect->getObjectNumber()) ?></span> <?php echo $this->spaceToEntity($this->escapeQuotes($this->defect->getTitle())) ?></div>
+    </div>
+
     <div class="contentLRtable">
       <div class="contentProperties_left">
         <div class="col1">
@@ -43,26 +44,65 @@
               <div class="textLabelEditor_text"><?php echo $this->t('Priorytet') ?></div>
               <div id="text" class="content_label"><span class="prio_<?php echo $this->defect->getPriority() ?> view"></span><?php echo $this->typeT($this->defect->getPriority(), 'DEFECT_PRIORITY') ?></div>
             </div>
-            <?php if (count($this->environments)): ?>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t('Type') ?></div>
+              <div class="content_label">
+                <span class="issue_type_<?php echo $this->defect->getIssueType() ?>" title="<?php echo $this->typeT($this->defect->getIssueType(), 'ISSUE') ?>"></span>
+                <?php echo ucfirst($this->typeT($this->defect->getIssueType(), 'ISSUE')) ?>
+              </div>
+            </div>
+            <div class="textLabelPropertiesDiv">
+              <div class="textLabelEditor_text"><?php echo $this->t("Zraportowano w") ?>:</div>
+              <div class="textLabelPropertiesDivSub">
+                <?php if (count($this->environmentsReported)): ?>
+                  <div>
+                    <div class="textLabelEditor_text"><?php echo $this->t('Środowiska') ?></div>
+                    <div id="text" class="content_label">
+                      <?php foreach ($this->environmentsReported as $environment): ?>
+                        <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a>
+                      <?php endforeach; ?>
+                    </div>
+                  </div>
+                <?php endif; ?>
+                <?php if (count($this->versionsReported)): ?>
+                  <div>
+                    <div class="textLabelEditor_text"><?php echo $this->t('Wersje') ?></div>
+                    <div id="text" class="content_label">
+                      <?php foreach ($this->versionsReported as $version): ?>
+                        <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a>
+                      <?php endforeach; ?>
+                    </div>
+                  </div>
+                <?php endif; ?>
+              </div>
+            </div>
+            <?php if (!empty($this->environmentsResolved) && (!empty($this->versionsResolved))): ?>
               <div class="textLabelPropertiesDiv">
-                <div class="textLabelEditor_text"><?php echo $this->t('Środowiska') ?></div>
-                <div id="text" class="content_label">
-                  <?php foreach ($this->environments as $environment): ?>
-                    <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a>
-                  <?php endforeach; ?>
+                <div class="textLabelEditor_text"><?php echo $this->t("Rozwiązano w") ?>:</div>
+                <div class="textLabelPropertiesDivSub">
+                  <?php if (count($this->environmentsResolved)): ?>
+                    <div>
+                      <div class="textLabelEditor_text"><?php echo $this->t('Środowiska') ?></div>
+                      <div id="text" class="content_label">
+                        <?php foreach ($this->environmentsResolved as $environment): ?>
+                          <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $environment->getId()), 'environment_view') ?>"><?php echo $this->escapeQuotes($environment->getName()) ?></a>
+                        <?php endforeach; ?>
+                      </div>
+                    </div>
+                  <?php endif; ?>
+                  <?php if (count($this->versionsResolved)): ?>
+                    <div>
+                      <div class="textLabelEditor_text"><?php echo $this->t('Wersje') ?></div>
+                      <div id="text" class="content_label">
+                        <?php foreach ($this->versionsResolved as $version): ?>
+                          <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a>
+                        <?php endforeach; ?>
+                      </div>
+                    </div>
+                  <?php endif; ?>
                 </div>
               </div>
-            <?php endif; ?>
-            <?php if (count($this->versions)): ?>
-              <div class="textLabelPropertiesDiv">
-                <div class="textLabelEditor_text"><?php echo $this->t('Wersje') ?></div>
-                <div id="text" class="content_label">
-                  <?php foreach ($this->versions as $version): ?>
-                    <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $version->getId()), 'version_view') ?>"><?php echo $this->escapeQuotes($version->getName()) ?></a>
-                  <?php endforeach; ?>
-                </div>
-              </div>
-            <?php endif; ?>
+            <?php endif ?>
             <?php if (count($this->tags)): ?>
               <div class="textLabelPropertiesDiv">
                 <div class="textLabelEditor_text"><?php echo $this->t('Tagi') ?></div>
@@ -74,12 +114,12 @@
               </div>
             <?php endif; ?>
             <?php if ($this->defect->getRelease()->getName() !== null): ?>
-            <div class="textLabelPropertiesDiv">
-              <div class="textLabelEditor_text"><?php echo $this->t('Wydanie') ?></div>
-              <div id="text" class="content_label">
-                <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $this->defect->getRelease()->getId()), 'release_view') ?>"><?php echo $this->escapeQuotes($this->defect->getRelease()->getName()) ?></a>
+              <div class="textLabelPropertiesDiv">
+                <div class="textLabelEditor_text"><?php echo $this->t('Wydanie') ?></div>
+                <div id="text" class="content_label">
+                  <a class="tagBox" href="<?php echo $this->projectUrl(array('id' => $this->defect->getRelease()->getId()), 'release_view') ?>"><?php echo $this->escapeQuotes($this->defect->getRelease()->getName()) ?></a>
+                </div>
               </div>
-            </div>
             <?php endif; ?>
           </div>
           <div class="rightside">
@@ -104,49 +144,174 @@
         <div>
           <h5 class="break_page"><span aria-hidden="true" class="icon_pencil icon-20"></span><?php echo $this->t('Opis') ?></h5>
           <div><?php echo nl2br($this->escapeQuotes($this->defect->getDescription())) ?></div>
-        </div> 
+        </div>
+        <?php if ($this->tasks !== false): ?>
+          <div class="textLabelPropertiesDiv history" id="j_taskBox">
+            <h5 class="break_page" <?php if (!$this->activeProject->isActive()):?>style="border-bottom:0px !important"<?php endif; ?>>
+              <span aria-hidden="true" class="icon_search_alt icon-20"></span> <?php echo $this->t('Zadania') ?> / <?php echo $this->t('Testy') ?>
+            </h5>
+            <?php if (count($this->tasks) > 0): ?>
+              <div id="j_taskContent">
+                <?php $taskIdLst = '' ?>
+                <ul id="j_taskList" class="optionsList">
+                  <?php foreach ($this->tasks as $task): ?>
+                    <?php if ($taskIdLst != $task->getId()): ?>
+                      <li id="j_taskItem_<?php echo $this->defect->getId() .'_'. $task->getId() ?>">
+                        <div class="clearfixDashboard history">
+                          <div title="<?php echo $task->getTitle() ?>"  class="testlist-l">
+                            <a href="<?php echo $this->projectUrl(array('id' => $task->getId()), 'task_view')?>">
+                              <span class="object_nr"><?php echo $task->getObjectNumber() ?></span> <?php echo $task->getTitle() ?>
+                            </a>
+                          </div>
+                          <div class="testlist-r">
+                            <?php echo $this->showTaskStatusIcon($task) ?>
+                            <?php if ($this->activeProject->isActive()
+                              && in_array($this->defect->getStatusId(), array(
+                                  Application_Model_DefectStatus::OPEN,
+                                  Application_Model_DefectStatus::REOPEN,
+                                  Application_Model_DefectStatus::IN_PROGRESS)
+                              )): ?>
+
+                            <?php
+                            if ($this->taskUserPermission($task, $this->authUser, array(
+                                Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU,
+                                Application_Model_RoleAction::TASK_DEFECT_MODIFY_ALL,
+                                Application_Model_RoleAction::TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU)
+                            )->isDefectModifyPermission()): ?>
+
+                                <?php if ($task->getExtraData('taskRelation') == 'defect'): ?>
+                                <a class="j_deleteTaskFromDefect" data-task-name="[<?php echo $task->getObjectNumber() .'] '. $this->escapeQuotes($task->getTitle()) ?>" href="<?php echo $this->projectUrl(array('taskId' => $task->getId(), 'id' => $this->defect->getId()), 'defect_delete_task_ajax') ?>" title="<?php echo $this->t('Usuń') ?>">
+                                  <span aria-hidden="true" class="icon_close icon-15"></span>
+                                </a>
+                                <?php else: ?>
+                                  <span class="icon_close empty icon-15"></span>
+                                <?php endif ?>
+                              <?php else: ?>
+                                <span class="icon_close empty icon-15"></span>
+                              <?php endif; ?>
+                            <?php endif ?>
+                          </div>
+                        </div>
+                      </li>
+                    <?php endif ?>
+                    <?php $taskIdLst = $task->getId(); ?>
+                    <?php if (count($task->getTaskTests()) > 0): ?>
+                      <?php foreach ($task->getTaskTests() as $taskTest): ?>
+                        <li id="j_testItem_<?php echo $this->defect->getId() ?>_<?php echo $taskTest->getId() ?>">
+                          <div class="clearfixDashboard history">
+                            <div style="padding-left: 30px;">
+                              <span class="list_item_arrow"></span>
+                              <a href="<?php echo $this->projectUrl(array('id' => $taskTest->getId()), $this->taskTestViewRouteName($taskTest->getTest()))?>">
+                                <span class="object_nr"><?php echo $taskTest->getTest()->getObjectNumber() ?></span> <?php echo $taskTest->getTest()->getName() ?>
+                              </a>
+                            </div>
+                            <div style="white-space: nowrap;">
+                              <?php if ($taskTest->getResolutionId() !== null): ?>
+                                <span title="<?php echo $taskTest->getResolution()->getName() ?>"><?php echo $this->showResolutionIcon($taskTest->getResolution()) ?></span>
+                              <?php else: ?>
+                                <b><?php echo $this->generalT('Nierozwiązany') ?></b>
+                              <?php endif; ?>
+                              <?php if ($this->activeProject->isActive()
+                                && in_array($this->defect->getStatusId(), array(
+                                  Application_Model_DefectStatus::OPEN,
+                                  Application_Model_DefectStatus::REOPEN,
+                                  Application_Model_DefectStatus::IN_PROGRESS
+                                ))): ?>
+                                <?php if ($this->taskUserPermission($task, $this->authUser, array(
+                                  Application_Model_RoleAction::TASK_DEFECT_MODIFY_CREATED_BY_YOU,
+                                  Application_Model_RoleAction::TASK_DEFECT_MODIFY_ALL,
+                                  Application_Model_RoleAction::TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU)
+                                )->isDefectModifyPermission()): ?>
+                                  <a class="j_deleteTestFromDefect" data-test-name="[<?php echo $taskTest->getTest()->getObjectNumber() .'] '. $this->escapeQuotes($taskTest->getTest()->getName()) ?>" href="<?php echo $this->projectUrl(array('taskTestId' => $taskTest->getId(), 'defectId' => $this->defect->getId()), 'task_test_delete_defect_ajax') ?>" title="<?php echo $this->t('Usuń') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+                                <?php else: ?>
+                                  <span class="icon_close empty icon-15"></span>
+                                <?php endif; ?>
+                              <?php endif; ?>
+                            </div>
+                          </div>
+                        </li>
+                      <?php endforeach; ?>
+                    <?php endif ?>
+                  <?php endforeach; ?>
+                </ul>
+              </div>
+            <?php endif; ?>
+
+          </div>
+        <?php endif ?>
+
       </div>
- 
-      <div class="contentEditUser_right">   
-        
+
+      <div class="contentEditUser_right">
+
         <div class="textLabelPropertiesDiv history">
           <h5 class="break_page"><span aria-hidden="true" class="icon_clock_alt icon-20"></span> <?php echo $this->t('Historia') ?></h5>
           <?php if (count($this->history)): ?>
             <div class="contentList history">
-                  <ul>
-                    <?php foreach ($this->history as $element): ?>
-                      <li>
-                        <div class="clearfixDashboard history">
-                          <a class="post_more_options" href="#"></a>
-                          <div class="author history" title="<?php echo $this->escapeQuotes($element->getUser()->getEmail()) ?>">
-                            <strong><?php echo $this->escapeQuotes($element->getUser()->getFullname()) ?></strong>
-                          </div>
-                          <div class="snippet_action_contentList history">
-                            <span class="snippet_action_contentList snippet_action_text history"><?php echo $this->defectHistory($element) ?></span>
-                            <div class="activity-item-info history">
-                              <div class="timestamp"><?php echo $element->getDate() ?></div>
-                            </div>                     
-                          </div>                   
+              <ul>
+                <?php foreach ($this->history as $element): ?>
+                  <li>
+                    <div class="clearfixDashboard history">
+                      <a class="post_more_options" href="#"></a>
+                      <div class="author history" title="<?php echo $this->escapeQuotes($element->getUser()->getEmail()) ?>">
+                        <strong><?php echo $this->escapeQuotes($element->getUser()->getFullname()) ?></strong>
+                      </div>
+                      <div class="snippet_action_contentList history">
+                        <span class="snippet_action_contentList snippet_action_text history"><?php echo $this->defectHistory($element) ?></span>
+                        <div class="activity-item-info history">
+                          <div class="timestamp"><?php echo $element->getDate() ?></div>
                         </div>
-                      </li>              
-                    <?php endforeach; ?>
-                  </ul>
+                      </div>
+                    </div>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
             </div>
           <?php endif;?>
-        </div> 
-          
-        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->defect->getExtraData('attachments'))); ?> 
+        </div>
+
+        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->defect->getExtraData('attachments'))); ?>
         <?php echo $this->partial('popups/delete-defects.phtml'); ?>
 
         <?php echo $this->partial('comment/partial.phtml', array(
           'subjectId'     => $this->defect->getId(),
           'subjectType'   => Application_Model_CommentSubjectType::DEFECT,
           'addCommentOn'  => $this->activeProject->isActive()
-        )); ?>    
-
+        )); ?>
       </div>
-      
     </div>
 
-  </article>    
+  </article>
 </section>
+<?php echo $this->partial('partials/dialog-iframe.phtml'); ?>
+
+<?php echo $this->partial('partials/dialog-confirm.phtml', array(
+  'title' => $this->t('Potwierdzenie'),
+  'message' => '<div>'. $this->t('Czy na pewno chcesz usunąć powiązanie z zadaniem') .':</div><div><span id="js_dialogConfirmItemName"></span></div>'
+)); ?>
+
+<?php echo $this->partial('partials/dialog-confirm.phtml', array(
+  'id' => 'dialog-confirm-2',
+  'title' => $this->t('Potwierdzenie'),
+  'message' => '<div>'. $this->t('Czy na pewno chcesz usunąć powiązanie z testem') .':</div><div><span id="js_dialogConfirmItemName2"></span></div>'
+)); ?>
+
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+
+  var dialogDeleteTaskFromDefect = {
+    textButtonDelete: '<?php echo $this->t("Usuń") ?>',
+    textButtonCancel: '<?php echo $this->t("Anuluj") ?>'
+  };
+
+  var dialogDeleteTestFromTask = {
+    textButtonDelete: '<?php echo $this->t("Usuń") ?>',
+    textButtonCancel: '<?php echo $this->t("Anuluj") ?>'
+  };
+  /* ]]> */
+</script>
+<?php echo $this->partial('partials/multi-select-js.phtml'); ?>
+
+
+

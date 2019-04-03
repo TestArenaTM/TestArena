@@ -7,14 +7,15 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>-->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'admin_user_add')?>" ><?php echo $this->t('Dodaj użytkownika') ?></a></li>
-      </ul>
-    </nav>
-
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array(), 'admin_user_add')?>" ><?php echo $this->t('Dodaj użytkownika') ?></a></li>
+        </ul>
+      </nav>
+    </div>
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
 
       <div class="search_text">
@@ -45,8 +46,7 @@
     </form>
 
     <?php if (count($this->users) > 0): ?>
-
-    <table>
+      <table>
       <thead>
         <tr>
           <th></th>
@@ -107,9 +107,8 @@
         <?php endforeach; ?>
       </tbody>
     </table>
-
+    <?php echo $this->partial('count-records-default.phtml', ['count' => $this->numberRecords]) ?>
     <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
-
     <?php else: ?>
     <div class="empty-text"><?php echo $this->t('Brak użytkowników') ?></div>
     <?php endif; ?>

@@ -26,7 +26,7 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
   
   public function getSqlAll(Zend_Controller_Request_Abstract $request)
   {
-    $sqlDefectCnt = '(SELECT COUNT(de.defect_id) FROM defect_environment AS de WHERE de.environment_id=e.id)';
+    $sqlDefectCnt = '(SELECT COUNT(DISTINCT de.defect_id) FROM defect_environment AS de WHERE de.environment_id=e.id)';
     $sqlTaskCnt = '(SELECT COUNT(*) FROM task_environment AS te INNER JOIN task AS t ON t.id=te.task_id WHERE te.environment_id=e.id)';
     
     $sql = $this->select()
@@ -89,12 +89,13 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
     return $this->fetchAll($sql);
   }
   
-  public function getForPopulateByDefect($defectId)
+  public function getForPopulateByDefect($defectId, $type = 'reported')
   {
     $sql = $this->select()
       ->from(array('e' => $this->_name), array('id', 'name'))
       ->join(array('de' => 'defect_environment'), 'de.environment_id = e.id', array())
-      ->where('de.defect_id = ?', $defectId);
+      ->where('de.defect_id = ?', $defectId)
+      ->where('de.type = ?', $type);
     
     return $this->fetchAll($sql);
   }
@@ -115,9 +116,9 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
   
   public function getForView($id, $projectId)
   {
-    $sqlDefectCnt = '(SELECT COUNT(de.defect_id) FROM defect_environment AS de WHERE de.environment_id=e.id)';
+    $sqlDefectCnt = '(SELECT COUNT(DISTINCT de.defect_id) FROM defect_environment AS de WHERE de.environment_id=e.id)';
     $sqlTaskCnt = '(SELECT COUNT(*) FROM task_environment AS te INNER JOIN task AS t ON t.id=te.task_id WHERE te.environment_id=e.id)';
-    
+
     $sql = $this->select()
       ->from(array('e' => $this->_name), array(
         'id',
@@ -150,7 +151,7 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
     return $this->fetchAll($sql);
   }
   
-  public function getByDefect($defectId)
+  public function getByDefect($defectId, $type = 'reported')
   {
     $sql = $this->select()
       ->from(array('e' => $this->_name), array(
@@ -159,6 +160,7 @@ class Project_Model_EnvironmentDbTable extends Custom_Model_DbTable_Criteria_Abs
       ))
       ->join(array('de' => 'defect_environment'), 'de.environment_id = e.id', array())
       ->where('de.defect_id = ?', $defectId)
+      ->where('de.type = ?', $type)
       ->group('e.id')
       ->setIntegrityCheck(false);
  

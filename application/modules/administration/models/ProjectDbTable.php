@@ -102,8 +102,12 @@ class Administration_Model_ProjectDbTable extends Custom_Model_DbTable_Criteria_
         'prefix',
         'name',
         'description',
+        'reopen_status_color',
+        'closed_status_color',
         'open_status_color',
-        'in_progress_status_color'
+        'in_progress_status_color',
+        'invalid_status_color',
+        'resolved_status_color'
       ))
       ->where('p.id = ?', $id)
       ->limit(1)
@@ -121,8 +125,12 @@ class Administration_Model_ProjectDbTable extends Custom_Model_DbTable_Criteria_
         'create_date',
         'name',
         'description',
+        'reopen_status_color',
+        'closed_status_color',
         'open_status_color',
-        'in_progress_status_color'
+        'in_progress_status_color',
+        'invalid_status_color',
+        'resolved_status_color',
       ))
       ->where('id = ?', $id)
       ->limit(1);

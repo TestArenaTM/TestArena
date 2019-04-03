@@ -1,7 +1,7 @@
-Installation Guide (TestArena v.3.1.1076)
+Installation Guide
 
 1. Recommended requirements:
-- PHP 5.6
+- PHP 7.2
 - Apache version 2.4
 - MySQL >= 5.5
 
@@ -37,7 +37,3 @@ Additional apache modules:
 3. Predefined log in data:
 	Login: administrator@testarena.pl
 	Password: 12qwAS
-	
-4. Migration steps from 3.0 to 3.1:
-	In release 3.1.1076 there are many changes to application structure and logic. Anyone who want's to migrate from older versions of TestArena, please contact us at http://testarena.pl/kontakt to get help with migration.	
-	

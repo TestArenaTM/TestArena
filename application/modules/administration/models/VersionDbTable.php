@@ -28,7 +28,8 @@ class Administration_Model_VersionDbTable extends Custom_Model_DbTable_Abstract
   {
     $sql = $this->select()
       ->from(array('v' => $this->_name), array(
-        'name'
+        'name',
+        'description'
       ))
       ->where('v.project_id = ?', $projectId);
 

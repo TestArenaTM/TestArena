@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-06-29 11:11+0200\n"
+"PO-Revision-Date: 2018-11-07 09:07+0100\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.2\n"
 
 # template
 msgid "TEMPLATE_CUSTOM"
@@ -86,37 +86,37 @@ msgid "ACTION_TASK_DELETE_ASSIGNED_TO_YOU"
 msgstr "Delete tasks assigned to yourself"
 
 msgid "ACTION_DEFECT_ADD"
-msgstr "Add defects"
+msgstr "Add issues"
 
 msgid "ACTION_DEFECT_ASSIGN_ALL"
-msgstr "Assign any defect"
+msgstr "Assign any issue"
 
 msgid "ACTION_DEFECT_EDIT_ALL"
-msgstr "Edit any defect"
+msgstr "Edit any issue"
 
 msgid "ACTION_DEFECT_DELETE_ALL"
-msgstr "Delete any defect"
+msgstr "Delete any issue"
 
 msgid "ACTION_DEFECT_CHANGE_STATUS_ALL"
-msgstr "Change status of any defect"
+msgstr "Change status of any issue"
 
 msgid "ACTION_DEFECT_EDIT_CREATED_BY_YOU"
-msgstr "Edit defects created by yourself"
+msgstr "Edit issues created by yourself"
 
 msgid "ACTION_DEFECT_DELETE_CREATED_BY_YOU"
-msgstr "Delete defects created by yourself"
+msgstr "Delete issues created by yourself"
 
 msgid "ACTION_DEFECT_CHANGE_STATUS_CREATED_BY_YOU"
-msgstr "Change status of defects created by yourself"
+msgstr "Change status of issues created by yourself"
 
 msgid "ACTION_DEFECT_DELETE_ASSIGNED_TO_YOU"
-msgstr "Delete defects assigned to yourself"
+msgstr "Delete issues assigned to yourself"
 
 msgid "ACTION_DEFECT_CHANGE_STATUS_ASSIGNED_TO_YOU"
-msgstr "Change status of defects assigned to yourself"
+msgstr "Change status of issues assigned to yourself"
 
 msgid "ACTION_DEFECT_EDIT_ASSIGNED_TO_YOU"
-msgstr "Edit defects assigned to yourself"
+msgstr "Edit issues assigned to yourself"
 
 msgid "ACTION_TEST_ADD"
 msgstr "Add tests"
@@ -134,19 +134,28 @@ msgid "ACTION_TEST_DELETE_CREATED_BY_YOU"
 msgstr "Delete tests created by yourself"
 
 msgid "ACTION_TASK_TEST_MODIFY_ALL"
-msgstr "Modify tests of ANY TASK"
+msgstr "Modify tests of any task"
 
 msgid "ACTION_TASK_TEST_MODIFY_ASSIGNED_TO_YOU"
 msgstr "Modify tests of tasks assigned to yourself"
 
 msgid "ACTION_TASK_TEST_MODIFY_CREATED_BY_YOU"
-msgstr "Modify TESTS of tasks created by yourself"
+msgstr "Modify tests of tasks created by yourself"
 
 msgid "ACTION_TASK_DEFECT_MODIFY_ALL"
-msgstr "Modify defects of ANY TASK"
+msgstr "Modify issues of any task"
 
 msgid "ACTION_TASK_DEFECT_MODIFY_ASSIGNED_TO_YOU"
-msgstr "Modify defects of tasks assigned to yourself"
+msgstr "Modify issues of tasks assigned to yourself"
 
 msgid "ACTION_TASK_DEFECT_MODIFY_CREATED_BY_YOU"
-msgstr "Modify defects of tasks created by yourself"
+msgstr "Modify issues of tasks created by yourself"
+
+msgid "ACTION_EXTENDING_PROJECT_STATISTIC"
+msgstr "Extending project statistic"
+
+msgid "ACTION_HELPER_TASK_ASSIGN_ALL"
+msgstr "Activation of the permission can lead to abuse caused by assigning tasks to each other and their modification or deletion based on other permissions."
+
+msgid "ACTION_HELPER_DEFECT_ASSIGN_ALL"
+msgstr "Activation of the permission can lead to abuse caused by assigning issues to each other and their modification or deletion based on other permissions."

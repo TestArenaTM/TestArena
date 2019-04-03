@@ -67,9 +67,9 @@
             <h5 id="j_msgSingleThreadSubject"></h5>
             <ul id="j_msgSingleThreadList"></ul>
             <div id="j_msgFormContainer" >
-              <div id="j_msgIsBusy"><img src="<?php echo $this->baseUrl('/img/is_busy.gif') ?>" /> <?php echo $this->generalT('Proszę czekać...') ?></div>
+              <div id="j_msgIsBusy"><img style="height: 50px;" src="<?php echo $this->baseUrl('/img/is_busy.gif') ?>" /> <?php echo $this->generalT('Proszę czekać...') ?></div>
               <div id="j_msgForm" class="messageContainer" style="display: none">
-                <div class="msgForm"><?php echo $this->formTextarea('j_msgContent', '', array('maxlength' => 1000, 'placeholder' => $this->t('Wpisz wiadomość'))) ?></div>
+                <div class="msgForm"><?php echo $this->formTextarea('j_msgContent', '', array('maxlength' => 1000, 'rows' => 4, 'placeholder' => $this->t('Wpisz wiadomość'))) ?></div>
                 <span class="msg_button comment_button">
                   <a class="j_msgResponse" href="#"><?php echo $this->t('Odpowiedz') ?></a>
                 </span>

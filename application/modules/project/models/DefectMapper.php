@@ -45,19 +45,21 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       $list[] = $defect->setDbProperties($row);
     }
     
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
-  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  public function getAllIds(Zend_Controller_Request_Abstract $request, $user, $accessPermissionsForDefects)
   {
-    $rows = $this->_getDbTable()->getAllIds($request);    
+    $rows = $this->_getDbTable()->getAllIds($request, $user, $accessPermissionsForDefects);
     $list = array();
-    
-    foreach ($rows->toArray() as $row)
+
+    if ($rows !== false)
     {
-      $list[] = $row['id'];
+      foreach ($rows->toArray() as $row)
+      {
+        $list[] = $row['id'];
+      }
     }
-    
     return $list;
   }
   
@@ -73,6 +75,7 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       'assignee_id' => $defect->getAssigneeId(),
       'create_date' => $date,
       'modify_date' => $date,
+      'type'        => $defect->getIssueType(),
       'status'      => Application_Model_DefectStatus::OPEN,
       'priority'    => $defect->getPriorityId(),
       'title'       => $defect->getTitle(),
@@ -102,11 +105,10 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveDefect($defect);
 
-      if ($adapter->commit())
-      {
-        $defect->setCreateDate($date);
-        return true;
-      }
+      $adapter->commit();
+      $defect->setCreateDate($date);
+
+      return true;
     }
     catch (Exception $e)
     {
@@ -121,12 +123,13 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
   {
     $db = $this->_getDbTable();
     $adapter = $db->getAdapter();    
-    
+
     $data = array(
       'assigner_id' => $defect->getAssignerId(),
       'assignee_id' => $defect->getAssigneeId(),
       'modify_date' => date('Y-m-d H:i:s'),
       'priority'    => $defect->getPriorityId(),
+      'type'        => $defect->getIssueType(),
       'title'       => $defect->getTitle(),
       'description' => $defect->getDescription(),
       'release_id'  => null
@@ -162,6 +165,18 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       $adapter->rollBack();
       return false;
     }
+  }
+
+  public function getForDelete(Application_Model_Defect $defect)
+  {
+    $row = $this->_getDbTable()->getForDelete($defect->getId(), $defect->getProjectId());
+
+    if (null === $row)
+    {
+      return false;
+    }
+
+    return $defect->setDbProperties($row->toArray());
   }
   
   public function getForView(Application_Model_Defect $defect)
@@ -239,10 +254,10 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       
       $defectEnvironmentMapper = new Project_Model_DefectEnvironmentMapper();
       $defectEnvironmentMapper->deleteByDefect($defect);
-      
+
       $defectTagMapper = new Project_Model_DefectTagMapper();
       $defectTagMapper->deleteByDefect($defect);
-      
+
       $defectVersionMapper = new Project_Model_DefectVersionMapper();
       $defectVersionMapper->deleteByDefect($defect);
       
@@ -367,7 +382,17 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     {
       $adapter->beginTransaction();
       $db->update($data, $where);
-      
+
+      if (!empty($defect->getExtraData('versions'))) {
+        $defectVersionMapper = new Project_Model_DefectVersionMapper();
+        $defectVersionMapper->save($defect, 'resolved');
+      }
+
+      if (!empty($defect->getExtraData('environments'))) {
+        $defectEnvironmentMapper = new Project_Model_DefectEnvironmentMapper();
+        $defectEnvironmentMapper->save($defect, 'resolved');
+      }
+
       $commentContent = Utils_Text::unicodeTrim($defect->getExtraData('comment'));
 
       if (!empty($commentContent))
@@ -408,7 +433,7 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     return $this->_changeWhitComment($defect, array(
       'assignee_id' => $defect->getAssigneeId(),
       'modify_date' => date('Y-m-d H:i:s'),
-      'status'      => Application_Model_DefectStatus::RESOLVED
+      'status'      => $defect->getStatusId(),
    ), array(
       'status IN(?)' => array(
         Application_Model_DefectStatus::OPEN,
@@ -421,11 +446,15 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
   
   public function isInvalid(Application_Model_Defect $defect)
   {
-    return $this->_changeWhitComment($defect, array(
-      'assignee_id' => $defect->getAssigneeId(),
+    $defect->setStatus(Application_Model_DefectStatus::INVALID);
+
+    $data = array(
       'modify_date' => date('Y-m-d H:i:s'),
-      'status'      => Application_Model_DefectStatus::INVALID
-    ), array(
+      'status'      => $defect->getStatusId(),
+      'assignee_id' => $defect->getAssigneeId(),
+    );
+
+    return $this->_changeWhitComment($defect, $data, array(
       'status IN(?)' => array(
         Application_Model_DefectStatus::OPEN,
         Application_Model_DefectStatus::REOPEN,
@@ -440,7 +469,7 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     return $this->_changeWhitComment($defect, array(
       'assignee_id' => $defect->getAssigneeId(),
       'modify_date' => date('Y-m-d H:i:s'),
-      'status'      => Application_Model_DefectStatus::REOPEN
+      'status'      => $defect->getStatusId()
     ), array(
       'status IN(?)' => array(
         Application_Model_DefectStatus::RESOLVED,
@@ -505,23 +534,58 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       return false;
     }
   }
-  
-  public function getByTask(Application_Model_Task $task)
+
+  public function getByTaskTest(Application_Model_TaskTest $taskTest)
   {
-    $rows = $this->_getDbTable()->getByTask($task->getId());
-    
+    $rows = $this->_getDbTable()->getByTaskTest($taskTest->getId());
+
     if (empty($rows))
     {
       return array();
     }
-    
+
     $list = array();
-    
+
     foreach ($rows->toArray() as $row)
     {
       $list[] = new Application_Model_Defect($row);
     }
-    
+    return $list;
+  }
+  
+  public function getByTask(Application_Model_Task $task)
+  {
+    $rows = $this->_getDbTable()->getByTask($task->getId());
+
+    if (empty($rows))
+    {
+      return array();
+    }
+
+    $list = array();
+    foreach ($rows->toArray() as $row)
+    {
+      $key = $row['id'] . !empty($row['test_id']) .'_';
+
+      if (!array_key_exists($key, $list))
+      {
+        $list[$key] = new Application_Model_Defect($row);
+      }
+
+      if (!empty($row['test_id']))
+      {
+        $test = new Application_Model_Test();
+        $test->setId($row['test_id']);
+        $test->setType($row['test_type']);
+        $test->setName($row['test_name']);
+        $test->setOrdinalNo($row['test_ordinal_no']);
+        $test->setExtraData('task_test_id', $row['task_test_id']);
+        $test->setExtraData('resolution_id', $row['resolution_id']);
+        $test->setExtraData('resolution_color', $row['resolution_color']);
+        $test->setExtraData('resolution_name', $row['resolution_name']);
+        $list[$key]->addTest($test);
+      }
+    }
     return $list;
   }
   
@@ -551,8 +615,26 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
       return false;
     }
 
+    $project = new Application_Model_Project();
+    $project->setOpenStatusColor($row['project$open_status_color']);
+    $project->setInProgressStatusColor($row['project$in_progress_status_color']);
+    $project->setReopenStatusColor($row['project$reopen_status_color']);
+    $project->setClosedStatusColor($row['project$closed_status_color']);
+    $project->setInvalidStatusColor($row['project$invalid_status_color']);
+    $project->setResolvedStatusColor($row['project$resolved_status_color']);
+
+    $defect->setProjectObject($project);
     $defect->setStatus($row['status']);
-    return $row->toArray();
+    $defect->setIssueType($row['issueType']);
+
+    $row = $row->toArray();
+
+    return array(
+      'id' => $row['id'],
+      'name' => $row['name'],
+      'status' => $row['status'],
+      'objectNumber' => $row['objectNumber']
+    );
   }
   
   public function getByIds4CheckAccess(array $ids)
@@ -571,6 +653,24 @@ class Project_Model_DefectMapper extends Custom_Model_Mapper_Abstract
     
     $list = array();
     
+    foreach ($rows->toArray() as $row)
+    {
+      $list[$row['id']] = new Application_Model_Defect($row);
+    }
+
+    return $list;
+  }
+
+  public function getByIds(array $ids)
+  {
+    if (count($ids) === 0)
+    {
+      return array();
+    }
+
+    $rows = $this->_getDbTable()->getByIds($ids);
+
+    $list = array();
     foreach ($rows->toArray() as $row)
     {
       $list[$row['id']] = new Application_Model_Defect($row);

@@ -3,117 +3,249 @@
     <a class="icon_house_alt" href="#"></a>
     <i class="arrow_carrot-right icon-15"></i>
     <a href="#"><?php echo $this->generalT('Zadania') ?></a>
-    <i class="arrow_carrot-right icon-15"></i>    
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div> --> 
+  </div> -->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-          <?php if ($this->taskTest->getResolutionId() !== null): ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_change')?>"><?php echo $this->t('Zmień status') ?></a></li>
-          <?php else: ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_resolve') ?>"><?php echo $this->t('Rozwiąż') ?></a></li>
-          <?php endif; ?>
-      </ul>
-    </nav>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link"
+                                        href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getTask()->getId()), 'task_view') ?>"><?php echo $this->generalT('Powrót') ?></a>
+          </li>
+            <?php if ($this->activeProject->isActive()
+                && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED
+                && $this->taskUserPermission->isTestModifyPermission()): ?>
+                <?php if ($this->taskTest->getResolutionId() !== null): ?>
+                <li class="button_link_li"><a class="button_link"
+                                              href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_change') ?>"><?php echo $this->t('Zmień status') ?></a>
+                </li>
+                <?php else: ?>
+                <li class="button_link_li">
+                  <a class="button_link"
+                     href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_resolve') ?>">
+                      <?php echo $this->t('Rozwiąż') ?>
+                  </a>
+                </li>
+                <?php endif; ?>
+            <?php endif; ?>
+        </ul>
+      </nav>
+    </div>
     <div class="textLabelEditor">
-      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escapeQuotes($this->taskTest->getTest()->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->taskTest->getTest()->getName()) ?></div>
-    </div>     
-    
+      <div id="text" class="content_label_title"><span
+          class="object_nr"><?php echo $this->escapeQuotes($this->taskTest->getTest()->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->taskTest->getTest()->getName()) ?>
+      </div>
+    </div>
+
     <div class="contentLRtable">
-      
+
       <div class="contentProperties_left">
         <div class="textLabelPropertiesDiv">
-          <div class="textLabelEditor_text"><?php echo $this->t('Status') ?>: </div>
+          <div class="textLabelEditor_text"><?php echo $this->t('Status') ?>:</div>
           <div id="text" class="content_label">
-            <?php if ($this->taskTest->getResolutionId() !== null): ?>
-              <?php echo $this->showResolutionIcon($this->taskTest->getResolution()) ?><b><?php echo $this->taskTest->getResolution()->getName() ?></b>
-            <?php else: ?>
-              <b><?php echo $this->generalT('Nierozwiązany') ?></b>
-            <?php endif; ?>
+              <?php if ($this->taskTest->getResolutionId() !== null): ?>
+                  <?php echo $this->showResolutionIcon($this->taskTest->getResolution()) ?>
+                <b><?php echo $this->taskTest->getResolution()->getName() ?></b>
+              <?php else: ?>
+                <b><?php echo $this->generalT('Nierozwiązany') ?></b>
+              <?php endif; ?>
           </div>
         </div>
         <div class="textLabelPropertiesDiv">
-          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?>: </div>
-          <div id="text" class="content_label"> <?php echo nl2br($this->escapeQuotes($this->taskTest->getTest()->getDescription())) ?></div>
+          <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?>:</div>
+          <div id="text"
+               class="content_label"> <?php echo nl2br($this->escapeQuotes($this->taskTest->getTest()->getDescription())) ?></div>
         </div>
         <div class="textLabelPropertiesDiv">
-          <div class="textLabelEditor_text"><?php echo $this->t('Zadanie') ?>: </div>
-          <div id="text" class="content_label"><a href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getTask()->getId()), 'task_view') ?>"><span class="object_nr"><?php echo $this->escapeQuotes($this->taskTest->getTask()->getObjectNumber()) ?></span> <?php echo nl2br($this->escapeQuotes($this->taskTest->getTask()->getTitle())) ?></a></div>
+          <div class="textLabelEditor_text"><?php echo $this->t('Zadanie') ?>:</div>
+          <div id="text" class="content_label"><a
+              href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getTask()->getId()), 'task_view') ?>"><span
+                class="object_nr"><?php echo $this->escapeQuotes($this->taskTest->getTask()->getObjectNumber()) ?></span> <?php echo nl2br($this->escapeQuotes($this->taskTest->getTask()->getTitle())) ?>
+            </a></div>
         </div>
-    
+
         <div>
-          <h5 class="break_page"><span aria-hidden="true" class="icon_ul icon-20"></span><?php echo $this->t('Pozycje') ?></h5>
-          <table>
-            <thead>
-              <tr>
-                <th><?php echo $this->t('Treść') ?></th>
-                <th><?php echo $this->t('Status') ?></th>
-                <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
-              </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($this->taskTest->getChecklistItems() as $taskChecklistItem): ?>
-              <tr<?php echo $this->taskChecklistItemStatus($taskChecklistItem);?>>
-                <td><?php echo $taskChecklistItem->getChecklistItem()->getName() ?></td>
-                <td><?php echo $this->statusT($taskChecklistItem->getStatus(), 'TASK_CHECKLIST_ITEM') ?></td>
-                <td>
-                  <nav>
-                    <ul class="action_list">
-                      <div class="popbox">
-                        <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
-                        <div class='collapse'>
-                          <ul class="box">
-                          <?php if ($taskChecklistItem->getStatusId() != Application_Model_TaskChecklistItemStatus::NONE): ?>
-                            <li><a href="<?php echo $this->projectUrl(array('id' => $taskChecklistItem->getId()), 'task_checklist_item_change_status_to_none') ?>"><?php echo $this->statusT('NONE', 'TASK_CHECKLIST_ITEM') ?></a></li>
-                            <li class="menuSeparator"></li>
-                          <?php endif; ?>
+          <h5 class="break_page"><span aria-hidden="true"
+                                       class="icon_ul icon-20"></span><?php echo $this->t('Pozycje') ?></h5>
+            <?php if (!empty($this->taskTest->getChecklistItems())): ?>
+              <form id="form_list" method="post"
+                    action="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_multi_change_status') ?>">
+                <input id="form_list_status" type="hidden" value="" name="status">
+                <table>
+                  <thead>
+                  <tr>
+                      <?php if ($this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                        <th style="width: 20px;"><input type="checkbox" name="selectAll"
+                                                        onclick="Project_TaskTestController_ViewChecklistAction.checkedOrUncheckedAllForPositions()"
+                                                        class="TaskTest_selectAllPosition"></th>
+                      <?php endif; ?>
+                    <th><?php echo $this->t('Treść') ?></th>
+                    <th class="status_list_th"><?php echo $this->t('Status') ?></th>
+                      <?php if ($this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                        <th class="action_list_th"><?php echo $this->t('Akcje') ?></th>
+                      <?php endif; ?>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <?php foreach ($this->taskTest->getChecklistItems() as $taskChecklistItem): ?>
+                    <tr<?php echo $this->taskChecklistItemStatus($taskChecklistItem); ?>>
+                        <?php if ($this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                          <td>
+                            <input name="ids[]" type="checkbox" class="taskChecklistItem"
+                                   value="<?php echo $taskChecklistItem->getId() ?>"
+                                   title="<?php echo $taskChecklistItem->getId() ?>">
+                          </td>
+                        <?php endif ?>
+                      <td><?php echo $this->escape($taskChecklistItem->getChecklistItem()->getName()) ?></td>
+                      <td><?php echo $this->statusT($taskChecklistItem->getStatus(), 'TASK_CHECKLIST_ITEM') ?></td>
+                        <?php if ($this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                          <td>
+                            <nav>
+                              <ul class="action_list">
+                                <div class="popbox">
+                                  <a href="#" id="action_icon" class="open icon_cog icon-20"></a>
+                                  <div class='collapse'>
+                                    <ul class="box">
+                                        <?php if ($taskChecklistItem->getStatusId() != Application_Model_TaskChecklistItemStatus::NONE): ?>
+                                          <li>
+                                            <a
+                                              href="<?php echo $this->projectUrl(array('id' => $taskChecklistItem->getId()), 'task_checklist_item_change_status_to_none') ?>"><?php echo $this->statusT('NONE', 'TASK_CHECKLIST_ITEM') ?></a>
+                                          </li>
+                                          <li class="menuSeparator"></li>
+                                        <?php endif; ?>
 
-                          <?php if ($taskChecklistItem->getStatusId() != Application_Model_TaskChecklistItemStatus::RESOLVE): ?>
-                            <li><a href="<?php echo $this->projectUrl(array('id' => $taskChecklistItem->getId()), 'task_checklist_item_change_status_to_resolve') ?>"><?php echo $this->statusT('RESOLVE', 'TASK_CHECKLIST_ITEM') ?></a></li>
-                          <?php endif; ?>
+                                        <?php if ($taskChecklistItem->getStatusId() != Application_Model_TaskChecklistItemStatus::RESOLVE): ?>
+                                          <li>
+                                            <a
+                                              href="<?php echo $this->projectUrl(array('id' => $taskChecklistItem->getId()), 'task_checklist_item_change_status_to_resolve') ?>"><?php echo $this->statusT('RESOLVE', 'TASK_CHECKLIST_ITEM') ?></a>
+                                          </li>
+                                        <?php endif; ?>
 
-                          <?php if ($taskChecklistItem->getStatusId() != Application_Model_TaskChecklistItemStatus::UNRESOLVE): ?>
-                            <li><a href="<?php echo $this->projectUrl(array('id' => $taskChecklistItem->getId()), 'task_checklist_item_change_status_to_unresolve') ?>"><?php echo $this->statusT('UNRESOLVE', 'TASK_CHECKLIST_ITEM') ?></a></li>
-                          <?php endif; ?>
-                          </ul> 
-                        </div>
-                      </div>                
-                    </ul>
-                  </nav>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-            </tbody>
-          </table>
+                                        <?php if ($taskChecklistItem->getStatusId() != Application_Model_TaskChecklistItemStatus::UNRESOLVE): ?>
+                                          <li>
+                                            <a
+                                              href="<?php echo $this->projectUrl(array('id' => $taskChecklistItem->getId()), 'task_checklist_item_change_status_to_unresolve') ?>"><?php echo $this->statusT('UNRESOLVE', 'TASK_CHECKLIST_ITEM') ?></a>
+                                          </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </ul>
+                            </nav>
+                          </td>
+                        <?php endif; ?>
+                    </tr>
+                  <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </form>
+            <?php endif; ?>
+          <div class="tools_for_selected_content" style="display: none;">
+            <div>
+                <?php echo $this->generalT('Liczba wybranych elementów') ?>: <span
+                id="tools_for_selected_count">0</span>
+            </div>
+            <div style="vertical-align: middle">
+              <div
+                style="float: left; height: 30px; line-height: 30px; margin-right: 5px;"><?php echo $this->t('Zmień status') ?>
+                :
+              </div>
+              <div>
+                <a href="#" class="button"
+                   onclick="Project_TaskTestController_ViewChecklistAction.changeStatus(<?php echo Application_Model_TaskChecklistItemStatus::NONE ?>); return false;">
+                    <?php echo $this->statusT('NONE', 'TASK_CHECKLIST_ITEM') ?>
+                </a>
+                <a href="#" class="button"
+                   onclick="Project_TaskTestController_ViewChecklistAction.changeStatus(<?php echo Application_Model_TaskChecklistItemStatus::UNRESOLVE ?>); return false;">
+                    <?php echo $this->statusT('UNRESOLVE', 'TASK_CHECKLIST_ITEM') ?>
+                </a>
+                <a href="#" class="button"
+                   onclick="Project_TaskTestController_ViewChecklistAction.changeStatus(<?php echo Application_Model_TaskChecklistItemStatus::RESOLVE ?>); return false;">
+                    <?php echo $this->statusT('RESOLVE', 'TASK_CHECKLIST_ITEM') ?>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
+          <?php echo $this->partial('task-test/field-defect.phtml', array(
+              'taskTest' => $this->taskTest,
+              'defects' => $this->defects,
+              'bugTracker' => $this->bugTracker,
+              'activeProject' => $this->activeProject,
+              'taskUserPermission' => $this->taskUserPermission,
+              'isDefectAddPermission' => $this->isDefectAddPermission
+          ));
+          ?>
       </div>
-      
+
+      <script type="text/javascript">
+
+        function classProject_TaskTestController_ViewChecklistAction() {
+          this.checkedOrUncheckedAllForPositions = function () {
+            if ($('.TaskTest_selectAllPosition:checked').length) {
+              $('.taskChecklistItem').prop('checked', true);
+            } else {
+              $('.taskChecklistItem').prop('checked', false);
+            }
+            this.showToolForPosition();
+          };
+
+          this.showToolForPosition = function () {
+            if ($('.taskChecklistItem').serializeArray().length > 0) {
+              $('.tools_for_selected_content').css('display', 'block');
+            } else {
+              $('.tools_for_selected_content').css('display', 'none');
+            }
+
+            $('#tools_for_selected_count').text($('.taskChecklistItem').serializeArray().length);
+
+            if ($('.taskChecklistItem').serializeArray().length) {
+              $('.TaskTest_selectAllPosition').prop('checked', false);
+            }
+
+            if ($('.taskChecklistItem').serializeArray().length == $('.taskChecklistItem').length) {
+              $('.TaskTest_selectAllPosition').prop('checked', true);
+            }
+          };
+
+          this.fieldBindClick = function () {
+            $('.taskChecklistItem').bind('click', this.showToolForPosition);
+          };
+
+          this.changeStatus = function (status) {
+            $('#form_list_status').val(status);
+            $('#form_list').submit();
+          }
+        }
+
+        let Project_TaskTestController_ViewChecklistAction = new classProject_TaskTestController_ViewChecklistAction();
+        Project_TaskTestController_ViewChecklistAction.fieldBindClick();
+      </script>
+
       <div class="contentEditUser_right">
         <div class="textLabelPropertiesDiv">
-          <div class="textLabelEditor_text"><?php echo $this->t('Autor') ?>: </div>
-          <div id="text" class="content_label"><?php echo $this->escapeQuotes($this->taskTest->getTest()->getAuthor()->getFullname()) ?></div>
+          <div class="textLabelEditor_text"><?php echo $this->t('Autor') ?>:</div>
+          <div id="text"
+               class="content_label"><?php echo $this->escapeQuotes($this->taskTest->getTest()->getAuthor()->getFullname()) ?></div>
         </div>
         <div class="textLabelPropertiesDiv" style="border-bottom:0px solid;">
-          <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?>: </div>
+          <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?>:</div>
           <div id="text" class="content_label"> <?php echo $this->taskTest->getTest()->getCreateDate() ?></div>
-        </div> 
-        
-        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->taskTest->getTest()->getExtraData('attachments'))); ?> 
+        </div>
 
-        <?php echo $this->partial('comment/partial.phtml', array(
-          'subjectId'     => $this->taskTest->getId(),
-          'subjectType'   => Application_Model_CommentSubjectType::TASK_TEST,
-          'addCommentOn'  => $this->activeProject->isActive()
-        )); ?>
+          <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->taskTest->getTest()->getExtraData('attachments'))); ?>
+
+          <?php echo $this->partial('comment/partial.phtml', array(
+              'subjectId' => $this->taskTest->getId(),
+              'subjectType' => Application_Model_CommentSubjectType::TASK_TEST,
+              'addCommentOn' => $this->activeProject->isActive()
+          )); ?>
       </div>
-      
+
     </div>
-    
-  </article>    
+
+  </article>
 </section>
-  
-  
+

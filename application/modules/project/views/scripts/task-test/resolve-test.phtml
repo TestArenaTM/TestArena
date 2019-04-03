@@ -7,10 +7,11 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>-->  
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-    <h3><?php echo $this->taskTest->getTest()->getObjectNumber() ?> <?php echo $this->taskTest->getTest()->getName() ?></h3>
-    <strong><?php echo $this->taskTest->getTask()->getObjectNumber() ?> <?php echo $this->taskTest->getTask()->getTitle() ?></strong>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+      <h3><span class="object_nr"><?php echo $this->taskTest->getTest()->getObjectNumber() ?></span> <?php echo $this->taskTest->getTest()->getName() ?></h3>
+      <strong><?php echo $this->taskTest->getTask()->getObjectNumber() ?> <?php echo $this->taskTest->getTask()->getTitle() ?></strong>
+    </div>
     <form name="j_endTaskRunForm" method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       <?php echo $this->form->backUrl->renderViewHelper() ?>
       
@@ -29,7 +30,10 @@
             <?php echo $this->form->comment->renderViewHelper() ?>
             <?php echo $this->formLabel('comment', $this->t('Komentarz')) ?>
             <?php foreach ($this->form->getErrors('comment') as $error): ?>
-                <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+                <div class="error_msg"><?php echo $this->errorT($error, array(
+                'min' => $this->form->getElement('comment')->getValidator('StringLengthOneCharacterLineBreaks')->getMin(),
+                'max' => $this->form->getElement('comment')->getValidator('StringLengthOneCharacterLineBreaks')->getMax()
+              )) ?></div>
             <?php endforeach; ?>
           </span>
         </div>

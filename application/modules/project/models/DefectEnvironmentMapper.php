@@ -24,21 +24,22 @@ class Project_Model_DefectEnvironmentMapper extends Custom_Model_Mapper_Abstract
 {
   protected $_dbTableClass = 'Project_Model_DefectEnvironmentDbTable';
 
-  public function save(Application_Model_Defect $defect)
+  public function save(Application_Model_Defect $defect, $type = 'reported')
   {
     $db = $this->_getDbTable();
     $adapter = $db->getAdapter();
     $data = array();
-    $values = implode(',', array_fill(0, count($defect->getExtraData('environments')), '(?, ?)'));
+    $values = implode(',', array_fill(0, count($defect->getExtraData('environments')), '(?, ?, ?)'));
     
     foreach ($defect->getExtraData('environments') as $environmentId)
     {
       $data[] = $defect->getId();
       $data[] = $environmentId;
+      $data[] = $type;
     }
     
-    $db->delete(array('defect_id = ?' => $defect->getId()));
-    $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (defect_id, environment_id) VALUES '.$values);
+    $db->delete(array('defect_id = ?' => $defect->getId(), 'type = ?' => $type));
+    $statement = $adapter->prepare('INSERT INTO '.$db->getName().' (defect_id, environment_id, type) VALUES '.$values);
     return $statement->execute($data);
   } 
 

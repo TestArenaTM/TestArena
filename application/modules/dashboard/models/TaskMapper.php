@@ -55,12 +55,12 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     return $this->_getDbTable()->countAll($project->getId(), $release->getId());
   }
   
-  public function countAssignedToMeGroupedByStatus(Application_Model_User $user, 
-    Application_Model_Project $project, Application_Model_Release $release)
+  public function countAssignedGroupedByStatus(Application_Model_User $user,
+    Application_Model_Project $project, Application_Model_Release $release, $onlyMe)
   {  
     $db = $this->_getDbTable();
     $adapter = $db->getAdapter();    
-    $sql = $db->getSqlAssignedToMe($user->getId(), $project->getId(), $release->getId());
+    $sql = $db->getSqlAssigned($user->getId(), $project->getId(), $release->getId(), $onlyMe);
     $stmt = $adapter->query($sql);
 
     $result = array(
@@ -93,10 +93,10 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     return $result;
   }
   
-  public function getLimitOverdueAssignedToMe(Application_Model_User $user, 
-    Application_Model_Project $project, Application_Model_Release $release, $limit = 5)
+  public function getLimitOverdueAssigned(Application_Model_User $user,
+    Application_Model_Project $project, Application_Model_Release $release, $limit = 5, $onlyMe)
   {
-    $rows = $this->_getDbTable()->getLimitOverdueAssignedToMe($user->getId(), $project->getId(), $release->getId(), $limit);
+    $rows = $this->_getDbTable()->getLimitOverdueAssigned($user->getId(), $project->getId(), $release->getId(), $limit, $onlyMe);
     
     if ($rows === null)
     {
@@ -113,9 +113,9 @@ class Dashboard_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     return $list;
   }
   
-  public function countOverdueAssignedToMe(Application_Model_User $user, 
-    Application_Model_Project $project, Application_Model_Release $release)
+  public function countOverdueAssigned(Application_Model_User $user,
+    Application_Model_Project $project, Application_Model_Release $release, $onlyMe)
   {
-    return $this->_getDbTable()->countOverdueAssignedToMe($user->getId(), $project->getId(), $release->getId());
+    return $this->_getDbTable()->countOverdueAssigned($user->getId(), $project->getId(), $release->getId(), $onlyMe);
   }
 }

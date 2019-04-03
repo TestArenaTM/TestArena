@@ -88,7 +88,7 @@ class Project_Model_TaskTestMapper extends Custom_Model_Mapper_Abstract
       
       $commentMapper = new Project_Model_CommentMapper();
       $commentMapper->deleteBySubject($comment);
-      
+
       $taskChecklistItemMapper = new Project_Model_TaskChecklistItemMapper();
       $taskChecklistItemMapper->deleteByTaskTest($taskTest);
       
@@ -180,7 +180,7 @@ class Project_Model_TaskTestMapper extends Custom_Model_Mapper_Abstract
     return $taskTest;
   }
   
-  public function changeResolution(Application_Model_TaskTest $taskTest)
+  public function changeResolution(Application_Model_TaskTest $taskTest, Application_Model_User $user)
   {
     $db = $this->_getDbTable();
     $adapter = $db->getAdapter();
@@ -202,7 +202,7 @@ class Project_Model_TaskTestMapper extends Custom_Model_Mapper_Abstract
       {
         $comment = new Application_Model_Comment();
         $comment->setContent($commentContent);
-        $comment->setUserObject($taskTest->getTask()->getAssignee());
+        $comment->setUserObject($user);
         $comment->setSubjectId($taskTest->getId());
         $comment->setSubjectType(Application_Model_CommentSubjectType::TASK_TEST);
         $commentMapper = new Project_Model_CommentMapper();

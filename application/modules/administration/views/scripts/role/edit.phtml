@@ -3,12 +3,13 @@
     <a class="icon_house_alt" href="#"></a>
     <i class="arrow_carrot-right icon-15"></i>
     <a href="#"><?php echo $this->generalT('Role') ?></a>
-    <i class="arrow_carrot-right icon-15"></i>    
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>  -->
-  <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
+  <article id="j_page_role" class="article_in_content">
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    </div>
     <?php if (isset($this->formError)): ?>
       <div><?php echo $this->t($this->formError) ?></div>
     <?php endif; ?>
@@ -26,16 +27,6 @@
                 'min' => $this->form->getElement('name')->getValidator('StringLength')->getMin(),
                 'max' => $this->form->getElement('name')->getValidator('StringLength')->getMax()
               )) ?></div>
-            <?php endforeach; ?>
-          </span>
-        </div>
-
-        <div class="formContainer">
-          <span>
-            <?php echo $this->form->type->renderViewHelper() ?>
-            <?php echo $this->formRequiredLabel('type', $this->t('Szablon')); ?>
-            <?php foreach ($this->form->getErrors('type') as $error): ?>
-              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
             <?php endforeach; ?>
           </span>
         </div>
@@ -59,8 +50,18 @@
             <?php endforeach; ?>
           </span>
         </div>
-      
+
       <div>
+        <div class="formContainer bottom">
+          <div><?php echo $this->t('Przykładowy zestaw uprawnień dla roli') ?></div>
+          <span>
+            <?php echo $this->form->type->renderViewHelper() ?>
+            <?php echo $this->formRequiredLabel('type', $this->t('Szablon')); ?>
+            <?php foreach ($this->form->getErrors('type') as $error): ?>
+              <div class="error_msg"><?php echo $this->errorT($error) ?></div>
+            <?php endforeach; ?>
+          </span>
+        </div>
         <h5 class="break_page"><span class="icon_cogs icon-20" aria-hidden="true"></span><?php echo $this->formRequiredLabel('type', $this->t('Ustawienia roli')); ?></h5>
         <div class="select-all">
             <input type="checkbox" id="rsMCheck" name="rsMCheck" value="1" /><label for="rsMCheck"><?php echo $this->t('Zaznacz wszystko') ?></label>
@@ -75,6 +76,8 @@
                     <td>
                       <div class="check-left"><?php echo $this->form->$fieldName->renderViewHelper() ?></div>
                       <label for="roleSettings-roleAction_<?php echo $actionId ?>"><?php echo $this->roleT($actionName, 'ACTION') ?></label>
+                      <?php if ($actionId === 8): ?><span class="help item">?<div class="cloud"><?php echo $this->roleT($actionName, 'ACTION_HELPER'); ?></div></span><?php endif ?>
+                      <?php if ($actionId === 19): ?><span class="help item">?<div class="cloud"><?php echo $this->roleT($actionName, 'ACTION_HELPER'); ?></div></span><?php endif ?>
                     </td>
                   </tr>
                 <?php endforeach;?>
@@ -83,7 +86,7 @@
           </div>
         <?php endforeach;?>
       </div>
-      
+
       <div><?php echo $this->form->roleSettingsEmptyValidation->renderViewHelper() ?>
       <?php foreach ($this->form->getErrors('roleSettingsEmptyValidation') as $error): ?>
         <div class="error_msg" style="border: 0px"><?php echo $this->errorT($error) ?></div>
@@ -94,7 +97,7 @@
         <span id="save"><?php echo $this->formSubmit('edit', $this->t('Zapisz')) ?></span>
         <span class="j_cancel_button"><a href="#"><?php echo $this->generalT('Anuluj') ?></a></span>
       </div>
-      <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>  
+      <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
 
       <div>
         <?php echo $this->form->csrf->renderViewHelper() ?>
@@ -102,11 +105,11 @@
         <div class="error_msg" style="width: 100%;border: 0px"><?php echo $this->errorT($error) ?></div>
         <?php endforeach; ?>
       </div>
- 
+
 
     </form>
-    
-  </article>    
+
+  </article>
 </section>
 
 <?php if (isset($this->prePopulatedUsers)) :?>
@@ -116,7 +119,7 @@
   /* ]]> */
   </script>
 <?php endif?>
-    
+
 <?php if (isset($this->prePopulatedProjects)) :?>
   <script type="text/javascript">
   /* <![CDATA[ */
@@ -124,7 +127,7 @@
   /* ]]> */
   </script>
   <?php endif?>
-    
+
 <script type="text/javascript">
 /* <![CDATA[ */
   language.projectsPlaceholder = '<?php echo $this->generalT('Kliknij aby wybrać projekt') ?>';

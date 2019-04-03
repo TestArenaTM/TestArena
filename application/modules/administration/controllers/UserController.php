@@ -37,7 +37,7 @@ class Administration_UserController extends Custom_Controller_Action_Administrat
   
   private function _getFilterForm()
   {
-    return new Administration_Form_UserFilter(array('action' => $this->_url(array(), 'admin_user_list')));
+    return new Administration_Form_UserFilter(array('action' => $this->_url(array('page' => 1), 'admin_user_list')));
   }
   
   public function indexAction()
@@ -48,16 +48,19 @@ class Administration_UserController extends Custom_Controller_Action_Administrat
     if ($filterForm->isValid($request->getParams()))
     {
       $userMapper = new Administration_Model_UserMapper();
-      list($list, $paginator) = $userMapper->getAll($request);
+      $request->setParam('search', $filterForm->getValue('search'));
+      list($list, $paginator, $numberRecords) = $userMapper->getAll($request);
     }
     else
     {
+      $numberRecords = 0;
       $list = array();
       $paginator = null;
     }
     
     $this->_setTranslateTitle();
     $this->view->users = $list;
+    $this->view->numberRecords = $numberRecords;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
@@ -99,8 +102,10 @@ class Administration_UserController extends Custom_Controller_Action_Administrat
     $userMapper = new Administration_Model_UserMapper();
     $user->setStatus($form->getValue('activeUser') ? Application_Model_UserStatus::ACTIVE : Application_Model_UserStatus::INACTIVE);
     $t = new Custom_Translate();
-    
-    if ($userMapper->add($user) && $this->_sendCreatePasswordEmail($user))
+
+    $isAddUser = $userMapper->add($user) > 0;
+    $isSendCreatePasswordEmail = $this->_sendCreatePasswordEmail($user);
+    if ($isAddUser && $isSendCreatePasswordEmail)
     {
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }

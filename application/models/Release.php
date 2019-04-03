@@ -147,7 +147,7 @@ class Application_Model_Release extends Custom_Model_Standard_Abstract implement
   
   public function setActive($active)
   {
-    $this->_active = (bool)$active;
+    $this->_active = (int)(bool)$active;
   }
   
   public function setPhases($phases)

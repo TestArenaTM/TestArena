@@ -5,17 +5,18 @@
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
   </div>  -->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->resolution->getId()), 'admin_resolution_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
-        <?php if ($this->resolution->getExtraData('taskCount') == 0 && $this->resolution->getExtraData('testCount') == 0): ?>
-          <li class="button_link_li j_delete_resolution"><a class="button_link" href="<?php echo $this->url(array('id' => $this->resolution->getId()), 'admin_resolution_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
-        <?php endif; ?>
-      </ul>
-    </nav>
-    
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->url(array('id' => $this->resolution->getId(), 'projectId' => $this->resolution->getProject()->getId()), 'admin_resolution_edit') ?>"><?php echo $this->t('Edytuj') ?></a></li>
+          <?php if ($this->resolution->getExtraData('taskCount') == 0 && $this->resolution->getExtraData('testCount') == 0): ?>
+            <li class="button_link_li"><a class="button_link j_delete_resolution" href="<?php echo $this->url(array('id' => $this->resolution->getId()), 'admin_resolution_delete') ?>"><?php echo $this->t('Usuń') ?></a></li>
+          <?php endif; ?>
+        </ul>
+      </nav>
+    </div>
     <div class="contentLRtable">
       <div class="contentProperties_left">
         <div class="textLabelEditor">
@@ -25,7 +26,7 @@
         <?php if (strlen($this->resolution->getDescription())): ?>
         <div class="textLabelEditor">
           <div class="textLabelEditor_text"><?php echo $this->t('Opis') ?></div>
-          <div id="text" class="content_label"><?php echo $this->escapeQuotes(nl2br($this->resolution->getDescription())) ?></div>
+          <div id="text" class="content_label"><?php echo nl2br($this->escapeQuotes($this->resolution->getDescription())) ?></div>
         </div>
         <?php endif; ?>
       </div>

@@ -31,6 +31,7 @@ class Project_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath',
         'attachmentCount' => new Zend_Db_Expr('COUNT(a.id)')
@@ -43,30 +44,33 @@ class Project_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstract
     return $this->fetchRow($sql);
   }
   
-  public function getBasicListBySubpath($subpath)
+  public function getBasicListBySubpath($projectId, $subpath)
   {
     $sql = $this->select()
       ->from(array('f' => $this->_name), array(
         'id',
         'name',
+        'name_visible',
         'extension'
       ))
       ->where('f.subpath = ?', $subpath)
-      ->order('f.name');
+      ->where('f.project_id = ?', $projectId)
+      ->order('f.name_visible ASC');
 
     return $this->fetchAll($sql);
   }
   
-  public function exists($name, $extension, $subpath)
+  public function exists($projectId, $nameVisible, $extension, $subpath)
   {
     $sql = $this->select()
       ->from(array('f' => $this->_name), array(
         'id'
       ))
-      ->where('f.name = ?', $name)
+      ->where('f.name_visible = ?', $nameVisible)
       ->where('f.extension = ?', $extension)
-      ->where('f.subpath = ?', $subpath);
-    
+      ->where('f.subpath = ?', $subpath)
+      ->where('f.project_id = ?', $projectId);
+
     return $this->getAdapter()->fetchOne($sql);
   }
   
@@ -77,6 +81,7 @@ class Project_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath',
         'attachmentCount' => new Zend_Db_Expr('COUNT(a.id)')
@@ -89,32 +94,34 @@ class Project_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstract
     return $this->fetchAll($sql);
   }
   
-  public function getListConstainingSubpath($subpath)
+  public function getListContainingSubpath($projectId, $subpath)
   {
     $sql = $this->select()
       ->from(array('f' => $this->_name), array(
         'id',
-        'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath',
         'attachmentCount' => new Zend_Db_Expr('COUNT(a.id)')
       ))
       ->joinLeft(array('a' => 'attachment'), 'a.file_id = f.id', array())
       ->where('f.subpath LIKE "'.addcslashes(addcslashes($subpath, '\\'), '\\').'%"')
+      ->where('f.project_id =? ', $projectId)
       ->group('f.id')
       ->setIntegrityCheck(false);
 
     return $this->fetchAll($sql);
   } 
   
-  public function getSubpathListConstainingSubpath($subpath)
+  public function getSubpathListContainingSubpath($projectId, $subpath)
   {
     $sql = $this->select()
       ->from(array('f' => $this->_name), array(
         'subpath'
       ))
       ->where('f.subpath LIKE "'.addcslashes(addcslashes($subpath, '\\'), '\\').'%"')
+      ->where('f.project_id =? ', $projectId)
       ->group('f.subpath');
 
     return $this->fetchAll($sql);
@@ -127,6 +134,7 @@ class Project_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath'
       ))
@@ -146,6 +154,7 @@ class Project_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath'
       ))
@@ -165,6 +174,7 @@ class Project_Model_FileDbTable extends Custom_Model_DbTable_Criteria_Abstract
         'id',
         'project'.self::TABLE_CONNECTOR.'id' => 'project_id',
         'name',
+        'name_visible',
         'extension',
         'subpath'
       ))

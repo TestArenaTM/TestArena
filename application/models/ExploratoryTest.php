@@ -61,7 +61,9 @@ class Application_Model_ExploratoryTest extends Application_Model_Test implement
   // <editor-fold defaultstate="collapsed" desc="Setters">
   public function setDuration($duration)
   {
-    $this->_duration = $duration;
+    if ($duration !== '') {
+      $this->_duration = $duration;
+    }
     return $this;
   }
 

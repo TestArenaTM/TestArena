@@ -228,4 +228,20 @@ class Project_Model_AttachmentMapper extends Custom_Model_Mapper_Abstract
       'type = ?' => Application_Model_AttachmentType::DEFECT_ATTACHMENT
     ));
   }
+
+  public function deleteByTest(Custom_Interface_Test $test)
+  {
+    $this->_getDbTable()->delete(array(
+      'subject_id = ?' => $test->getId(),
+      'type = ?' => Application_Model_AttachmentType::TEST_ATTACHMENT
+    ));
+  }
+
+  public function deleteByTestIds(array $testIds)
+  {
+    $this->_getDbTable()->delete(array(
+      'subject_id IN(?)' => $testIds,
+      'type = ?' => Application_Model_AttachmentType::TEST_ATTACHMENT
+    ));
+  }
 }

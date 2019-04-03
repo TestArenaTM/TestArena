@@ -1,7 +1,8 @@
 <section id="content" style="padding-top: 50px;">
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitleStep1') ?></h1>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitleStep1') ?></h1>
+    </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
         <div class="wizard-step">
           <?php foreach ($this->form->breadCrumbs->getElements() as $breadcrumb): ?>
@@ -65,10 +66,12 @@
       
         <div class="formContainer full">
           <span>
-            <div class="checkForm">
+            <div class="checkForm" style="display: flex;">
               <?php echo $this->form->stepOne->active->renderViewHelper() ?>
-              <?php echo $this->formLabel('active', $this->t('Aktywne')) ?>  
-              <span class="help item">?<div class="cloud"><?php echo $this->t('Aktywne wydanie - info') ?></div></span>
+              <?php echo $this->formLabel('active', $this->t('Aktywne')) ?>
+              <div class="help_content_inline" style="margin-left: 10px;">
+                <span class="help item">?<div class="cloud"><?php echo $this->t('Aktywne wydanie - info') ?></div></span>
+              </div>
               <?php foreach ($this->form->stepOne->getErrors('active') as $error): ?>
                 <div class="error_msg"><?php echo $this->errorT($error) ?></div>
               <?php endforeach; ?>
@@ -77,7 +80,10 @@
         </div>
 
          <div style="margin-top:15px">
-          <span id="save"><?php echo $this->form->submit ?></span>
+          <span id="save" class="button_send"><?php echo $this->form->submit ?></span>
+           <span class="j_cancel_button">
+             <a href="<?php echo $this->projectUrl(array(), 'release_list') ?>"><?php echo $this->generalT('Anuluj') ?></a>
+           </span>
         </div>
         <div class="required_text"><?php echo $this->generalT('Pole wymagane') ?></div>
 

@@ -25,6 +25,14 @@ class User_PasswordController extends Custom_Controller_Action_Application_Abstr
   public function preDispatch()
   {
     $this->checkUserSession();
+
+    if (Zend_Registry :: get('config')->environment === 'demo' & $this->_user != null) {
+      if ($this->_user->getId() == '1' && $this->getRequest()->getActionName() != 'index')
+      {
+        throw new Custom_404Exception();
+      }
+    }
+
   }
   
   private function _getCreatePasswordForm()

@@ -24,17 +24,19 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
 {
   protected $_map = array(
     'create_date'   => 'createDate',
-    'remove_date'   => 'removeDate',    
+    'remove_date'   => 'removeDate',
+    'name_visible'  => 'nameVisible'
   );
   
-  private $_id          = null;
-  private $_project     = null;
-  private $_name        = null;
-  private $_extension   = null;
-  private $_subpath     = null;
-  private $_createDate  = null;
-  private $_removeDate  = null;
-  private $_description = null;
+  private $_id            = null;
+  private $_project       = null;
+  private $_name          = null;
+  private $_nameVisible   = null;
+  private $_extension     = null;
+  private $_subpath       = null;
+  private $_createDate    = null;
+  private $_removeDate    = null;
+  private $_description   = null;
   
   // <editor-fold defaultstate="collapsed" desc="Getters">
   public function getId()
@@ -51,10 +53,20 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
   {
     return $this->_name;
   }
+
+  public function getNameVisible()
+  {
+    return $this->_nameVisible;
+  }
   
   public function getExtension()
   {
     return $this->_extension;
+  }
+
+  public function getFullNameVisible()
+  {
+    return strlen($this->getExtension()) > 0 ? $this->getNameVisible().'.'.$this->getExtension() : $this->getNameVisible();
   }
   
   public function getFullName()
@@ -95,11 +107,12 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
   public function getFullPath($systemNameEncoding = false)
   {
     $fullPath = $this->getMainPath().$this->getSubpath().$this->getFullName();
-    
     if ($systemNameEncoding)
     {
-      $encoding = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'CP1250' : 'ISO-8859-2';
-      $fullPath = iconv('UTF-8', $encoding, $fullPath);
+      if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
+        return $fullPath;
+      }
+      $fullPath = mb_convert_encoding($fullPath, 'ISO-8859-2', 'UTF-8');
     }
 
     return $fullPath;
@@ -134,6 +147,12 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     return $this;
   }
 
+  public function setNameVisible($nameVisible)
+  {
+    $this->_nameVisible = $nameVisible;
+    return $this;
+  }
+
   public function setProject($propertyName, $propertyValue)
   {
     if (null === $this->_project)
@@ -159,6 +178,12 @@ class Application_Model_File extends Custom_Model_Standard_Abstract
     if ($filter)
     {
       $name = str_replace(array('<', '>', ':', '"', '/', '\\', '|', '*', '?'), '_', $name);
+    }
+    $encoding = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'CP1250//TRANSLIT' : 'ISO-8859-2//TRANSLIT';
+    $name = @iconv('UTF-8', $encoding, utf8_encode($name));
+
+    if ($name === false) {
+      $name = md5(mt_rand() . microtime());
     }
 
     $this->_name = $name;

@@ -44,7 +44,7 @@ class Administration_Model_UserMapper extends Custom_Model_Mapper_Abstract
       $list[] = $user->setDbProperties($row);
     }
     
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
   public function getAllAjax(Zend_Controller_Request_Abstract $request)
@@ -55,7 +55,6 @@ class Administration_Model_UserMapper extends Custom_Model_Mapper_Abstract
   
   public function add(Application_Model_User $user)
   {
-    //var_dump($user->getEmail());exit;
     $data = array(
       'email'          => $user->getEmail(),
       'status'        => $user->getStatusId(),

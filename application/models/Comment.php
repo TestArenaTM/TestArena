@@ -22,6 +22,8 @@ The full text of the GPL is in the LICENSE file.
 */
 class Application_Model_Comment extends Custom_Model_Standard_Abstract
 {
+  const MAX_CONTENT_LENGTH = 1000;
+  
   protected $_map = array(
     'subject_id'    => 'subjectId',
     'subject_type'  => 'subjectType',

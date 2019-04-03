@@ -1,7 +1,8 @@
 <section id="content" style="padding-top: 50px;">
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitleStep1') ?></h1>
-
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitleStep1') ?></h1>
+    </div>
     <form method="<?php echo $this->form->getMethod() ?>" action="<?php echo $this->form->getAction() ?>">
       
       <div class="wizard-step">
@@ -26,7 +27,7 @@
 
         <div class="formContainer">
           <span>
-            <?php echo $this->form->stepOne->prefix->renderViewHelper() ?><span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span>
+            <?php echo $this->form->stepOne->prefix->renderViewHelper() ?><div class="help_content"><span class="help item">?<div class="cloud"><?php echo $this->t('Unikalny identyfikator') ?></div></span></div>
             <?php echo $this->formRequiredLabel('prefix', $this->t('Prefiks')) ?>
             <?php foreach ($this->form->stepOne->getErrors('prefix') as $error): ?>
               <div class="error_msg"><?php echo $this->errorT($error, array(

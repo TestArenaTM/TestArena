@@ -34,12 +34,52 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
     
     $this->_helper->layout->setLayout('administration');
   }
+
+  private function _getEditResolutionColorForDefectsForm(Application_Model_Project $project)
+  {
+    $form = new Administration_Form_EditResolutionColorForDefects(array(
+      'action'  => $this->_url(array('projectId' => $project->getId()), 'admin_resolution_list'),
+      'method'  => 'post',
+      'id'      => $project->getId()
+    ));
+    $form->populate($project->getExtraData('rowData'));
+    return $form;
+  }
+
+  private function _getEditResolutionColorForDefects($project)
+  {
+    $projectEdited = $this->_getValidProjectForEdit();
+    $form = $this->_getEditResolutionColorForDefectsForm($projectEdited);
+    $this->view->form = $form;
+    $request = $this->getRequest();
+    if ($request->isPost())
+    {
+      if ($form->isValid($request->getPost()))
+      {
+        $t = new Custom_Translate();
+        $projectMapper = new Administration_Model_ProjectMapper();
+        $project->setProperties($form->getValues());
+
+        if ($projectMapper->save($project))
+        {
+          $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+        }
+        else
+        {
+          $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
+        }
+
+        $this->redirect(array('projectId' => $project->getId()), 'admin_resolution_list');
+      }
+    }
+  }
     
   public function indexAction()
   {
+    $this->_setCurrentBackUrl('administrationResolutions');
     $project = $this->_getValidProjectForView();
+    $this->_getEditResolutionColorForDefects($project);
     $resolutionMapper = new Administration_Model_ResolutionMapper();
-    
     $this->_setTranslateTitle();
     $this->view->resolutions = $resolutionMapper->getAllByProject($project);
     $this->view->project = $project;
@@ -68,6 +108,7 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
     return new Administration_Form_AddResolution(array(
       'action'    => $this->_url(array('projectId' => $project->getId()), 'admin_resolution_add_process'),
       'method'    => 'post',
+      'backUrl'   => $this->_url(array('projectId' => $project->getId()), 'admin_resolution_list'),
       'projectId' => $project->getId()
     ));
   }
@@ -86,7 +127,7 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
 
     if (!$request->isPost())
     {
-      return $this->redirect(array(), 'admin_resolution_add');
+      return $this->redirect(array('projectId' => $project->getId()), 'admin_resolution_add');
     }
     
     $form = $this->_getAddForm($project);
@@ -118,8 +159,9 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
   private function _getEditForm(Application_Model_Resolution $resolution)
   {
     $form = new Administration_Form_EditResolution(array(
-      'action'    => $this->_url(array('id' => $resolution->getId()), 'admin_resolution_edit_process'),
+      'action'    => $this->_url(array('id' => $resolution->getId(), 'projectId' => $resolution->getProject()->getId()), 'admin_resolution_edit_process'),
       'method'    => 'post',
+      'backUrl'   => $this->_url(array('projectId' => $resolution->getProject()->getId()), 'admin_resolution_list'),
       'projectId' => $resolution->getProject()->getId(),
       'id'        => $resolution->getId()
     ));
@@ -130,20 +172,23 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
   
   public function editAction()
   {
-    $resolution = $this->_getValidResolutionForEdit();
+    $project = $this->_getValidProjectForView();
+    $resolution = $this->_getValidResolutionForEdit($project);
     $this->_setTranslateTitle();
     $form = $this->_getEditForm($resolution);
+    $this->view->project = $project;
     $this->view->form = $form;
   }
 
   public function editProcessAction()
   {
-    $resolution = $this->_getValidResolutionForEdit();
+    $project = $this->_getValidProjectForView();
+    $resolution = $this->_getValidResolutionForEdit($project);
     $request = $this->getRequest();
 
     if (!$request->isPost())
     {
-      return $this->redirect(array('id' => $resolution->getId()), 'admin_resolution_edit');
+      return $this->redirect(array('id' => $resolution->getId(), 'projectId' => $resolution->getProject()->getId()), 'admin_resolution_edit');
     }
     
     $form = $this->_getEditForm($resolution);
@@ -152,6 +197,7 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
     {
       $this->_setTranslateTitle();
       $this->view->form = $form;
+      $this->view->project = $project;
       return $this->render('edit');
     }
     
@@ -168,9 +214,9 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    $this->redirect($form->getBackUrl());
+    $this->redirect(array('id' => $resolution->getId(), 'projectId' => $resolution->getProject()->getId()), 'admin_resolution_list');
   }
-  
+
   public function deleteAction()
   {
     $resolution = $this->_getValidResolutionForView();
@@ -192,7 +238,7 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
     
-    return $this->redirect($this->getRequest()->getServer('HTTP_REFERER'));
+    return $this->redirect($this->_getBackUrl('administrationResolutions', ''));
   }
   
   private function _getValidProject()
@@ -219,8 +265,23 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
     {
       throw new Custom_404Exception();
     }
-    
+
     return $project;
+  }
+
+  private function _getValidProjectForEdit()
+  {
+    $project = $this->_getValidProject();
+
+    $projectMapper = new Administration_Model_ProjectMapper();
+    $rowData = $projectMapper->getForEdit($project);
+
+    if ($rowData === false)
+    {
+      throw new Custom_404Exception();
+    }
+
+    return $project->setExtraData('rowData', $rowData);
   }
   
   private function _getValidNotFinishedProjectForView()
@@ -262,14 +323,14 @@ class Administration_ResolutionController extends Custom_Controller_Action_Admin
     return $resolution;
   }
   
-  private function _getValidResolutionForEdit()
+  private function _getValidResolutionForEdit(Application_Model_Project $project)
   {
     $resolution = $this->_getValidResolution();
 
     $resolutionMapper = new Administration_Model_ResolutionMapper();
     $rowData = $resolutionMapper->getForEdit($resolution);
 
-    if ($rowData === false)
+    if ($rowData === false || $resolution->getProject()->getId() !== $project->getId())
     {
       throw new Custom_404Exception();
     }

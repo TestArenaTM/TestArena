@@ -23,14 +23,74 @@ The full text of the GPL is in the LICENSE file.
 class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
 {
   protected $_dbTableClass = 'Project_Model_TaskDbTable';
+
+  public function getAllAjax(Zend_Controller_Request_Abstract $request, Application_Model_Project $project)
+  {
+    return $this->_getDbTable()->getAllAjax($request, $project->getId())->toArray();
+  }
+
+  public function getByDefect(Application_Model_Defect $defect, Application_Model_Project $project)
+  {
+    $db = $this->_getDbTable();
+    $rows = $db->getAllByDefect($defect, $project);
+
+    if (null === $rows)
+    {
+      return false;
+    }
+
+    $list = array();
+
+    foreach ($rows->toArray() as $row)
+    {
+
+      $key = $row['id'];
+      if (!array_key_exists($key, $list))
+      {
+        $task = new Application_Model_Task($row);
+        $task->setExtraData('taskRelation', $row['taskRelation']);
+        $list[$key] = new Application_Model_Task($row);
+      }
+
+      if (!empty($row['test_id']))
+      {
+        $project = new Application_Model_Project();
+        $project->setPrefix($row['project$prefix']);
+        $project->setOpenStatusColor($row['project$open_status_color']);
+        $project->setReopenStatusColor($row['project$reopen_status_color']);
+        $project->setClosedStatusColor($row['project$closed_status_color']);
+        $project->setInProgressStatusColor($row['project$in_progress_status_color']);
+
+        $resolution = new Application_Model_Resolution();
+        $resolution->setId($row['resolution$id']);
+        $resolution->setName($row['resolution$name']);
+        $resolution->setColor($row['resolution$color']);
+        $resolution->setProjectObject($project);
+
+        $test = new Application_Model_Test();
+        $test->setId($row['test_id']);
+        $test->setType($row['test_type']);
+        $test->setName($row['test_name']);
+        $test->setOrdinalNo($row['test_ordinal_no']);
+        $test->setProjectObject($project);
+
+        $taskTest = new Application_Model_TaskTest();
+        $taskTest->setId($row['task_test_id']);
+        $taskTest->setTestObject($test);
+        $taskTest->setResolutionObject($resolution);
+        $list[$key]->addTaskTest($taskTest);
+      }
+    }
+
+    return $list;
+  }
   
   public function getAll(Zend_Controller_Request_Abstract $request, Application_Model_Project $project)
   {
     $db = $this->_getDbTable();
-    
-    $adapter = new Zend_Paginator_Adapter_DbSelect($db->getSqlAll($request));
+    $adapter = new Zend_Paginator_Adapter_DbSelect($db->getSqlAll($request, $project->getBugTracker()->getBugTrackerId()));
     $adapter->setRowCount($db->getSqlAllCount($request));
- 
+
     $paginator = new Zend_Paginator($adapter);
     $paginator->setCurrentPageNumber($request->getParam('page', 1));
     $resultCountPerPage = (int)$request->getParam('resultCountPerPage');
@@ -45,17 +105,20 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       $list[] = $task->setDbProperties($row);
     }
 
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
-  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  public function getAllIds(Zend_Controller_Request_Abstract $request, $user, $accessPermissionsForTasks, Application_Model_Project $project)
   {
-    $rows = $this->_getDbTable()->getAllIds($request);    
+    $rows = $this->_getDbTable()->getAllIds($request, $user, $accessPermissionsForTasks, $project->getBugTracker()->getBugTrackerId());
     $list = array();
-    
-    foreach ($rows->toArray() as $row)
+
+    if ($rows !== false)
     {
-      $list[] = $row['id'];
+      foreach ($rows->toArray() as $row)
+      {
+        $list[] = $row['id'];
+      }
     }
     
     return $list;
@@ -64,7 +127,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
   public function getForEdit(Application_Model_Task $task)
   {
     $row = $this->_getDbTable()->getForEdit($task->getId(), $task->getProjectId());
-    
+
     if (null === $row)
     {
       return false;
@@ -182,9 +245,9 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     return $list;
   }
   
-  public function getForView(Application_Model_Task $task)
+  public function getForView(Application_Model_Task $task, Application_Model_ProjectBugTracker $projectBugTracker)
   {
-    $row = $this->_getDbTable()->getForView($task->getId(), $task->getProjectId());
+    $row = $this->_getDbTable()->getForView($task->getId(), $task->getProjectId(), $projectBugTracker->getBugTrackerId());
     
     if (null === $row)
     {
@@ -236,11 +299,10 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachmentMapper->saveTask($task);
 
-      if ($adapter->commit())
-      {
-        $task->setCreateDate($date);
-        return true;
-      }
+      $adapter->commit();
+      $task->setCreateDate($date);
+
+      return true;
     }
     catch (Exception $e)
     {
@@ -699,7 +761,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     }
   }
   
-  public function close(Application_Model_Task $task)
+  public function close(Application_Model_Task $task, Application_Model_User $user)
   {
     $db = $this->_getDbTable();
     $adapter = $db->getAdapter();
@@ -731,7 +793,7 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
       {
         $comment = new Application_Model_Comment();
         $comment->setContent($commentContent);
-        $comment->setUserObject($task->getAssignee());
+        $comment->setUserObject($user);
         $comment->setSubjectId($task->getId());
         $comment->setSubjectType(Application_Model_CommentSubjectType::TASK);
         $commentMapper = new Project_Model_CommentMapper();
@@ -806,4 +868,23 @@ class Project_Model_TaskMapper extends Custom_Model_Mapper_Abstract
     }
 
     return $list;
-  }}
+  }
+
+  public function getForDeleteDefect(Application_Model_TaskTest $taskTest)
+  {
+    $row = $this->_getDbTable()->getForDeleteDefect($taskTest->getId());
+
+    if (null === $row)
+    {
+      return false;
+    }
+    $test = new Application_Model_Task();
+    $taskTest = new Application_Model_TaskTest();
+    $taskTest->setTest('id', $row['test_id']);
+    $test->setDbProperties($row->toArray());
+    $test->addTaskTest($taskTest);
+    return $test;
+  }
+
+}
+

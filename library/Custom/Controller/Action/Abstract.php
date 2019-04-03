@@ -101,6 +101,17 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
     if ($this->checkUserSession())
     {
       $locale = $this->_user->getDefaultLocale();
+
+      $request = new Zend_Controller_Request_Http();
+      if (!empty($request->getCookie('currentLocale'))) {
+        $locale = $request->getCookie('currentLocale');
+
+        $this->_user->setDefaultLocale($locale);
+        $userMapper = new Application_Model_UserMapper();
+        $userMapper->changeDefaultLocale($this->_user);
+
+        setcookie('currentLocale', null, -1, '/');
+      }
     }
     elseif (isset($localeSession->current))
     {
@@ -491,7 +502,8 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'reopen-process'        => 'defects',
           'resolve-test'          => 'defects',
           'resolve-test-process'  => 'defects',
-          'view'                  => 'defects'
+          'view'                  => 'defects',
+          'resolve'               => 'defects'
         ),
         'environment' => array(
           'add'           => 'environments',
@@ -513,6 +525,10 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'view'          => 'releases',
           'report'        => 'releases'
         ),
+        'release-clone' => array(
+          'index'         => 'releases',
+          'process'       => 'releases',
+        ),
         'tag' => array(
           'add'           => 'tags',
           'add-process'   => 'tags',
@@ -526,8 +542,6 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'add-process'           => 'tasks',
           'assign'                => 'tasks',
           'assign-process'        => 'tasks',
-          'change-test'           => 'tasks',
-          'change-test-process'   => 'tasks',
           'edit'                  => 'tasks',
           'edit-process'          => 'tasks',
           'close'                 => 'tasks',
@@ -535,21 +549,18 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'index'                 => 'tasks',
           'reopen'                => 'tasks',
           'reopen-process'        => 'tasks',
-          'resolve-test'          => 'tasks',
-          'resolve-test-process'  => 'tasks',
           'view'                  => 'tasks',
-          'view-automatic-test'   => 'tasks',
-          'view-checklist'        => 'tasks',
-          'view-exploratory-test' => 'tasks',
-          'view-other-test'       => 'tasks',
-          'view-test-case'        => 'tasks'
         ),
         'task-test' => array(
           'view-automatic-test'   => 'tasks',
           'view-checklist'        => 'tasks',
           'view-exploratory-test' => 'tasks',
           'view-other-test'       => 'tasks',
-          'view-test-case'        => 'tasks'
+          'view-test-case'        => 'tasks',
+          'resolve-test'          => 'tasks',
+          'resolve-test-process'  => 'tasks',
+          'change-test'           => 'tasks',
+          'change-test-process'   => 'tasks',
         ),
         'test' => array(
           'add-checklist'                     => 'tests',
@@ -560,6 +571,8 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'add-other-test-process'            => 'tests',
           'add-test-case'                     => 'tests',
           'add-test-case-process'             => 'tests',
+          'add-automatic-test'                => 'tests',
+          'add-automatic-test-process'        => 'tests',
           'edit-checklist'                    => 'tests',
           'edit-checklist-process'            => 'tests',
           'edit-exploratory-test'             => 'tests',
@@ -568,6 +581,8 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'edit-other-test-process'           => 'tests',
           'edit-test-case'                    => 'tests',
           'edit-test-case-process'            => 'tests',
+          'edit-automatic-test'               => 'tests',
+          'edit-automatic-test-process'       => 'tests',
           'forward-to-execute'                => 'tests',//NIEUŻYWANE
           'forward-to-execute-process'        => 'tests',//NIEUŻYWANE
           'group-forward-to-execute'          => 'tests',//NIEUŻYWANE
@@ -576,7 +591,8 @@ abstract class Custom_Controller_Action_Abstract extends Zend_Controller_Action
           'view-checklist'                    => 'tests',
           'view-exploratory-test'             => 'tests',
           'view-other-test'                   => 'tests',
-          'view-test-case'                    => 'tests'
+          'view-test-case'                    => 'tests',
+          'view-automatic-test'               => 'tests'
         ),
         'version' => array(
           'add'           => 'versions',

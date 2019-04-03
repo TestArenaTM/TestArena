@@ -43,7 +43,7 @@ class Project_TagController extends Custom_Controller_Action_Application_Project
   
   private function _getFilterForm()
   {
-    return new Project_Form_TagFilter(array('action' => $this->_projectUrl(array(), 'tag_list')));
+    return new Project_Form_TagFilter(array('action' => $this->_projectUrl(array('page' => 1), 'tag_list')));
   }
     
   public function indexAction()
@@ -55,11 +55,13 @@ class Project_TagController extends Custom_Controller_Action_Application_Project
     if ($filterForm->isValid($request->getParams()))
     {
       $this->_filterAction($filterForm->getValues(), 'tag');
+      $request->setParam('search', $filterForm->getValue('search'));
       $tagMapper = new Project_Model_TagMapper();
-      list($list, $paginator) = $tagMapper->getAll($request);
+      list($list, $paginator, $numberRecords) = $tagMapper->getAll($request);
     }
     else
     {
+      $numberRecords = 0;
       $list = array();
       $paginator = null;
     }
@@ -70,10 +72,15 @@ class Project_TagController extends Custom_Controller_Action_Application_Project
     {
       $filterForm->prepareSavedValues($filter->getData());
     }
-    
+
+    $projectBugTrackerDbTable = new Administration_Model_ProjectBugTrackerDbTable();
+    $showColumnDefectCount = $projectBugTrackerDbTable->isBugTruckerInternalByProject($this->_project);
+
     $this->_setTranslateTitle();
     $this->view->tags = $list;
+    $this->view->numberRecords = $numberRecords;
     $this->view->paginator = $paginator;
+    $this->view->showColumnDefectCount = $showColumnDefectCount;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
     $this->view->accessTagManagement = $this->_checkAccess(Application_Model_RoleAction::TAG_MANAGEMENT);

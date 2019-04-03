@@ -323,4 +323,13 @@ class Message_IndexController extends Custom_Controller_Action_Application_Abstr
       'method'  => 'post'
     ));
   }
+
+  public function newMessageInfoAjaxAction()
+  {
+    $message = new Message_Model_MessageMapper();
+    $res = ($message->getUnreadMessageCountByUser($this->_user) > 0) ? 1 : 0;
+    echo $res;
+    exit;
+  }
+
 }

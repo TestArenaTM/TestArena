@@ -193,7 +193,6 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
       ->where('r.active = 1')
       ->limit(1)
       ->setIntegrityCheck(false);
-    
     return $this->fetchRow($sql);
   }
   
@@ -211,5 +210,15 @@ class Project_Model_ReleaseDbTable extends Custom_Model_DbTable_Criteria_Abstrac
       ->setIntegrityCheck(false);
     
     return $this->fetchRow($sql);
+  }
+
+  public function getForPopulateById($id)
+  {
+    $sql = $this->select()
+      ->from(array('v' => $this->_name), array('id', 'name'))
+      ->where('v.id = ?', $id)
+      ->limit(1);
+
+    return $this->fetchAll($sql);
   }
 }

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-08-18 12:49+0200\n"
-"Last-Translator: Paweł Piaskowy\n"
+"PO-Revision-Date: 2019-01-14 08:35+0100\n"
+"Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.2\n"
 
 # Captcha
 msgid "missingValue"
@@ -35,7 +35,7 @@ msgid "notSame"
 msgstr "Ważność formularza wygasła. Spróbuj wysłać go ponownie."
 
 msgid "missingToken"
-msgstr "Ważność formularza wygasła. Spróbuj wysłać o ponownie."
+msgstr "Ważność formularza wygasła. Spróbuj wysłać go ponownie."
 
 # UniqueEmail
 msgid "emailExists"
@@ -53,11 +53,23 @@ msgstr "Twoje aktualne hasło jest inne."
 msgid "emailAddressInvalid"
 msgstr "Nieprawidłowy adres e-mail. Wprowadź adres ponownie."
 
+# EmailAddressQuotedString
+msgid "emailAddressQuotedString"
+msgstr "Nieprawidłowy adres e-mail. Wprowadź adres ponownie."
+
+# EmailAddressLengthExceeded
+msgid "emailAddressLengthExceeded"
+msgstr "Nieprawidłowa liczba znaków dla adresu e-mail"
+
 # EmailExists
 msgid "emailNotExists"
 msgstr "Podany adres e-mail nie istnieje w systemie."
 
 msgid "emailAddressInvalidFormat"
+msgstr "Nieprawidłowy format adresu e-mail. Wprowadź adres ponownie."
+
+# EmailAddressDotAtom
+msgid "emailAddressDotAtom"
 msgstr "Nieprawidłowy format adresu e-mail. Wprowadź adres ponownie."
 
 # PasswordConfirmation
@@ -125,7 +137,7 @@ msgstr "Role project not exists in database."
 
 # Role Settings
 msgid "roleSettingsEmpty"
-msgstr "Musisz wybrać prznajmniej jedną akcję."
+msgstr "Musisz wybrać przynajmniej jedną akcję."
 
 # ProjectPrefix
 msgid "projectPrefixInvalidCharacters"
@@ -257,7 +269,7 @@ msgstr "Niepoprawny rozmiar obrazu. Maksymalna wysokość to 3000 px."
 
 # Attachment
 msgid "attachmentCanNotAdd"
-msgstr "Nie można dodać załącznika."
+msgstr "Nie można dodać załącznika, ponieważ już został dodany."
 
 msgid "attachmentNotSetIds"
 msgstr "Nie ustawiono idetyfikatorów."
@@ -321,6 +333,10 @@ msgstr "Element projektu nie istnieje w bazie."
 # UniqueEnvironemtnName
 msgid "environmentNameExists"
 msgstr "Nazwa środowiska już istnieje w bazie danych!"
+
+# ProjectNoActive
+msgid "projectNoActive"
+msgstr "Projekt nie jest aktywny!"
 
 # UniqueVersionName
 msgid "versionNameExists"
@@ -398,4 +414,16 @@ msgstr "Test już istnieje w zadaniu."
 
 # UniqueTaskDefect
 msgid "taskDefectExists"
-msgstr "Defekt już istnieje w zadaniu."
+msgstr "Zgłoszenie już istnieje w zadaniu."
+
+# UniqueDefectTask
+msgid "defectTaskExists"
+msgstr "Zadanie już istnieje w zgłoszeniu."
+
+# UniqueTestDefect
+msgid "testDefectExists"
+msgstr "Zgłoszenie już istnieje w teście."
+
+# TagInvalidIds
+msgid "tagInvalidIds"
+msgstr "Błędny tag."

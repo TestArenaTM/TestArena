@@ -46,7 +46,7 @@ class Zend_View_Helper_PrepareTaskActions extends Zend_View_Helper_Abstract
       {
         $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_close'), 'text' => 'Zamknij', 'class' => '');
       }
-      
+
       if ($taskUserPermission->isAssignPermission())
       {
         $actions[] = null;
@@ -80,8 +80,10 @@ class Zend_View_Helper_PrepareTaskActions extends Zend_View_Helper_Abstract
       {
         $actions[] =  null;
       }
-      
-      $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_delete'), 'text' => 'Usuń', 'class' => 'j_delete_task');
+      if ($task->getExtraData('taskDefectOrTestDefectIs') != '1')
+      {
+        $actions[] = array('url' => $this->view->projectUrl(array('id' => $task->getId()), 'task_delete'), 'text' => 'Usuń', 'class' => 'j_delete_task', 'type' => 'delete');
+      }
     }
     
     return $actions;

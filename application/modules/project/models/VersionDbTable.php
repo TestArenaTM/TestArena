@@ -26,7 +26,7 @@ class Project_Model_VersionDbTable extends Custom_Model_DbTable_Criteria_Abstrac
   
   public function getSqlAll(Zend_Controller_Request_Abstract $request)
   {
-    $sqlDefectCnt = '(SELECT COUNT(dv.defect_id) FROM defect_version AS dv WHERE dv.version_id=v.id)';
+    $sqlDefectCnt = '(SELECT COUNT(distinct dv.defect_id) FROM defect_version AS dv WHERE dv.version_id=v.id)';
     $sqlTaskCnt = '(SELECT COUNT(*) FROM task_version AS tv INNER JOIN task AS t ON t.id=tv.task_id WHERE tv.version_id=v.id)';
     
     $sql = $this->select()
@@ -89,12 +89,13 @@ class Project_Model_VersionDbTable extends Custom_Model_DbTable_Criteria_Abstrac
     return $this->fetchAll($sql);
   }
   
-  public function getForPopulateByDefect($defectId)
+  public function getForPopulateByDefect($defectId, $type = 'reported')
   {
     $sql = $this->select()
       ->from(array('v' => $this->_name), array('id', 'name'))
       ->join(array('dv' => 'defect_version'), 'dv.version_id = v.id', array())
-      ->where('dv.defect_id = ?', $defectId);
+      ->where('dv.defect_id = ?', $defectId)
+      ->where('dv.type = ?', $type);
     
     return $this->fetchAll($sql);
   }
@@ -116,7 +117,7 @@ class Project_Model_VersionDbTable extends Custom_Model_DbTable_Criteria_Abstrac
   
   public function getForView($id, $projectId)
   {
-    $sqlDefectCnt = '(SELECT COUNT(dv.defect_id) FROM defect_version AS dv WHERE dv.version_id=v.id)';
+    $sqlDefectCnt = '(SELECT COUNT(distinct dv.defect_id) FROM defect_version AS dv WHERE dv.version_id=v.id)';
     $sqlTaskCnt = '(SELECT COUNT(*) FROM task_version AS tv INNER JOIN task AS t ON t.id=tv.task_id WHERE tv.version_id=v.id)';
     
     $sql = $this->select()
@@ -151,7 +152,7 @@ class Project_Model_VersionDbTable extends Custom_Model_DbTable_Criteria_Abstrac
     return $this->fetchAll($sql);
   }
   
-  public function getByDefect($defectId)
+  public function getByDefect($defectId, $type = 'reported')
   {
     $sql = $this->select()
       ->from(array('v' => $this->_name), array(
@@ -160,9 +161,10 @@ class Project_Model_VersionDbTable extends Custom_Model_DbTable_Criteria_Abstrac
       ))
       ->join(array('tv' => 'defect_version'), 'tv.version_id = v.id', array())
       ->where('tv.defect_id = ?', $defectId)
+      ->where('tv.type = ?', $type)
       ->group('v.id')
       ->setIntegrityCheck(false);
- 
+
     return $this->fetchAll($sql);
   }
   

@@ -26,19 +26,31 @@ class Application_Model_DefectJira extends Custom_Model_Standard_Abstract
   private $_bugTracker  = null;
   private $_no          = null;
   private $_summary     = null;
+  private $_tests       = null;
   
   // <editor-fold defaultstate="collapsed" desc="Getters">
   public function getId()
   {
     return $this->_id;
   }
-  
+
+
+  public function getTests()
+  {
+    return $this->_tests;
+  }
+
   public function getBugTracker()
   {
     return $this->_bugTracker;
   }
 
   public function getNo()
+  {
+    return $this->_no;
+  }
+
+  public function getOrdinalNo()
   {
     return $this->_no;
   }
@@ -55,7 +67,13 @@ class Application_Model_DefectJira extends Custom_Model_Standard_Abstract
     $this->_id = (int)$id;
     return $this;
   }
-  
+
+  public function addTestObject(Application_Model_Test $test)
+  {
+    $this->_tests[] = $test;
+    return $this;
+  }
+
   public function setBugTracker($propertyName, $propertyValue)
   {
     if (null === $this->_bugTracker)

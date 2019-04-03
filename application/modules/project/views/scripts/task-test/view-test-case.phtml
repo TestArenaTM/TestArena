@@ -3,34 +3,39 @@
     <a class="icon_house_alt" href="#"></a>
     <i class="arrow_carrot-right icon-15"></i>
     <a href="#"><?php echo $this->generalT('Zadania') ?></a>
-    <i class="arrow_carrot-right icon-15"></i>    
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div>-->  
+  </div>-->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
 
-    <nav class="button_link_nav">
-      <ul class="button_link_ul">
-        <?php if ($this->activeProject->isActive() 
-                  && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED
-                  && $this->taskUserPermission->isChangeStatusPermission()): ?>
-        
-          <?php if ($this->taskTest->getResolutionId() !== null): ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_change')?>"><?php echo $this->t('Zmień status') ?></a></li>
-          <?php else: ?>
-            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_resolve') ?>"><?php echo $this->t('Rozwiąż') ?></a></li>
+      <nav class="button_link_nav">
+        <ul class="button_link_ul">
+          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getTask()->getId()), 'task_view')?>"><?php echo $this->generalT('Powrót') ?></a></li>
+          <?php if ($this->activeProject->isActive()
+                    && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED
+                    && $this->taskUserPermission->isTestModifyPermission()): ?>
+
+            <?php if ($this->taskTest->getResolutionId() !== null): ?>
+              <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_change')?>"><?php echo $this->t('Zmień status') ?></a></li>
+            <?php else: ?>
+              <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getId()), 'task_test_resolve') ?>"><?php echo $this->t('Rozwiąż') ?></a></li>
+            <?php endif; ?>
+
           <?php endif; ?>
-          
-        <?php endif; ?>
-      </ul>
-    </nav>
-
+        </ul>
+      </nav>
+    </div>
     <div class="textLabelEditor">
-      <div id="text" class="content_label_title"><span class="object_nr"><?php echo $this->escapeQuotes($this->taskTest->getTest()->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->taskTest->getTest()->getName()) ?></div>
-    </div>    
-    
-    <div class="contentLRtable">   
-      
+      <div id="text" class="content_label_title">
+        <span class="object_nr">
+          <?php echo $this->escapeQuotes($this->taskTest->getTest()->getObjectNumber()) ?></span> <?php echo $this->escapeQuotes($this->taskTest->getTest()->getName()) ?>
+      </div>
+    </div>
+
+    <div class="contentLRtable">
+
       <div class="contentProperties_left">
         <div class="textLabelPropertiesDiv">
           <div class="textLabelEditor_text"><?php echo $this->t('Status') ?>: </div>
@@ -52,15 +57,25 @@
         </div>
         <div class="textLabelPropertiesDiv">
           <div class="textLabelEditor_text"><?php echo $this->t('Zadanie') ?>: </div>
-          <div id="text" class="content_label"><a href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getTask()->getId()), 'task_view') ?>"><span class="object_nr"><?php echo $this->escapeQuotes($this->taskTest->getTask()->getObjectNumber()) ?></span> <?php echo nl2br($this->escapeQuotes($this->taskTest->getTask()->getTitle())) ?></a></div>
+          <div id="text" class="content_label"><a href="<?php echo $this->projectUrl(array('id' => $this->taskTest->getTask()->getId()), 'task_view') ?>">
+              <span class="object_nr"><?php echo $this->escapeQuotes($this->taskTest->getTask()->getObjectNumber()) ?></span> <?php echo nl2br($this->escapeQuotes($this->taskTest->getTask()->getTitle())) ?></a>
+          </div>
         </div>
-        
+
         <div>
             <h5 class="break_page"><span aria-hidden="true" class="icon_pencil icon-20"></span><?php echo $this->t('Opis') ?></h5>
             <div><?php echo nl2br($this->escapeQuotes($this->taskTest->getTest()->getDescription())) ?></div>
-        </div>        
+        </div>
+        <?php echo $this->partial('task-test/field-defect.phtml', array(
+          'taskTest'        => $this->taskTest,
+          'defects'     => $this->defects,
+          'bugTracker'  => $this->bugTracker,
+          'activeProject' => $this->activeProject,
+          'taskUserPermission' => $this->taskUserPermission,
+          'isDefectAddPermission' => $this->isDefectAddPermission
+        ));
+        ?>
       </div>
-      
       <div class="contentEditUser_right">
         <div class="textLabelPropertiesDiv">
           <div class="textLabelEditor_text"><?php echo $this->t('Autor') ?>: </div>
@@ -70,8 +85,8 @@
           <div class="textLabelEditor_text"><?php echo $this->t('Data utworzenia') ?>: </div>
           <div id="text" class="content_label"> <?php echo $this->taskTest->getTest()->getCreateDate() ?></div>
         </div>
-        
-        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->taskTest->getTest()->getExtraData('attachments'))); ?> 
+
+        <?php echo $this->partial('partials/attachments.phtml', array('attachments' => $this->taskTest->getTest()->getExtraData('attachments'))); ?>
 
         <?php echo $this->partial('comment/partial.phtml', array(
           'subjectId'     => $this->taskTest->getId(),
@@ -79,8 +94,7 @@
           'addCommentOn'  => $this->activeProject->isActive()
         )); ?>
       </div>
-      
     </div>
-    
-  </article>    
+
+  </article>
 </section>

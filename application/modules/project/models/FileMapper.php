@@ -36,10 +36,10 @@ class Project_Model_FileMapper extends Custom_Model_Mapper_Abstract
     return $file->setDbProperties($row->toArray());
   }
   
-  public function getBasicListBySubpath($path)
+  public function getBasicListBySubpath(Application_Model_Project $project, $path)
   {
-    $rows = $this->_getDbTable()->getBasicListBySubpath($path);
-    
+    $rows = $this->_getDbTable()->getBasicListBySubpath($project->getId(), $path);
+
     if ($rows === null)
     {
       return false;
@@ -58,7 +58,7 @@ class Project_Model_FileMapper extends Custom_Model_Mapper_Abstract
   
   public function exists(Application_Model_File $file)
   {
-    return $this->_getDbTable()->exists($file->getName(), $file->getExtension(), $file->getSubpath()) > 0;
+    return $this->_getDbTable()->exists($file->getProject()->getId(), $file->getNameVisible(), $file->getExtension(), $file->getSubpath()) > 0;
   }
   
   public function add(Application_Model_File $file)
@@ -66,6 +66,7 @@ class Project_Model_FileMapper extends Custom_Model_Mapper_Abstract
     $data = array(
       'project_id'    => $file->getProject()->getId(),
       'name'          => $file->getName(),
+      'name_visible'  => $file->getNameVisible(),
       'extension'     => $file->getExtension(),
       'subpath'       => $file->getSubpath(),
       'create_date'   => $file->getCreateDate(),
@@ -143,9 +144,9 @@ class Project_Model_FileMapper extends Custom_Model_Mapper_Abstract
     return $list;
   }
   
-  public function getListConstainingSubpath($subpath)
+  public function getListContainingSubpath(Application_Model_Project $project, $subpath)
   {
-    $rows = $this->_getDbTable()->getListConstainingSubpath($subpath);
+    $rows = $this->_getDbTable()->getListContainingSubpath($project->getId(), $subpath);
 
     if ($rows === null)
     {
@@ -156,7 +157,9 @@ class Project_Model_FileMapper extends Custom_Model_Mapper_Abstract
     
     foreach ($rows->toArray() as $row)
     {
-      $list[] = new Application_Model_File($row);
+      $file = new Application_Model_File($row);
+      $file->setProjectObject($project);
+      $list[] = $file;
     }
 
     return $list;
@@ -164,13 +167,13 @@ class Project_Model_FileMapper extends Custom_Model_Mapper_Abstract
   
   public function rename(Application_Model_File $file, Application_Model_File $newFile)
   {
-    return $this->_getDbTable()->update(array('name' => $newFile->getName()), array('id = ?' => $file->getId()));
+    return $this->_getDbTable()->update(array('name_visible' => $newFile->getNameVisible()), array('id = ?' => $file->getId()));
   }
   
-  public function renameDirectory($subpath, $newsubpath)
+  public function renameDirectory(Application_Model_Project $project, $subpath, $newsubpath)
   {
     $db = $this->_getDbTable();
-    $rows = $db->getSubpathListConstainingSubpath($subpath);
+    $rows = $db->getSubpathListContainingSubpath($project->getId(), $subpath);
 
     if ($rows === null)
     {

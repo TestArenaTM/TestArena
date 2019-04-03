@@ -44,7 +44,7 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
   
   private function _getFilterForm()
   {
-    return new Project_Form_EnvironmentFilter(array('action' => $this->_projectUrl(array(), 'environment_list')));
+    return new Project_Form_EnvironmentFilter(array('action' => $this->_projectUrl(array('page' => 1), 'environment_list')));
   }
     
   public function indexAction()
@@ -56,11 +56,13 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
     if ($filterForm->isValid($request->getParams()))
     {
       $this->_filterAction($filterForm->getValues(), 'environment');
+      $request->setParam('search', $filterForm->getValue('search'));
       $environmentMapper = new Project_Model_EnvironmentMapper();
-      list($list, $paginator) = $environmentMapper->getAll($request);
+      list($list, $paginator, $numberRecords) = $environmentMapper->getAll($request);
     }
     else
     {
+      $numberRecords = 0;
       $list = array();
       $paginator = null;
     }
@@ -71,9 +73,14 @@ class Project_EnvironmentController extends Custom_Controller_Action_Application
     {
       $filterForm->prepareSavedValues($filter->getData());
     }
+
+    $projectBugTrackerDbTable = new Administration_Model_ProjectBugTrackerDbTable();
+    $showColumnDefectCount = $projectBugTrackerDbTable->isBugTruckerInternalByProject($this->_project);
     
     $this->_setTranslateTitle();
+    $this->view->numberRecords = $numberRecords;
     $this->view->environments = $list;
+    $this->view->showColumnDefectCount = $showColumnDefectCount;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;

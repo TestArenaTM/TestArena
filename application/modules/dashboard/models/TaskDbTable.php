@@ -77,7 +77,7 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
     return $this->getAdapter()->fetchOne($sql);
   }
   
-  public function getSqlAssignedToMe($userId, $projectId, $releaseId)
+  public function getSqlAssigned($userId, $projectId, $releaseId, $onlyMe)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -90,9 +90,13 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
     
     $sql
       ->join(array('r' => 'role'), 'r.project_id = p.id', array())
-      ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
-      ->where('ru.user_id = ?', $userId)
-      ->where('t.assignee_id = ?', $userId)
+      ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array());
+    if ($onlyMe) {
+      $sql
+        ->where('ru.user_id = ?', $userId)
+        ->where('t.assignee_id = ?', $userId);
+      }
+    $sql
       ->group('t.id');
     
     return $sql;
@@ -115,7 +119,7 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
     return $this->getAdapter()->fetchOne($sql);
   }
   
-  public function getLimitOverdueAssignedToMe($userId, $projectId, $releaseId, $limit)
+  public function getLimitOverdueAssigned($userId, $projectId, $releaseId, $limit, $onlyMe = true)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -141,17 +145,20 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->join(array('r' => 'role'), 'r.project_id = p.id', array())
       ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
       ->where('t.status != ?', Application_Model_TaskStatus::CLOSED)
-      ->where('t.due_date < ?', date('Y-m-d H:i:s'))
-      ->where('ru.user_id = ?', $userId)
-      ->where('t.assignee_id = ?', $userId)
-      ->order('t.due_date')
+      ->where('t.due_date < ?', date('Y-m-d H:i:s'));
+    if ($onlyMe) {
+      $sql
+        ->where('ru.user_id = ?', $userId)
+        ->where('t.assignee_id = ?', $userId);
+    }
+    $sql->order('t.due_date')
       ->group('t.id')
       ->limit($limit);
     
     return $this->fetchAll($sql);
   }
   
-  public function countOverdueAssignedToMe($userId, $projectId, $releaseId)
+  public function countOverdueAssigned($userId, $projectId, $releaseId, $onlyMe)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -165,10 +172,12 @@ class Dashboard_Model_TaskDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->join(array('r' => 'role'), 'r.project_id = p.id', array())
       ->join(array('ru' => 'role_user'), 'ru.role_id = r.id', array())
       ->where('t.status != ?', Application_Model_TaskStatus::CLOSED)
-      ->where('t.due_date < ?', date('Y-m-d H:i:s'))
-      ->where('ru.user_id = ?', $userId)
-      ->where('t.assignee_id = ?', $userId);
-      
+      ->where('t.due_date < ?', date('Y-m-d H:i:s'));
+    if ($onlyMe) {
+      $sql
+        ->where('ru.user_id = ?', $userId)
+        ->where('t.assignee_id = ?', $userId);
+    }
     return $this->getAdapter()->fetchOne($sql);
   }
   

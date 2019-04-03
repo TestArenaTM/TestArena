@@ -52,13 +52,22 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $release->setId($this->getRequest()->getParam('release', null));
     
     return new Project_Form_TaskFilter(array(
-      'action'          => $this->_projectUrl(array(), 'task_list'),
+      'action'          => $this->_projectUrl(array('page' => 1), 'task_list'),
       'userList'        => $userMapper->getByProjectAsOptions($this->_project),
       'releaseList'     => $releaseMapper->getByProjectAsOptions($this->_project),
       'environmentList' => $environmentMapper->getByProjectAsOptions($this->_project),
       'versionList'     => $versionMapper->getByProjectAsOptions($this->_project),
       'project'         => $this->_project
     ));
+  }
+
+  public function listAjaxAction()
+  {
+    $this->checkUserSession(true, true);
+    $taskMapper = new Project_Model_TaskMapper();
+    $result = $taskMapper->getAllAjax($this->getRequest(), $this->_project);
+    echo json_encode($result);
+    exit;
   }
     
   public function indexAction()
@@ -73,16 +82,17 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     {
       $this->_filterAction($filterForm->getValues(), 'task'.$this->_project->getId());
       $request->setParam('userId', $this->_user->getId());
-      
+      $request->setParam('search', $filterForm->getValue('search'));
       $taskMapper = new Project_Model_TaskMapper();
-      list($list, $paginator) = $taskMapper->getAll($request, $this->_project);
+      list($list, $paginator, $numberRecords) = $taskMapper->getAll($request, $this->_project);
       
-      $allIds = $taskMapper->getAllIds($request);
+      $allIds = $taskMapper->getAllIds($request, $this->_user, $this->_getAccessPermissionsForTasks(), $this->_project);
     }
     else
     {
       $list = $allIds = array();
       $paginator = null;
+      $numberRecords = 0;
     }
     
     $filter = $this->_user->getFilter(Application_Model_FilterGroup::TASKS);
@@ -113,57 +123,13 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $this->view->prePopulatedTags = $filterForm->prePopulateTags($tagMapper->getForPopulateByIds($filterForm->getTags()));
     
     $this->_setTranslateTitle();
+    $this->view->numberRecords = $numberRecords;
     $this->view->tasks = $list;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
     $this->view->filterForm = $filterForm;
     $this->view->taskUserPermissions = $this->_getAccessPermissionsForTasks();
     $this->view->allIds = $allIds;
-  }
-  
-  private function _setViewNavigation(Application_Model_Task $task)
-  { 
-    // Odczyt kolejności zadań do sesji
-    $session = new Zend_Session_Namespace('Task');
-    $nextTask = null;
-    $prevTask = null;
-    
-    if ($session->allIds)
-    {
-      $ids = $session->allIds;
-      $currentIndex = array_search($task->getId(), $ids);
-
-      if ($currentIndex !== false)
-      {
-        $taskMapper = new Project_Model_TaskMapper();
-        $nextPrevIds = array();
-
-        if ($currentIndex > 0)
-        {
-          $nextPrevIds['prev'] = $ids[$currentIndex - 1];
-        }
-
-        if ($currentIndex < count($ids) - 1)
-        {
-          $nextPrevIds['next'] = $ids[$currentIndex + 1];
-        }
-
-        $taskList = $taskMapper->getByIds($nextPrevIds);
-
-        if (array_key_exists('prev', $nextPrevIds) && array_key_exists($nextPrevIds['prev'], $taskList))
-        {
-          $prevTask = $taskList[$nextPrevIds['prev']];
-        }
-
-        if (array_key_exists('next', $nextPrevIds) && array_key_exists($nextPrevIds['next'], $taskList))
-        {
-          $nextTask = $taskList[$nextPrevIds['next']];
-        }
-      }
-    }
-    
-    $this->view->prevTask = $prevTask;
-    $this->view->nextTask = $nextTask;
   }
   
   private function _prepareDefectsForView(Application_Model_Task $task)
@@ -194,12 +160,12 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   }
     
   public function viewAction()
-  {    
+  {
     $task = $this->_getValidTaskForView();
     $this->_setCurrentBackUrl('file_dwonload');
     $this->_setCurrentBackUrl('task_assignToMe');
     $this->_setCurrentBackUrl('task_changeStatus');
-    
+
     $fileMapper = new Project_Model_FileMapper();
     $task->setExtraData('attachments', $fileMapper->getListByTask($task));
     
@@ -218,8 +184,9 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $this->view->history = $historyMapper->getByTask($task);
     $this->view->taskTests = $taskTestMapper->getByTask($task);
     $this->view->taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_getAccessPermissionsForTasks());
-    
-    $this->_setViewNavigation($task);
+    $this->view->testUserPermission = new Application_Model_TestUserPermission(new Application_Model_Test(), $this->_user, $this->_checkMultipleAccess(array(Application_Model_RoleAction::TEST_ADD)));
+    $this->view->defectUserPermission = new Application_Model_DefectUserPermission(new Application_Model_Defect(), $this->_user, $this->_checkMultipleAccess(array(Application_Model_RoleAction::DEFECT_ADD)));
+
     $this->_prepareDefectsForView($task);
   }
   
@@ -237,7 +204,6 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     if ($request->isPost())
     {
       $releaseId = $request->getPost('releaseId', 0);
-      
       if ($releaseId > 0)
       {
         $release = new Application_Model_Release();
@@ -271,10 +237,13 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
 
   public function addAction()
   {
+    $releaseMapper = new Project_Model_ReleaseMapper();
     $this->_checkAccess(Application_Model_RoleAction::TASK_ADD, true);
+    $form = $this->_getAddForm();
+    $this->view->prePopulatedRelease = $form->prePopulateRelease($releaseMapper->getForPopulateById($form->getRelease()));
     
     $this->_setTranslateTitle();
-    $this->view->form = $this->_getAddForm();
+    $this->view->form = $form;
   }
   
   public function addProcessAction()
@@ -296,12 +265,14 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $environmentMapper = new Project_Model_EnvironmentMapper();
       $versionMapper = new Project_Model_VersionMapper();
       $tagMapper = new Project_Model_TagMapper();
+      $releaseMapper = new Project_Model_ReleaseMapper();
 
       $this->_setTranslateTitle();
       $this->view->form = $form;
       $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByIds($form->getEnvironments()));
       $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByIds($form->getVersions()));
       $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByIds($form->getTags()));
+      $this->view->prePopulatedRelease = $form->prePopulateRelease($releaseMapper->getForPopulateById($form->getRelease()));
       return $this->render('add'); 
     }
     
@@ -376,6 +347,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $environmentMapper = new Project_Model_EnvironmentMapper();
     $versionMapper = new Project_Model_VersionMapper();
     $tagMapper = new Project_Model_TagMapper();
+    $releaseMapper = new Project_Model_ReleaseMapper();
     $form = $this->_getEditForm($task);
     $rowData = $task->getExtraData('rowData');
     $form->populate($form->prepareAttachmentsFromDb($rowData['attachments']));
@@ -386,6 +358,8 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByTask($task));
     $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByTask($task));
     $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByTask($task));
+    $this->view->prePopulatedRelease = $form->prePopulateRelease($releaseMapper->getForPopulateById($form->getRelease()));
+    $this->view->accessAssing = $this->_checkAccess(Application_Model_RoleAction::TASK_ASSIGN_ALL);
   }
   
   public function editProcessAction()
@@ -412,6 +386,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->view->prePopulatedEnvironments = $form->prePopulateEnvironments($environmentMapper->getForPopulateByIds($form->getEnvironments()));
       $this->view->prePopulatedVersions = $form->prePopulateVersions($versionMapper->getForPopulateByIds($form->getVersions()));
       $this->view->prePopulatedTags = $form->prePopulateTags($tagMapper->getForPopulateByIds($form->getTags()));
+      $this->view->accessAssing = $this->_checkAccess(Application_Model_RoleAction::TASK_ASSIGN_ALL);
       return $this->render('edit'); 
     }
 
@@ -430,9 +405,11 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     $task->setDbProperties($form->getValues());
     $task->setRelease('id', $form->getValue('releaseId'));
-    $task->setAssignee('id', $form->getValue('assigneeId'));
-    $task->setAssigner('id', $this->_user->getId());
-
+    if ($this->_checkAccess(Application_Model_RoleAction::TASK_ASSIGN_ALL))
+    {
+      $task->setAssignee('id', $form->getValue('assigneeId'));
+      $task->setAssigner('id', $this->_user->getId());
+    }
     $taskMapper = new Project_Model_TaskMapper();
     $t = new Custom_Translate();
     
@@ -478,6 +455,18 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   {
     $multiSelectName = 'task'.$this->_project->getId();
     $taskIds = $this->_getMultiSelectIds($multiSelectName, false);
+
+    $taskMapper = new Project_Model_TaskMapper();
+
+    $request = $this->getRequest();
+    $allIds = $taskMapper->getAllIds($request, $this->_user, $this->_getAccessPermissionsForTasks(), $this->_project);
+    $skipIds = array();
+    foreach($taskIds as $key => $id) {
+      if (!in_array($id, $allIds)) {
+        $skipIds[] = $id;
+        unset($taskIds[$key]);
+      }
+    }
     
     $taskMapper = new Project_Model_TaskMapper();
     $tasks = $taskMapper->getByIds4CheckAccess($taskIds);
@@ -487,8 +476,24 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $t = new Custom_Translate();
     
     if ($taskMapper->deleteByIds($taskIds))
-    {    
-      $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+    {
+      if (empty($skipIds))
+      {
+        $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
+      }
+      else
+      {
+        $tasks = $taskMapper->getByIds($skipIds);
+        $titles = array();
+        /** @var Application_Model_Task $task */
+        foreach ($tasks as $task)
+        {
+          $titles[] = $task->getTitle();
+        }
+
+        $message = $t->translate('statusWarning', array('names' => '"'.  implode('", "', $titles ) .'"'));
+        $this->_messageBox->set($message, Custom_MessageBox::TYPE_WARNING);
+      }
       $this->_clearMultiSelectIds($multiSelectName);
     }
     else
@@ -557,6 +562,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   public function assignProcessAction()
   {
     $task    = $this->_getValidTaskForAssign();
+    $statusCurrent = $task->getStatusId();
     $request = $this->getRequest();
     
     if (!$request->isPost())
@@ -583,13 +589,25 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if ($taskMapper->assign($task))
     {
+      $historyMapper = new Project_Model_HistoryMapper();
+
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($task);
       $history->setType(Application_Model_HistoryType::ASSIGN_TASK);
       $history->setField1($task->getAssigneeId());
-      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
+
+      if ($statusCurrent != Application_Model_TaskStatus::OPEN)
+      {
+        $history = new Application_Model_History();
+        $history->setUserObject($this->_user);
+        $history->setSubjectObject($task);
+        $history->setType(Application_Model_HistoryType::CHANGE_TASK_STATUS);
+        $history->setField1($task->getStatusId());
+        $historyMapper->add($history);
+      }
+
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
     else
@@ -603,7 +621,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   public function assignToMeAction()
   {
     $task = $this->_getValidTaskForAssign();
-    
+    $statusCurrent = $task->getStatusId();
     if ($task->getAssigneeId() == $this->_user->getId())
     {
       throw new Custom_404Exception();
@@ -616,13 +634,24 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     
     if ($taskMapper->assign($task))
     {
+      $historyMapper = new Project_Model_HistoryMapper();
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
       $history->setSubjectObject($task);
       $history->setType(Application_Model_HistoryType::ASSIGN_TASK);
       $history->setField1($task->getAssigneeId());
-      $historyMapper = new Project_Model_HistoryMapper();
       $historyMapper->add($history);
+
+      if ($statusCurrent != Application_Model_TaskStatus::OPEN)
+      {
+        $history = new Application_Model_History();
+        $history->setUserObject($this->_user);
+        $history->setSubjectObject($task);
+        $history->setType(Application_Model_HistoryType::CHANGE_TASK_STATUS);
+        $history->setField1($task->getStatusId());
+        $historyMapper->add($history);
+      }
+
       $this->_messageBox->set($t->translate('statusSuccess'), Custom_MessageBox::TYPE_INFO);
     }
     else
@@ -701,7 +730,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $taskMapper = new Project_Model_TaskMapper();
     $t = new Custom_Translate();
     
-    if ($taskMapper->close($task))
+    if ($taskMapper->close($task, $this->_user))
     {
       $history = new Application_Model_History();
       $history->setUserObject($this->_user);
@@ -748,6 +777,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $this->_setTranslateTitle();
     $this->view->form = $form;
     $this->view->task = $task;
+    $this->view->accessAssing = $this->_checkAccess(Application_Model_RoleAction::TASK_ASSIGN_ALL);
   }
   
   public function reopenProcessAction()
@@ -773,12 +803,16 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       $this->_setTranslateTitle();
       $this->view->form = $form;
       $this->view->task = $task;
+      $this->view->accessAssing = $this->_checkAccess(Application_Model_RoleAction::TASK_ASSIGN_ALL);
       return $this->render('reopen'); 
     }
 
     $task->setProperties($form->getValues());
     $task->setStatus(Application_Model_TaskStatus::REOPEN);
-    $task->setAssignee('id', $form->getValue('assigneeId'));
+    if ($this->_checkAccess(Application_Model_RoleAction::TASK_ASSIGN_ALL))
+    {
+      $task->setAssignee('id', $form->getValue('assigneeId'));
+    }
     $taskMapper = new Project_Model_TaskMapper();
     $t = new Custom_Translate();
     
@@ -800,6 +834,37 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
 
     return $this->projectRedirect($form->getBackUrl());
   }
+
+  private function _getStatusColorForDefect($defect)
+  {
+    $color = '';
+    switch ($defect->getStatusId()) {
+      case Application_Model_DefectStatus::OPEN:
+        $color = $defect->getProject()->getOpenStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::REOPEN:
+        $color = $defect->getProject()->getReopenStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::IN_PROGRESS:
+        $color = $defect->getProject()->getInProgressStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::FINISHED:
+        $color = $defect->getProject()->getClosedStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::INVALID:
+        $color = $defect->getProject()->getInvalidStatusColor();
+        break;
+
+      case Application_Model_DefectStatus::RESOLVED:
+        $color = $defect->getProject()->getResolvedStatusColor();
+        break;
+    }
+    return $color;
+  }
   
   public function addDefectAjaxAction()
   {
@@ -809,10 +874,11 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       'data'   => array(),
       'errors' => array()
     );
-    
+
     $taskDefect = new Application_Model_TaskDefect();
     $taskDefect->setTaskObject($this->_getValidTaskForDefectAjax());
     $taskDefect->setBugTrackerId($this->_project->getBugTracker()->getBugTrackerId());
+
     $t = new Custom_Translate();
     $data = false;
     
@@ -822,11 +888,14 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
         $taskDefect->setDefect('id', $this->getRequest()->getPost('defectId'));
         $defectMapper = new Project_Model_DefectMapper();
         $data = $defectMapper->getForViewAjax($taskDefect->getDefect(), $this->_project);
-        
         if ($data !== false)
         {
-          $data['status'] = $t->translate('DEFECT_'.$taskDefect->getDefect()->getStatus(), null, 'status');
+          $data['itemId'] = $data['id'] .'_';
           $data['rowStatus'] = $taskDefect->getDefect()->getStatus()->getName();
+          $data['statusColor'] = $this->_getStatusColorForDefect($taskDefect->getDefect());
+          $data['status'] = $t->translate('DEFECT_'.$taskDefect->getDefect()->getStatus(), null, 'status');
+          $data['issueType'] = $taskDefect->getDefect()->getIssueType();
+          $data['issueTypeTitle'] = $t->translate('ISSUE_'.$taskDefect->getDefect()->getIssueType(), null, 'type');
           $data['defectType'] = Application_Model_BugTrackerType::INTERNAL;
         }
         break;
@@ -835,9 +904,9 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
         $taskDefect->setDefectJira('id', $this->getRequest()->getPost('defectId'));
         $defecJiraMapper = new Project_Model_DefectJiraMapper();
         $data = $defecJiraMapper->getForViewAjax($taskDefect->getDefect(), $this->_project->getBugTracker());
-        
         if ($data != false)
         {
+          $data['itemId'] = $data['id'] .'_';
           $bugTrackerJiraMapper = new Project_Model_BugTrackerJiraMapper();
           $bugTrackerJira = $bugTrackerJiraMapper->getById($this->_project->getBugTracker()->getBugTrackerJira());
 
@@ -872,6 +941,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
         
         if ($data !== false)
         {
+          $data['itemId'] = $data['id'] .'_';
           try
           {
             $bugTrackerMantisMapper = new Project_Model_BugTrackerMantisMapper();
@@ -907,21 +977,30 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
         'task_id'         => $taskDefect->getTask()->getId(),
         'bug_tracker_id'  => $this->_project->getBugTracker()->getBugTrackerId()
       )));
-      
       if ($validator->isValid($taskDefect->getDefect()->getId()))
       {
         $taskDefectMapper = new Project_Model_TaskDefectMapper();
 
         if ($taskDefectMapper->add($taskDefect))
         {
+          $historyMapper = new Project_Model_HistoryMapper();
+
           $history = new Application_Model_History();
           $history->setUserObject($this->_user);
           $history->setSubjectObject($taskDefect->getTask());
           $history->setType(Application_Model_HistoryType::ADD_DEFECT_TO_TASK);
           $history->setField1($taskDefect->getDefect()->getId());
-          $historyMapper = new Project_Model_HistoryMapper();
           $historyMapper->add($history);
+
+          $history = new Application_Model_History();
+          $history->setUserObject($this->_user);
+          $history->setSubjectObject($taskDefect->getDefect());
+          $history->setType(Application_Model_HistoryType::ADD_TASK_TO_DEFECT);
+          $history->setField1($taskDefect->getTask()->getId());
+          $historyMapper->add($history);
+
           $result['data'] = $data;
+          $result['data']['taskId'] = $this->getRequest()->getParam('id');
         }
         else
         {
@@ -951,8 +1030,6 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
 
   public function deleteDefectAjaxAction()
   {
-    $this->checkUserSession(true, true);
-    
     $result = array(
       'status' => 'SUCCESS',
       'data'   => array(),
@@ -964,6 +1041,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $taskDefect = new Application_Model_TaskDefect();
     $taskDefect->setTaskObject($this->_getValidTaskForDefectAjax());
     $taskDefect->setDefect('id', $this->getRequest()->getParam('defectId'));
+    $taskDefect->setBugTrackerId($this->_project->getBugTracker()->getBugTrackerId());
     
     if ($taskDefect->getDefect()->getId() > 0)
     {
@@ -971,14 +1049,23 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
 
       if ($taskDefectMapper->delete($taskDefect))
       {
+        $historyMapper = new Project_Model_HistoryMapper();
         $history = new Application_Model_History();
         $history->setUserObject($this->_user);
         $history->setSubjectObject($taskDefect->getTask());
         $history->setType(Application_Model_HistoryType::DELETE_DEFECT_FROM_TASK);
         $history->setField1($taskDefect->getDefect()->getId());
-        $historyMapper = new Project_Model_HistoryMapper();
         $historyMapper->add($history);
-        $result['data']['id'] = $taskDefect->getDefect()->getId();
+
+        $historyMapper = new Project_Model_HistoryMapper();
+        $history = new Application_Model_History();
+        $history->setUserObject($this->_user);
+        $history->setSubjectObject($taskDefect->getDefect());
+        $history->setType(Application_Model_HistoryType::DELETE_TASK_FROM_DEFECT);
+        $history->setField1($taskDefect->getTask()->getId());
+        $historyMapper->add($history);
+
+        $result['data']['itemId'] = $taskDefect->getDefect()->getId() .'_';
       }
       else
       {
@@ -1036,7 +1123,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
     $task = $this->_getValidTask();
     $taskMapper = new Project_Model_TaskMapper();
     
-    if ($taskMapper->getForView($task) === false)
+    if ($taskMapper->getForView($task, $this->_project->getBugTracker()) === false)
     {
       throw new Custom_404Exception();
     }
@@ -1107,9 +1194,6 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       Application_Model_RoleAction::TASK_CHANGE_STATUS_CREATED_BY_YOU,
       Application_Model_RoleAction::TASK_CHANGE_STATUS_ASSIGNED_TO_YOU,
       Application_Model_RoleAction::TASK_CHANGE_STATUS_ALL,
-      Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU,
-      Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU,
-      Application_Model_RoleAction::TASK_EDIT_ALL
     );
     
     $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForChangeStatus));
@@ -1123,10 +1207,7 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   private function _checkAssignPermissions(Application_Model_Task $task)
   {
     $roleActionsForAssign = array(
-      Application_Model_RoleAction::TASK_ASSIGN_ALL,
-      Application_Model_RoleAction::TASK_EDIT_CREATED_BY_YOU,
-      Application_Model_RoleAction::TASK_EDIT_ASSIGNED_TO_YOU,
-      Application_Model_RoleAction::TASK_EDIT_ALL
+      Application_Model_RoleAction::TASK_ASSIGN_ALL
     );
     
     $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForAssign));
@@ -1144,9 +1225,9 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
       Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU,
       Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU
     );
-    
+
     $taskUserPermission = new Application_Model_TaskUserPermission($task, $this->_user, $this->_checkMultipleAccess($roleActionsForAssign));
-    
+
     if (false === $taskUserPermission->isDeletePermission())
     {
       $this->_throwTaskAccessDeniedException();
@@ -1191,5 +1272,19 @@ class Project_TaskController extends Custom_Controller_Action_Application_Projec
   private function _getAccessPermissionsForTasks()
   {
     return $this->_checkMultipleAccess(Application_Model_TaskUserPermission::$_taskRoleActions);
+  }
+
+  private function _getValidTest($throw = true)
+  {
+    $test = new Application_Model_Test();
+    $test->setId($this->getRequest()->getParam('testId'));
+    $test->setProjectObject($this->_project);
+
+    $testMapper = new Project_Model_TestMapper();
+    if ($testMapper->getForValid($test) === false && $throw) {
+      throw new Custom_404Exception();
+    }
+
+    return $test;
   }
 }

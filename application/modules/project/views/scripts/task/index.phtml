@@ -3,31 +3,31 @@
 <section id="content">
  <!-- <div class="breadcrumb">
     <a class="icon_house_alt" href="#"></a>
-    <i class="arrow_carrot-right icon-15"></i>  
+    <i class="arrow_carrot-right icon-15"></i>
     <div class="active_bc"><?php echo $this->t('pageTitle') ?></div>
-  </div>-->  
+  </div>-->
   <article class="article_in_content">
-    <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
-
-    <?php if ($this->activeProject->isActive() 
-        && $this->taskUserPermissions[Application_Model_RoleAction::TASK_ADD]): ?>
-      <nav class="button_link_nav">
-        <ul class="button_link_ul">
-          <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'task_add')?>" ><?php echo $this->t('Dodaj zadanie') ?></a></li>
-        </ul>
-      </nav>
-    <?php endif; ?>
-    
+    <div class="content_header">
+      <h1 class="content_title"><?php echo $this->t('pageTitle') ?></h1>
+      <?php if ($this->activeProject->isActive()
+          && $this->taskUserPermissions[Application_Model_RoleAction::TASK_ADD]): ?>
+        <nav class="button_link_nav">
+          <ul class="button_link_ul">
+            <li class="button_link_li"><a class="button_link" href="<?php echo $this->projectUrl(array(), 'task_add')?>" ><?php echo $this->t('Dodaj zadanie') ?></a></li>
+          </ul>
+        </nav>
+      <?php endif; ?>
+    </div>
     <form class="filterBox" name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
       <?php echo $this->filterForm->filterAction->renderViewHelper() ?>
-      
+
       <div class="search_text">
         <div class="filter">
           <div><?php echo $this->formLabel('search', $this->generalT('Szukaj')) ?></div>
           <div class="search_in_filter"><?php echo $this->filterForm->search->renderViewHelper() ?><a href="#" id="j_searchButton" class="icon_search icon-20"></a></div>
         </div>
       </div>
-      
+
       <div class="search_filter">
         <div class="filter">
           <div><?php echo $this->formLabel('release', $this->t('Wydanie')) ?></div>
@@ -40,7 +40,7 @@
         </div>
 
         <div class="filter">
-          <div><?php echo $this->formLabel('priority', $this->t('Priorytet')) ?></div>
+          <div><?php echo $this->formLabel('priority', $this->t('Filtr priorytet')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->priority->renderViewHelper() ?></div>
         </div>
 
@@ -68,11 +68,11 @@
           <div><?php echo $this->formLabel('resultCountPerPage', $this->generalT('Wyniki')) ?></div>
           <div class="custom-select-xsmall"><?php echo $this->filterForm->resultCountPerPage->renderViewHelper() ?></div>
         </div>
-          
+
         <div class="filter">
           <div><?php echo $this->filterForm->exceededDueDate->renderViewHelper() ?><?php echo $this->formLabel('exceededDueDate', $this->t('Przekroczony termin')) ?></div>
         </div>
-        
+
         <div class="filter custom-auto">
           <div><?php echo $this->formLabel('tags', $this->t('Tagi')) ?></div>
           <div class="ustom-select-xsmall"><?php echo $this->filterForm->tags->renderViewHelper() ?></div>
@@ -93,10 +93,9 @@
           </th>
           <th><?php echo $this->sortingControl('Tytuł', 'task_title', 'sorting.phtml', $this->request) ?></th>
           <th class="attachment_column"></th>
-          <th><?php echo $this->sortingControl('Priorytet', 'task_priority', 'sorting.phtml', $this->request) ?></th>
+          <th title="<?php echo $this->t('Filtr priorytet') ?>"><?php echo $this->sortingControl('Priorytet', 'task_priority', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Wydanie', $this->createSortedFieldName('task', 'name', array('release')), 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Data utworzenia', 'task_create_date', 'sorting.phtml', $this->request) ?></th>
-          <!--<th><?php //echo $this->sortingControl('Data modyfikacji', 'task_modify_date', 'sorting.phtml', $this->request) ?></th>-->
           <th><?php echo $this->sortingControl('Termin realizacji', 'task_due_date', 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Przypisał', $this->createSortedFieldName('task', 'name', array('assigner')), 'sorting.phtml', $this->request) ?></th>
           <th><?php echo $this->sortingControl('Przypisane do', $this->createSortedFieldName('task', 'name', array('assignee')), 'sorting.phtml', $this->request) ?></th>
@@ -113,13 +112,41 @@
         <tr>
         <?php endif; ?>
           <td class="t_object_number">
-            <input type="checkbox" name="item_<?php echo $task->getId() ?>" value="task<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_item" />
+            <input type="checkbox"
+              <?php if ($task->getExtraData('taskDefectOrTestDefectIs') == '0'): ?>
+                <?php if (!$this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_ALL]
+                && !$this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU]
+                && !$this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU]): ?>
+                  disabled
+                <?php else: ?>
+                  <?php if (!$this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_ALL]): ?>
+                    <?php if ($this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU]
+                      && !$this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU]
+                      && $task->getAuthor()->getId() !== $this->authUser->getId()): ?>
+                      disabled
+                    <?php elseif ($this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU]
+                      && !$this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU]
+                      && $task->getAssigneeId() !== $this->authUser->getId()): ?>
+                      disabled
+                    <?php elseif (($this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_CREATED_BY_YOU]
+                        && $task->getAuthor()->getId() !== $this->authUser->getId())
+                      && ($this->taskUserPermissions[Application_Model_RoleAction::TASK_DELETE_ASSIGNED_TO_YOU]
+                        && $task->getAssigneeId() !== $this->authUser->getId())
+                    ): ?>
+                      disabled
+                    <?php endif ?>
+                  <?php endif ?>
+                <?php endif ?>
+              <?php else: ?>
+                disabled
+              <?php endif ?>
+                   name="item_<?php echo $task->getId() ?>" value="task<?php echo $this->activeProject->getId(); ?>" class="j_multiSelect_item" />
             <?php echo $this->escapeQuotes($task->getObjectNumber()) ?>
           </td>
           <td class="title_task_max">
             <?php echo $this->showTaskStatusIcon($task) ?>
             <a href="<?php echo $this->projectUrl(array('id' => $task->getId()), 'task_view') ?>">
-              <?php echo $this->escapeQuotes($task->getTitle()) ?>
+              <?php echo $this->spaceToEntity($this->escapeQuotes($task->getTitle())) ?>
             </a>
           </td>
           <td>
@@ -151,12 +178,12 @@
                           <?php if ($action === null): ?>
                             <li class="menuSeparator"></li>
                           <?php else: ?>
-                            <li><a class="<?php echo $action['class'] ?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
+                            <li><a <?php if (array_key_exists('type', $action) && $action['type'] == 'delete'): ?>data-name="task<?php echo $this->activeProject->getId(); ?>" data-item-id="<?php echo $task->getId() ?>"<?php endif; ?> class="<?php echo $action['class'] ?>" href="<?php echo $action['url'] ?>"><?php echo $this->t($action['text']) ?></a></li>
                           <?php endif; ?>
                         <?php endforeach; ?>
-                      </ul> 
+                      </ul>
                     </div>
-                  </div>                
+                  </div>
                 </ul>
               </nav>
             <?php endif; ?>
@@ -165,7 +192,6 @@
         <?php endforeach; ?>
       </tbody>
     </table>
-
     <div>
       <p id="j_multiSelect_couterContainer"><?php echo $this->generalT('Liczba wybranych elementów') ?>: <span id="j_multiSelect_couterValue">0</span></p>
       <a class="button j_multiSelect_sendButton_task<?php echo $this->activeProject->getId(); ?> j_delete_tasks" href="<?php echo $this->projectUrl(array(), 'task_multi_delete') ?>">
@@ -174,19 +200,19 @@
       <a id="j_multiSelect_selectAllButton_task<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wybierz wszystkie') ?></a>
       <a id="j_multiSelect_unselectAllButton_task<?php echo $this->activeProject->getId(); ?>" class="button" href="#"><?php echo $this->generalT('Wyczyść wybrane') ?></a>
     </div>
-    
+    <div style="padding-top: 20px">
+      <?php echo $this->partial('count-records-default.phtml', ['count' => $this->numberRecords]) ?>
+    </div>
     <?php echo $this->paginationControl($this->paginator, 'Sliding', 'pagination-filter.phtml', $this->request->getParams()); ?>
-
     <?php else: ?>
     <div class="empty-text"><?php echo $this->t('Brak zadań') ?></div>
     <?php endif; ?>
-    
-  </article>    
-</section>
 
-<?php 
+  </article>
+</section>
+<?php
 echo $this->partial('popups/delete-tasks.phtml');
-echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allIds)); 
+echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allIds));
 ?>
 
 <script type="text/javascript">
@@ -197,7 +223,7 @@ echo $this->partial('partials/multi-select.phtml', array('allIds' => $this->allI
     prePopulated['tags'] = <?php echo $this->prePopulatedTags?>;
   <?php endif?>
   isSearchTags = true;
-    
+
   url.tagListAjax = '<?php echo $this->projectUrl(array(), 'tag_list_ajax') ?>';
   var filterDefaultValues = <?php echo $this->filterForm->getDefaultValues(); ?>;
   var filterSavedValues = <?php echo $this->filterForm->getSavedValues(); ?>;

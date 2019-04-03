@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-10-23 10:25+0200\n"
+"PO-Revision-Date: 2019-04-03 08:27+0200\n"
 "Last-Translator: Paweł Piaskowy <pawel@piaskowy.net>\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: en_US\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.2.1\n"
 
 msgid "pageTitle"
 msgstr "Browser"
@@ -89,6 +89,12 @@ msgstr "You need to specify the name of the directory."
 msgid "DIRECTORY_NAME_IS_ICORRECT"
 msgstr "Can not create directory with given name."
 
+msgid "FILE_NAME_IS_INCORRECT"
+msgstr "Can not change file name, because it has invalid characters: <>&."
+
+msgid "NAME_OF_FILE_ADDED_IS_INCORRECT"
+msgstr "At least one of the added files has invalid characters in name: <>&.\\n\\nFile list:\\n"
+
 msgid "NEW_DIRECTORY_NAME_IS_EMPTY"
 msgstr "You need to specify the new name of the directory."
 
@@ -108,10 +114,25 @@ msgid "UPLOAD_FILE_EXISTS"
 msgstr "At least one of the file upload has a name that already exists in the specified location.\\n\\nFile list:\\n"
 
 msgid "FILE_FORBIDDEN_EXTENSION"
-msgstr "At least one of the files to be transferred has not allowed an extension. Allowed extensions: jpg, jpeg, png, gif, doc, xls, csv, txt, xml, html.\\n\\nFile list:\\n"
+msgstr "At least one of the files to be transferred has not allowed an extension. Allowed extensions: jpg, jpeg, png, gif, doc, docx, xls, xlsx, odt, ods, csv, txt, xml, html, pdf.\\n\\nFile list:\\n"
 
 msgid "Akcje"
 msgstr "Actions"
 
 msgid "[root]"
 msgstr "[root directory]"
+
+msgid "Czy na pewno chcesz usunąć wybrany plik?"
+msgstr "Are you sure you want to delete this file?"
+
+msgid "Czy na pewno chcesz usunąć wybrany folder?"
+msgstr "Are you sure you want to delete this directory?"
+
+msgid "Czy na pewno chcesz usunąć zaznaczone pliki / foldery?"
+msgstr "Are you sure you want to delete the selected files and / or directories?"
+
+msgid "Nic nie wybrano."
+msgstr "Nothing is checked."
+
+msgid "Anuluj"
+msgstr "Cancel"

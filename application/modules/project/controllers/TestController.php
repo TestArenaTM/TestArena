@@ -45,7 +45,7 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   {
     $userMapper = new Project_Model_UserMapper();
     return new Project_Form_TestFilter(array(
-      'action'   => $this->_projectUrl(array(), 'test_list'),
+      'action'   => $this->_projectUrl(array('page' => 1), 'test_list'),
       'userList' => $userMapper->getByProjectAsOptions($this->_project)
     ));
   }
@@ -60,17 +60,27 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     $this->_setCurrentBackUrl('checklistEdit');
     $request = $this->_getRequestForFilter(Application_Model_FilterGroup::TESTS);
     $filterForm = $this->_getFilterForm();
-    
+
+    $allIds = array();
     if ($filterForm->isValid($request->getParams()))
     {
       $this->_filterAction($filterForm->getValues(), 'test'.$this->_project->getId());
       $testMapper = new Project_Model_TestMapper();
-      list($list, $paginator) = $testMapper->getAll($request, $this->_project);
-      
-      $allIds = $testMapper->getAllIds($request);
+      $request->setParam('search', $filterForm->getValue('search'));
+      list($list, $paginator, $numberRecords) = $testMapper->getAll($request, $this->_project);
+
+      if ($this->_checkAccess(Application_Model_RoleAction::TEST_DELETE_ALL))
+      {
+        $allIds = $testMapper->getAllIds($request);
+      }
+      elseif ($this->_checkAccess(Application_Model_RoleAction::TEST_DELETE_CREATED_BY_YOU))
+      {
+        $allIds = $testMapper->getAllIds($request, $this->_user->getId());
+      }
     }
     else
     {
+      $numberRecords = 0;
       $list = $allIds = array();
       $paginator = null;
     }
@@ -83,6 +93,7 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     }
     
     $this->_setTranslateTitle();
+    $this->view->numberRecords = $numberRecords;
     $this->view->tests = $list;
     $this->view->paginator = $paginator;
     $this->view->request = $request;
@@ -125,7 +136,21 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     
     $testMapper->getPreviousNextByTest($test);
 
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    $releaseActive = $releaseMapper->getActive($this->_project);
+
+    $filterForm = $this->_getTaskFilterForm($releaseActive);
+
+    $request = $this->getRequest();
+    list($tasksList, $tasksPaginator,$tasksNumberRecords) = $this->_getViewForTasks($test, $filterForm, $releaseActive);
+
     $this->_setTranslateTitle(array('name' => $test->getName()), 'headTitle');
+
+    $this->view->tasksList = $tasksList;
+    $this->view->tasksPaginator = $tasksPaginator;
+    $this->view->tasksNumberRecords = $tasksNumberRecords;
+    $this->view->request = $request;
+    $this->view->filterForm = $filterForm;
     $this->view->test = $test;
     $this->view->backUrl = $this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'));
     $this->view->testUserPermission = new Application_Model_TestUserPermission($test, $this->_user, $this->_getAccessPermissionsForTests());
@@ -150,7 +175,20 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     
     $testMapper->getPreviousNextByTest($testCase);
 
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    $releaseActive = $releaseMapper->getActive($this->_project);
+
+    $filterForm = $this->_getTaskFilterForm($releaseActive);
+
+    list($tasksList, $tasksPaginator,$tasksNumberRecords) = $this->_getViewForTasks($testCase, $filterForm, $releaseActive);
+    $request = $this->getRequest();
     $this->_setTranslateTitle();
+
+    $this->view->tasksList = $tasksList;
+    $this->view->tasksPaginator = $tasksPaginator;
+    $this->view->tasksNumberRecords = $tasksNumberRecords;
+    $this->view->request = $request;
+    $this->view->filterForm = $filterForm;
     $this->view->testCase = $testCase;
     $this->view->backUrl = $this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'));
     $this->view->testUserPermission = new Application_Model_TestUserPermission($testCase, $this->_user, $this->_getAccessPermissionsForTests());
@@ -175,7 +213,20 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     
     $testMapper->getPreviousNextByTest($exploratoryTest);
 
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    $releaseActive = $releaseMapper->getActive($this->_project);
+
+    $filterForm = $this->_getTaskFilterForm($releaseActive);
+    $request = $this->getRequest();
+    list($tasksList, $tasksPaginator,$tasksNumberRecords) = $this->_getViewForTasks($exploratoryTest, $filterForm, $releaseActive);
+
     $this->_setTranslateTitle();
+
+    $this->view->tasksList = $tasksList;
+    $this->view->tasksPaginator = $tasksPaginator;
+    $this->view->tasksNumberRecords = $tasksNumberRecords;
+    $this->view->request = $request;
+    $this->view->filterForm = $filterForm;
     $this->view->exploratoryTest = $exploratoryTest;
     $this->view->backUrl = $this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'));
     $this->view->testUserPermission = new Application_Model_TestUserPermission($exploratoryTest, $this->_user, $this->_getAccessPermissionsForTests());
@@ -200,7 +251,21 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     
     $testMapper->getPreviousNextByTest($automaticTest);
 
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    $releaseActive = $releaseMapper->getActive($this->_project);
+
+    $filterForm = $this->_getTaskFilterForm($releaseActive);
+
+    $request = $this->getRequest();
+    list($tasksList, $tasksPaginator,$tasksNumberRecords) = $this->_getViewForTasks($automaticTest, $filterForm, $releaseActive);
+
     $this->_setTranslateTitle(array('name' => $automaticTest->getName()), 'headTitle');
+
+    $this->view->tasksList = $tasksList;
+    $this->view->tasksPaginator = $tasksPaginator;
+    $this->view->tasksNumberRecords = $tasksNumberRecords;
+    $this->view->request = $request;
+    $this->view->filterForm = $filterForm;
     $this->view->automaticTest = $automaticTest;
     $this->view->backUrl = $this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'));
     $this->view->testUserPermission = new Application_Model_TestUserPermission($automaticTest, $this->_user, $this->_getAccessPermissionsForTests());
@@ -216,17 +281,28 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     {
       throw new Custom_404Exception();
     }
-    
     $this->_setCurrentBackUrl('file_dwonload');
     $this->_setCurrentBackUrl('checklistTestEdit');
     
     $fileMapper = new Project_Model_FileMapper();
     $checklist->setExtraData('attachments', $fileMapper->getListByTest($checklist));
-    
+
     $testMapper->getPreviousNextByTest($checklist);
 
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    $releaseActive = $releaseMapper->getActive($this->_project);
+    $filterForm = $this->_getTaskFilterForm($releaseActive);
+
+    $request = $this->getRequest();
+    list($tasksList, $tasksPaginator,$tasksNumberRecords) = $this->_getViewForTasks($checklist, $filterForm, $releaseActive);
+
     $this->_setTranslateTitle(array('name' => $checklist->getName()), 'headTitle');
+    $this->view->tasksList = $tasksList;
+    $this->view->tasksPaginator = $tasksPaginator;
+    $this->view->tasksNumberRecords = $tasksNumberRecords;
+    $this->view->request = $request;
     $this->view->checklist = $checklist;
+    $this->view->filterForm = $filterForm;
     $this->view->backUrl = $this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'));
     $this->view->testUserPermission = new Application_Model_TestUserPermission($checklist, $this->_user, $this->_getAccessPermissionsForTests());
   }
@@ -234,9 +310,12 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   public function addOtherTestAction()
   {
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
-    
+
     $this->_setTranslateTitle();
     $this->view->form = $this->_getAddOtherTestForm();
+    $request = $this->getRequest();
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
   }
   
   public function addOtherTestProcessAction()
@@ -244,6 +323,8 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
     
     $request = $this->getRequest();
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
     
     if (!$request->isPost())
     {
@@ -278,6 +359,11 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     {
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
+
+    if ($this->_helper->_layout->getLayout() == 'iframe') {
+      $this->_addTestToTask($test, $request->getParam('taskId'), $request->getParam('defectId'));
+      return $this->_closeDialog();
+    }
     
     return $this->projectRedirect($this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'), true));
   }
@@ -285,7 +371,9 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   public function addTestCaseAction()
   {
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
-    
+    $request = $this->getRequest();
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
     $this->_setTranslateTitle();
     $this->view->form = $this->_getAddTestCaseForm();
   }
@@ -295,7 +383,9 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
     
     $request = $this->getRequest();
-    
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
+
     if (!$request->isPost())
     {
       return $this->projectRedirect(array(), 'test_add_test_case');
@@ -328,14 +418,21 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     {
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
+
+    if ($this->_helper->_layout->getLayout() == 'iframe') {
+      $this->_addTestToTask($testCase, $request->getParam('taskId'), $request->getParam('defectId'));
+      return $this->_closeDialog();
+    }
     
     return $this->projectRedirect($this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'), true));
   }
   
   public function addExploratoryTestAction()
   {
+    $request = $this->getRequest();
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
-    
     $this->_setTranslateTitle();
     $this->view->form = $this->_getAddExploratoryTestForm();
   }
@@ -343,9 +440,11 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   public function addExploratoryTestProcessAction()
   {
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
-    
+
     $request = $this->getRequest();
-    
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
+
     if (!$request->isPost())
     {
       return $this->projectRedirect(array(), 'test_add_exploratory_test');
@@ -379,14 +478,22 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     {
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
-    
+
+    if ($this->_helper->_layout->getLayout() == 'iframe') {
+      $this->_addTestToTask($exploratoryTest, $request->getParam('taskId'), $request->getParam('defectId'));
+      return $this->_closeDialog();
+    }
+
     return $this->projectRedirect($this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'), true));
   }
   
   public function addAutomaticTestAction()
   {
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
-    
+
+    $request = $this->getRequest();
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
     $this->_setTranslateTitle();
     $this->view->form = $this->_getAddAutomaticTestForm();
   }
@@ -396,6 +503,8 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
     
     $request = $this->getRequest();
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
     
     if (!$request->isPost())
     {
@@ -430,6 +539,11 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     {
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
+
+    if ($this->_helper->_layout->getLayout() == 'iframe') {
+      $this->_addTestToTask($automaticTest, $request->getParam('taskId'), $request->getParam('defectId'));
+      return $this->_closeDialog();
+    }
     
     return $this->projectRedirect($this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'), true));
   }
@@ -437,6 +551,10 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   public function addChecklistAction()
   {
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
+
+    $request = $this->getRequest();
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
     
     $this->_setTranslateTitle();
     $this->view->form = $this->_getAddChecklistForm();
@@ -447,7 +565,9 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     $this->_checkAccess(Application_Model_RoleAction::TEST_ADD, true);
     
     $request = $this->getRequest();
-    
+    $this->_helper->_layout->setLayout($request->getParam('layout'));
+    $this->view->layout = $this->_helper->_layout->getLayout();
+
     if (!$request->isPost())
     {
       return $this->projectRedirect(array(), 'test_add_checklist');
@@ -461,7 +581,7 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
       $this->_setTranslateTitle();
       $this->view->form = $form;
       $this->view->project = $this->_project;
-      
+
       return $this->render('add-checklist'); 
     }
 
@@ -481,6 +601,11 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     {
       $this->_messageBox->set($t->translate('statusError'), Custom_MessageBox::TYPE_ERROR);
     }
+
+    if ($this->_helper->_layout->getLayout() == 'iframe') {
+      $this->_addTestToTask($checklist, $request->getParam('taskId'), $request->getParam('defectId'));
+      return $this->_closeDialog();
+    }
     
     return $this->projectRedirect($this->_getBackUrl('test_list', $this->_projectUrl(array(), 'test_list'), true));
   }
@@ -491,7 +616,7 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     $form = $this->_getEditOtherTestForm($test);
     $rowData = $test->getExtraData('rowData');
     $form->populate($form->prepareAttachmentsFromDb($rowData['attachments']));
-    
+
     $this->_setTranslateTitle();
     $this->view->form = $form;
   }
@@ -499,7 +624,7 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   public function editOtherTestProcessAction()
   {
     $request = $this->getRequest();
-    
+
     if (!$request->isPost())
     {
       return $this->projectRedirect(array(), 'test_add_other_test');
@@ -514,7 +639,8 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     {
       $this->_setTranslateTitle();
       $this->view->form = $form;
-      return $this->render('edit-other-test'); 
+
+      return $this->render('edit-other-test');
     }
     
     $test->setProperties($form->getValues());
@@ -522,7 +648,7 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
     $test->setProject('id', $this->_project->getId());
     
     $testMapper = new Project_Model_TestMapper();
-    
+
     $t = new Custom_Translate();
     
     if ($testMapper->editOtherTestCore($test))
@@ -626,7 +752,7 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
 
         return $this->projectRedirect($route['params'], $route['name']);
       }
-      
+
       return $this->projectRedirect($this->_getBackUrl('testCaseEdit', $this->_projectUrl(array(), 'test_list'), true));
     }
 
@@ -973,8 +1099,9 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
 
   private function _getAddOtherTestForm()
   {
+    $request = $this->getRequest();
     $form = new Project_Form_AddOtherTest(array(
-      'action'    => $this->_projectUrl(array(), 'test_add_other_test_process'),
+      'action'    => $this->_projectUrl(array('layout' => $request->getParam('layout'), 'taskId' => $request->getParam('taskId'), 'defectId' => $request->getParam('defectId')), 'test_add_other_test_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
@@ -999,8 +1126,9 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   
   private function _getAddTestCaseForm()
   {
+    $request = $this->getRequest();
     $form = new Project_Form_AddTestCase(array(
-      'action'    => $this->_projectUrl(array(), 'test_add_test_case_process'),
+      'action'    => $this->_projectUrl(array('layout' => $request->getParam('layout'), 'taskId' => $request->getParam('taskId'), 'defectId' => $request->getParam('defectId')), 'test_add_test_case_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
@@ -1025,8 +1153,9 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   
   private function _getAddExploratoryTestForm()
   {
+    $request = $this->getRequest();
     $form = new Project_Form_AddExploratoryTest(array(
-      'action'    => $this->_projectUrl(array(), 'test_add_exploratory_test_process'),
+      'action'    => $this->_projectUrl(array('layout' => $request->getParam('layout'), 'taskId' => $request->getParam('taskId'), 'defectId' => $request->getParam('defectId')), 'test_add_exploratory_test_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
@@ -1051,10 +1180,11 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
 
   private function _getAddAutomaticTestForm()
   {
+    $request = $this->getRequest();
     $form = new Project_Form_AddAutomaticTest(array(
-      'action'    => $this->_projectUrl(array(), 'test_add_automatic_test_process'),
+      'action'    => $this->_projectUrl(array('layout' => $request->getParam('layout'), 'taskId' => $request->getParam('taskId'), 'defectId' => $request->getParam('defectId')), 'test_add_automatic_test_process'),
       'method'    => 'post',
-      'projectId' => $this->_project->getId()
+      'projectId' => $this->_project->getId(),
     ));
     
     $automaticTest = $this->_getValidAutomaticTest(false);
@@ -1078,11 +1208,15 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   private function _getAddChecklistForm()
   {
     $form = new Project_Form_AddChecklist(array(
-      'action'    => $this->_projectUrl(array(), 'test_add_checklist_process'),
+      'action' => $this->_projectUrl(array(
+        'layout'   => $this->getRequest()->getParam('layout'),
+        'taskId'   => $this->getRequest()->getParam('taskId'),
+        'defectId' => $this->getRequest()->getParam('defectId')
+      ), 'test_add_checklist_process'),
       'method'    => 'post',
       'projectId' => $this->_project->getId()
     ));
-    
+
     $checklist = $this->_getValidChecklist(false);
     
     if ($checklist !== null)
@@ -1436,4 +1570,89 @@ class Project_TestController extends Custom_Controller_Action_Application_Projec
   {
     return $this->_checkMultipleAccess(Application_Model_TestUserPermission::$_testRoleActions);
   }
+
+  private function _closeDialog()
+  {
+    $this->getRequest()->setControllerName('');
+    return $this->render('partials/dialog-iframe-close');
+  }
+
+  private function _addTestToTask($testObject, $taskId, $defectId)
+  {
+    $defect = new Application_Model_Defect();
+    if ($defectId > 0)
+    {
+      $defect->setId($defectId);
+    }
+
+    $taskTest = new Application_Model_TaskTest();
+    $taskTest->setTask('id', $taskId);
+    $taskTest->setTest('id', $testObject->getId());
+    $taskTest->setDefectObject($defect);
+    $testMapper = new Project_Model_TestMapper();
+    if ($taskTest->getTest()->getId() > 0 && ($testObject = $testMapper->getForViewInTask($taskTest->getTest(), $this->_project)) !== false)
+    {
+      $taskTest->setTestObject($testObject);
+      $taskTestMapper = new Project_Model_TaskTestMapper();
+      if ($taskTestMapper->add($taskTest))
+      {
+
+        $history = new Application_Model_History();
+        $history->setUserObject($this->_user);
+        $history->setSubjectObject($taskTest->getTask());
+        $history->setType(Application_Model_HistoryType::ADD_TASK_TEST_TO_TASK);
+        $history->setField1($taskTest->getId());
+        $historyMapper = new Project_Model_HistoryMapper();
+        $historyMapper->add($history);
+      }
+    }
+  }
+
+  /**
+   * @param Application_Model_Release|null $releaseActive
+   */
+  private function _getTaskFilterForm($releaseActive)
+  {
+    $releaseMapper = new Project_Model_ReleaseMapper();
+    if ($releaseActive === null)
+    {
+      $releaseActive = new Application_Model_Project();
+    }
+
+    $taskFilterForm = new Project_Form_TaskFilterForTest(array(
+      'releaseList' => $releaseMapper->getByProjectAsOptions($this->_project),
+      'releaseDefault' => $releaseActive->getId()
+    ));
+    $taskFilterForm->populate(array('release' =>  $releaseActive->getId()));
+    return $taskFilterForm;
+  }
+
+  /**
+   * @param Application_Model_Release|null $releaseActive
+   */
+  private function _getViewForTasks(Custom_Interface_Test $test, Project_Form_TaskFilterForTest $filterForm, $releaseActive)
+  {
+    $request = $this->getRequest();
+    $request->setParam('testId', $test->getId());
+    if ($request->getParam('release') !== null)
+    {
+      if ($filterForm->getValue('release') != $request->getParam('release')) {
+        $filterForm->isValid($request->getParams());
+      }
+      $taskMapper = new Project_Model_TaskMapper();
+      list($tasksList, $tasksPaginator, $tasksNumberRecords) = $taskMapper->getAll($request, $this->_project);
+    }
+    else
+    {
+      if ($releaseActive != null)
+      {
+        $request->setParam('release', $releaseActive->getId());
+      }
+      $taskMapper = new Project_Model_TaskMapper();
+      list($tasksList, $tasksPaginator, $tasksNumberRecords) = $taskMapper->getAll($request, $this->_project);
+    }
+
+    return array($tasksList, $tasksPaginator, $tasksNumberRecords);
+  }
+
 }

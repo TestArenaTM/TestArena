@@ -44,7 +44,7 @@ class Project_Model_EnvironmentMapper extends Custom_Model_Mapper_Abstract
       $list[] = $environment->setDbProperties($row);
     }
     
-    return array($list, $paginator);
+    return array($list, $paginator, $adapter->count());
   }
   
   public function getAllAjax(Zend_Controller_Request_Abstract $request)
@@ -64,9 +64,9 @@ class Project_Model_EnvironmentMapper extends Custom_Model_Mapper_Abstract
     return $result->toArray();
   }
   
-  public function getForPopulateByDefect(Application_Model_Defect $defect)
+  public function getForPopulateByDefect(Application_Model_Defect $defect, $type = 'reported')
   {
-    $result = $this->_getDbTable()->getForPopulateByDefect($defect->getId());
+    $result = $this->_getDbTable()->getForPopulateByDefect($defect->getId(), $type);
     return $result->toArray();
   }
 
@@ -185,9 +185,9 @@ class Project_Model_EnvironmentMapper extends Custom_Model_Mapper_Abstract
     return $list;
   }
 
-  public function getByDefect(Application_Model_Defect $defect)
+  public function getByDefect(Application_Model_Defect $defect, $type = 'reported')
   {
-    $rows = $this->_getDbTable()->getByDefect($defect->getId());
+    $rows = $this->_getDbTable()->getByDefect($defect->getId(), $type);
     
     if (null === $rows)
     {

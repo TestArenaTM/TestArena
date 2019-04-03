@@ -221,14 +221,19 @@ class Project_IndexController extends Custom_Controller_Action_Application_Proje
     $this->checkUserSession(true, true);
     $this->_checkAccess(Application_Model_RoleAction::PROJECT_ATTACHMENT, true);
     $id = $this->getRequest()->getParam('id', 0);
-    
-    if ($id > 0)
+
+    if ($id > 0 && $this->_project->getStatusId() == Application_Model_ProjectStatus::ACTIVE)
     {
       $attachmentMapper = new Project_Model_AttachmentMapper();
       $attachment = new Application_Model_Attachment();
       $attachment->setId($id);
       $attachmentMapper->delete($attachment);
       $result['status'] = 'SUCCESS';
+    }
+    else if ($this->_project->getStatusId() != Application_Model_ProjectStatus::ACTIVE)
+    {
+      $t = new Custom_Translate();
+      $result['errors'][] = $t->translate("projectNoActive", null, 'error');
     }
     else
     {

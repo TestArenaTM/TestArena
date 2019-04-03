@@ -1,81 +1,97 @@
 <section id="content">
   <article class="article_in_content dashboard">
-
-    <?php if ($this->filterForm !== null): ?>   
-    <?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
-    <article class="column_dashboard">
-      <form name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>" action="<?php echo $this->filterForm->getAction() ?>">
-        
-        <?php echo $this->filterForm->onlyActiveRelease->renderViewHelper() ?>
-        <?php echo $this->formLabel('onlyActiveRelease', $this->t('Pokaż tylko dla aktywnego wydania NAME', array('name' => $this->activeRelease->getName()))) ?>
-        
-      </form>
-    </article>
-    <?php endif;?>
-        
-    <?php        
-    if ($this->activeProject === null)
-    {
+      <article class="dashboard_header">
+        <?php if ($this->filterForm !== null): ?>
+          <?php $this->filterRequestConditions($this->filterForm->getValues()) ?>
+          <form name="<?php echo $this->filterForm->getName() ?>" method="<?php echo $this->filterForm->getMethod() ?>"
+                action="<?php echo $this->filterForm->getAction() ?>">
+            <?php echo $this->filterForm->onlyActiveRelease->renderViewHelper() ?>
+            <?php echo $this->formLabel('onlyActiveRelease', $this->t('Pokaż tylko dla aktywnego wydania NAME', array('name' => $this->activeRelease->getName()))) ?>
+          </form>
+        <?php else: ?>
+          <div></div>
+        <?php endif ?>
+        <?php if ($this->isExtendingProjectStatistic): ?>
+        <div>
+          <a href="<?php echo $this->url(array('type' => 'project'), 'index') ?>" class="button-big <?php if ($this->url() == $this->url(array('type' => 'project'), 'index')) echo 'active' ?>"><?php echo $this->t('Dla projektu') ?></a>
+          <a href="<?php echo $this->url(array('type' => 'user'), 'index') ?>" class="button-big <?php if ($this->url() == $this->url(array('type' => 'user'), 'index')) echo 'active' ?>"><?php echo $this->t('Dla mnie') ?></a>
+        </div>
+        <?php endif ?>
+      </article>
+    <?php
+    if ($this->activeProject === null) {
       echo $this->partial('partials/task-statistics.phtml', array(
         'authUser' => $this->authUser,
         'mainLinkPart' => $this->mainLinkPart,
-        'numberOfTasksAssignedToMe' => $this->numberOfTasksAssignedToMe,
-        'percentOfTasksAssignedToMe' => $this->percentOfTasksAssignedToMe,
-        'numberOfOpenTasksAssignedToMe' => $this->numberOfOpenTasksAssignedToMe,
-        'percentOfOpenTasksAssignedToMe' => $this->percentOfOpenTasksAssignedToMe,
-        'numberOfReopenTasksAssignedToMe' => $this->numberOfReopenTasksAssignedToMe,
-        'percentOfReopenTasksAssignedToMe' => $this->percentOfReopenTasksAssignedToMe,
-        'numberOfInProgressTasksAssignedToMe' => $this->numberOfInProgressTasksAssignedToMe,
-        'percentOfInProgressTasksAssignedToMe' => $this->percentOfInProgressTasksAssignedToMe,
-        'numberOfClosedTasksAssignedToMe' => $this->numberOfClosedTasksAssignedToMe,
-        'percentOfClosedTasksAssignedToMe' => $this->percentOfClosedTasksAssignedToMe,
-        'json_numberOfTasksAssignedToMeGroupedByStatus' => $this->json_numberOfTasksAssignedToMeGroupedByStatus
+        'numberOfTasksAssigned' => $this->numberOfTasksAssigned,
+        'percentOfTasksAssigned' => $this->percentOfTasksAssigned,
+        'numberOfOpenTasksAssigned' => $this->numberOfOpenTasksAssigned,
+        'percentOfOpenTasksAssigned' => $this->percentOfOpenTasksAssigned,
+        'numberOfReopenTasksAssigned' => $this->numberOfReopenTasksAssigned,
+        'percentOfReopenTasksAssigned' => $this->percentOfReopenTasksAssigned,
+        'numberOfInProgressTasksAssigned' => $this->numberOfInProgressTasksAssigned,
+        'percentOfInProgressTasksAssigned' => $this->percentOfInProgressTasksAssigned,
+        'numberOfClosedTasksAssigned' => $this->numberOfClosedTasksAssigned,
+        'percentOfClosedTasksAssigned' => $this->percentOfClosedTasksAssigned,
+        'json_numberOfTasksAssignedGroupedByStatus' => $this->json_numberOfTasksAssignedGroupedByStatus,
+        'forMe' => $this->onlyMe
       ));
-    }
-    else
-    {
+    } else {
       echo $this->partial('partials/task-statistics-active-project.phtml', array(
         'authUser' => $this->authUser,
         'activeProject' => $this->activeProject,
         'mainLinkPart' => $this->mainLinkPart,
-        'numberOfTasksAssignedToMe' => $this->numberOfTasksAssignedToMe,
-        'percentOfTasksAssignedToMe' => $this->percentOfTasksAssignedToMe,
-        'numberOfOpenTasksAssignedToMe' => $this->numberOfOpenTasksAssignedToMe,
-        'percentOfOpenTasksAssignedToMe' => $this->percentOfOpenTasksAssignedToMe,
-        'numberOfReopenTasksAssignedToMe' => $this->numberOfReopenTasksAssignedToMe,
-        'percentOfReopenTasksAssignedToMe' => $this->percentOfReopenTasksAssignedToMe,
-        'numberOfInProgressTasksAssignedToMe' => $this->numberOfInProgressTasksAssignedToMe,
-        'percentOfInProgressTasksAssignedToMe' => $this->percentOfInProgressTasksAssignedToMe,
-        'numberOfClosedTasksAssignedToMe' => $this->numberOfClosedTasksAssignedToMe,
-        'percentOfClosedTasksAssignedToMe' => $this->percentOfClosedTasksAssignedToMe,
-        'json_numberOfTasksAssignedToMeGroupedByStatus' => $this->json_numberOfTasksAssignedToMeGroupedByStatus
+        'numberOfTasksAssigned' => $this->numberOfTasksAssigned,
+        'percentOfTasksAssigned' => $this->percentOfTasksAssigned,
+        'numberOfOpenTasksAssigned' => $this->numberOfOpenTasksAssigned,
+        'percentOfOpenTasksAssigned' => $this->percentOfOpenTasksAssigned,
+        'numberOfReopenTasksAssigned' => $this->numberOfReopenTasksAssigned,
+        'percentOfReopenTasksAssigned' => $this->percentOfReopenTasksAssigned,
+        'numberOfInProgressTasksAssigned' => $this->numberOfInProgressTasksAssigned,
+        'percentOfInProgressTasksAssigned' => $this->percentOfInProgressTasksAssigned,
+        'numberOfClosedTasksAssigned' => $this->numberOfClosedTasksAssigned,
+        'percentOfClosedTasksAssigned' => $this->percentOfClosedTasksAssigned,
+        'json_numberOfTasksAssignedGroupedByStatus' => $this->json_numberOfTasksAssignedGroupedByStatus,
+        'openStatusColor' => $this->openStatusColor,
+        'inProgressStatusColor' => $this->inProgressStatusColor,
+        'reopenStatusColor' => $this->reopenStatusColor,
+        'closedStatusColor' => $this->closedStatusColor,
+        'forMe' => $this->onlyMe
       ));
     }
     ?>
-    <article class="article_left">
-      <?php echo $this->partial('partials/my-tasks.phtml', array(
-        'activeProject' => $this->activeProject,
-        'mainLinkPart' => $this->mainLinkPart,
-        'lastNotClosedTasksAssignedToMe' => $this->lastNotClosedTasksAssignedToMe,
-        'numberOfNotClosedTasksAssignedToMe' => $this->numberOfNotClosedTasksAssignedToMe        
-      )); ?>
-    </article> 
+    <?php if ($this->onlyMe): ?>
+      <article class="article_left">
+        <?php echo $this->partial('partials/my-tasks.phtml', array(
+          'activeProject' => $this->activeProject,
+          'mainLinkPart' => $this->mainLinkPart,
+          'lastNotClosedTasksAssignedToMe' => $this->lastNotClosedTasksAssignedToMe,
+          'numberOfNotClosedTasksAssignedToMe' => $this->numberOfNotClosedTasksAssignedToMe
+        )); ?>
+      </article>
 
-    <article class="article_right">
-      <?php echo $this->partial('partials/my-overdue-tasks.phtml', array(
+      <article class="article_right">
+        <?php echo $this->partial('partials/my-overdue-tasks-for-user.phtml', array(
+          'activeProject' => $this->activeProject,
+          'mainLinkPart' => $this->mainLinkPart,
+          'overdueTasksAssigned' => $this->overdueTasksAssigned,
+          'numberOfOverdueTasksAssigned' => $this->numberOfOverdueTasksAssigned
+        )); ?>
+
+        <?php /** disable chat echo $this->partial('partials/my-messages.phtml', array(
+          'activeProject' => $this->activeProject,
+          'latestMessages' => $this->latestMessages,
+          'numberOfUnreadMessages' => $this->numberOfUnreadMessages,
+          'purifier' => $this->purifier
+        )); */?>
+      </article>
+    <?php else: ?>
+      <?php echo $this->partial('partials/my-overdue-tasks-for-project.phtml', array(
         'activeProject' => $this->activeProject,
         'mainLinkPart' => $this->mainLinkPart,
-        'overdueTasksAssignedToMe' => $this->overdueTasksAssignedToMe,
-        'numberOfOverdueTasksAssignedToMe' => $this->numberOfOverdueTasksAssignedToMe
+        'overdueTasksAssigned' => $this->overdueTasksAssigned,
+        'numberOfOverdueTasksAssigned' => $this->numberOfOverdueTasksAssigned
       )); ?>
-      
-      <?php echo $this->partial('partials/my-messages.phtml', array(
-        'activeProject' => $this->activeProject,
-        'latestMessages' => $this->latestMessages,
-        'numberOfUnreadMessages' => $this->numberOfUnreadMessages,
-        'purifier' => $this->purifier
-      )); ?>
-    </article> 
-    
+    <?php endif ?>
   </article>
 </section>

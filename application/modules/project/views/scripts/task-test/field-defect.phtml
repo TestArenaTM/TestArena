@@ -1,0 +1,235 @@
+<div class="textLabelPropertiesDiv history" id="j_defectBox">
+  <h5 class="break_page"
+      <?php if (!$this->activeProject->isActive() || !$this->taskUserPermission->isDefectModifyPermission()): ?>style="border-bottom:0px !important"<?php endif; ?>>
+    <span
+      class="icon_error-triangle_alt icon-20"></span> <?php echo $this->partialT('Defekty', 'field-issue', 'project') ?>
+  </h5>
+  <?php if ($this->activeProject->isActive()
+    && $this->taskUserPermission->isDefectModifyPermission()
+    && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+    <div class="filter addTest">
+      <div class="search_in_filter addTest">
+        <input type="hidden" name="defectId" value="" id="j_defectId">
+        <input type="text" name="defectName" value="" id="j_defectName">
+        <a id="j_addDefectToTask" class="addTestToTask"
+           href="<?php echo $this->projectUrl(array(
+               'id' => $this->taskTest->getId(),
+             ),
+             'task_test_add_test_defect_ajax') ?>"
+           title="<?php echo $this->partialT('Dodaj defekt', 'field-issue', 'project') ?>"><i
+            class="icon_plus icon-15"></i></a>
+      </div>
+      <?php if ($this->activeProject->getBugTRacker()->getBugTrackerType()->getId() == Application_Model_BugTrackerType::INTERNAL && $this->isDefectAddPermission): ?>
+        <div class="button_dropdown">
+          <button onclick="button_dropdown.button('issueType')" id="button_dropdown_button_issueType"
+                  class="button_dropdown_button">
+            <?php echo $this->partialT('Dodaj nowe', 'field-issue', 'project') ?>
+          </button>
+          <ul class="button_dropdown_list" id="button_dropdown_list_issueType">
+            <li>
+              <span class="button_dropdown_list_option"
+                    onclick="DialogIframe.open('<?php echo $this->projectUrl(array(
+                      'issueType' => 'NEW_FEATURE',
+                      'layout' => 'iframe',
+                      'taskId' => $this->taskTest->getTask()->getId(),
+                      'taskTestId' => $this->taskTest->getId()),
+                      'defect_add')
+                    ?>', '<?php echo $this->partialT('Dodaj nowe zgłoszenie', 'field-issue', 'project') ?>');">
+                <?php echo $this->typeT('NEW_FEATURE', 'ISSUE') ?>
+              </span>
+            </li>
+            <li>
+              <span class="button_dropdown_list_option"
+                    onclick="DialogIframe.open('<?php echo $this->projectUrl(array(
+                      'issueType' => 'IMPROVEMENT',
+                      'layout' => 'iframe',
+                      'taskId' => $this->taskTest->getTask()->getId(),
+                      'taskTestId' => $this->taskTest->getId()),
+                      'defect_add')
+                    ?>', '<?php echo $this->partialT('Dodaj nowe zgłoszenie', 'field-issue', 'project') ?>');">
+                <?php echo $this->typeT('IMPROVEMENT', 'ISSUE') ?>
+              </span>
+            </li>
+            <li>
+              <span class="button_dropdown_list_option"
+                    onclick="DialogIframe.open('<?php echo $this->projectUrl(array(
+                      'issueType' => 'DEFECT',
+                      'layout' => 'iframe',
+                      'taskId' => $this->taskTest->getTask()->getId(),
+                      'taskTestId' => $this->taskTest->getId()),
+                      'defect_add')
+                    ?>', '<?php echo $this->partialT('Dodaj nowe zgłoszenie', 'field-issue', 'project') ?>');">
+                <?php echo $this->typeT('DEFECT', 'ISSUE') ?>
+              </span>
+            </li>
+          </ul>
+          <script type="text/javascript">
+            button_dropdown.autoClose('issueType');
+          </script>
+        </div>
+      <?php endif ?>
+    </div>
+  <?php endif; ?>
+  <div id="j_defectContent">
+    <ul id="j_defectList" class="optionsList">
+      <?php if ($this->bugTracker == null): ?>
+        <?php if (count($this->defects)): ?>
+          <?php foreach ($this->defects as $defect): ?>
+            <li id="j_defectItem_<?php echo $defect->getId() ?>_<?php echo $this->taskTest->getId() ?>">
+              <div class="clearfixDashboard history">
+                <div class="testlist-l" title="<?php echo $this->escapeQuotes($defect->getExtraData('name')) ?>">
+                  <p class="j_defectLink" key="<?php echo $defect->getExtraData('key') ?>">
+                    <?php if ($defect instanceof Application_Model_Defect): ?>
+                      <span class="issue issue_type_<?php echo $defect->getIssueType() ?>" title="<?php echo $this->typeT($defect->getIssueType(), 'ISSUE') ?>"></span>
+                      <a class="list_item_link"
+                         href="<?php echo $this->defectUrl($defect->getId(), $this->bugTracker, $this->taskTest->getTask()->getId()) ?>">
+                          <span
+                            class="object_nr"><?php echo $defect->getObjectNumber() ?></span> <?php echo $defect->getTitle() ?>
+                      </a>
+                    <?php else: ?>
+                      <a class="list_item_link"
+                           href="<?php echo $this->defectUrl($defect->getNo(), $this->bugTracker) ?>"><?php echo $this->escapeQuotes($defect->getExtraData('name')) ?></a>
+                    <?php endif; ?>
+                  </p>
+                  <p class="j_defectText"
+                     key="<?php echo $defect->getExtraData('key') ?>"><?php echo $this->escapeQuotes($defect->getExtraData('name')) ?></p>
+                </div>
+                <div class="testlist-r">
+                  <!--
+                <span>
+                  <?php echo $this->defectStatusTag($defect, $this->bugTracker) ?>
+                </span>
+                -->
+                  <span>
+                <?php if ($defect instanceof Application_Model_Defect): ?>
+                  <?php echo $this->showDefectStatusIcon($defect) ?>
+                <?php endif ?>
+              </span>
+                  <?php if ($this->activeProject->isActive()
+                    && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED): ?>
+                    <?php if ($this->taskUserPermission->isDefectModifyPermission()): ?>
+                    <a class="j_deleteDefectFromTask"
+                       href="<?php echo $this->projectUrl(array('taskTestId' => $this->taskTest->getId(), 'defectId' => $defect->getId()), 'task_test_delete_defect_ajax') ?>"
+                       title="<?php echo $this->partialT('Usuń', 'task-internal-defects', 'project') ?>"><span
+                        aria-hidden="true" class="icon_close icon-15"></span></a>
+                      <?php else: ?>
+                        <span class="icon_close empty icon-15"></span>
+                      <?php endif ?>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </li>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      <?php else: ?>
+        <?php foreach ($this->defects as $defect): ?>
+          <li id="j_defectItem_<?php echo $defect->getId() ?>_">
+            <div class="clearfixDashboard history">
+              <div class="testlist-l" title="<?php echo $this->escapeQuotes($defect->getExtraData('name')) ?>">
+                <p class="j_defectLink" key="<?php echo $defect->getExtraData('key') ?>">
+                  <a target="_blank" class="list_item_link" href="<?php echo $this->defectUrl($defect->getNo(), $this->bugTracker) ?>"><?php echo $defect->getExtraData('name') ?></a>
+                </p>
+                <p class="j_defectText" key="<?php echo $defect->getExtraData('key') ?>"><?php echo $defect->getExtraData('name') ?></p>
+              </div>
+              <div class="testlist-r">
+        <span>
+          <?php echo $this->defectStatusTag($defect, $this->bugTracker) ?>
+        </span>
+                <?php if ($this->activeProject->isActive()
+                  && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
+                    <?php if ($this->taskUserPermission->isDefectModifyPermission()): ?>
+                    <a class="j_deleteDefectFromTask"
+                       href="<?php echo $this->projectUrl(array('taskTestId' => $this->taskTest->getId(), 'defectId' => $defect->getId()), 'task_test_delete_defect_ajax') ?>"
+                       title="<?php echo $this->partialT('Usuń', 'task-internal-defects', 'project') ?>"><span
+                        aria-hidden="true" class="icon_close icon-15"></span></a>
+                    <?php else: ?>
+                      <span class="icon_close empty icon-15"></span>
+                    <?php endif ?>
+                <?php endif; ?>
+              </div>
+            </div>
+          </li>
+        <?php endforeach; ?>
+      <?php endif ?>
+    </ul>
+  </div>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    url.defectStatusAjax = '<?php echo $this->projectUrl(array(), 'defect_status_ajax') ?>';
+    language.defectNotExists = '<?php echo $this->generalT('Zgłoszenie nie istnieje.') ?>';
+    /* ]]> */
+  </script>
+</div>
+
+<?php echo $this->partial('partials/dialog-confirm.phtml', array(
+  'id' => 'dialog-confirm-2',
+  'title' => $this->partialT('Potwierdzenie', 'field-issue', 'project'),
+  'message' => '<div>'. $this->partialT('Czy na pewno chcesz usunąć tę relację', 'field-issue', 'project') .'?</div>'
+)); ?>
+<script type="text/javascript">
+  dialogDeleteDefectFromTask = {};
+  dialogDeleteDefectFromTask.textButtonCancel = "<?php echo $this->partialT("Anuluj", 'field-issue', 'project') ?>";
+  dialogDeleteDefectFromTask.textButtonDelete = "<?php echo $this->partialT("Usuń", 'field-issue', 'project') ?>";
+</script>
+<script type="text/javascript">
+  /* <![CDATA[ */
+  url.taskDefectView = '<?php echo $this->defectUrl('0', $this->bugTracker) ?>';
+  url.deleteDefectFromTask = '<?php echo $this->projectUrl(array('taskTestId' => $this->taskTest->getId(), 'defectId' => 0), 'task_test_delete_defect_ajax') ?>';
+
+  <?php if ($this->bugTracker === null): ?>
+  language.addDefectToTaskMustFillField = '<?php echo $this->partialT('addDefectToTaskMustFillField', 'field-issue', 'project') ?>';
+  var autocompleteData2 = {
+    url: '<?php echo $this->projectUrl(array(), 'defect_list_ajax') ?>',
+    textInputName: '#j_defectName',
+    dstName: '#j_defectId'
+  };
+  <?php else: ?>
+    language.addDefectToTaskMustFillField = '<?php echo $this->partialT('addDefectToTaskMustFillFieldEx', 'field-issue', 'project') ?>';
+    var autocompleteDataForDefect = {
+      url: '<?php echo $this->projectUrl(array(), 'defect_info_ajax') ?>',
+      textInputName: '#j_defectName',
+      dstName: '#j_defectId',
+      minLength: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? 1 : strlen($this->defectProjectPrefix($this->bugTracker)) + 2; ?>',
+      projectPrefix: '<?php echo ($this->bugTracker instanceof Application_Model_BugTrackerMantis) ? '' : $this->defectProjectPrefix($this->bugTracker) . '-';?>'
+    };
+  <?php endif; ?>
+
+  var defectTypeInternal = '<?php echo Application_Model_BugTrackerType::INTERNAL?>';
+  /* ]]> */
+</script>
+
+<script id="j_taskDefectInternalItemTmpl" type="text/x-jquery-tmpl">
+<li id="j_defectItem_${itemId}">
+  <div class="clearfixDashboard history">
+    <div class="testlist-l" title="${name}">
+      <span class="issue_type_${issueType}" title="${issueTypeTitle}"></span>
+      <a class="list_item_link" href="${viewUrl}"><span class="object_nr">${objectNumber}</span> ${name}</a>
+    </div>
+    <div class="testlist-r">
+      <!--
+      <span>
+        <strong>${status}</strong>
+      </span>
+      -->
+      <span>
+        <span class="statusIcon defectStatus_${rowStatus}" style="background: ${statusColor}" title="${status}"></span>
+      </span>
+      <?php if ($this->activeProject->isActive()
+    && $this->taskUserPermission->isDefectModifyPermission()
+    && $this->taskTest->getTask()->getStatusId() != Application_Model_TaskStatus::CLOSED):?>
+        <a class="j_deleteDefectFromTask" data-defect-name="[${objectNumber}] ${name}" href="${deleteUrl}" title="<?php echo $this->partialT('Usuń', 'task-defect-internal-tmpl', 'project') ?>"><span aria-hidden="true" class="icon_close icon-15"></span></a>
+      <?php endif; ?>
+    </div>
+  </div>
+</li>
+</script>
+
+<?php echo $this->partial('partials/dialog-iframe.phtml'); ?>
+
+<?php if ($this->bugTracker !== null): ?>
+  <?php echo $this->partial('partials/task-defect-tmpl.phtml', array(
+    'taskUserPermission' => $this->taskUserPermission,
+    'activeProject' => $this->activeProject,
+    'task' => $this->taskTest->getTask()
+  )); ?>
+<?php endif ?>

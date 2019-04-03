@@ -28,13 +28,21 @@ class Project_Model_TaskTestDbTable extends Custom_Model_DbTable_Criteria_Abstra
   {
     $sql = $this->select()
       ->from(array('tt' => $this->_name), array(
-        'id'
+        'id',
+        'testDefectIs' => new Zend_Db_Expr("
+          CASE WHEN EXISTS (
+            SELECT defect_id FROM `test_defect` WHERE task_test_id = tt.id
+          )
+            THEN 1
+            ELSE 0
+          END
+        ")
       ))
       ->join(array('t' => 'test'), 't.id = tt.test_id', $this->_createAlias('test', array(
         'id',
         'ordinal_no',
         'type',
-        'name'
+        'name',
       )))
       ->join(array('p' => 'project'), 'p.id = t.project_id', $this->_createAlias('test'.self::TABLE_CONNECTOR.'project', array(
         'prefix'

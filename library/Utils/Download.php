@@ -33,7 +33,7 @@ class Utils_Download
     //$userAgent = new Zend_Http_UserAgent();
     //if ($userAgent->getDevice()->getBrowser() == 'MSIE')
     //{
-      $this->_alliance = iconv('UTF-8', 'cp1250', $this->_alliance);
+    //  $this->_alliance = iconv('UTF-8', 'cp1250', $this->_alliance);
     //}
   }
 

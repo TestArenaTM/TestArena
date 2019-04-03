@@ -62,4 +62,14 @@ class Application_Model_TestUserPermission extends Custom_Model_UserPermission_A
     
     return false;
   }
+
+    public function isDeleteAllPermission()
+    {
+        return true === $this->_userPermissions[Application_Model_RoleAction::TEST_DELETE_ALL];
+    }
+
+    public function isDeleteCreatedByYouPermission()
+    {
+        return true === $this->_userPermissions[Application_Model_RoleAction::TEST_DELETE_CREATED_BY_YOU];
+    }
 }

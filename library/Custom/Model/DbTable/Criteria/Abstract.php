@@ -151,10 +151,16 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
         break;
         
       case 'task':
+
         if ($this->_paramExists('projectId', 0))
         {
           $select->where($this->_db->quoteInto('t.project_id = ?', $request->getParam('projectId')));
         }
+
+          if ($this->_paramExists('testId', 0))
+          {
+              $select->where($this->_db->quoteInto('tate.test_id = ?', $request->getParam('testId')));
+          }
         
         if ($this->_paramExists('search') && mb_strlen($request->getParam('search'), 'UTF-8'))
         {
@@ -235,7 +241,7 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
       case 'defect':
         if ($this->_paramExists('q'))
         {
-          $select->where($this->_db->quoteInto("d.title LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q'))))); 
+          $select->where($this->_db->quoteInto("CONCAT(p.prefix, '-', d.ordinal_no, ' ', d.title) LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q')))));
         }
 
         if ($this->_paramExists('projectId', 0))
@@ -252,6 +258,11 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
         if ($this->_paramExists('status') && ($status = $request->getParam('status')) > 0)
         {
           $select->where('d.status = ?', $status);
+        }
+
+        if ($this->_paramExists('issueType') && $request->getParam('issueType') !== '')
+        {
+          $select->where('d.type = ?', $request->getParam('issueType'));
         }
         
         if ($this->_paramExists('priority') && $request->getParam('priority') > 0)
@@ -315,7 +326,7 @@ abstract class Custom_Model_DbTable_Criteria_Abstract extends Custom_Model_DbTab
       case 'test':
         if ($this->_paramExists('q'))
         {
-          $select->where($this->_db->quoteInto("t.name LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q')))));
+          $select->where($this->_db->quoteInto("CONCAT(p.prefix, '-', t.ordinal_no, ' ', t.name) LIKE ? ESCAPE '='", array($this->_prepareLikePhrase($request->getParam('q')))));
         }
         
         if ($this->_paramExists('search') && mb_strlen($request->getParam('search'), 'UTF-8'))

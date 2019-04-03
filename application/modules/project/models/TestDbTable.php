@@ -73,7 +73,7 @@ class Project_Model_TestDbTable extends Custom_Model_DbTable_Criteria_Abstract
     return $sql;
   }
   
-  public function getAllIds(Zend_Controller_Request_Abstract $request)
+  public function getAllIds(Zend_Controller_Request_Abstract $request, $userId = null)
   {
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
@@ -98,6 +98,12 @@ class Project_Model_TestDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ->where('t.current_version = ?', true)
       ->group('t.id')
       ->setIntegrityCheck(false);
+
+      if ($userId !== null)
+      {
+        $sql->where('t.author_id = ?', $userId);
+      }
+
     
     $this->_setWhereCriteria($sql, $request);
     $this->_setOrderConditions($sql, $request);
@@ -126,7 +132,22 @@ class Project_Model_TestDbTable extends Custom_Model_DbTable_Criteria_Abstract
       
     $this->_setWhereCriteria($sql, $request);      
     return $this->fetchAll($sql);
-  }  
+  }
+
+  public function getForValid($id, $projectId)
+  {
+    $sql = $this->select()
+      ->from(array('t' => $this->_name), array(
+        'id'
+      ))
+      ->where('t.id = ?', $id)
+      ->where('t.project_id = ?', $projectId)
+      ->group('t.id')
+      ->limit(1)
+      ->setIntegrityCheck(false);
+
+    return $this->fetchRow($sql);
+  }
   
   public function getForView($id, $projectId)
   {
@@ -511,7 +532,8 @@ class Project_Model_TestDbTable extends Custom_Model_DbTable_Criteria_Abstract
     $sql = $this->select()
       ->from(array('t' => $this->_name), array(
         'id',
-        'type'
+        'type',
+        'status'
       ))
       ->where('t.id = ?', $id)
       ->where('t.status = ?', Application_Model_TestStatus::ACTIVE)

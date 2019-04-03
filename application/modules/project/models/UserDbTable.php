@@ -62,7 +62,8 @@ class Project_Model_UserDbTable extends Custom_Model_DbTable_Criteria_Abstract
       ))
       ->join(array('ru' => 'role_user'), 'ru.user_id = u.id', array())
       ->join(array('r' => 'role'), 'r.id = ru.role_id', array())
-      ->setIntegrityCheck(false);
+      ->setIntegrityCheck(false)
+      ->group('u.id');
       
     $this->_setWhereCriteria($sql, $request);
     $this->_setOrderConditions($sql, $request);    

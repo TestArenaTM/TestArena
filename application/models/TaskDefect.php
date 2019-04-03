@@ -43,6 +43,9 @@ class Application_Model_TaskDefect extends Custom_Model_Standard_Abstract
     return $this->_task;
   }
 
+  /**
+   * @return Application_Model_Defect|null
+   */
   public function getDefect()
   {
     return $this->_defect;

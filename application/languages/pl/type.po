@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Lizzie\n"
 "POT-Creation-Date: 2012-03-16 10:18+0100\n"
-"PO-Revision-Date: 2017-06-14 13:46+0200\n"
+"PO-Revision-Date: 2018-04-13 13:08+0200\n"
 "Last-Translator: Paweł Piaskowy\n"
 "Language-Team: 21CN <biuro@21cn.pl>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Language: pl_PL\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.6\n"
 
 # role
 msgid "ROLE_CUSTOM"
@@ -81,3 +81,13 @@ msgstr "PDF"
 
 msgid "CSV_REPORT"
 msgstr "CSV"
+
+# issue types
+msgid "ISSUE_NEW_FEATURE"
+msgstr "Nowa funkcjonalność"
+
+msgid "ISSUE_IMPROVEMENT"
+msgstr "Ulepszenie"
+
+msgid "ISSUE_DEFECT"
+msgstr "Defekt"
